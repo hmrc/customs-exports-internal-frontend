@@ -14,33 +14,33 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.customsexportsinternalfrontend.config.AppConfig
+@import uk.gov.hmrc.customsexportsinternalfrontend.views.html._
+@import uk.gov.hmrc.play.views.html.layouts.{Article, Sidebar}
+
+@this(govuk_wrapper: govuk_wrapper, sidebar_di: Sidebar, article_di: Article)
+
 @(title: String,
   sidebarLinks: Option[Html] = None,
   contentHeader: Option[Html] = None,
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
-  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: AppConfig)
-
-@import uk.gov.hmrc.play.views.html.layouts
-
+  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages)
 
 @serviceInfoContent = {}
 
 @sidebar = {
     @if(sidebarLinks.isDefined) {
-        @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
+        @sidebar_di(sidebarLinks.get, Some("sidebar"))
     }
 }
 
 
-@govuk_wrapper(appConfig = appConfig,
-               title = title,
+@govuk_wrapper(title = title,
                mainClass = mainClass,
                bodyClasses = bodyClasses,
                sidebar = sidebar,
                contentHeader = contentHeader,
-               mainContent = layouts.article(mainContent),
+               mainContent = article_di(mainContent),
                serviceInfoContent = serviceInfoContent,
                scriptElem = scriptElem
 )
