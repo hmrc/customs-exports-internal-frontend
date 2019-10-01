@@ -25,8 +25,11 @@ import uk.gov.hmrc.customsexportsinternalfrontend.views.html.hello_world
 import scala.concurrent.Future
 
 @Singleton
-class HelloWorldController @Inject()(appConfig: AppConfig, mcc: MessagesControllerComponents, helloWorldPage: hello_world)
-    extends FrontendController(mcc) {
+class HelloWorldController @Inject()(
+  appConfig: AppConfig,
+  mcc: MessagesControllerComponents,
+  helloWorldPage: hello_world
+) extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
 
