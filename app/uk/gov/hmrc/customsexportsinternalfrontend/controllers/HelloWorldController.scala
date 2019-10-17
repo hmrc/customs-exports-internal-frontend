@@ -26,10 +26,8 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import scala.concurrent.Future
 
 @Singleton
-class HelloWorldController @Inject()(verify: Verify,
-                                     mcc: MessagesControllerComponents,
-                                     helloWorldPage: hello_world
-                                    ) extends FrontendController(mcc) with I18nSupport {
+class HelloWorldController @Inject()(verify: Verify, mcc: MessagesControllerComponents, helloWorldPage: hello_world)
+    extends FrontendController(mcc) with I18nSupport {
 
   val helloWorld: Action[AnyContent] = verify.authenticated.async { implicit request =>
     Future.successful(Ok(helloWorldPage()))

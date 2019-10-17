@@ -35,15 +35,14 @@ import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthenticatedAction @Inject()(appConfig: AppConfig,
-                                    override val config: Configuration,
-                                    override val env: Environment,
-                                    override val authConnector: StrideAuthConnector,
-                                    mcc: MessagesControllerComponents,
-                                    unauthorizedPage: unauthorized)
-  extends ActionBuilder[AuthenticatedRequest, AnyContent]
-    with AuthorisedFunctions
-    with AuthRedirects {
+class AuthenticatedAction @Inject()(
+  appConfig: AppConfig,
+  override val config: Configuration,
+  override val env: Environment,
+  override val authConnector: StrideAuthConnector,
+  mcc: MessagesControllerComponents,
+  unauthorizedPage: unauthorized
+) extends ActionBuilder[AuthenticatedRequest, AnyContent] with AuthorisedFunctions with AuthRedirects {
 
   override implicit val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
@@ -51,7 +50,8 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
   private val logger = Logger(classOf[AuthenticatedAction])
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     lazy val forbidden = Forbidden(unauthorizedPage()(request, mcc.messagesApi.preferred(request)))
 
     authorised(AuthProviders(PrivilegedApplication)).retrieve(Retrievals.credentials) {
@@ -62,9 +62,8 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
         Future.successful(forbidden)
       }
     } recover {
-      case _: NoActiveSession => toStrideLogin(
-        if (appConfig.runningAsDev) s"http://${request.host}${request.uri}" else request.uri
-      )
+      case _: NoActiveSession =>
+        toStrideLogin(if (appConfig.runningAsDev) s"http://${request.host}${request.uri}" else request.uri)
       case e: AuthorisationException =>
         logger.debug("Authentication Failed", e)
         forbidden

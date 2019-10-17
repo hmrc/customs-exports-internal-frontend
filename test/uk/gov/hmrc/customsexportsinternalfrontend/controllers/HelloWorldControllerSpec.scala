@@ -27,7 +27,8 @@ class HelloWorldControllerSpec extends ControllerLayerSpec {
 
   private val helloWorldPage = aRealInstanceOf[hello_world]
 
-  private def controller(auth: AuthenticatedAction) = new HelloWorldController(new Verify(auth), stubMessagesControllerComponents(), helloWorldPage)
+  private def controller(auth: AuthenticatedAction) =
+    new HelloWorldController(new Verify(auth), stubMessagesControllerComponents(), helloWorldPage)
 
   "GET /" should {
     val get = FakeRequest("GET", "/")
