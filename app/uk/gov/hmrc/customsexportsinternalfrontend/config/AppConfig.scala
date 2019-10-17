@@ -17,21 +17,28 @@
 package uk.gov.hmrc.customsexportsinternalfrontend.config
 
 import javax.inject.{Inject, Singleton}
-import play.api.Configuration
+import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig, environment: Environment) {
   private val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
 
   private val assetsUrl = config.get[String]("assets.url")
-  private val serviceIdentifier = "MyService"
 
+  private val serviceIdentifier = "customs-exports-internal-frontend"
+
+  val runningAsDev: Boolean = {
+    config
+      .getOptional[String]("run.mode")
+      .map(_.equals(Mode.Dev.toString))
+      .getOrElse(Mode.Dev.equals(environment.mode))
+  }
   val assetsPrefix: String = assetsUrl + config.get[String]("assets.version")
   val analyticsToken: String = config.get[String](s"google-analytics.token")
   val analyticsHost: String = config.get[String](s"google-analytics.host")
-
   val reportAProblemPartialUrl: String = s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifier"
   val reportAProblemNonJSUrl: String = s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
+  val authBaseUrl: String = servicesConfig.baseUrl("auth")
 
 }

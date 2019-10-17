@@ -17,23 +17,21 @@
 package uk.gov.hmrc.customsexportsinternalfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.customsexportsinternalfrontend.config.AppConfig
+import uk.gov.hmrc.customsexportsinternalfrontend.controllers.actions.Verify
 import uk.gov.hmrc.customsexportsinternalfrontend.views.html.hello_world
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
 @Singleton
-class HelloWorldController @Inject()(
-  appConfig: AppConfig,
-  mcc: MessagesControllerComponents,
-  helloWorldPage: hello_world
-) extends FrontendController(mcc) {
+class HelloWorldController @Inject()(verify: Verify,
+                                     mcc: MessagesControllerComponents,
+                                     helloWorldPage: hello_world
+                                    ) extends FrontendController(mcc) with I18nSupport {
 
-  implicit val config: AppConfig = appConfig
-
-  val helloWorld: Action[AnyContent] = Action.async { implicit request =>
+  val helloWorld: Action[AnyContent] = verify.authenticated.async { implicit request =>
     Future.successful(Ok(helloWorldPage()))
   }
 

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.customsexportsinternalfrontend.views.html.templates.main_template
+package uk.gov.hmrc.customsexportsinternalfrontend.controllers.actions
 
-@this(main_template: main_template)
+import javax.inject.Inject
 
-@()(implicit request: Request[_], messages: Messages)
+class Verify @Inject()(authenticatedAction: AuthenticatedAction) {
 
-@main_template(title = "Hello from customs-exports-internal-frontend") {
-    <h1>Hello from customs-exports-internal-frontend !</h1>
+  def authenticated: AuthenticatedAction = authenticatedAction
+
 }

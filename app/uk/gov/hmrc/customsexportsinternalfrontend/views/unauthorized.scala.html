@@ -14,18 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.customsexportsinternalfrontend.views.html._
+@import uk.gov.hmrc.customsexportsinternalfrontend.views.html.templates.main_template
 
-@this(govuk_wrapper: govuk_wrapper)
+@this(main_template: main_template)
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[_], messages: Messages)
 
-@contentHeader = {
-  <h1>@heading</h1>
+@main_template(title = messages("view.unauthorized.title")) {
+    <h1>@messages("view.unauthorized.title")</h1>
 }
-
-@mainContent = {
-  <p>@message</p>
-}
-
-@govuk_wrapper(title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)
