@@ -16,17 +16,20 @@
 
 package uk.gov.hmrc.customsexportsinternalfrontend.config
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig, environment: Environment) {
+class AppConfig @Inject()(
+  config: Configuration,
+  servicesConfig: ServicesConfig,
+  environment: Environment,
+  @Named("appName") serviceIdentifier: String
+) {
   private val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
 
   private val assetsUrl = config.get[String]("assets.url")
-
-  private val serviceIdentifier = "customs-exports-internal-frontend"
 
   val runningAsDev: Boolean = {
     config
