@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customsexportsinternalfrontend.config
+package uk.gov.hmrc.customsexportsinternalfrontend.connectors
 
-import javax.inject.{Inject, Singleton}
-
-import play.api.i18n.MessagesApi
-import play.api.mvc.Request
-import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
-import uk.gov.hmrc.customsexportsinternalfrontend.views.html.error
+import com.google.inject.Inject
+import javax.inject.Singleton
+import uk.gov.hmrc.auth.core.PlayAuthConnector
+import uk.gov.hmrc.customsexportsinternalfrontend.config.AppConfig
+import uk.gov.hmrc.http.CorePost
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 @Singleton
-class ErrorHandler @Inject()(val messagesApi: MessagesApi, errorTemplate: error) extends FrontendErrorHandler {
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
-    errorTemplate(pageTitle, heading, message)
+class StrideAuthConnector @Inject()(configuration: AppConfig, client: HttpClient) extends PlayAuthConnector {
+  override val serviceUrl: String = configuration.authBaseUrl
+  override def http: CorePost = client
 }

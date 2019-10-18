@@ -16,40 +16,31 @@
 
 package uk.gov.hmrc.customsexportsinternalfrontend.controllers
 
-import org.scalatest.{Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{Configuration, Environment, _}
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import uk.gov.hmrc.customsexportsinternalfrontend.config.AppConfig
+import uk.gov.hmrc.customsexportsinternalfrontend.controllers.actions.AuthenticatedAction
 import uk.gov.hmrc.customsexportsinternalfrontend.views.html.hello_world
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
-  private val fakeRequest = FakeRequest("GET", "/")
+class HelloWorldControllerSpec extends ControllerLayerSpec {
 
-  private val env = Environment.simple()
-  private val configuration = Configuration.load(env)
+  private val helloWorldPage = new hello_world(main_template)
 
-  private val serviceConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
-  private val appConfig = new AppConfig(configuration, serviceConfig)
-  private val helloWorldPage = app.injector.instanceOf[hello_world]
-
-  private val controller = new HelloWorldController(appConfig, stubMessagesControllerComponents(), helloWorldPage)
+  private def controller(auth: AuthenticatedAction) =
+    new HelloWorldController(auth, stubMessagesControllerComponents(), helloWorldPage)
 
   "GET /" should {
-    "return 200" in {
-      val result = controller.helloWorld(fakeRequest)
-      status(result) shouldBe Status.OK
+    val get = FakeRequest("GET", "/")
+
+    "return 200 when authenticated" in {
+      val result = controller(SuccessfulAuth()).helloWorld(get)
+      status(result) mustBe Status.OK
     }
 
-    "return HTML" in {
-      val result = controller.helloWorld(fakeRequest)
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+    "return 403 when unauthenticated" in {
+      val result = controller(UnsuccessfulAuth).helloWorld(get)
+      status(result) mustBe Status.FORBIDDEN
     }
-
   }
 }
