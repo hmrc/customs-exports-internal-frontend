@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class AuthenticatedActionSpec extends ControllerLayerSpec {
 
-  private val unauthorizedPage: unauthorized = aRealInstanceOf[unauthorized]
+  private val unauthorizedPage: unauthorized = new unauthorized(main_template)
   private val appConfig = mock[AppConfig]
   private val config = mock[Configuration]
   private val environment = mock[Environment]

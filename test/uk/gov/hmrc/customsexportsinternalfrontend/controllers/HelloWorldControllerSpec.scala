@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class HelloWorldControllerSpec extends ControllerLayerSpec {
 
-  private val helloWorldPage = aRealInstanceOf[hello_world]
+  private val helloWorldPage = new hello_world(main_template)
 
   private def controller(auth: AuthenticatedAction) =
     new HelloWorldController(new Verify(auth), stubMessagesControllerComponents(), helloWorldPage)
