@@ -26,8 +26,6 @@ import uk.gov.hmrc.customsexportsinternalfrontend.views.html.error
 
 @Singleton
 class ErrorHandler @Inject()(val messagesApi: MessagesApi, errorTemplate: error) extends FrontendErrorHandler {
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(
-    implicit request: Request[_]
-  ): Html =
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
     errorTemplate(pageTitle, heading, message)
 }

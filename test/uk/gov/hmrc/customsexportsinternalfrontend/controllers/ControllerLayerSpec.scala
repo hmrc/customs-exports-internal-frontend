@@ -30,8 +30,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-abstract class ControllerLayerSpec
-    extends WordSpec with ViewTemplates with MustMatchers with MockitoSugar with BeforeAndAfterEach {
+abstract class ControllerLayerSpec extends WordSpec with ViewTemplates with MustMatchers with MockitoSugar with BeforeAndAfterEach {
 
   case class SuccessfulAuth(operator: Operator = Operator("0"))
       extends AuthenticatedAction(
