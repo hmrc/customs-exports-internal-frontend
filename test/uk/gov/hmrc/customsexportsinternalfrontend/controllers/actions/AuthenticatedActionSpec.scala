@@ -42,14 +42,7 @@ class AuthenticatedActionSpec extends ControllerLayerSpec {
   private val strideConnector = mock[StrideAuthConnector]
 
   private def action =
-    new AuthenticatedAction(
-      appConfig,
-      config,
-      environment,
-      strideConnector,
-      stubMessagesControllerComponents(),
-      unauthorizedPage
-    )
+    new AuthenticatedAction(appConfig, config, environment, strideConnector, stubMessagesControllerComponents(), unauthorizedPage)
 
   "Invoke" should {
     val request = FakeRequest()
@@ -71,8 +64,7 @@ class AuthenticatedActionSpec extends ControllerLayerSpec {
     "return unauthorized" when {
       "auth successful without credentials" in {
         given(block.apply(any())).willReturn(Future.successful(controllerResponse))
-        given(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any()))
-          .willReturn(Future.successful(None))
+        given(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any())).willReturn(Future.successful(None))
 
         val result = action.invokeBlock(request, block)
 
@@ -103,9 +95,7 @@ class AuthenticatedActionSpec extends ControllerLayerSpec {
           val result = action.invokeBlock(request, block)
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(
-            "http://localhost:9041/stride/sign-in?successURL=http%3A%2F%2Flocalhost%2F&origin=undefined"
-          )
+          redirectLocation(result) mustBe Some("http://localhost:9041/stride/sign-in?successURL=http%3A%2F%2Flocalhost%2F&origin=undefined")
         }
 
         "running in environment" in {
