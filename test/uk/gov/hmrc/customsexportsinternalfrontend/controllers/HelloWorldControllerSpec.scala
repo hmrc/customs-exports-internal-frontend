@@ -19,7 +19,7 @@ package uk.gov.hmrc.customsexportsinternalfrontend.controllers
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.customsexportsinternalfrontend.controllers.actions.{AuthenticatedAction, Verify}
+import uk.gov.hmrc.customsexportsinternalfrontend.controllers.actions.AuthenticatedAction
 import uk.gov.hmrc.customsexportsinternalfrontend.views.html.hello_world
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -28,7 +28,7 @@ class HelloWorldControllerSpec extends ControllerLayerSpec {
   private val helloWorldPage = new hello_world(main_template)
 
   private def controller(auth: AuthenticatedAction) =
-    new HelloWorldController(new Verify(auth), stubMessagesControllerComponents(), helloWorldPage)
+    new HelloWorldController(auth, stubMessagesControllerComponents(), helloWorldPage)
 
   "GET /" should {
     val get = FakeRequest("GET", "/")
