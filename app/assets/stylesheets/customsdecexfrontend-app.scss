@@ -1,0 +1,23 @@
+@import 'partials/_variables';
+@import 'partials/_base';
+
+@import 'partials/_forms';
+@import 'partials/_tabular-data';
+@import 'partials/_typography';
+
+@import 'partials/_utilities';
+
+@import 'partials/_shame';
+
+@import 'colours/_colours-palette';
+@import 'colours/_colours-organisations';
+@import 'colours/_colour';
+@import 'colours/_colours-applied';
+
+@import 'partials/_step-by-step-navigation';
+@import 'partials/_lists.scss';
+@import 'partials/_layout.scss';
+
+.text-right {
+  text-align: right;
+}

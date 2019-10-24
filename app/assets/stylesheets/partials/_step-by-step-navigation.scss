@@ -1,0 +1,209 @@
+// Based on https://github.com/alphagov/govuk_publishing_components/blob/v9.3.6/app/assets/stylesheets/govuk_publishing_components/components/_step-by-step-nav.scss
+
+@import '../colours/_colour';
+
+.exports-notifications__steps {
+  padding: 0;
+  margin: 0;
+}
+
+.exports-notifications__step {
+  position: relative;
+  padding-left: 45px;
+  list-style: none;
+}
+
+.exports-notifications__step:nth-last-child(odd) .exports-notifications__header {
+  background-color: govuk-colour("grey-5");
+}
+
+.exports-notifications__step:nth-last-child(odd) .govuk-form-group {
+  background-color: govuk-colour("grey-5");
+}
+
+.exports-notifications__step:nth-last-child(odd) .exports-notifications__panel {
+  border-bottom: solid 2px govuk-colour("grey-3");
+}
+
+.exports-notifications__step:after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: 0;
+  height: 100%;
+  border-left: solid 2px $govuk-border-colour;
+  background: #fff;
+  left: 0;
+  margin-left: 12px;
+  top: 15px;
+}
+
+.exports-notifications__step:last-child:before {
+  content: "";
+  position: absolute;
+  z-index: 6;
+  bottom: 0;
+  left: 0;
+  margin-left: 6.5px;
+  width: 13px;
+  height: 0;
+  border-bottom: solid 2px $govuk-border-colour;
+}
+
+.exports-notifications__step:last-child:after {
+  height: -webkit-calc(100% - 15px);
+  height: calc(100% - 15px);
+}
+
+.exports-notifications__step:last-child .exports-notifications__help:after {
+  height: 100%;
+}
+
+.exports-notifications--large .exports-notifications__step {
+  padding-left: 60px;
+}
+
+.exports-notifications--large .exports-notifications__step:after {
+  left: 0;
+  margin-left: 16px;
+  border-width: 3px;
+  top: 30px;
+}
+
+.exports-notifications--large .exports-notifications__step:last-child:before {
+  margin-left: 8.75px;
+  width: 17.5px;
+  border-width: 3px;
+}
+
+.exports-notifications--large .exports-notifications__step:last-child:after {
+  height: calc(100% - 30px);
+}
+
+.exports-notifications__step--active .exports-notifications__circle--number,
+.exports-notifications__step--active .exports-notifications__help:after,
+.exports-notifications__step--active .exports-notifications__substep:after,
+.exports-notifications__step--active:after,
+.exports-notifications__step--active:last-child:before {
+  border-color: govuk-colour("black");
+}
+
+
+.exports-notifications__header {
+  padding-top: 15px;
+  padding-left: 16px;
+}
+
+.exports-notifications--active .exports-notifications__header {
+  cursor: pointer;
+}
+
+.exports-notifications__header:hover .exports-notifications__button {
+  color: $govuk-link-colour;
+}
+
+.exports-notifications__header:hover .exports-notifications__toggle-link {
+  text-decoration: underline;
+}
+
+.exports-notifications--large .exports-notifications__header {
+  padding: 30px 0;
+}
+
+
+.exports-notifications__title {
+  font-size: 23px;
+  font-weight: bold;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.exports-notifications--large .exports-notifications__title {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+.exports-notifications--large .exports-notifications__title {
+  font-size: 24px;
+  line-height: 1.4;
+}
+
+
+.exports-notifications__circle {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  position: absolute;
+  z-index: 5;
+  top: 15px;
+  left: 0;
+  width: 26px;
+  height: 26px;
+  color: govuk-colour("black");
+  background: #fff;
+  border-radius: 100px;
+  text-align: center;
+}
+
+.exports-notifications__circle--number {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 23px;
+  border: solid 2px $govuk-border-colour;
+}
+
+.exports-notifications--large .exports-notifications__circle {
+  top: 30px;
+  width: 35px;
+  height: 35px;
+}
+
+.exports-notifications--large .exports-notifications__circle--number {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 23px;
+}
+
+.exports-notifications--large .exports-notifications__circle--number {
+  font-size: 19px;
+  line-height: 30px;
+}
+
+.exports-notifications--large .exports-notifications__circle--number {
+  border-width: 3px;
+}
+
+.exports-notifications__circle-inner {
+  float: right;
+  min-width: 100%;
+}
+
+.exports-notifications__circle-background {
+  text-shadow: 0 -0.1em 0 #fff, 0.1em 0 0 #fff, 0 0.1em 0 #fff, -0.1em 0 0 #fff;
+}
+
+.exports-notifications__panel {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.25;
+  .js-enabled &.js-hidden {
+    display: none;
+  }
+}
+
+.exports-notifications__panel {
+  font-size: 18px;
+}
+
+.exports-notifications--large .exports-notifications__panel {
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.exports-notifications__panel .govuk-form-group{
+  margin-bottom: 0;
+  padding-bottom: 20px;
+  padding-top: 5px;
+  padding-left: 16px;
+}
