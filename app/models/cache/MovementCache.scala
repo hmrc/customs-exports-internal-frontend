@@ -16,15 +16,49 @@
 
 package models.cache
 
+import forms.Choice
 import play.api.libs.json.{Json, OFormat}
 
 case class MovementCache(
   pid: String,
-  choice: String
+  choice: Choice,
+  arrivalJourney: Option[ArrivalJourney] = None,
+  departureJourney: Option[DepartureJourney] = None,
+  associateJourney: Option[AssociateJourney] = None,
+  dissociateJourney: Option[DissociateJourney] = None,
+  shutJourney: Option[ShutJourney] = None
 )
 
 object MovementCache {
   implicit val format: OFormat[MovementCache] = Json.format[MovementCache]
 }
 
+case class ArrivalJourney(field: Option[String] = None)
 
+object ArrivalJourney {
+  implicit val format: OFormat[ArrivalJourney] = Json.format[ArrivalJourney]
+}
+
+case class DepartureJourney(field: Option[String] = None)
+
+object DepartureJourney {
+  implicit val format: OFormat[DepartureJourney] = Json.format[DepartureJourney]
+}
+
+case class AssociateJourney(field: Option[String] = None)
+
+object AssociateJourney {
+  implicit val format: OFormat[AssociateJourney] = Json.format[AssociateJourney]
+}
+
+case class DissociateJourney(field: Option[String] = None)
+
+object DissociateJourney {
+  implicit val format: OFormat[DissociateJourney] = Json.format[DissociateJourney]
+}
+
+case class ShutJourney(field: Option[String] = None)
+
+object ShutJourney {
+  implicit val format: OFormat[ShutJourney] = Json.format[ShutJourney]
+}

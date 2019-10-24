@@ -39,7 +39,7 @@ class ChoiceController @Inject()(
 
   def displayChoiceForm(): Action[AnyContent] = authenticate.async { implicit request =>
     movementRepository.findByPid("PID").map {
-      case Some(cache) => Ok(choicePage(Choice.form.fill(Choice(cache.choice))))
+      case Some(cache) => Ok(choicePage(Choice.form.fill(cache.choice)))
       case None => Ok(choicePage(Choice.form))
     }
   }
@@ -50,8 +50,8 @@ class ChoiceController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))),
         validForm =>
-          movementRepository.findOrCreate("PID", MovementCache("PID", validForm.value)).flatMap { cache =>
-            val newCache = cache.copy(choice = validForm.value)
+          movementRepository.findOrCreate("PID", MovementCache("PID", validForm)).flatMap { cache =>
+            val newCache = cache.copy(choice = validForm)
 
             movementRepository.insert(newCache).map { _ =>
               Redirect(routes.ChoiceController.displayChoiceForm())
