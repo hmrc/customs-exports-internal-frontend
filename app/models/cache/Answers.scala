@@ -5,9 +5,11 @@ import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
 
-case class Arrival(someFields: String) extends Answers {
+case class Arrival(field1: Option[String]) extends Answers {
   override val `type`: cache.JourneyType.Value = JourneyType.ARRIVE
+
 }
+
 object Arrival {
   implicit val format: Format[Arrival] = Json.format[Arrival]
 }
@@ -15,6 +17,7 @@ object Arrival {
 case class Departure(someFields: String) extends Answers {
   override val `type`: cache.JourneyType.Value = JourneyType.DEPART
 }
+
 object Departure {
   implicit val format: Format[Departure] = Json.format[Departure]
 }
