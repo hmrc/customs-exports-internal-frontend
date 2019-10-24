@@ -6,7 +6,7 @@ import sbt._
 object AppDependencies {
 
   val compile = Seq(
-
+    "uk.gov.hmrc" %% "simple-reactivemongo" % "7.20.0-play-26",
     "uk.gov.hmrc"             %% "govuk-template"           % "5.42.0-play-26",
     "uk.gov.hmrc"             %% "play-ui"                  % "8.2.0-play-26",
     "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.1.0"

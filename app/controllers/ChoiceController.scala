@@ -21,19 +21,42 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import controllers.actions.AuthenticatedAction
+import models.cache.MovementCache
+import repositories.MovementRepository
 import views.html.choice_page
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ChoiceController @Inject()(authenticate: AuthenticatedAction, mcc: MessagesControllerComponents, choicePage: choice_page)(
-  implicit ec: ExecutionContext
-) extends FrontendController(mcc) with I18nSupport {
+class ChoiceController @Inject()(
+  authenticate: AuthenticatedAction,
+  mcc: MessagesControllerComponents,
+  movementRepository: MovementRepository,
+  choicePage: choice_page
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayChoiceForm(): Action[AnyContent] = authenticate.async { implicit request =>
-    Future.successful(Ok(choicePage(Choice.form)))
+    movementRepository.findByPid("PID").map {
+      case Some(cache) => Ok(choicePage(Choice.form.fill(Choice(cache.choice))))
+      case None => Ok(choicePage(Choice.form))
+    }
   }
 
-  def submitChoice(): Action[AnyContent] = ???
+  def submitChoice(): Action[AnyContent] = authenticate.async { implicit request =>
+    Choice.form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))),
+        validForm =>
+          movementRepository.findOrCreate("PID", MovementCache("PID", validForm.value)).flatMap { cache =>
+            val newCache = cache.copy(choice = validForm.value)
+
+            movementRepository.insert(newCache).map { _ =>
+              Redirect(routes.ChoiceController.displayChoiceForm())
+            }
+        }
+      )
+  }
 }
