@@ -19,6 +19,7 @@ package forms
 import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.json._
 import Mapping.requiredRadio
+import models.cache.JourneyType.JourneyType
 import utils.FieldValidator.isContainedIn
 
 sealed abstract class Choice(val value: String) {
@@ -33,6 +34,8 @@ object Choice {
 
   def apply(input: String): Choice =
     allChoices.find(_.value == input).getOrElse(throw new IllegalArgumentException("Incorrect choice"))
+
+  def apply(`type`: JourneyType): Choice = ???
 
   implicit object ChoiceValueFormat extends Format[Choice] {
     def reads(status: JsValue): JsResult[Choice] = status match {

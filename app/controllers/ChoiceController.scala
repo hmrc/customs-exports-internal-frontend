@@ -19,9 +19,10 @@ package controllers
 import forms.Choice
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.AuthenticatedAction
-import models.cache.Cache
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Results}
+import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.exchanges.{AuthenticatedRequest, JourneyRequest}
+import models.cache.{Arrival, Cache}
 import repositories.MovementRepository
 import views.html.choice_page
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -30,33 +31,46 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ChoiceController @Inject()(
-  authenticate: AuthenticatedAction,
-  mcc: MessagesControllerComponents,
-  movementRepository: MovementRepository,
-  choicePage: choice_page
+                                  authenticate: AuthenticatedAction,
+                                  getJourney: JourneyRefiner,
+                                  mcc: MessagesControllerComponents,
+                                  movementRepository: MovementRepository,
+                                  choicePage: choice_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayChoiceForm(): Action[AnyContent] = authenticate.async { implicit request =>
     movementRepository.findByPid("PID").map {
-      case Some(cache) => Ok(choicePage(Choice.form.fill(Choice(cache.choice))))
-      case None => Ok(choicePage(Choice.form))
+      case Some(cache) => Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
+      case None => Ok(choicePage(Choice.form()))
     }
   }
 
-  def submitChoice(): Action[AnyContent] = authenticate.async { implicit request =>
-    Choice.form
+  def submitChoice(): Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
+    Choice.form()
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))),
-        validForm =>
-          movementRepository.findOrCreate("PID", Answers("PID", validForm.value)).flatMap { cache =>
-            val newCache = cache.copy(choice = validForm.value)
-
-            movementRepository.insert(newCache).map { _ =>
-              Redirect(routes.ChoiceController.displayChoiceForm())
-            }
-        }
+        saveChoice
       )
+  }
+
+  def secondPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request: JourneyRequest[AnyContent] =>
+    val arrival: Arrival = request.answersAs[Arrival]
+    Future.successful(Results.Ok(""))
+  }
+
+  private def saveChoice(choice: Choice): Future[Result] = {
+    if(choice.value == "arrival") {
+      val answers = Arrival(None)
+      movementRepository.findOrCreate("PID", Cache("PID", answers)).flatMap { cache =>
+        val newCache = cache.copy(answers = answers)
+        movementRepository.insert(newCache).map { _ =>
+          Redirect(routes.ChoiceController.displayChoiceForm())
+        }
+      }
+    } else {
+      Future.successful(Redirect(routes.ChoiceController.displayChoiceForm()))
+    }
   }
 }
