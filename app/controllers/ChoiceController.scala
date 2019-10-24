@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import controllers.actions.AuthenticatedAction
-import models.cache.Cache
+import models.cache.MovementCache
 import repositories.MovementRepository
 import views.html.choice_page
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -50,7 +50,7 @@ class ChoiceController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))),
         validForm =>
-          movementRepository.findOrCreate("PID", Answers("PID", validForm.value)).flatMap { cache =>
+          movementRepository.findOrCreate("PID", MovementCache("PID", validForm.value)).flatMap { cache =>
             val newCache = cache.copy(choice = validForm.value)
 
             movementRepository.insert(newCache).map { _ =>
