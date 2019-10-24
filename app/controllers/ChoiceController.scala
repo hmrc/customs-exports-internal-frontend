@@ -19,9 +19,9 @@ package controllers
 import forms.Choice
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Results}
 import controllers.actions.{ArrivalAction, AuthenticatedAction}
-import controllers.exchanges.AuthenticatedRequest
+import controllers.exchanges.{ArrivalRequest, AuthenticatedRequest}
 import models.cache.{Arrival, Cache}
 import repositories.MovementRepository
 import views.html.choice_page
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ChoiceController @Inject()(
                                   authenticate: AuthenticatedAction,
-                                  journey: ArrivalAction,
+                                  verifyArrival: ArrivalAction,
                                   mcc: MessagesControllerComponents,
                                   movementRepository: MovementRepository,
                                   choicePage: choice_page
@@ -53,6 +53,11 @@ class ChoiceController @Inject()(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))),
         saveChoice
       )
+  }
+
+  def secondPage(): Action[AnyContent] = (authenticate andThen verifyArrival).async { implicit request: ArrivalRequest[AnyContent] =>
+    val arrival: Arrival = request.answers
+    Future.successful(Results.Ok(""))
   }
 
   private def saveChoice(choice: Choice): Future[Result] = {
