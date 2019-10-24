@@ -16,7 +16,6 @@
 
 package controllers.exchanges
 
-import models.cache.Answers
 import play.api.mvc.WrappedRequest
 
-case class JourneyRequest[T](answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest[T](request)
+case class JourneyRequest[T, J](answers: J, request: AuthenticatedRequest[T]) extends WrappedRequest[T](request)

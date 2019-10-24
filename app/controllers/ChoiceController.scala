@@ -20,8 +20,8 @@ import forms.Choice
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.{AuthenticatedAction, JourneyAction}
-import models.cache.{Arrival, Cache}
+import controllers.actions.AuthenticatedAction
+import models.cache.Cache
 import repositories.MovementRepository
 import views.html.choice_page
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -31,7 +31,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ChoiceController @Inject()(
   authenticate: AuthenticatedAction,
-  journey: JourneyAction,
   mcc: MessagesControllerComponents,
   movementRepository: MovementRepository,
   choicePage: choice_page
@@ -45,23 +44,13 @@ class ChoiceController @Inject()(
     }
   }
 
-  def submitChoice(): Action[AnyContent] = (authenticate andThen journey).async { implicit request =>
-    request.answers match {
-      case data: Arrival => ???
-      case _ => throw
-    }
-
-    request.answers.get[Arrival]
-
+  def submitChoice(): Action[AnyContent] = authenticate.async { implicit request =>
     Choice.form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))),
         validForm =>
-        validForm.value match {
-          case forms.Choice.Arrival => Arrival()
-        }
-          movementRepository.findOrCreate("PID", Cache("PID", Arrival(""))).flatMap { cache =>
+          movementRepository.findOrCreate("PID", Answers("PID", validForm.value)).flatMap { cache =>
             val newCache = cache.copy(choice = validForm.value)
 
             movementRepository.insert(newCache).map { _ =>
