@@ -18,13 +18,15 @@ package models.cache
 
 import play.api.libs.json.{Json, OFormat}
 
-case class MovementCache(
+case class Cache
+(
   pid: String,
-  choice: String
+  answers: Answers
 )
 
-object MovementCache {
-  implicit val format: OFormat[MovementCache] = Json.format[MovementCache]
+object Cache {
+  implicit val format: OFormat[Cache] = Json.format[Cache]
 }
+
 
 

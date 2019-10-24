@@ -17,7 +17,7 @@
 package repositories
 
 import javax.inject.Inject
-import models.cache.MovementCache
+import models.cache.Cache
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONObjectID
@@ -27,10 +27,10 @@ import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 import scala.concurrent.{ExecutionContext, Future}
 
 class MovementRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: ExecutionContext)
-  extends ReactiveRepository[MovementCache, BSONObjectID](
+  extends ReactiveRepository[Cache, BSONObjectID](
     "movementCache",
     mc.mongoConnector.db,
-    MovementCache.format,
+    Cache.format,
     objectIdFormats
   ) {
 
@@ -38,15 +38,15 @@ class MovementRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: Exec
     Index(Seq("pid" -> IndexType.Ascending), name = Some("pidIdx"))
   )
 
-  def findByPid(pid: String): Future[Option[MovementCache]] = find("pid" -> pid).map(_.headOption)
+  def findByPid(pid: String): Future[Option[Cache]] = find("pid" -> pid).map(_.headOption)
 
-  def findOrCreate(pid: String, onMissing: MovementCache): Future[MovementCache] =
+  def findOrCreate(pid: String, onMissing: Cache): Future[Cache] =
     findByPid(pid).flatMap {
       case Some(movementCache) => Future.successful(movementCache)
       case None             => save(onMissing)
     }
 
-  def save(movementCache: MovementCache): Future[MovementCache] = insert(movementCache).map { res =>
+  def save(movementCache: Cache): Future[Cache] = insert(movementCache).map { res =>
     if (!res.ok) logger.error(s"Errors when persisting movement cache: ${res.writeErrors.mkString("--")}")
     movementCache
   }
