@@ -1,0 +1,16 @@
+/*
+====================================
+Utility alignments
+====================================
+*/
+.u-align--right {
+  text-align: right;
+}
+@media screen and (min-width: 641px){
+  .u-align--tablet-right {
+    text-align: right;
+  }
+}
+.u-align--center {
+    text-align: center;
+}

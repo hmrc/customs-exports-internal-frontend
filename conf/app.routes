@@ -1,3 +1,8 @@
 # microservice specific routes
+GET         /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
 
-GET        /hello-world             uk.gov.hmrc.customsexportsinternalfrontend.controllers.HelloWorldController.helloWorld
+GET         /hello-world         controllers.HelloWorldController.helloWorld
+
+# Declaration choice page
+GET         /choice              controllers.ChoiceController.displayChoiceForm()
+POST        /choice              controllers.ChoiceController.submitChoice()
