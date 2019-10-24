@@ -17,14 +17,12 @@
 package controllers.actions
 
 import controllers.exchanges.{ArrivalRequest, AuthenticatedRequest}
-import models.cache.{Arrival, JourneyType}
-import models.cache.JourneyType.JourneyType
+import models.cache.Arrival
 import repositories.MovementRepository
 
 import scala.concurrent.ExecutionContext
 
 class ArrivalAction(movementRepository: MovementRepository)
                    (override val executionContext: ExecutionContext) extends JourneyRefiner[Arrival, ArrivalRequest](movementRepository) {
-  override val `type`: JourneyType = JourneyType.ARRIVE
   override def requestGenerator[A](request: AuthenticatedRequest[A], answers: Arrival): ArrivalRequest[A] = ArrivalRequest(answers, request)
 }
