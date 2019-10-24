@@ -1,4 +1,6 @@
-service.name=Internal Exports Movements Service
+service.name=Internal Exports Movements 
+
+site.continue = Continue
 
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
