@@ -22,7 +22,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Results}
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest}
-import models.cache.{Arrival, Cache}
+import models.cache.{ArrivalAnswers, Cache}
 import repositories.MovementRepository
 import views.html.choice_page
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -56,13 +56,13 @@ class ChoiceController @Inject()(
   }
 
   def secondPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request: JourneyRequest[AnyContent] =>
-    val arrival: Arrival = request.answersAs[Arrival]
+    val arrival: ArrivalAnswers = request.answersAs[ArrivalAnswers]
     Future.successful(Results.Ok(""))
   }
 
   private def saveChoice(choice: Choice): Future[Result] = {
     if(choice.value == "arrival") {
-      val answers = Arrival(None)
+      val answers = ArrivalAnswers(None)
       movementRepository.findOrCreate("PID", Cache("PID", answers)).flatMap { cache =>
         val newCache = cache.copy(answers = answers)
         movementRepository.insert(newCache).map { _ =>

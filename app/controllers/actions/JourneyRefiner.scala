@@ -18,22 +18,18 @@ package controllers.actions
 
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest}
 import javax.inject.Inject
-import models.cache.{Answers, Cache}
-import models.cache.JourneyType.JourneyType
+import models.cache.Answers
 import play.api.mvc.{ActionRefiner, Result, Results}
 import repositories.MovementRepository
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyRefiner @Inject()(movementRepository: MovementRepository)
-                             (implicit override val executionContext: ExecutionContext) extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
+                              (implicit override val executionContext: ExecutionContext) extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-    movementRepository.findByPid(request.operator.pid)
+    movementRepository.findByPid(request.operator.pid).map(_.map(_.answers))
       .map {
         case Some(answers: Answers) => Right(JourneyRequest(answers, request))
         case _ => Left(Results.Redirect(controllers.routes.ChoiceController.displayChoiceForm()))
