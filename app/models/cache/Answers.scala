@@ -21,7 +21,7 @@ import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
 
-case class ArrivalAnswers(field1: Option[String]) extends Answers {
+case class ArrivalAnswers(field1: Option[String] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ARRIVE
 }
 
@@ -29,7 +29,7 @@ object ArrivalAnswers {
   implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
 }
 
-case class DepartureAnswers(field1: Option[String]) extends Answers {
+case class DepartureAnswers(field1: Option[String] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DEPART
 }
 
@@ -37,7 +37,7 @@ object DepartureAnswers {
   implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
 }
 
-case class AssociateUcrAnswers(field1: Option[String]) extends Answers {
+case class AssociateUcrAnswers(field1: Option[String] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ASSOCIATE_UCR
 }
 
@@ -45,7 +45,7 @@ object AssociateUcrAnswers {
   implicit val format: Format[AssociateUcrAnswers] = Json.format[AssociateUcrAnswers]
 }
 
-case class DissociateUcrAnswers(field1: Option[String]) extends Answers {
+case class DissociateUcrAnswers(field1: Option[String] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
 }
 
@@ -53,7 +53,7 @@ object DissociateUcrAnswers {
   implicit val format: Format[DissociateUcrAnswers] = Json.format[DissociateUcrAnswers]
 }
 
-case class ShutMucrAnswers(field1: Option[String]) extends Answers {
+case class ShutMucrAnswers(field1: Option[String] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
 }
 
@@ -64,6 +64,7 @@ object ShutMucrAnswers {
 trait Answers {
   val `type`: JourneyType
 }
+
 object Answers {
   implicit val format: Format[Answers] = Union.from[Answers]("type")
     .and[ArrivalAnswers](JourneyType.ARRIVE.toString)

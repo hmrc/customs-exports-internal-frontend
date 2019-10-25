@@ -22,20 +22,13 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result, Results}
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest}
-import models.cache.{
-  Answers,
-  ArrivalAnswers,
-  AssociateUcrAnswers,
-  Cache,
-  DepartureAnswers,
-  DissociateUcrAnswers,
-  ShutMucrAnswers
-}
+import models.cache.{Answers, ArrivalAnswers, AssociateUcrAnswers, Cache, DepartureAnswers, DissociateUcrAnswers, ShutMucrAnswers}
 import repositories.MovementRepository
 import views.html.choice_page
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Failure
 
 @Singleton
 class ChoiceController @Inject()(
@@ -51,10 +44,13 @@ class ChoiceController @Inject()(
   println("#### " + request.operator.pid)
     movementRepository.findByPid(request.operator.pid).map {
       case Some(cache) =>
-        println("SOME")
         Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
       case None        =>
-        println("NONE")
+        Ok(choicePage(Choice.form()))
+    }.recover {
+      case error: Throwable =>
+        println("####### " + error)
+        println("####### " + error.getCause)
         Ok(choicePage(Choice.form()))
     }
   }
