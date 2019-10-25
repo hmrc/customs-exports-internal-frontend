@@ -20,8 +20,8 @@ import forms.Choice
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Results}
-import controllers.actions.{ArrivalAction, AuthenticatedAction}
-import controllers.exchanges.{ArrivalRequest, AuthenticatedRequest}
+import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.exchanges.{AuthenticatedRequest, JourneyRequest}
 import models.cache.{Arrival, Cache}
 import repositories.MovementRepository
 import views.html.choice_page
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ChoiceController @Inject()(
                                   authenticate: AuthenticatedAction,
-                                  verifyArrival: ArrivalAction,
+                                  getJourney: JourneyRefiner,
                                   mcc: MessagesControllerComponents,
                                   movementRepository: MovementRepository,
                                   choicePage: choice_page
@@ -41,13 +41,13 @@ class ChoiceController @Inject()(
 
   def displayChoiceForm(): Action[AnyContent] = authenticate.async { implicit request =>
     movementRepository.findByPid("PID").map {
-      case Some(cache) => Ok(choicePage(Choice.form.fill(Choice(cache.answers.`type`))))
-      case None => Ok(choicePage(Choice.form))
+      case Some(cache) => Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
+      case None => Ok(choicePage(Choice.form()))
     }
   }
 
   def submitChoice(): Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
-    Choice.form
+    Choice.form()
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))),
@@ -55,8 +55,8 @@ class ChoiceController @Inject()(
       )
   }
 
-  def secondPage(): Action[AnyContent] = (authenticate andThen verifyArrival).async { implicit request: ArrivalRequest[AnyContent] =>
-    val arrival: Arrival = request.answers
+  def secondPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request: JourneyRequest[AnyContent] =>
+    val arrival: Arrival = request.answersAs[Arrival]
     Future.successful(Results.Ok(""))
   }
 

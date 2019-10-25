@@ -17,7 +17,7 @@
 package controllers.actions
 
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest}
-import models.cache.Cache
+import models.cache.{Answers, Cache}
 import models.cache.JourneyType.JourneyType
 import play.api.mvc.{ActionRefiner, Result, Results}
 import repositories.MovementRepository
@@ -25,26 +25,17 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-abstract class JourneyRefiner[J, +R[_] <: JourneyRequest[_]](movementRepository: MovementRepository) extends ActionRefiner[AuthenticatedRequest, R]{
+abstract class JourneyRefiner(movementRepository: MovementRepository)
+                             (implicit override val executionContext: ExecutionContext) extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
-  def requestGenerator[A](request: AuthenticatedRequest[A], answers: J): R[A]
-
-  override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, R[A]]] = {
+  override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-    val eventualJ: Future[Option[J]] = movementRepository.findByPid(request.operator.pid)
-      .map(filteringOutInvalidTypes)
-      .map(mappingAnswerToConcreteType)
-
-    eventualJ
+    movementRepository.findByPid(request.operator.pid)
       .map {
-        case Some(answers: J) => Right(requestGenerator(request, answers))
+        case Some(answers: Answers) => Right(JourneyRequest(answers, request))
         case _ => Left(Results.Redirect(controllers.routes.ChoiceController.displayChoiceForm()))
       }
   }
-
-  private def mappingAnswerToConcreteType: Option[Cache] => Option[J] = _.map(_.answers.asInstanceOf[J])
-
-  private def filteringOutInvalidTypes: Option[Cache] => Option[Cache] = _.filter(_.answers.`type`.isInstanceOf[J])
 }

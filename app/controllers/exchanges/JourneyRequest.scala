@@ -16,15 +16,16 @@
 
 package controllers.exchanges
 
-import models.cache.{Answers, Arrival}
+import models.cache.Answers
 import play.api.mvc.WrappedRequest
 
-trait JourneyRequest[T <: Answers] {
-  val answers: T
+case class JourneyRequest[T](answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
+
+  def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
+
+  def answersAs[J <: Answers]: J = answers match {
+    case ans: J => ans
+    case _ => throw new IllegalArgumentException("")
+  }
 }
 
-case class ArrivalRequest[T]
-(
-  override val answers: Arrival,
-  request: AuthenticatedRequest[T]
-) extends WrappedRequest[T](request) with JourneyRequest[Arrival]
