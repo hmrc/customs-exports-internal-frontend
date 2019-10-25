@@ -21,14 +21,13 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result, Results}
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.exchanges.{AuthenticatedRequest, JourneyRequest}
+import controllers.exchanges.AuthenticatedRequest
 import models.cache.{Answers, ArrivalAnswers, AssociateUcrAnswers, Cache, DepartureAnswers, DissociateUcrAnswers, ShutMucrAnswers}
 import repositories.MovementRepository
 import views.html.choice_page
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Failure
 
 @Singleton
 class ChoiceController @Inject()(
@@ -41,17 +40,9 @@ class ChoiceController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayChoiceForm(): Action[AnyContent] = authenticate.async { implicit request =>
-  println("#### " + request.operator.pid)
     movementRepository.findByPid(request.operator.pid).map {
-      case Some(cache) =>
-        Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
-      case None        =>
-        Ok(choicePage(Choice.form()))
-    }.recover {
-      case error: Throwable =>
-        println("####### " + error)
-        println("####### " + error.getCause)
-        Ok(choicePage(Choice.form()))
+      case Some(cache) => Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
+      case None        => Ok(choicePage(Choice.form()))
     }
   }
 
@@ -76,9 +67,7 @@ class ChoiceController @Inject()(
       )
   }
 
-  private def proceedJourney(journey: Answers, call: Call)(
-    implicit request: AuthenticatedRequest[AnyContent]
-  ): Future[Result] =
+  private def proceedJourney(journey: Answers, call: Call)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
     // TODO change to upsert
     movementRepository.findOrCreate(request.pid, Cache(request.pid, journey)).map(_ => Redirect(call))
 }

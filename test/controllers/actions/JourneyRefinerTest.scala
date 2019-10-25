@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class JourneyRefinerTest extends WordSpec with MustMatchers with MockitoSugar with BeforeAndAfterEach {
 
   private val movementRepository = mock[MovementRepository]
-  private val block = mock[JourneyRequest[_] =>  Future[Result]]
+  private val block = mock[JourneyRequest[_] => Future[Result]]
   private val operator = Operator("pid")
   private val request = AuthenticatedRequest(operator, FakeRequest())
   private val answers = ArrivalAnswers()

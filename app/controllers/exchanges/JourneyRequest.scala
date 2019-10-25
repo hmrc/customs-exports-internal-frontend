@@ -26,7 +26,6 @@ case class JourneyRequest[T](operator: Operator, answers: Answers, request: Auth
 
   def answersAs[J <: Answers]: J = answers match {
     case ans: J => ans
-    case _ => throw ReturnToStartException
+    case _      => throw ReturnToStartException
   }
 }
-

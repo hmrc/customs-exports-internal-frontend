@@ -37,11 +37,11 @@ object Choice {
     allChoices.find(_.value == input).getOrElse(throw new IllegalArgumentException("Incorrect choice"))
 
   def apply(`type`: JourneyType): Choice = `type` match {
-    case ARRIVE => Arrival
-    case DEPART => Departure
-    case ASSOCIATE_UCR => AssociateUCR
+    case ARRIVE         => Arrival
+    case DEPART         => Departure
+    case ASSOCIATE_UCR  => AssociateUCR
     case DISSOCIATE_UCR => DisassociateUCR
-    case SHUT_MUCR => ShutMUCR
+    case SHUT_MUCR      => ShutMUCR
   }
 
   implicit object ChoiceValueFormat extends Format[Choice] {

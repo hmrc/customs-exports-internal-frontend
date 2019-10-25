@@ -22,7 +22,7 @@ import org.scalatest.OptionValues
 import play.api.libs.json.{JsError, JsNumber, JsObject, JsString, JsSuccess, JsValue}
 import unit.base.UnitSpec
 
-class ChoiceSpec extends UnitSpec with OptionValues{
+class ChoiceSpec extends UnitSpec with OptionValues {
 
   import ChoiceSpec._
 

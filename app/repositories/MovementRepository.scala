@@ -27,23 +27,16 @@ import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 import scala.concurrent.{ExecutionContext, Future}
 
 class MovementRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: ExecutionContext)
-  extends ReactiveRepository[Cache, BSONObjectID](
-    "movementCache",
-    mc.mongoConnector.db,
-    Cache.format,
-    objectIdFormats
-  ) {
+    extends ReactiveRepository[Cache, BSONObjectID]("movementCache", mc.mongoConnector.db, Cache.format, objectIdFormats) {
 
-  override def indexes: Seq[Index] = Seq(
-    Index(Seq("pid" -> IndexType.Ascending), name = Some("pidIdx"))
-  )
+  override def indexes: Seq[Index] = Seq(Index(Seq("pid" -> IndexType.Ascending), name = Some("pidIdx")))
 
   def findByPid(pid: String): Future[Option[Cache]] = find("pid" -> pid).map(_.headOption)
 
   def findOrCreate(pid: String, onMissing: Cache): Future[Cache] =
     findByPid(pid).flatMap {
       case Some(movementCache) => Future.successful(movementCache)
-      case None             => save(onMissing)
+      case None                => save(onMissing)
     }
 
   def save(movementCache: Cache): Future[Cache] = insert(movementCache).map { res =>

@@ -66,7 +66,8 @@ trait Answers {
 }
 
 object Answers {
-  implicit val format: Format[Answers] = Union.from[Answers]("type")
+  implicit val format: Format[Answers] = Union
+    .from[Answers]("type")
     .and[ArrivalAnswers](JourneyType.ARRIVE.toString)
     .and[DepartureAnswers](JourneyType.DEPART.toString)
     .and[AssociateUcrAnswers](JourneyType.ASSOCIATE_UCR.toString)
