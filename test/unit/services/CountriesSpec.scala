@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package unit.services
 
-import play.api.mvc.{Request, WrappedRequest}
+import services.Countries.allCountries
+import services.Country
+import unit.base.UnitSpec
 
-case class Operator(pid: String)
+class CountriesSpec extends UnitSpec {
 
-case class AuthenticatedRequest[T](operator: Operator, request: Request[T]) extends WrappedRequest[T](request) {
-
-  val pid = operator.pid
+  "Countries" should {
+    "give all countries with codes in alphabetical order of country name with filtering according to permitted MDG values" in {
+      allCountries must contain(Country("Afghanistan", "AF"))
+      allCountries must contain(Country("Curaçao", "CW"))
+      allCountries must contain(Country("Zimbabwe", "ZW"))
+    }
+  }
 }

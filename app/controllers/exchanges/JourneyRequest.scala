@@ -16,11 +16,16 @@
 
 package controllers.exchanges
 
-import play.api.mvc.{Request, WrappedRequest}
+import models.ReturnToStartException
+import models.cache.Answers
+import play.api.mvc.WrappedRequest
 
-case class Operator(pid: String)
+case class JourneyRequest[T](operator: Operator, answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
 
-case class AuthenticatedRequest[T](operator: Operator, request: Request[T]) extends WrappedRequest[T](request) {
+  def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
 
-  val pid = operator.pid
+  def answersAs[J <: Answers]: J = answers match {
+    case ans: J => ans
+    case _      => throw ReturnToStartException
+  }
 }

@@ -16,9 +16,11 @@
 
 package forms
 
+import models.cache.JourneyType._
 import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.json._
 import Mapping.requiredRadio
+import models.cache.JourneyType.JourneyType
 import utils.FieldValidator.isContainedIn
 
 sealed abstract class Choice(val value: String) {
@@ -34,6 +36,14 @@ object Choice {
   def apply(input: String): Choice =
     allChoices.find(_.value == input).getOrElse(throw new IllegalArgumentException("Incorrect choice"))
 
+  def apply(`type`: JourneyType): Choice = `type` match {
+    case ARRIVE         => Arrival
+    case DEPART         => Departure
+    case ASSOCIATE_UCR  => AssociateUCR
+    case DISSOCIATE_UCR => DisassociateUCR
+    case SHUT_MUCR      => ShutMUCR
+  }
+
   implicit object ChoiceValueFormat extends Format[Choice] {
     def reads(status: JsValue): JsResult[Choice] = status match {
       case JsString(choice) =>
@@ -46,12 +56,12 @@ object Choice {
 
   case object Arrival extends Choice("arrival")
   case object Departure extends Choice("departure")
-  case object AssociateDUCR extends Choice("associateDUCR")
-  case object DisassociateDUCR extends Choice("disassociateDUCR")
+  case object AssociateUCR extends Choice("associateUCR")
+  case object DisassociateUCR extends Choice("disassociateUCR")
   case object ShutMUCR extends Choice("shutMUCR")
   case object Submissions extends Choice("submissions")
 
-  val allChoices = Seq(Arrival, Departure, AssociateDUCR, DisassociateDUCR, ShutMUCR, Submissions)
+  val allChoices = Seq(Arrival, Departure, AssociateUCR, DisassociateUCR, ShutMUCR, Submissions)
 
   val choiceId = "Choice"
 

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package models.cache
 
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.libs.json.{Format, Reads, Writes}
 
-case class Operator(pid: String)
+object JourneyType extends Enumeration {
+  type JourneyType = Value
 
-case class AuthenticatedRequest[T](operator: Operator, request: Request[T]) extends WrappedRequest[T](request) {
+  val ARRIVE, DEPART, ASSOCIATE_UCR, DISSOCIATE_UCR, SHUT_MUCR = Value
 
-  val pid = operator.pid
+  implicit val format: Format[JourneyType] = Format(Reads.enumNameReads(JourneyType), Writes.enumNameWrites)
 }

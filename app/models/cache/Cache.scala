@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package models.cache
 
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.libs.json.{Json, OFormat}
 
-case class Operator(pid: String)
+case class Cache(pid: String, answers: Answers)
 
-case class AuthenticatedRequest[T](operator: Operator, request: Request[T]) extends WrappedRequest[T](request) {
-
-  val pid = operator.pid
+object Cache {
+  implicit val format: OFormat[Cache] = Json.format[Cache]
 }

@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package unit.base
 
-import play.api.mvc.{Request, WrappedRequest}
+import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatestplus.mockito.MockitoSugar
 
-case class Operator(pid: String)
-
-case class AuthenticatedRequest[T](operator: Operator, request: Request[T]) extends WrappedRequest[T](request) {
-
-  val pid = operator.pid
-}
+trait UnitSpec extends WordSpec with MustMatchers with MockitoSugar

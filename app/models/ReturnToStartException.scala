@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package models
 
-import play.api.mvc.{Request, WrappedRequest}
-
-case class Operator(pid: String)
-
-case class AuthenticatedRequest[T](operator: Operator, request: Request[T]) extends WrappedRequest[T](request) {
-
-  val pid = operator.pid
-}
+case object ReturnToStartException extends RuntimeException("Invalid Application State. Returning User to the Start.")
