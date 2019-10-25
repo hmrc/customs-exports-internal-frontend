@@ -20,7 +20,8 @@ class JourneyRefinerTest extends WordSpec with MustMatchers with MockitoSugar wi
 
   private val movementRepository = mock[MovementRepository]
   private val block = mock[JourneyRequest[_] =>  Future[Result]]
-  private val request = AuthenticatedRequest(Operator("pid"), FakeRequest())
+  private val operator = Operator("pid")
+  private val request = AuthenticatedRequest(operator, FakeRequest())
   private val answers = ArrivalAnswers()
   private val cache = Cache("pid", answers)
 
@@ -39,7 +40,7 @@ class JourneyRefinerTest extends WordSpec with MustMatchers with MockitoSugar wi
 
         await(refiner.invokeBlock(request, block)) mustBe Results.Ok
 
-        theRequestBuilt mustBe JourneyRequest(answers, request)
+        theRequestBuilt mustBe JourneyRequest(operator, answers, request)
       }
 
       def theRequestBuilt: JourneyRequest[_] = {

@@ -21,21 +21,44 @@ import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
 
-case class ArrivalAnswers(field1: Option[String] = None) extends Answers {
-  override val `type`: cache.JourneyType.Value = JourneyType.ARRIVE
-
+case class ArrivalAnswers(field1: Option[String]) extends Answers {
+  override val `type`: JourneyType.Value = JourneyType.ARRIVE
 }
 
 object ArrivalAnswers {
   implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
 }
 
-case class Departure(someFields: String) extends Answers {
-  override val `type`: cache.JourneyType.Value = JourneyType.DEPART
+case class DepartureAnswers(field1: Option[String]) extends Answers {
+  override val `type`: JourneyType.Value = JourneyType.DEPART
 }
 
-object Departure {
-  implicit val format: Format[Departure] = Json.format[Departure]
+object DepartureAnswers {
+  implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
+}
+
+case class AssociateUcr(field1: Option[String]) extends Answers {
+  override val `type`: JourneyType.Value = JourneyType.ASSOCIATE_UCR
+}
+
+object AssociateUcr {
+  implicit val format: Format[AssociateUcr] = Json.format[AssociateUcr]
+}
+
+case class DissociateUcr(field1: Option[String]) extends Answers {
+  override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
+}
+
+object DissociateUcr {
+  implicit val format: Format[DissociateUcr] = Json.format[DissociateUcr]
+}
+
+case class ShutMucr(field1: Option[String]) extends Answers {
+  override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
+}
+
+object ShutMucr {
+  implicit val format: Format[ShutMucr] = Json.format[ShutMucr]
 }
 
 trait Answers {
@@ -44,6 +67,9 @@ trait Answers {
 object Answers {
   implicit val format: Format[Answers] = Union.from[Answers]("type")
     .and[ArrivalAnswers](JourneyType.ARRIVE.toString)
-    .and[Departure](JourneyType.DEPART.toString)
+    .and[DepartureAnswers](JourneyType.DEPART.toString)
+    .and[AssociateUcr](JourneyType.ASSOCIATE_UCR.toString)
+    .and[DissociateUcr](JourneyType.DISSOCIATE_UCR.toString)
+    .and[ShutMucr](JourneyType.SHUT_MUCR.toString)
     .format
 }

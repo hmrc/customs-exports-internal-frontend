@@ -20,7 +20,7 @@ import models.ReturnToStartException
 import models.cache.Answers
 import play.api.mvc.WrappedRequest
 
-case class JourneyRequest[T](answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
+case class JourneyRequest[T](operator: Operator, answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
 
   def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
 
