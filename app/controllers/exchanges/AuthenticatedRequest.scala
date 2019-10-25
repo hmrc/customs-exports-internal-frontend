@@ -20,4 +20,7 @@ import play.api.mvc.{Request, WrappedRequest}
 
 case class Operator(pid: String)
 
-case class AuthenticatedRequest[T](operator: Operator, request: Request[T]) extends WrappedRequest[T](request)
+case class AuthenticatedRequest[T](operator: Operator, request: Request[T]) extends WrappedRequest[T](request) {
+
+  val pid = operator.pid
+}

@@ -37,28 +37,28 @@ object DepartureAnswers {
   implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
 }
 
-case class AssociateUcr(field1: Option[String]) extends Answers {
+case class AssociateUcrAnswers(field1: Option[String]) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ASSOCIATE_UCR
 }
 
-object AssociateUcr {
-  implicit val format: Format[AssociateUcr] = Json.format[AssociateUcr]
+object AssociateUcrAnswers {
+  implicit val format: Format[AssociateUcrAnswers] = Json.format[AssociateUcrAnswers]
 }
 
-case class DissociateUcr(field1: Option[String]) extends Answers {
+case class DissociateUcrAnswers(field1: Option[String]) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
 }
 
-object DissociateUcr {
-  implicit val format: Format[DissociateUcr] = Json.format[DissociateUcr]
+object DissociateUcrAnswers {
+  implicit val format: Format[DissociateUcrAnswers] = Json.format[DissociateUcrAnswers]
 }
 
-case class ShutMucr(field1: Option[String]) extends Answers {
+case class ShutMucrAnswers(field1: Option[String]) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
 }
 
-object ShutMucr {
-  implicit val format: Format[ShutMucr] = Json.format[ShutMucr]
+object ShutMucrAnswers {
+  implicit val format: Format[ShutMucrAnswers] = Json.format[ShutMucrAnswers]
 }
 
 trait Answers {
@@ -68,8 +68,8 @@ object Answers {
   implicit val format: Format[Answers] = Union.from[Answers]("type")
     .and[ArrivalAnswers](JourneyType.ARRIVE.toString)
     .and[DepartureAnswers](JourneyType.DEPART.toString)
-    .and[AssociateUcr](JourneyType.ASSOCIATE_UCR.toString)
-    .and[DissociateUcr](JourneyType.DISSOCIATE_UCR.toString)
-    .and[ShutMucr](JourneyType.SHUT_MUCR.toString)
+    .and[AssociateUcrAnswers](JourneyType.ASSOCIATE_UCR.toString)
+    .and[DissociateUcrAnswers](JourneyType.DISSOCIATE_UCR.toString)
+    .and[ShutMucrAnswers](JourneyType.SHUT_MUCR.toString)
     .format
 }

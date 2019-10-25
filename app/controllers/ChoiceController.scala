@@ -19,10 +19,18 @@ package controllers
 import forms.Choice
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Results}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result, Results}
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest}
-import models.cache.{Answers, ArrivalAnswers, Cache, DepartureAnswers}
+import models.cache.{
+  Answers,
+  ArrivalAnswers,
+  AssociateUcrAnswers,
+  Cache,
+  DepartureAnswers,
+  DissociateUcrAnswers,
+  ShutMucrAnswers
+}
 import repositories.MovementRepository
 import views.html.choice_page
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -40,9 +48,14 @@ class ChoiceController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayChoiceForm(): Action[AnyContent] = authenticate.async { implicit request =>
+  println("#### " + request.operator.pid)
     movementRepository.findByPid(request.operator.pid).map {
-      case Some(cache) => Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
-      case None        => Ok(choicePage(Choice.form()))
+      case Some(cache) =>
+        println("SOME")
+        Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
+      case None        =>
+        println("NONE")
+        Ok(choicePage(Choice.form()))
     }
   }
 
@@ -53,20 +66,23 @@ class ChoiceController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))),
         _ match {
-            case forms.Choice.Arrival          => proceedJourney(ArrivalAnswers(None))
-            case forms.Choice.Departure        => proceedJourney(DepartureAnswers(None))
-            case forms.Choice.AssociateUCR    => ???
-            case forms.Choice.DisassociateUCR => ???
-            case forms.Choice.ShutMUCR         => ???
+          case forms.Choice.Arrival =>
+            proceedJourney(ArrivalAnswers(None), routes.ChoiceController.displayChoiceForm())
+          case forms.Choice.Departure =>
+            proceedJourney(DepartureAnswers(None), routes.ChoiceController.displayChoiceForm())
+          case forms.Choice.AssociateUCR =>
+            proceedJourney(AssociateUcrAnswers(None), routes.ChoiceController.displayChoiceForm())
+          case forms.Choice.DisassociateUCR =>
+            proceedJourney(DissociateUcrAnswers(None), routes.ChoiceController.displayChoiceForm())
+          case forms.Choice.ShutMUCR =>
+            proceedJourney(ShutMucrAnswers(None), routes.ChoiceController.displayChoiceForm())
         }
       )
   }
 
-  private def proceedJourney(journey: Answers)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] = {
-    val pid = request.operator.pid
+  private def proceedJourney(journey: Answers, call: Call)(
+    implicit request: AuthenticatedRequest[AnyContent]
+  ): Future[Result] =
     // TODO change to upsert
-    movementRepository.findOrCreate(pid, Cache(pid, journey)).map { _ =>
-      Redirect(routes.ChoiceController.displayChoiceForm())
-    }
-  }
+    movementRepository.findOrCreate(request.pid, Cache(request.pid, journey)).map(_ => Redirect(call))
 }
