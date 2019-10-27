@@ -69,5 +69,5 @@ class ChoiceController @Inject()(
 
   private def proceedJourney(journey: Answers, call: Call)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
     // TODO change to upsert
-    movementRepository.findOrCreate(request.pid, Cache(request.pid, journey)).map(_ => Redirect(call))
+    movementRepository.upsert(Cache(request.pid, journey)).map(_ => Redirect(call))
 }

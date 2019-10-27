@@ -18,6 +18,7 @@ package repositories
 
 import javax.inject.Inject
 import models.cache.Cache
+import play.api.libs.json.{JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONObjectID
@@ -39,8 +40,17 @@ class MovementRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: Exec
       case None                => save(onMissing)
     }
 
-  def save(movementCache: Cache): Future[Cache] = insert(movementCache).map { res =>
+  private def save(movementCache: Cache): Future[Cache] = insert(movementCache).map { res =>
     if (!res.ok) logger.error(s"Errors when persisting movement cache: ${res.writeErrors.mkString("--")}")
     movementCache
   }
+
+  def upsert(movementCache: Cache): Future[Cache] =
+    findAndUpdate(Json.obj("pid" -> movementCache.pid), Json.toJson(movementCache).as[JsObject])
+      .map(_.value.map(_.as[Cache]))
+      .flatMap {
+        case Some(cache) => Future.successful(cache)
+        case None        => save(movementCache)
+      }
+
 }
