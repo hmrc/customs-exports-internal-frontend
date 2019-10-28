@@ -52,9 +52,9 @@ class ChoiceController @Inject()(
       case forms.Choice.Arrival | forms.Choice.Departure =>
         proceedJourney(ArrivalAnswers(None), routes.ChoiceController.displayPage())
       case forms.Choice.AssociateUCR =>
-        proceedJourney(DepartureAnswers(None), routes.ChoiceController.displayPage())
+        proceedJourney(DepartureAnswers(None), controllers.consolidations.routes.MucrOptionsController.displayPage())
       case forms.Choice.DisassociateUCR =>
-        proceedJourney(AssociateUcrAnswers(None), controllers.consolidations.routes.MucrOptionsController.displayPage())
+        proceedJourney(AssociateUcrAnswers(None), routes.ChoiceController.displayPage())
       case forms.Choice.ShutMUCR =>
         proceedJourney(DissociateUcrAnswers(None), routes.ChoiceController.displayPage())
       case forms.Choice.Submissions =>
@@ -73,7 +73,7 @@ class ChoiceController @Inject()(
           case forms.Choice.Departure =>
             proceedJourney(DepartureAnswers(None), routes.ChoiceController.displayPage())
           case forms.Choice.AssociateUCR =>
-            proceedJourney(AssociateUcrAnswers(None), routes.ChoiceController.displayPage())
+            proceedJourney(AssociateUcrAnswers(None), controllers.consolidations.routes.MucrOptionsController.displayPage())
           case forms.Choice.DisassociateUCR =>
             proceedJourney(DissociateUcrAnswers(None), routes.ChoiceController.displayPage())
           case forms.Choice.ShutMUCR =>
