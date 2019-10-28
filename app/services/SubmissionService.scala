@@ -16,12 +16,53 @@
 
 package services
 
-import models.cache.DisassociateUcrAnswers
+import connectors.CustomsDeclareExportsMovementsConnector
+import forms._
+import javax.inject.{Inject, Singleton}
+import metrics.MovementsMetrics
+import models.cache.JourneyType
+import models.requests.{MovementRequest, MovementType}
+import play.api.http.Status.INTERNAL_SERVER_ERROR
+import repositories.MovementRepository
+import services.audit.{AuditService, AuditTypes}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-trait SubmissionService {
+@Singleton
+class SubmissionService @Inject()(
+  movementRepository: MovementRepository,
+  connector: CustomsDeclareExportsMovementsConnector,
+  auditService: AuditService,
+  metrics: MovementsMetrics
+)(implicit ec: ExecutionContext) {
 
-  def submit(answers: DisassociateUcrAnswers): Future[Unit]
+  def submitMovementRequest(pid: String)(implicit hc: HeaderCarrier): Future[(Option[ConsignmentReferences], Int)] =
+    movementRepository.findByPid(pid).flatMap {
+      case Some(cache) =>
+        val data = Movement.createMovementRequest(cache)
+        val timer = metrics.startTimer(cache.answers.`type`)
+
+        auditService.auditAllPagesUserInput(cache.answers)
+
+        val movementAuditType =
+          if (cache.answers.`type` == JourneyType.ARRIVE) AuditTypes.AuditArrival else AuditTypes.AuditDeparture
+
+        sendMovementRequest(data).map { submitResponse =>
+          metrics.incrementCounter(cache.answers.`type`)
+          auditService
+            .auditMovements(data, submitResponse.status.toString, movementAuditType)
+          timer.stop()
+          (Some(data.consignmentReference), submitResponse.status)
+        }
+      case _ =>
+        Future.successful((None, INTERNAL_SERVER_ERROR))
+    }
+
+  private def sendMovementRequest(movementRequest: MovementRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
+    movementRequest.choice match {
+      case MovementType.Arrival   => connector.sendArrivalDeclaration(movementRequest)
+      case MovementType.Departure => connector.sendDepartureDeclaration(movementRequest)
+    }
 
 }
