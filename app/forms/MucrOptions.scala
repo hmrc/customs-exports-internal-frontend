@@ -67,4 +67,3 @@ object MucrOptions {
       form.withError(errorField, "mucrOptions.reference.value.error")
     }
 }
-

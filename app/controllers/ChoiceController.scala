@@ -82,8 +82,6 @@ class ChoiceController @Inject()(
       )
   }
 
-  private def proceedJourney(journey: Answers, call: Call)(
-    implicit request: AuthenticatedRequest[AnyContent]
-  ): Future[Result] =
+  private def proceedJourney(journey: Answers, call: Call)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
     movementRepository.upsert(Cache(request.pid, journey)).map(_ => Redirect(call))
 }

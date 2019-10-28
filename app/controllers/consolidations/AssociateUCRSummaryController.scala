@@ -44,7 +44,7 @@ class AssociateUCRSummaryController @Inject()(
 
     (mucrOpt, associateUcrOpt) match {
       case (Some(mucrOptions), Some(ucr)) => Ok(associateUcrSummaryPage(ucr, mucrOptions.mucr))
-      case _ => Redirect(controllers.routes.ChoiceController.displayPage())
+      case _                              => Redirect(controllers.routes.ChoiceController.displayPage())
     }
   }
 

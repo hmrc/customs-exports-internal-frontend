@@ -45,14 +45,16 @@ class MucrOptionsController @Inject()(
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    form.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(mucrOptionsPage(formWithErrors))),
-      validForm => {
-        val updatedCache = request.answersAs[AssociateUcrAnswers].copy(mucrOptions = Some(validForm))
-        movementRepository.upsert(Cache(request.pid, updatedCache)).map { _ =>
-          Redirect(consolidationsRoutes.AssociateUCRController.displayPage())
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(mucrOptionsPage(formWithErrors))),
+        validForm => {
+          val updatedCache = request.answersAs[AssociateUcrAnswers].copy(mucrOptions = Some(validForm))
+          movementRepository.upsert(Cache(request.pid, updatedCache)).map { _ =>
+            Redirect(consolidationsRoutes.AssociateUCRController.displayPage())
+          }
         }
-      }
-    )
+      )
   }
 }

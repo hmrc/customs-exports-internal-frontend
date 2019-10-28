@@ -38,10 +38,7 @@ object DepartureAnswers {
   implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
 }
 
-case class AssociateUcrAnswers(
-  mucrOptions: Option[MucrOptions] = None,
-  associateUcr: Option[AssociateUcr] = None
-) extends Answers {
+case class AssociateUcrAnswers(mucrOptions: Option[MucrOptions] = None, associateUcr: Option[AssociateUcr] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ASSOCIATE_UCR
 }
 

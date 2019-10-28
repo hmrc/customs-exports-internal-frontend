@@ -45,7 +45,7 @@ class AssociateUCRController @Inject()(
 
     mucrOptions match {
       case Some(mucrOptions) => Ok(associateUcrPage(associateUcr.fold(form)(form.fill), mucrOptions))
-      case None => Redirect(controllers.routes.ChoiceController.displayPage())
+      case None              => Redirect(controllers.routes.ChoiceController.displayPage())
     }
   }
 
@@ -56,7 +56,7 @@ class AssociateUCRController @Inject()(
         formWithErrors => {
           request.answersAs[AssociateUcrAnswers].mucrOptions match {
             case Some(mucr) => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucr)))
-            case None => Future.successful(Redirect(controllers.routes.ChoiceController.displayPage()))
+            case None       => Future.successful(Redirect(controllers.routes.ChoiceController.displayPage()))
           }
         },
         formData => {
