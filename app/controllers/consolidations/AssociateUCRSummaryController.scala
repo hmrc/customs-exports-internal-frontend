@@ -51,15 +51,11 @@ class AssociateUCRSummaryController @Inject()(
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
     val answers = request.answersAs[AssociateUcrAnswers]
-    val mucrOpt = answers.mucrOptions
-    val associateUcrOpt = answers.associateUcr
+    //MUCR options necessary for submit
+    val mucrOptions = answers.mucrOptions.getOrElse(throw ReturnToStartException)
+    val associateUcr = answers.associateUcr.getOrElse(throw ReturnToStartException)
 
-    (mucrOpt, associateUcrOpt) match {
-      case (Some(mucrOptions), Some(ucr)) =>
-        // Submit based on the data above
-        Redirect(routes.AssociateUCRConfirmationController.displayPage())
-          .flashing(FlashKeys.UCR -> ucr.ucr, FlashKeys.CONSOLIDATION_KIND -> ucr.kind.formValue)
-      case _ => throw ReturnToStartException
-    }
+    Redirect(routes.AssociateUCRConfirmationController.displayPage())
+      .flashing(FlashKeys.UCR -> associateUcr.ucr, FlashKeys.CONSOLIDATION_KIND -> associateUcr.kind.formValue)
   }
 }
