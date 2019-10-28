@@ -16,13 +16,12 @@
 
 package models.cache
 
-import forms.{AssociateUcr, MucrOptions}
-import models.cache
 import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
+import forms.{AssociateUcr, MucrOptions}
 
-case class ArrivalAnswers(field1: Option[String] = None) extends Answers {
+case class ArrivalAnswers(override val eori: Option[String] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ARRIVE
 }
 
@@ -30,7 +29,7 @@ object ArrivalAnswers {
   implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
 }
 
-case class DepartureAnswers(field1: Option[String] = None) extends Answers {
+case class DepartureAnswers(override val eori: Option[String] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DEPART
 }
 
@@ -38,7 +37,11 @@ object DepartureAnswers {
   implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
 }
 
-case class AssociateUcrAnswers(mucrOptions: Option[MucrOptions] = None, associateUcr: Option[AssociateUcr] = None) extends Answers {
+case class AssociateUcrAnswers(
+  override val eori: Option[String] = None,
+  mucrOptions: Option[MucrOptions] = None,
+  associateUcr: Option[AssociateUcr] = None
+) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ASSOCIATE_UCR
 }
 
@@ -46,7 +49,7 @@ object AssociateUcrAnswers {
   implicit val format: Format[AssociateUcrAnswers] = Json.format[AssociateUcrAnswers]
 }
 
-case class DissociateUcrAnswers(field1: Option[String] = None) extends Answers {
+case class DissociateUcrAnswers(override val eori: Option[String] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
 }
 
@@ -54,7 +57,7 @@ object DissociateUcrAnswers {
   implicit val format: Format[DissociateUcrAnswers] = Json.format[DissociateUcrAnswers]
 }
 
-case class ShutMucrAnswers(field1: Option[String] = None) extends Answers {
+case class ShutMucrAnswers(override val eori: Option[String] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
 }
 
@@ -64,6 +67,7 @@ object ShutMucrAnswers {
 
 trait Answers {
   val `type`: JourneyType
+  val eori: Option[String]
 }
 
 object Answers {
