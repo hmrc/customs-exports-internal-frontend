@@ -32,7 +32,7 @@ import play.api.test.Helpers._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class JourneyRefinerTest extends WordSpec with MustMatchers with MockitoSugar with BeforeAndAfterEach {
+class JourneyRefinerSpec extends WordSpec with MustMatchers with MockitoSugar with BeforeAndAfterEach {
 
   private val movementRepository = mock[MovementRepository]
   private val block = mock[JourneyRequest[_] => Future[Result]]
@@ -70,7 +70,7 @@ class JourneyRefinerTest extends WordSpec with MustMatchers with MockitoSugar wi
       "answers not found" in {
         given(movementRepository.findByPid("pid")).willReturn(Future.successful(None))
 
-        await(refiner.invokeBlock(request, block)) mustBe Results.Redirect(controllers.routes.ChoiceController.displayChoiceForm())
+        await(refiner.invokeBlock(request, block)) mustBe Results.Redirect(controllers.routes.ChoiceController.displayPage())
       }
     }
   }

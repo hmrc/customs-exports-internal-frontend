@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package unit.services
+package services
 
+import base.UnitSpec
 import services.Countries.allCountries
-import services.Country
-import unit.base.UnitSpec
 
 class CountriesSpec extends UnitSpec {
 

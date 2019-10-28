@@ -42,7 +42,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       "empty answers" in {
         givenTheCacheIsEmpty()
 
-        val result = controller(SuccessfulAuth()).displayChoiceForm(get)
+        val result = controller(SuccessfulAuth()).displayPage(get)
 
         status(result) mustBe Status.OK
         contentAsHtml(result) mustBe page(Choice.form())
@@ -51,7 +51,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       "existing answers" in {
         givenTheCacheContains(Cache("pid", ArrivalAnswers()))
 
-        val result = controller(SuccessfulAuth()).displayChoiceForm(get)
+        val result = controller(SuccessfulAuth()).displayPage(get)
 
         status(result) mustBe Status.OK
         contentAsHtml(result) mustBe page(Choice.form().fill(Choice.Arrival))
@@ -59,7 +59,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     }
 
     "return 403 when unauthenticated" in {
-      val result = controller(UnsuccessfulAuth).displayChoiceForm(get)
+      val result = controller(UnsuccessfulAuth).displayPage(get)
 
       status(result) mustBe Status.FORBIDDEN
     }
@@ -70,7 +70,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     "return 200 when authenticated" when {
       "arrival" in {
         val post = FakeRequest("POST", "/").withFormUrlEncodedBody("choice" -> Choice.Arrival.value).withCSRFToken
-        val result = controller(SuccessfulAuth()).submitChoice(post)
+        val result = controller(SuccessfulAuth()).submit(post)
 
         status(result) mustBe Status.SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ConsignmentReferencesController.displayPage().url)
@@ -79,37 +79,37 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "departure" in {
         val post = FakeRequest("POST", "/").withFormUrlEncodedBody("choice" -> Choice.Departure.value).withCSRFToken
-        val result = controller(SuccessfulAuth()).submitChoice(post)
+        val result = controller(SuccessfulAuth()).submit(post)
 
         status(result) mustBe Status.SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ChoiceController.displayChoiceForm().url)
+        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
         theCacheUpserted mustBe Cache(pid, DepartureAnswers())
       }
 
       "associate UCR" in {
         val post = FakeRequest("POST", "/").withFormUrlEncodedBody("choice" -> Choice.AssociateUCR.value).withCSRFToken
-        val result = controller(SuccessfulAuth()).submitChoice(post)
+        val result = controller(SuccessfulAuth()).submit(post)
 
         status(result) mustBe Status.SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ChoiceController.displayChoiceForm().url)
+        redirectLocation(result) mustBe Some(controllers.consolidations.routes.MucrOptionsController.displayPage().url)
         theCacheUpserted mustBe Cache(pid, AssociateUcrAnswers())
       }
 
       "disassociate UCR" in {
         val post = FakeRequest("POST", "/").withFormUrlEncodedBody("choice" -> Choice.DisassociateUCR.value).withCSRFToken
-        val result = controller(SuccessfulAuth()).submitChoice(post)
+        val result = controller(SuccessfulAuth()).submit(post)
 
         status(result) mustBe Status.SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ChoiceController.displayChoiceForm().url)
+        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
         theCacheUpserted mustBe Cache(pid, DissociateUcrAnswers())
       }
 
       "shut MUCR" in {
         val post = FakeRequest("POST", "/").withFormUrlEncodedBody("choice" -> Choice.ShutMUCR.value).withCSRFToken
-        val result = controller(SuccessfulAuth()).submitChoice(post)
+        val result = controller(SuccessfulAuth()).submit(post)
 
         status(result) mustBe Status.SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ChoiceController.displayChoiceForm().url)
+        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
         theCacheUpserted mustBe Cache(pid, ShutMucrAnswers())
       }
     }
@@ -117,7 +117,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     "return 400 when invalid" in {
       implicit val post = FakeRequest("POST", "/").withCSRFToken
 
-      val result = controller(SuccessfulAuth()).submitChoice(post)
+      val result = controller(SuccessfulAuth()).submit(post)
 
       status(result) mustBe Status.BAD_REQUEST
       contentAsHtml(result) mustBe page(Choice.form().bind(Map[String, String]()))
@@ -126,7 +126,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     "return 403 when unauthenticated" in {
       val post = FakeRequest("POST", "/").withCSRFToken
 
-      val result = controller(UnsuccessfulAuth).submitChoice(post)
+      val result = controller(UnsuccessfulAuth).submit(post)
 
       status(result) mustBe Status.FORBIDDEN
     }

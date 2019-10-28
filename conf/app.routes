@@ -1,11 +1,25 @@
 # microservice specific routes
-GET         /assets/*file                  controllers.Assets.versioned(path="/public", file: Asset)
-
-GET         /hello-world                   controllers.HelloWorldController.helloWorld
+GET         /assets/*file                      controllers.Assets.versioned(path="/public", file: Asset)
 
 # Declaration choice page
-GET         /choice                        controllers.ChoiceController.displayChoiceForm()
-POST        /choice                        controllers.ChoiceController.submitChoice()
+GET         /choice                            controllers.ChoiceController.displayPage()
+GET         /choice/:journey                   controllers.ChoiceController.startSpecificJourney(journey)
+POST        /choice                            controllers.ChoiceController.submit()
+
+# MUCR options page
+GET         /mucr-options                      controllers.consolidations.MucrOptionsController.displayPage()
+POST        /mucr-options                      controllers.consolidations.MucrOptionsController.submit()
+
+# Associate UCR page
+GET         /associate-ucr                     controllers.consolidations.AssociateUCRController.displayPage()
+POST        /associate-ucr                     controllers.consolidations.AssociateUCRController.submit()
+
+# Associate UCR summary page
+GET         /associate-ucr-summary             controllers.consolidations.AssociateUCRSummaryController.displayPage()
+POST        /associate-ucr-summary             controllers.consolidations.AssociateUCRSummaryController.submit()
+
+# Associate UCR confirmation page
+GET         /associate-ucr-confirmation        controllers.consolidations.AssociateUCRConfirmationController.displayPage()
 
 # Enter DUCR page
 GET         /consignment-references        controllers.ConsignmentReferencesController.displayPage()

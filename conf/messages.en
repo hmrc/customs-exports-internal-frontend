@@ -1,0 +1,120 @@
+service.name=Internal Exports Movements 
+
+site.continue = Continue
+site.back = Back
+site.change = Change
+site.confirmAndSubmit = Confirm and submit
+site.backToStart = Back to start
+site.save_and_continue = Save and continue
+
+title.format={0} - {1} - GOV.UK
+title.withSection.format={0} - {1} - {2} - GOV.UK
+
+error.summary.title = There’s been a problem
+error.summary.text = Check the following
+
+movement.choice.title = What do you want to do?
+movement.choice.arrival.label = Arrive a consignment
+movement.choice.departure.label = Depart a consignment
+movement.choice.associate.label = Associate a consignment
+movement.choice.disassociateDucr.label = Disassociate a consignment
+movement.choice.shutMucr.label = Shut a master consignment
+movement.choice.submissions.label = View requests
+
+consignmentReferences.title = Consignment references
+consignmentReferences.ARRIVE.heading = Arrive consignment
+consignmentReferences.DEPART.heading = Depart consignment
+consignmentReferences.ARRIVE.question = What consignment do you want to arrive?
+consignmentReferences.DEPART.question = What consignment do you want to depart?
+consignmentReferences.reference.ducr = Declaration Consignment Reference (DUCR)
+consignmentReferences.reference.mucr = Master Consignment Reference (MUCR)
+consignmentReferences.reference.empty = Please choose reference
+consignmentReferences.reference.error = Incorrect reference
+consignmentReferences.reference.ducrValue = Declaration Unique Consignment Reference
+consignmentReferences.reference.mucrValue = Master Unique Consignment Reference
+consignmentReferences.reference.mucrValue.empty = Enter a Master Unique Consignment Reference
+consignmentReferences.reference.ducrValue.empty = Enter a Declaration Unique Consignment Reference
+consignmentReferences.reference.mucrValue.error = Master Unique Consignment Reference is incorrect
+consignmentReferences.reference.ducrValue.error = Declaration Unique Consignment Reference is incorrect
+
+arrivalReference = Arrival reference
+arrivalReference.question = Give this arrival a unique reference
+arrivalReference.hint = This will help you identify it if you need to find it in the future. It can be up to 25 characters.
+arrivalReference.error = The reference should be no more than 25 characters.
+
+arrivalDetails.title = Arrival date and time
+arrivalDetails.header = Enter date and time of arrival
+arrivalDetails.date.question = Date of Arrival
+arrivalDetails.date.hint = For example, 01 08 2007
+arrivalDetails.time.question = Time of Arrival
+arrivalDetails.time.hint = Enter the time in 24 hour format. For example, 13 30
+
+dateTime.date.error.format = Date format is incorrect
+dateTime.date.day.empty = Day cannot be empty
+dateTime.date.day.error = Day is incorrect
+dateTime.date.month.empty = Month cannot be empty
+dateTime.date.month.error = Month is incorrect
+dateTime.date.year.empty = Year cannot be empty
+dateTime.date.year.error = Year is incorrect
+dateTime.time.hour.empty = Hour cannot be empty
+dateTime.time.hour.error = Hour is incorrect
+dateTime.time.minute.empty = Minute cannot be empty
+dateTime.time.minute.error = Minute is incorrect
+
+location.title = Location
+location.question = What is the goods location code?
+location.hint = The is an alphanumeric code. For example, GBAUEMAEMAEMA
+location.code.empty = Goods location code cannot be empty
+location.code.error = Goods location code is incorrect
+
+summary.referenceType = Consignment type
+summary.referenceValue = Consignment reference
+summary.consignmentDetails = Consignment details
+summary.goodsLocation = Goods location code
+
+summary.arrival.title = Is the information provided for this arrival correct?
+summary.arrival.date = Date of arrival
+summary.arrival.time = Time of arrival
+
+summary.departure.title = Is the information provided for this departure correct?
+summary.departure.date = Date of departure
+summary.departure.time = Time of departure
+
+summary.arrivalReference.reference = Unique reference
+
+associate.heading = Add to MUCR {0}
+mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
+mucrOptions.create = Create a new Master Consignment Reference (MUCR)
+mucrOptions.add = Add to an existing Master Consignment Reference (MUCR)
+mucrOptions.create.reference = Enter an alphanumeric reference
+mucrOptions.add.reference = Which MUCR do you want to add to?
+mucrOptions.createAdd.value.empty = Please select an option
+mucrOptions.reference.value.empty = Please enter a reference
+mucrOptions.reference.value.error = Please enter a valid reference
+
+associate.ucr.title = Which consignment do you want to add?
+associate.ucr.ducr = Declaration Consignment Reference (DUCR)
+associate.ucr.ducr.label = Declaration Unique Consignment Reference
+associate.ucr.mucr = Master Consignment Reference (MUCR)
+associate.ucr.mucr.label = Master Unique Consignment Reference
+associate.ucr.hint = You may want to keep a record of which consignments you have added to this MUCR.
+
+associate.ucr.summary.title = Is the information provided for this association request correct?
+associate.ucr.summary.kind.mucr = MUCR
+associate.ucr.summary.kind.ducr = DUCR
+associate.ucr.summary.addConsignment = Add consignment
+associate.ucr.summary.masterConsignment = To master consignment
+
+movement.confirmation.statusInfo = To check the status of this consignment, {0}.
+movement.confirmation.statusInfo.submissions = view requests
+movement.confirmation.whatNext = What do you want to do next?
+
+associate.ducr.confirmation.tab.heading = Add DUCR request submitted
+associate.ducr.confirmation.heading = Request to associate DUCR {0} has been submitted
+associate.mucr.confirmation.tab.heading = Add MUCR request submitted
+associate.mucr.confirmation.heading = Request to associate MUCR {0} has been submitted
+association.confirmation.associateOrDepart = {0} another consignment, or {1} a consignment.
+association.confirmation.associateOrDepart.associate = Associate
+association.confirmation.associateOrDepart.depart = depart
+
+view.unauthorized.title=You are not authorized

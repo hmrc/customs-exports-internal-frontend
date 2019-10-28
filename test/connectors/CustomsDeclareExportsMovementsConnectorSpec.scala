@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package unit.connectors
+package connectors
 
+import base.UnitSpec
 import config.AppConfig
-import connectors.CustomsDeclareExportsMovementsConnector
 import forms.Choice
 import forms.Choice.{Arrival, Departure}
 import models.requests.MovementRequest
@@ -29,7 +29,6 @@ import play.api.test.Helpers.OK
 import testdata.MovementsTestData
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import unit.base.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
