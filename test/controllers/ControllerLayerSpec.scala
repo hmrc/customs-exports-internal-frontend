@@ -18,43 +18,63 @@ package controllers
 
 import config.AppConfig
 import connectors.StrideAuthConnector
+import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
+import models.cache.Answers
 import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.i18n.Messages
 import play.api.mvc.{Request, Result, Results}
+import play.api.test.Helpers
+import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
-import controllers.actions.AuthenticatedAction
-import controllers.exchanges.{AuthenticatedRequest, Operator}
-import views.html.unauthorized
+import play.twirl.api.Html
+import repositories.MovementRepository
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.ViewTemplates
+import views.html.unauthorized
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-abstract class ControllerLayerSpec extends WordSpec with ViewTemplates with MustMatchers with MockitoSugar with BeforeAndAfterEach {
+abstract class ControllerLayerSpec extends WordSpec with ViewTemplates with MustMatchers with MockitoSugar with BeforeAndAfterEach with CSRFSupport {
 
-  case class SuccessfulAuth(operator: Operator = Operator("0"))
-      extends AuthenticatedAction(
-        mock[AppConfig],
-        mock[Configuration],
-        mock[Environment],
-        mock[StrideAuthConnector],
-        stubMessagesControllerComponents(),
-        mock[unauthorized]
-      ) {
+  protected val pid = "0"
+  protected val operator = Operator(pid)
+
+  protected implicit def messages(implicit request: Request[_]): Messages = stubMessagesControllerComponents().messagesApi.preferred(request)
+
+  protected def contentAsHtml(of: Future[Result]): Html = Html(contentAsBytes(of).decodeString(charset(of).getOrElse("utf-8")))
+
+  case class SuccessfulAuth(operator: Operator = operator)
+    extends AuthenticatedAction(
+      mock[AppConfig],
+      mock[Configuration],
+      mock[Environment],
+      mock[StrideAuthConnector],
+      stubMessagesControllerComponents(),
+      mock[unauthorized]
+    ) {
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
       block(AuthenticatedRequest(operator, request))
   }
 
   case object UnsuccessfulAuth
-      extends AuthenticatedAction(
-        mock[AppConfig],
-        mock[Configuration],
-        mock[Environment],
-        mock[StrideAuthConnector],
-        stubMessagesControllerComponents(),
-        mock[unauthorized]
-      ) {
+    extends AuthenticatedAction(
+      mock[AppConfig],
+      mock[Configuration],
+      mock[Environment],
+      mock[StrideAuthConnector],
+      stubMessagesControllerComponents(),
+      mock[unauthorized]
+    ) {
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
       Future.successful(Results.Forbidden(""))
   }
+
+  case class Refiner(answers: Answers) extends JourneyRefiner(mock[MovementRepository]) {
+    override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
+      Future.successful(Right(JourneyRequest(answers, request)))
+  }
+
 }

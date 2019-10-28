@@ -56,7 +56,7 @@ class JourneyRefinerTest extends WordSpec with MustMatchers with MockitoSugar wi
 
         await(refiner.invokeBlock(request, block)) mustBe Results.Ok
 
-        theRequestBuilt mustBe JourneyRequest(operator, answers, request)
+        theRequestBuilt mustBe JourneyRequest(answers, request)
       }
 
       def theRequestBuilt: JourneyRequest[_] = {

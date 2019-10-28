@@ -32,27 +32,26 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ChoiceController @Inject()(
   authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
   movementRepository: MovementRepository,
   choicePage: choice_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayChoiceForm(): Action[AnyContent] = authenticate.async { implicit request =>
+  def displayChoiceForm: Action[AnyContent] = authenticate.async { implicit request =>
     movementRepository.findByPid(request.operator.pid).map {
       case Some(cache) => Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
       case None        => Ok(choicePage(Choice.form()))
     }
   }
 
-  def submitChoice(): Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
+  def submitChoice: Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
     Choice
       .form()
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))),
-        _ match {
+        {
           case forms.Choice.Arrival =>
             proceedJourney(ArrivalAnswers(None), routes.ChoiceController.displayChoiceForm())
           case forms.Choice.Departure =>
