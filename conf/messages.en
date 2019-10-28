@@ -2,6 +2,7 @@ service.name=Internal Exports Movements
 
 site.continue = Continue
 site.back = Back
+site.save_and_continue = Save and continue
 site.change = Change
 site.confirmAndSubmit = Confirm and submit
 site.backToStart = Back to start
@@ -9,6 +10,8 @@ site.backToStart = Back to start
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
+error.summary.title = There’s been a problem
+error.summary.text = Check the following
 
 movement.choice.title = What do you want to do?
 movement.choice.arrival.label = Arrive a consignment
@@ -52,5 +55,7 @@ associate.mucr.confirmation.heading = Request to associate MUCR {0} has been sub
 association.confirmation.associateOrDepart = {0} another consignment, or {1} a consignment.
 association.confirmation.associateOrDepart.associate = Associate
 association.confirmation.associateOrDepart.depart = depart
+
+disassociateDucr.title = Which DUCR do you want to remove?
 
 view.unauthorized.title=You are not authorized

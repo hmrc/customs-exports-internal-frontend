@@ -99,23 +99,17 @@ trait ViewMatchers { self: MustMatchers =>
   }
 
   class ElementContainsMessageMatcher(key: String)(implicit messages: Messages) extends Matcher[Element] {
-    override def apply(left: Element): MatchResult = {
+    override def apply(left: Element): MatchResult =
       MatchResult(
         left != null && left.text().contains(messages(key)),
         s"Element did not contain message with key {$key}\n${actualContentWas(left)}",
         s"Element contained message with key {$key}"
       )
-    }
   }
 
   class MessageIsDefinedAt(key: String)(implicit messages: Messages) extends Matcher[Element] {
-    override def apply(left: Element): MatchResult = {
-      MatchResult(
-        messages.isDefinedAt(key),
-        s"Message key {$key} is not in the messages file",
-        s"Message is configured for key {$key}"
-      )
-    }
+    override def apply(left: Element): MatchResult =
+      MatchResult(messages.isDefinedAt(key), s"Message key {$key} is not in the messages file", s"Message is configured for key {$key}")
   }
 
   class ElementContainsHtmlMatcher(content: String) extends Matcher[Element] {

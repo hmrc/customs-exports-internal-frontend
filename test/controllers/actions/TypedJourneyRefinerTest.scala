@@ -82,7 +82,7 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
         given(movementRepository.findByPid("pid")).willReturn(Future.successful(None))
 
         await(refiner(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Redirect(
-          controllers.routes.ChoiceController.displayChoiceForm()
+          controllers.routes.ChoiceController.displayPage()
         )
       }
 
@@ -90,7 +90,7 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
         given(movementRepository.findByPid("pid")).willReturn(Future.successful(None))
 
         await(refiner(JourneyType.DEPART).invokeBlock(request, block)) mustBe Results.Redirect(
-          controllers.routes.ChoiceController.displayChoiceForm()
+          controllers.routes.ChoiceController.displayPage()
         )
       }
     }
