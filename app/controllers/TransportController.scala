@@ -17,8 +17,8 @@
 package controllers
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import forms.ConsignmentReferences
-import forms.ConsignmentReferences._
+import forms.Transport
+import forms.Transport.form
 import javax.inject.{Inject, Singleton}
 import models.cache.{ArrivalAnswers, Cache}
 import play.api.data.Form
@@ -26,35 +26,33 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.MovementRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.consignment_references
+import views.html.transport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConsignmentReferencesController @Inject()(
+class TransportController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   movementRepository: MovementRepository,
   mcc: MessagesControllerComponents,
-  consignmentReferencesPage: consignment_references
+  transportPage: transport
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    Future.successful(Ok(consignmentReferencesPage(request.answersAs[ArrivalAnswers].consignmentReferences.fold(form)(form.fill(_)))))
+    Future.successful(Ok(transportPage(request.answersAs[ArrivalAnswers].transport.fold(form)(form.fill(_)))))
   }
 
-  def saveConsignmentReferences(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
+  def saveTransport(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[ConsignmentReferences]) => Future.successful(BadRequest(consignmentReferencesPage(formWithErrors))),
+        (formWithErrors: Form[Transport]) => Future.successful(BadRequest(transportPage(formWithErrors))),
         validForm => {
-          val arrivalAnswers = request.answersAs[ArrivalAnswers].copy(consignmentReferences = Some(validForm))
+          val arrivalAnswers = request.answersAs[ArrivalAnswers].copy(transport = Some(validForm))
           movementRepository.upsert(Cache(request.operator.pid, arrivalAnswers)).map { _ =>
-            // TODO depart/arrive logic
-            Redirect(controllers.routes.ArrivalReferenceController.displayPage())
-
+            Redirect(controllers.routes.SummaryController.displayPage())
           }
         }
       )

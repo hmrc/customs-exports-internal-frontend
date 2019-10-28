@@ -17,46 +17,50 @@
 package controllers
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import forms.ConsignmentReferences
-import forms.ConsignmentReferences._
-import javax.inject.{Inject, Singleton}
-import models.cache.{ArrivalAnswers, Cache}
-import play.api.data.Form
+import javax.inject.Inject
+import models.cache.{ArrivalAnswers, DepartureAnswers}
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.MovementRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.consignment_references
+import views.html.summary.{arrival_summary_page, departure_summary_page}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class ConsignmentReferencesController @Inject()(
+class SummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   movementRepository: MovementRepository,
   mcc: MessagesControllerComponents,
-  consignmentReferencesPage: consignment_references
+  arrivalSummaryPage: arrival_summary_page,
+  departureSummaryPage: departure_summary_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
+  private val logger = Logger(this.getClass)
+
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    Future.successful(Ok(consignmentReferencesPage(request.answersAs[ArrivalAnswers].consignmentReferences.fold(form)(form.fill(_)))))
+    request.answers match {
+      case arrivalAnswers: ArrivalAnswers     => Future.successful(Ok(arrivalSummaryPage(arrivalAnswers)))
+      case departureAnswers: DepartureAnswers => Future.successful(Ok(departureSummaryPage(departureAnswers)))
+    }
   }
 
-  def saveConsignmentReferences(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        (formWithErrors: Form[ConsignmentReferences]) => Future.successful(BadRequest(consignmentReferencesPage(formWithErrors))),
-        validForm => {
-          val arrivalAnswers = request.answersAs[ArrivalAnswers].copy(consignmentReferences = Some(validForm))
-          movementRepository.upsert(Cache(request.operator.pid, arrivalAnswers)).map { _ =>
-            // TODO depart/arrive logic
-            Redirect(controllers.routes.ArrivalReferenceController.displayPage())
-
-          }
-        }
-      )
+  def submitMovementRequest(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
+    ???
+//    submissionService
+//      .submitMovementRequest(movementCacheId, request.authenticatedRequest.user.eori, request.choice)
+//      .flatMap {
+//        case (Some(consignmentReferences), ACCEPTED) =>
+//          customsCacheService.remove(movementCacheId).map { _ =>
+//            Ok(movementConfirmationPage(consignmentReferences))
+//          }
+//        case _ =>
+//          Future.successful {
+//            logger.warn(s"No movement data found in cache.")
+//            errorHandler.getInternalServerErrorPage
+//          }
+//      }
   }
 }

@@ -16,12 +16,18 @@
 
 package models.cache
 
-import forms.ConsignmentReferences
+import forms._
 import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
 
-case class ArrivalAnswers(consignmentReferences: Option[ConsignmentReferences] = None) extends Answers {
+case class ArrivalAnswers(
+  consignmentReferences: Option[ConsignmentReferences] = None,
+  arrivalReference: Option[ArrivalReference] = None,
+  arrivalDetails: Option[ArrivalDetails] = None,
+  location: Option[Location] = None,
+  transport: Option[Transport] = None
+) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ARRIVE
 }
 
@@ -29,7 +35,7 @@ object ArrivalAnswers {
   implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
 }
 
-case class DepartureAnswers(field1: Option[String] = None) extends Answers {
+case class DepartureAnswers(field1: Option[String] = None, departureDetails: Option[DepartureDetails] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DEPART
 }
 

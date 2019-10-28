@@ -10,3 +10,23 @@ POST        /choice                        controllers.ChoiceController.submitCh
 # Enter DUCR page
 GET         /consignment-references        controllers.ConsignmentReferencesController.displayPage()
 POST        /consignment-references        controllers.ConsignmentReferencesController.saveConsignmentReferences()
+
+# Arrival Reference page
+GET         /arrival-reference                     controllers.ArrivalReferenceController.displayPage()
+POST        /arrival-reference                     controllers.ArrivalReferenceController.submit()
+
+# Movement details page
+GET         /movement-details                      controllers.MovementDetailsController.displayPage()
+POST        /movement-details                      controllers.MovementDetailsController.saveMovementDetails()
+
+# Goods location page
+GET         /location                              controllers.LocationController.displayPage()
+POST        /location                              controllers.LocationController.saveLocation()
+
+# Transport page
+GET         /transport                             controllers.TransportController.displayPage()
+POST        /transport                             controllers.TransportController.saveTransport()
+
+# Summary
+GET         /summary                               controllers.SummaryController.displayPage()
+POST        /summary                               controllers.SummaryController.submitMovementRequest()
