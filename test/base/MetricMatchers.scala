@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package controllers
+package base
 
-import play.api.mvc.Request
-import play.api.test.{CSRFTokenHelper, FakeRequest}
+import com.codahale.metrics.Counting
+import org.scalatest.matchers.{MatchResult, Matcher}
 
-trait CSRFSupport {
-  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
-    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
+trait MetricsMatchers {
+  def changeOn(block: => Any): Matcher[Counting] = new MetricsMatchers.ChangeOnMatcher(() => block)
+}
+
+object MetricsMatchers {
+  class ChangeOnMatcher(block: () => Any) extends Matcher[Counting] {
+    override def apply(left: Counting): MatchResult = {
+      val before = left.getCount
+      block()
+      val after = left.getCount
+      MatchResult(after > before, "Metric does not change in block", "Metric changed in block")
+    }
   }
 }

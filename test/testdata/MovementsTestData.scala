@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package testdata
+import forms.{Choice, Movement}
+import models.cache.{ArrivalAnswers, Cache}
+import models.requests.MovementRequest
 
-import play.api.mvc.Request
-import play.api.test.{CSRFTokenHelper, FakeRequest}
+object MovementsTestData {
 
-trait CSRFSupport {
-  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
-    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
-  }
+  def validMovementRequest(movementType: Choice): MovementRequest =
+    Movement.createMovementRequest(Cache("pid", ArrivalAnswers(Some("eori"))))
+
 }

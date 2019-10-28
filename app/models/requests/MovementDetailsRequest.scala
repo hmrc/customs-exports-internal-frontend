@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package models.requests
+import play.api.libs.json.{Json, OFormat}
 
-import play.api.mvc.Request
-import play.api.test.{CSRFTokenHelper, FakeRequest}
+case class MovementDetailsRequest(dateTime: String)
 
-trait CSRFSupport {
-  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
-    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
-  }
+object MovementDetailsRequest {
+  implicit val format: OFormat[MovementDetailsRequest] = Json.format[MovementDetailsRequest]
 }

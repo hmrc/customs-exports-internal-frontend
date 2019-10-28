@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package controllers
+package base
 
-import play.api.mvc.Request
-import play.api.test.{CSRFTokenHelper, FakeRequest}
+import org.mockito.Mockito.reset
+import org.scalatest.{BeforeAndAfterEach, Suite}
+import org.scalatestplus.mockito.MockitoSugar
+import repositories.MovementRepository
 
-trait CSRFSupport {
-  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
-    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
+trait MockMovementsRepository extends MockitoSugar with BeforeAndAfterEach { self: Suite =>
+
+  val mockMovementsRepository: MovementRepository = mock[MovementRepository]
+
+  override protected def afterEach(): Unit = {
+    reset(mockMovementsRepository)
+
+    super.afterEach()
   }
 }

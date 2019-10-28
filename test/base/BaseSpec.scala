@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package controllers
+package base
 
-import play.api.mvc.Request
-import play.api.test.{CSRFTokenHelper, FakeRequest}
+import org.scalatest.{MustMatchers, WordSpec}
 
-trait CSRFSupport {
-  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
-    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
-  }
-}
+trait BaseSpec extends WordSpec with MustMatchers

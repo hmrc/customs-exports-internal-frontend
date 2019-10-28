@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-package controllers
+package base
 
-import play.api.mvc.Request
-import play.api.test.{CSRFTokenHelper, FakeRequest}
+import com.codahale.metrics.{Counter, MetricRegistry, Timer}
+import com.kenshoo.play.metrics.Metrics
+import metrics.MovementsMetrics
 
-trait CSRFSupport {
-  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
-    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
+trait MovementsMetricsStub {
+
+  val registry = new MetricRegistry()
+
+  private val metrics: Metrics = new Metrics {
+    override val defaultRegistry: MetricRegistry = registry
+
+    override def toJson: String = ???
   }
+
+  val movementsMetricsStub = new MovementsMetrics(metrics)
+
+  def timer(name: String): Timer = registry.getTimers.get(name)
+
+  def counter(name: String): Counter = registry.getCounters.get(name)
+
 }
