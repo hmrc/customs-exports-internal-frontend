@@ -54,7 +54,7 @@ class ChoiceController @Inject()(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))),
         _ match {
           case forms.Choice.Arrival =>
-            proceedJourney(ArrivalAnswers(None), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(ArrivalAnswers(None), routes.ConsignmentReferencesController.displayPage())
           case forms.Choice.Departure =>
             proceedJourney(DepartureAnswers(None), routes.ChoiceController.displayChoiceForm())
           case forms.Choice.AssociateUCR =>
@@ -68,6 +68,5 @@ class ChoiceController @Inject()(
   }
 
   private def proceedJourney(journey: Answers, call: Call)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
-    // TODO change to upsert
     movementRepository.upsert(Cache(request.pid, journey)).map(_ => Redirect(call))
 }

@@ -1,6 +1,8 @@
 service.name=Internal Exports Movements 
 
+site.back = Back
 site.continue = Continue
+site.save_and_continue = Save and continue
 
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
@@ -14,6 +16,20 @@ movement.choice.disassociateDucr.label = Disassociate a consignment
 movement.choice.shutMucr.label = Shut a master consignment
 movement.choice.submissions.label = View requests
 
-
+consignmentReferences.title = Consignment references
+consignmentReferences.ARRIVE.heading = Arrive consignment
+consignmentReferences.DEPART.heading = Depart consignment
+consignmentReferences.ARRIVE.question = What consignment do you want to arrive?
+consignmentReferences.DEPART.question = What consignment do you want to depart?
+consignmentReferences.reference.ducr = Declaration Consignment Reference (DUCR)
+consignmentReferences.reference.mucr = Master Consignment Reference (MUCR)
+consignmentReferences.reference.empty = Please choose reference
+consignmentReferences.reference.error = Incorrect reference
+consignmentReferences.reference.ducrValue = Declaration Unique Consignment Reference
+consignmentReferences.reference.mucrValue = Master Unique Consignment Reference
+consignmentReferences.reference.mucrValue.empty = Enter a Master Unique Consignment Reference
+consignmentReferences.reference.ducrValue.empty = Enter a Declaration Unique Consignment Reference
+consignmentReferences.reference.mucrValue.error = Master Unique Consignment Reference is incorrect
+consignmentReferences.reference.ducrValue.error = Declaration Unique Consignment Reference is incorrect
 
 view.unauthorized.title=You are not authorized

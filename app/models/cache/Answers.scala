@@ -16,12 +16,12 @@
 
 package models.cache
 
-import models.cache
+import forms.ConsignmentReferences
 import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
 
-case class ArrivalAnswers(field1: Option[String] = None) extends Answers {
+case class ArrivalAnswers(consignmentReferences: Option[ConsignmentReferences] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ARRIVE
 }
 
