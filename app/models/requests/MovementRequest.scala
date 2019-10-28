@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package controllers
+package models.requests
 
-import play.api.mvc.Request
-import play.api.test.{CSRFTokenHelper, FakeRequest}
+import forms._
+import play.api.libs.json.{Json, OFormat}
 
-trait CSRFSupport {
-  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
-    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
-  }
+case class MovementRequest(
+  eori: String,
+  providerId: Option[String] = None,
+  choice: MovementType,
+  consignmentReference: ConsignmentReferences,
+  movementDetails: MovementDetailsRequest,
+  location: Option[Location] = None,
+  arrivalReference: Option[ArrivalReference] = None,
+  transport: Option[Transport] = None
+)
+
+object MovementRequest {
+  implicit val format: OFormat[MovementRequest] = Json.format[MovementRequest]
 }

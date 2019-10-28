@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package forms
+import play.api.libs.json.Json
 
-import play.api.mvc.Request
-import play.api.test.{CSRFTokenHelper, FakeRequest}
+// TODO replace with complete form
+case class ArrivalReference(reference: Option[String])
 
-trait CSRFSupport {
-  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
-    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
-  }
+object ArrivalReference {
+  implicit val format = Json.format[ArrivalReference]
 }
