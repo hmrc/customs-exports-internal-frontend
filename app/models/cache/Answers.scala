@@ -45,12 +45,12 @@ object AssociateUcrAnswers {
   implicit val format: Format[AssociateUcrAnswers] = Json.format[AssociateUcrAnswers]
 }
 
-case class DissociateUcrAnswers(field1: Option[String] = None) extends Answers {
+case class DisassociateUcrAnswers(eori: Option[String] = Some("eori"), ucr: Option[String] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
 }
 
-object DissociateUcrAnswers {
-  implicit val format: Format[DissociateUcrAnswers] = Json.format[DissociateUcrAnswers]
+object DisassociateUcrAnswers {
+  implicit val format: Format[DisassociateUcrAnswers] = Json.format[DisassociateUcrAnswers]
 }
 
 case class ShutMucrAnswers(field1: Option[String] = None) extends Answers {
@@ -71,7 +71,7 @@ object Answers {
     .and[ArrivalAnswers](JourneyType.ARRIVE.toString)
     .and[DepartureAnswers](JourneyType.DEPART.toString)
     .and[AssociateUcrAnswers](JourneyType.ASSOCIATE_UCR.toString)
-    .and[DissociateUcrAnswers](JourneyType.DISSOCIATE_UCR.toString)
+    .and[DisassociateUcrAnswers](JourneyType.DISSOCIATE_UCR.toString)
     .and[ShutMucrAnswers](JourneyType.SHUT_MUCR.toString)
     .format
 }

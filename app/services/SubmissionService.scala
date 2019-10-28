@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package services
 
-import play.api.mvc.Request
-import play.api.test.{CSRFTokenHelper, FakeRequest}
+import models.cache.DisassociateUcrAnswers
 
-trait CSRFSupport {
-  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
-    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
-  }
+import scala.concurrent.Future
+
+trait SubmissionService {
+
+  def submit(answers: DisassociateUcrAnswers): Future[Unit]
+
 }

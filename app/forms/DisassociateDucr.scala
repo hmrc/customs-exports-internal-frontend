@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package controllers
+package forms
 
-import play.api.mvc.Request
-import play.api.test.{CSRFTokenHelper, FakeRequest}
+import play.api.data.{Form, Forms, Mapping}
+import play.api.data.Forms.text
+import play.api.libs.json.{Json, OFormat}
+import utils.FieldValidator._
 
-trait CSRFSupport {
-  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
-    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
-  }
+object DisassociateDucr {
+  val mapping: Mapping[String] = Forms.mapping(
+    "ducr" -> text()
+      .verifying("disassociateDucr.ducr.empty", nonEmpty)
+      .verifying("disassociateDucr.ducr.error", isEmpty or validDucr)
+  )(identity)(Some(_))
+
+  val form: Form[String] = Form(mapping)
 }

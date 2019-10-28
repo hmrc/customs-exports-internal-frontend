@@ -101,7 +101,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe Status.SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ChoiceController.displayChoiceForm().url)
-        theCacheUpserted mustBe Cache(pid, DissociateUcrAnswers())
+        theCacheUpserted mustBe Cache(pid, DisassociateUcrAnswers())
       }
 
       "shut MUCR" in {

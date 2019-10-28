@@ -16,16 +16,16 @@
 
 package controllers
 
+import controllers.actions.AuthenticatedAction
+import controllers.exchanges.AuthenticatedRequest
 import forms.Choice
 import javax.inject.{Inject, Singleton}
+import models.cache._
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result, Results}
-import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.exchanges.AuthenticatedRequest
-import models.cache.{Answers, ArrivalAnswers, AssociateUcrAnswers, Cache, DepartureAnswers, DissociateUcrAnswers, ShutMucrAnswers}
+import play.api.mvc._
 import repositories.MovementRepository
-import views.html.choice_page
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.choice_page
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -52,13 +52,13 @@ class ChoiceController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), {
           case forms.Choice.Arrival =>
-            proceedJourney(ArrivalAnswers(None), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(ArrivalAnswers(), routes.ChoiceController.displayChoiceForm())
           case forms.Choice.Departure =>
-            proceedJourney(DepartureAnswers(None), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(DepartureAnswers(), routes.ChoiceController.displayChoiceForm())
           case forms.Choice.AssociateUCR =>
-            proceedJourney(AssociateUcrAnswers(None), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(AssociateUcrAnswers(), routes.ChoiceController.displayChoiceForm())
           case forms.Choice.DisassociateUCR =>
-            proceedJourney(DissociateUcrAnswers(None), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(DisassociateUcrAnswers(), routes.ChoiceController.displayChoiceForm())
           case forms.Choice.ShutMUCR =>
             proceedJourney(ShutMucrAnswers(None), routes.ChoiceController.displayChoiceForm())
         }

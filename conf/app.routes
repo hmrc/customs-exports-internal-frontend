@@ -6,3 +6,7 @@ GET         /hello-world         controllers.HelloWorldController.helloWorld
 # Declaration choice page
 GET         /choice              controllers.ChoiceController.displayChoiceForm()
 POST        /choice              controllers.ChoiceController.submitChoice()
+
+# Disassociate DUCR page
+GET         /disassociate-ducr                     controllers.DisassociateDucrController.display()
+POST        /disassociate-ducr                     controllers.DisassociateDucrController.submit()

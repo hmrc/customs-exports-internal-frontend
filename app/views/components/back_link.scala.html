@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package controllers
+@(href: Call)(implicit messages: Messages)
 
-import play.api.mvc.Request
-import play.api.test.{CSRFTokenHelper, FakeRequest}
-
-trait CSRFSupport {
-  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
-    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
-  }
-}
+<div class="js-visible">
+    <a id="link-back" class="link-back" href="@{href.url}">@messages("site.back")</a>
+</div>
