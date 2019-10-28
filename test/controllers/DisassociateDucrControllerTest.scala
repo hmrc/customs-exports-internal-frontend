@@ -40,14 +40,7 @@ class DisassociateDucrControllerTest extends ControllerLayerSpec with MockCache 
   private val page = new disassociate_ducr(main_template)
 
   private def controller(auth: AuthenticatedAction, existingAnswers: Answers) =
-    new DisassociateDucrController(
-      auth,
-      ValidJourney(existingAnswers),
-      stubMessagesControllerComponents(),
-      submissionService,
-      cache,
-      page
-    )
+    new DisassociateDucrController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), submissionService, cache, page)
 
   "GET" should {
     implicit val get = FakeRequest("GET", "/").withCSRFToken

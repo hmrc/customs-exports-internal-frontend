@@ -32,12 +32,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DisassociateDucrController @Inject()(
-                                            authenticate: AuthenticatedAction,
-                                            getJourney: JourneyRefiner,
-                                            mcc: MessagesControllerComponents,
-                                            submissionService: SubmissionService,
-                                            movementRepository: MovementRepository,
-                                            page: disassociate_ducr
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  mcc: MessagesControllerComponents,
+  submissionService: SubmissionService,
+  movementRepository: MovementRepository,
+  page: disassociate_ducr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

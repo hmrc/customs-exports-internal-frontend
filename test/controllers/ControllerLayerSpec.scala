@@ -76,9 +76,8 @@ abstract class ControllerLayerSpec extends WordSpec with ViewTemplates with Must
     override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
       Future.successful(Right(JourneyRequest(answers, request)))
 
-    override def apply(types: JourneyType*): ActionRefiner[AuthenticatedRequest, JourneyRequest] = {
+    override def apply(types: JourneyType*): ActionRefiner[AuthenticatedRequest, JourneyRequest] =
       if (types.contains(answers.`type`)) ValidJourney(answers) else InValidJourney
-    }
   }
 
   case object InValidJourney extends JourneyRefiner(mock[MovementRepository]) {

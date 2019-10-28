@@ -27,18 +27,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyRefiner @Inject()(movementRepository: MovementRepository)(implicit val exc: ExecutionContext)
-  extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
+    extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
   override protected def executionContext: ExecutionContext = exc
 
-  private def refiner[A](request: AuthenticatedRequest[A], types: JourneyType*): Future[Either[Result, JourneyRequest[A]]] = {
+  private def refiner[A](request: AuthenticatedRequest[A], types: JourneyType*): Future[Either[Result, JourneyRequest[A]]] =
     movementRepository.findByPid(request.operator.pid).map(_.map(_.answers)).map {
       case Some(answers: Answers) if types.isEmpty || types.contains(answers.`type`) =>
         Right(JourneyRequest(answers, request))
       case _ =>
         Left(Results.Redirect(controllers.routes.ChoiceController.displayChoiceForm()))
     }
-  }
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
     refiner(request, Seq.empty[JourneyType]: _*)
