@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package controllers
 
-import models.ReturnToStartException
-import models.cache.Answers
-import play.api.mvc.WrappedRequest
+import play.api.mvc.Request
+import play.api.test.{CSRFTokenHelper, FakeRequest}
 
-case class JourneyRequest[T](answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
-
-  val operator: Operator = request.operator
-  val pid: String = request.operator.pid
-
-  def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
-
-  def answersAs[J <: Answers]: J = answers match {
-    case ans: J => ans
-    case _      => throw ReturnToStartException
+trait CSRFSupport {
+  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
+    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
   }
 }

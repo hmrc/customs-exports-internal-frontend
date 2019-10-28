@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package testdata
+import forms.{Choice, Movement}
+import models.cache.{ArrivalAnswers, Cache}
+import models.requests.MovementRequest
 
-import models.ReturnToStartException
-import models.cache.Answers
-import play.api.mvc.WrappedRequest
+object MovementsTestData {
 
-case class JourneyRequest[T](answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
+  def validMovementRequest(movementType: Choice): MovementRequest =
+    Movement.createMovementRequest(Cache("pid", ArrivalAnswers(Some("eori"))))
 
-  val operator: Operator = request.operator
-  val pid: String = request.operator.pid
-
-  def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
-
-  def answersAs[J <: Answers]: J = answers match {
-    case ans: J => ans
-    case _      => throw ReturnToStartException
-  }
 }

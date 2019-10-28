@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package base
 
-import models.ReturnToStartException
-import models.cache.Answers
-import play.api.mvc.WrappedRequest
+import com.codahale.metrics.{Counter, MetricRegistry, Timer}
+import com.kenshoo.play.metrics.Metrics
+import metrics.MovementsMetrics
 
-case class JourneyRequest[T](answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
+trait MovementsMetricsStub {
 
-  val operator: Operator = request.operator
-  val pid: String = request.operator.pid
+  val registry = new MetricRegistry()
 
-  def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
+  private val metrics: Metrics = new Metrics {
+    override val defaultRegistry: MetricRegistry = registry
 
-  def answersAs[J <: Answers]: J = answers match {
-    case ans: J => ans
-    case _      => throw ReturnToStartException
+    override def toJson: String = ???
   }
+
+  val movementsMetricsStub = new MovementsMetrics(metrics)
+
+  def timer(name: String): Timer = registry.getTimers.get(name)
+
+  def counter(name: String): Counter = registry.getCounters.get(name)
+
 }

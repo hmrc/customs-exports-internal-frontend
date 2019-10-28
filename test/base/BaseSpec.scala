@@ -14,21 +14,8 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package base
 
-import models.ReturnToStartException
-import models.cache.Answers
-import play.api.mvc.WrappedRequest
+import org.scalatest.{MustMatchers, WordSpec}
 
-case class JourneyRequest[T](answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
-
-  val operator: Operator = request.operator
-  val pid: String = request.operator.pid
-
-  def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
-
-  def answersAs[J <: Answers]: J = answers match {
-    case ans: J => ans
-    case _      => throw ReturnToStartException
-  }
-}
+trait BaseSpec extends WordSpec with MustMatchers

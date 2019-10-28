@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package models.requests
 
-import models.ReturnToStartException
-import models.cache.Answers
-import play.api.mvc.WrappedRequest
+import forms._
+import play.api.libs.json.{Json, OFormat}
 
-case class JourneyRequest[T](answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
+case class MovementRequest(
+  eori: String,
+  providerId: Option[String] = None,
+  choice: MovementType,
+  consignmentReference: ConsignmentReferences,
+  movementDetails: MovementDetailsRequest,
+  location: Option[Location] = None,
+  arrivalReference: Option[ArrivalReference] = None,
+  transport: Option[Transport] = None
+)
 
-  val operator: Operator = request.operator
-  val pid: String = request.operator.pid
-
-  def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
-
-  def answersAs[J <: Answers]: J = answers match {
-    case ans: J => ans
-    case _      => throw ReturnToStartException
-  }
+object MovementRequest {
+  implicit val format: OFormat[MovementRequest] = Json.format[MovementRequest]
 }

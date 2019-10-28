@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package base
 
-import models.ReturnToStartException
-import models.cache.Answers
-import play.api.mvc.WrappedRequest
+import org.mockito.Mockito.reset
+import org.scalatest.{BeforeAndAfterEach, Suite}
+import org.scalatestplus.mockito.MockitoSugar
+import repositories.MovementRepository
 
-case class JourneyRequest[T](answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
+trait MockMovementsRepository extends MockitoSugar with BeforeAndAfterEach { self: Suite =>
 
-  val operator: Operator = request.operator
-  val pid: String = request.operator.pid
+  val mockMovementsRepository: MovementRepository = mock[MovementRepository]
 
-  def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
+  override protected def afterEach(): Unit = {
+    reset(mockMovementsRepository)
 
-  def answersAs[J <: Answers]: J = answers match {
-    case ans: J => ans
-    case _      => throw ReturnToStartException
+    super.afterEach()
   }
 }
