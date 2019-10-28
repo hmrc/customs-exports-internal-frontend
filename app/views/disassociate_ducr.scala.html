@@ -21,7 +21,7 @@
 
 @(form: Form[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title("disassociateDucr.title")) {
+@main_template(title = Title(messages("disassociateDucr.title"))) {
     @helper.form(controllers.consolidations.routes.DisassociateDucrController.submit, 'autoComplete -> "off") {
         @helper.CSRF.formField
 

@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package views
+package storage
 
-import play.api.i18n.Messages
-
-case class Title(title: String)
-
-object Title {
-  def apply(headingKey: String, sectionKey: Option[String])(implicit messages: Messages): Title =
-    if (sectionKey.isEmpty) {
-      Title(messages("title.format", messages(headingKey), messages("service.name")))
-    } else {
-      Title(messages("title.withSection.format", messages(headingKey), messages(sectionKey.getOrElse("")), messages("service.name")))
-    }
+object FlashKeys {
+  val UCR = "UCR"
+  val CONSOLIDATION_KIND = "CONSOLIDATION_KIND"
+  val MUCR = "MUCR"
 }
