@@ -32,7 +32,7 @@ import repositories.MovementRepository
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class EnsureJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSugar with BeforeAndAfterEach {
+class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSugar with BeforeAndAfterEach {
 
   private val movementRepository = mock[MovementRepository]
   private val block = mock[JourneyRequest[_] => Future[Result]]
