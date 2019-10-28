@@ -19,6 +19,7 @@ package controllers.consolidations
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.storage.FlashKeys
 import javax.inject.Inject
+import models.ReturnToStartException
 import models.cache.AssociateUcrAnswers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -44,7 +45,7 @@ class AssociateUCRSummaryController @Inject()(
 
     (mucrOpt, associateUcrOpt) match {
       case (Some(mucrOptions), Some(ucr)) => Ok(associateUcrSummaryPage(ucr, mucrOptions.mucr))
-      case _                              => Redirect(controllers.routes.ChoiceController.displayPage())
+      case _                              => throw ReturnToStartException
     }
   }
 
@@ -58,7 +59,7 @@ class AssociateUCRSummaryController @Inject()(
         // Submit based on the data above
         Redirect(routes.AssociateUCRConfirmationController.displayPage())
           .flashing(FlashKeys.UCR -> ucr.ucr, FlashKeys.CONSOLIDATION_KIND -> ucr.kind.formValue)
-      case _ => Redirect(controllers.routes.ChoiceController.displayPage())
+      case _ => throw ReturnToStartException
     }
   }
 }
