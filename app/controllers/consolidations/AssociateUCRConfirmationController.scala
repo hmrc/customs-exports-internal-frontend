@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.consolidations
 
-import javax.inject.{Inject, Singleton}
+import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import javax.inject.Inject
 import play.api.i18n.I18nSupport
-import play.api.mvc._
-import controllers.actions.AuthenticatedAction
-import views.html.hello_world
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.associate_ucr_confirmation
 
-import scala.concurrent.Future
+class AssociateUCRConfirmationController @Inject()(
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  mcc: MessagesControllerComponents,
+  associateUCRConfirmPage: associate_ucr_confirmation
+) extends FrontendController(mcc) with I18nSupport {
 
-@Singleton
-class HelloWorldController @Inject()(authenticate: AuthenticatedAction, mcc: MessagesControllerComponents, helloWorldPage: hello_world)
-    extends FrontendController(mcc) with I18nSupport {
-
-  val helloWorld: Action[AnyContent] = authenticate.async { implicit request =>
-    Future.successful(Ok(helloWorldPage()))
+  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
+    Ok(associateUCRConfirmPage())
   }
-
 }

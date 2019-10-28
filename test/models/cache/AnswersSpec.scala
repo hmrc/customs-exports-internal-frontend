@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package unit.models.cache
+package models.cache
 
-import models.cache._
+import base.UnitSpec
 import play.api.libs.json.{JsObject, JsString, JsSuccess, JsValue}
-import unit.base.UnitSpec
 
-class Answers extends UnitSpec {
+class AnswersSpec extends UnitSpec {
 
   "Answers reads" should {
 

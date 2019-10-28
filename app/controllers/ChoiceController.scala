@@ -38,34 +38,50 @@ class ChoiceController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayChoiceForm: Action[AnyContent] = authenticate.async { implicit request =>
+  def displayPage: Action[AnyContent] = authenticate.async { implicit request =>
     movementRepository.findByPid(request.operator.pid).map {
       case Some(cache) => Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
       case None        => Ok(choicePage(Choice.form()))
     }
   }
 
-  def submitChoice: Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
+  def startSpecificJourney(choice: String): Action[AnyContent] = authenticate.async { implicit request =>
+    val correctChoice = Choice(choice)
+
+    correctChoice match {
+      case forms.Choice.Arrival | forms.Choice.Departure =>
+        proceedJourney(ArrivalAnswers(), routes.ChoiceController.displayPage())
+      case forms.Choice.AssociateUCR =>
+        proceedJourney(DepartureAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
+      case forms.Choice.DisassociateUCR =>
+        proceedJourney(AssociateUcrAnswers(), routes.ChoiceController.displayPage())
+      case forms.Choice.ShutMUCR =>
+        proceedJourney(DissociateUcrAnswers(), routes.ChoiceController.displayPage())
+      case forms.Choice.Submissions =>
+        proceedJourney(ShutMucrAnswers(), routes.ChoiceController.displayPage())
+    }
+  }
+
+  def submit: Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
     Choice
       .form()
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), {
           case forms.Choice.Arrival =>
-            proceedJourney(ArrivalAnswers(), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(ArrivalAnswers(), routes.ChoiceController.displayPage())
           case forms.Choice.Departure =>
-            proceedJourney(DepartureAnswers(), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(DepartureAnswers(), routes.ChoiceController.displayPage())
           case forms.Choice.AssociateUCR =>
-            proceedJourney(AssociateUcrAnswers(), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(AssociateUcrAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
           case forms.Choice.DisassociateUCR =>
-            proceedJourney(DisassociateUcrAnswers(), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(DisassociateUcrAnswers(, routes.ChoiceController.displayPage())
           case forms.Choice.ShutMUCR =>
-            proceedJourney(ShutMucrAnswers(None), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(ShutMucrAnswers(None), routes.ChoiceController.displayPage())
         }
       )
   }
 
   private def proceedJourney(journey: Answers, call: Call)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
-    // TODO change to upsert
     movementRepository.upsert(Cache(request.pid, journey)).map(_ => Redirect(call))
 }

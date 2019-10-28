@@ -19,6 +19,7 @@ package models.cache
 import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
+import forms.{AssociateUcr, MucrOptions}
 
 case class ArrivalAnswers(override val eori: Option[String] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ARRIVE
@@ -36,7 +37,11 @@ object DepartureAnswers {
   implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
 }
 
-case class AssociateUcrAnswers(override val eori: Option[String] = None) extends Answers {
+case class AssociateUcrAnswers(
+  override val eori: Option[String] = None,
+  mucrOptions: Option[MucrOptions] = None,
+  associateUcr: Option[AssociateUcr] = None
+) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ASSOCIATE_UCR
 }
 

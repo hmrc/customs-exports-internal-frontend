@@ -16,7 +16,7 @@
 
 package services
 
-import base.{MetricsMatchers, MockCustomsExportsMovement, MockMovementsRepository, MovementsMetricsStub}
+import base.{MetricsMatchers, MockCustomsExportsMovement, MockMovementsRepository, MovementsMetricsStub, UnitSpec}
 import models.cache.{ArrivalAnswers, Cache}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -27,7 +27,6 @@ import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.test.Helpers._
 import services.audit.{AuditService, AuditTypes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import unit.base.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

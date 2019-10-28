@@ -20,7 +20,6 @@
 @import views.components.fields.RadioOption
 @import views.Title
 @import views.html.templates.main_template
-@import views.html.components
 
 @this(main_template: main_template)
 
@@ -28,7 +27,7 @@
 
 @main_template(title = Title("movement.choice.title")) {
 
-    @helper.form(routes.ChoiceController.submitChoice(), 'autoComplete -> "off") {
+    @helper.form(routes.ChoiceController.submit(), 'autoComplete -> "off") {
         @helper.CSRF.formField
 
         @components.error_summary(form.errors)

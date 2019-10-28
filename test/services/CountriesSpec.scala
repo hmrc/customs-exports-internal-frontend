@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.templates.main_template
-@import views.Title
+package services
 
-@this(main_template: main_template)
+import base.UnitSpec
+import services.Countries.allCountries
 
-@()(implicit request: Request[_], messages: Messages)
+class CountriesSpec extends UnitSpec {
 
-@main_template(title = Title("Hello from customs-exports-internal-frontend")) {
-    <h1>Hello from customs-exports-internal-frontend !</h1>
+  "Countries" should {
+    "give all countries with codes in alphabetical order of country name with filtering according to permitted MDG values" in {
+      allCountries must contain(Country("Afghanistan", "AF"))
+      allCountries must contain(Country("Curaçao", "CW"))
+      allCountries must contain(Country("Zimbabwe", "ZW"))
+    }
+  }
 }

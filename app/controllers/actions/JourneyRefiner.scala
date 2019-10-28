@@ -36,7 +36,7 @@ class JourneyRefiner @Inject()(movementRepository: MovementRepository)(implicit 
       case Some(answers: Answers) if types.isEmpty || types.contains(answers.`type`) =>
         Right(JourneyRequest(answers, request))
       case _ =>
-        Left(Results.Redirect(controllers.routes.ChoiceController.displayChoiceForm()))
+        Left(Results.Redirect(controllers.routes.ChoiceController.displayPage()))
     }
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
