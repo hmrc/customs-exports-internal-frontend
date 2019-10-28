@@ -16,16 +16,16 @@
 
 package controllers
 
+import controllers.actions.AuthenticatedAction
+import controllers.exchanges.AuthenticatedRequest
 import forms.Choice
 import javax.inject.{Inject, Singleton}
+import models.cache._
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result, Results}
-import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.exchanges.AuthenticatedRequest
-import models.cache.{Answers, ArrivalAnswers, AssociateUcrAnswers, Cache, DepartureAnswers, DissociateUcrAnswers, ShutMucrAnswers}
+import play.api.mvc._
 import repositories.MovementRepository
-import views.html.choice_page
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.choice_page
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,34 +38,50 @@ class ChoiceController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayChoiceForm: Action[AnyContent] = authenticate.async { implicit request =>
+  def displayPage: Action[AnyContent] = authenticate.async { implicit request =>
     movementRepository.findByPid(request.operator.pid).map {
       case Some(cache) => Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
       case None        => Ok(choicePage(Choice.form()))
     }
   }
 
-  def submitChoice: Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
+  def startSpecificJourney(choice: String): Action[AnyContent] = authenticate.async { implicit request =>
+    val correctChoice = Choice(choice)
+
+    correctChoice match {
+      case forms.Choice.Arrival | forms.Choice.Departure =>
+        proceedJourney(ArrivalAnswers(None), routes.ChoiceController.displayPage())
+      case forms.Choice.AssociateUCR =>
+        proceedJourney(DepartureAnswers(None), controllers.consolidations.routes.MucrOptionsController.displayPage())
+      case forms.Choice.DisassociateUCR =>
+        proceedJourney(AssociateUcrAnswers(None), routes.ChoiceController.displayPage())
+      case forms.Choice.ShutMUCR =>
+        proceedJourney(DissociateUcrAnswers(None), routes.ChoiceController.displayPage())
+      case forms.Choice.Submissions =>
+        proceedJourney(ShutMucrAnswers(None), routes.ChoiceController.displayPage())
+    }
+  }
+
+  def submit: Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
     Choice
       .form()
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), {
           case forms.Choice.Arrival =>
-            proceedJourney(ArrivalAnswers(None), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(ArrivalAnswers(None), routes.ChoiceController.displayPage())
           case forms.Choice.Departure =>
-            proceedJourney(DepartureAnswers(None), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(DepartureAnswers(None), routes.ChoiceController.displayPage())
           case forms.Choice.AssociateUCR =>
-            proceedJourney(AssociateUcrAnswers(None), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(AssociateUcrAnswers(None), controllers.consolidations.routes.MucrOptionsController.displayPage())
           case forms.Choice.DisassociateUCR =>
-            proceedJourney(DissociateUcrAnswers(None), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(DissociateUcrAnswers(None), routes.ChoiceController.displayPage())
           case forms.Choice.ShutMUCR =>
-            proceedJourney(ShutMucrAnswers(None), routes.ChoiceController.displayChoiceForm())
+            proceedJourney(ShutMucrAnswers(None), routes.ChoiceController.displayPage())
         }
       )
   }
 
   private def proceedJourney(journey: Answers, call: Call)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
-    // TODO change to upsert
     movementRepository.upsert(Cache(request.pid, journey)).map(_ => Redirect(call))
 }

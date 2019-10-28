@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package unit.base
+package controllers.storage
 
-import org.scalatest.{MustMatchers, WordSpec}
-import org.scalatestplus.mockito.MockitoSugar
-
-trait UnitSpec extends WordSpec with MustMatchers with MockitoSugar
+object FlashKeys {
+  val UCR = "UCR"
+  val CONSOLIDATION_KIND = "CONSOLIDATION_KIND"
+  val MUCR = "MUCR"
+}

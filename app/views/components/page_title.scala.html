@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package unit.services
+@(title: Option[String] = None, subtitle: Option[String] = None)(implicit messages: Messages)
 
-import services.Countries.allCountries
-import services.Country
-import unit.base.UnitSpec
-
-class CountriesSpec extends UnitSpec {
-
-  "Countries" should {
-    "give all countries with codes in alphabetical order of country name with filtering according to permitted MDG values" in {
-      allCountries must contain(Country("Afghanistan", "AF"))
-      allCountries must contain(Country("Curaçao", "CW"))
-      allCountries must contain(Country("Zimbabwe", "ZW"))
-    }
-  }
-}
+<fieldset>
+    <legend class="heading-large" role="heading" aria="" level="1">
+        @if(title.nonEmpty) {
+            <h1 id="title" style="margin:0">@messages(title.get)</h1>
+        }
+        @if(subtitle.nonEmpty) {
+            <span class="form-hint">@messages(subtitle.get)</span>
+        }
+    </legend>
+</fieldset>

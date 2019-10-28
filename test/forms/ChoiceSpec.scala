@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package unit.forms
+package forms
 
+import base.UnitSpec
 import forms.Choice.{Arrival, ChoiceValueFormat, Departure}
-import forms.Choice
 import org.scalatest.OptionValues
-import play.api.libs.json.{JsError, JsNumber, JsObject, JsString, JsSuccess, JsValue}
-import unit.base.UnitSpec
+import play.api.libs.json._
 
 class ChoiceSpec extends UnitSpec with OptionValues {
 

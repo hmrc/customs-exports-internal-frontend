@@ -10,8 +10,9 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "govuk-template"           % "5.42.0-play-26",
     "uk.gov.hmrc" %% "play-json-union-formatter"  % "1.5.0",
     "uk.gov.hmrc"             %% "play-ui"                  % "8.2.0-play-26",
-    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.1.0"
-  ) map(_.withSources())
+    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.1.0",
+    "uk.gov.hmrc" %% "play-conditional-form-mapping" % "1.1.0-play-26"
+  ).map(_.withSources())
 
   val test = Seq(
     "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.1.0" % Test classifier "tests",
@@ -21,6 +22,6 @@ object AppDependencies {
     "org.mockito"             %  "mockito-core"             % "3.0.0"                 % "test",
     "org.pegdown"             %  "pegdown"                  % "1.6.0"                 % "test, it",
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "3.1.2"                 % "test, it"
-  ) map(_.withSources())
+  ).map(_.withSources())
 
 }

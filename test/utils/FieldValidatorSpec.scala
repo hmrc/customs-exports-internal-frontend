@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package unit.utils
+package utils
 
-import unit.base.UnitSpec
+import base.UnitSpec
 import utils.FieldValidator._
 
 import scala.util.Random
