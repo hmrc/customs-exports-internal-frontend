@@ -50,8 +50,7 @@ class ChoiceController @Inject()(
       .form()
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))),
-        {
+        formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), {
           case forms.Choice.Arrival =>
             proceedJourney(ArrivalAnswers(None), routes.ChoiceController.displayChoiceForm())
           case forms.Choice.Departure =>

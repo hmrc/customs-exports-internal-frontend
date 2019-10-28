@@ -25,7 +25,6 @@ import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.mvc.{Request, Result, Results}
-import play.api.test.Helpers
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
@@ -47,27 +46,27 @@ abstract class ControllerLayerSpec extends WordSpec with ViewTemplates with Must
   protected def contentAsHtml(of: Future[Result]): Html = Html(contentAsBytes(of).decodeString(charset(of).getOrElse("utf-8")))
 
   case class SuccessfulAuth(operator: Operator = operator)
-    extends AuthenticatedAction(
-      mock[AppConfig],
-      mock[Configuration],
-      mock[Environment],
-      mock[StrideAuthConnector],
-      stubMessagesControllerComponents(),
-      mock[unauthorized]
-    ) {
+      extends AuthenticatedAction(
+        mock[AppConfig],
+        mock[Configuration],
+        mock[Environment],
+        mock[StrideAuthConnector],
+        stubMessagesControllerComponents(),
+        mock[unauthorized]
+      ) {
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
       block(AuthenticatedRequest(operator, request))
   }
 
   case object UnsuccessfulAuth
-    extends AuthenticatedAction(
-      mock[AppConfig],
-      mock[Configuration],
-      mock[Environment],
-      mock[StrideAuthConnector],
-      stubMessagesControllerComponents(),
-      mock[unauthorized]
-    ) {
+      extends AuthenticatedAction(
+        mock[AppConfig],
+        mock[Configuration],
+        mock[Environment],
+        mock[StrideAuthConnector],
+        stubMessagesControllerComponents(),
+        mock[unauthorized]
+      ) {
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
       Future.successful(Results.Forbidden(""))
   }

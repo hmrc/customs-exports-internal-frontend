@@ -28,13 +28,11 @@ trait MockCache extends MockitoSugar with BeforeAndAfterEach {
     super.afterEach()
   }
 
-  protected def givenTheCacheContains(content: Cache): Unit = {
+  protected def givenTheCacheContains(content: Cache): Unit =
     given(cache.findByPid(any())).willReturn(Future.successful(Some(content)))
-  }
 
-  protected def givenTheCacheIsEmpty(): Unit = {
+  protected def givenTheCacheIsEmpty(): Unit =
     given(cache.findByPid(any())).willReturn(Future.successful(None))
-  }
 
   protected def theCacheUpserted: Cache = {
     val captor: ArgumentCaptor[Cache] = ArgumentCaptor.forClass(classOf[Cache])
