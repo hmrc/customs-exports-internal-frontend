@@ -15,8 +15,9 @@
  *@
 
 @import views.Title
+@import views.html.templates.main_template
 
-@this(main_template: views.html.templates.main_template)
+@this(main_template: main_template)
 
 @(form: Form[String])(implicit request: Request[_], messages: Messages)
 

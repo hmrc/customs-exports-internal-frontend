@@ -15,5 +15,8 @@ movement.choice.shutMucr.label = Shut a master consignment
 movement.choice.submissions.label = View requests
 
 
+disassociateDucr.title = Which DUCR do you want to remove?
 
-view.unauthorized.title=You are not authorized
+
+
+view.unauthorized.title = You are not authorized
