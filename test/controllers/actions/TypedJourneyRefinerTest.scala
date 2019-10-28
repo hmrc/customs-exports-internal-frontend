@@ -81,17 +81,13 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
       "answers not found" in {
         given(movementRepository.findByPid("pid")).willReturn(Future.successful(None))
 
-        await(refiner(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Redirect(
-          controllers.routes.ChoiceController.displayPage()
-        )
+        await(refiner(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Redirect(controllers.routes.ChoiceController.displayPage())
       }
 
       "answers found of a different type" in {
         given(movementRepository.findByPid("pid")).willReturn(Future.successful(None))
 
-        await(refiner(JourneyType.DEPART).invokeBlock(request, block)) mustBe Results.Redirect(
-          controllers.routes.ChoiceController.displayPage()
-        )
+        await(refiner(JourneyType.DEPART).invokeBlock(request, block)) mustBe Results.Redirect(controllers.routes.ChoiceController.displayPage())
       }
     }
   }

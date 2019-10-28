@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.consolidations
 
+import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
+import controllers.storage.FlashKeys
 import forms.DisassociateDucr
 import models.cache.{Answers, DisassociateUcrAnswers}
 import org.mockito.ArgumentMatchers._
@@ -33,7 +35,7 @@ import views.html.disassociate_ducr
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DisassociateDucrControllerTest extends ControllerLayerSpec with MockCache {
+class DisassociateDucrControllerSpec extends ControllerLayerSpec with MockCache {
 
   private val ucr = "9AB123456"
   private val submissionService = mock[SubmissionService]
@@ -78,6 +80,7 @@ class DisassociateDucrControllerTest extends ControllerLayerSpec with MockCache 
       status(result) mustBe Status.SEE_OTHER
       redirectLocation(result) mustBe Some(routes.DisassociateDucrController.display().url)
       theSubmission mustBe DisassociateUcrAnswers(ucr = Some(ucr))
+      flash(result).get(FlashKeys.UCR) mustBe Some(ucr)
     }
 
     def theSubmission: DisassociateUcrAnswers = {

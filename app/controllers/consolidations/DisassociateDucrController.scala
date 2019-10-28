@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.storage.FlashKeys
 import forms.DisassociateDucr
 import javax.inject.{Inject, Singleton}
 import models.cache.{DisassociateUcrAnswers, JourneyType}
@@ -24,7 +25,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.MovementRepository
 import services.SubmissionService
-import storage.FlashKeys
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.disassociate_ducr
 
@@ -57,7 +57,7 @@ class DisassociateDucrController @Inject()(
           for {
             _ <- submissionService.submit(request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))
           } yield
-            Redirect(routes.DisassociateDucrController.display())
+            Redirect(controllers.consolidations.routes.DisassociateDucrController.display())
               .flashing(FlashKeys.UCR -> answers)
       )
   }
