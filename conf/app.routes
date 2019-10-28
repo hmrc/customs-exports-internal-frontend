@@ -1,8 +1,6 @@
 # microservice specific routes
 GET         /assets/*file                      controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /hello-world                       controllers.HelloWorldController.helloWorld
-
 # Declaration choice page
 GET         /choice                            controllers.ChoiceController.displayPage()
 GET         /choice/:journey                   controllers.ChoiceController.startSpecificJourney(journey)
