@@ -39,7 +39,7 @@ class ChoiceController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayChoiceForm: Action[AnyContent] = authenticate.async { implicit request =>
-    movementRepository.findByPid(request.operator.pid).map {
+    movementRepository.findByPid(request.pid).map {
       case Some(cache) => Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
       case None        => Ok(choicePage(Choice.form()))
     }

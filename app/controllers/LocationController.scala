@@ -51,7 +51,7 @@ class LocationController @Inject()(
         (formWithErrors: Form[Location]) => Future.successful(BadRequest(locationPage(formWithErrors))),
         validForm => {
           val arrivalAnswers = request.answersAs[ArrivalAnswers].copy(location = Some(validForm))
-          movementRepository.upsert(Cache(request.operator.pid, arrivalAnswers)).map { _ =>
+          movementRepository.upsert(Cache(request.pid, arrivalAnswers)).map { _ =>
             request.answers match {
               case arrivalAnswers: ArrivalAnswers =>
                 Redirect(controllers.routes.SummaryController.displayPage())

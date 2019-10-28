@@ -23,6 +23,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.MovementRepository
+import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.summary.{arrival_summary_page, departure_summary_page}
 
@@ -32,6 +33,7 @@ class SummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   movementRepository: MovementRepository,
+  submissionService: SubmissionService,
   mcc: MessagesControllerComponents,
   arrivalSummaryPage: arrival_summary_page,
   departureSummaryPage: departure_summary_page
@@ -47,20 +49,19 @@ class SummaryController @Inject()(
     }
   }
 
-  def submitMovementRequest(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    ???
-//    submissionService
-//      .submitMovementRequest(movementCacheId, request.authenticatedRequest.user.eori, request.choice)
-//      .flatMap {
-//        case (Some(consignmentReferences), ACCEPTED) =>
-//          customsCacheService.remove(movementCacheId).map { _ =>
-//            Ok(movementConfirmationPage(consignmentReferences))
-//          }
-//        case _ =>
-//          Future.successful {
-//            logger.warn(s"No movement data found in cache.")
-//            errorHandler.getInternalServerErrorPage
-//          }
-//      }
+  def submitMovementRequest(): Action[AnyContent] = authenticate.async { implicit request =>
+    submissionService
+      .submitMovementRequest(request.pid)
+      .flatMap {
+        case (Some(consignmentReferences), ACCEPTED) =>
+          movementRepository.delete(request.pid).map { _ =>
+            Ok(movementConfirmationPage(consignmentReferences))
+          }
+        case _ =>
+          Future.successful {
+            logger.warn(s"No movement data found in cache.")
+            errorHandler.getInternalServerErrorPage
+          }
+      }
   }
 }

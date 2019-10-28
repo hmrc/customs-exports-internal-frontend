@@ -73,7 +73,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller(SuccessfulAuth()).submitChoice(post)
 
         status(result) mustBe Status.SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ChoiceController.displayChoiceForm().url)
+        redirectLocation(result) mustBe Some(routes.ConsignmentReferencesController.displayPage().url)
         theCacheUpserted mustBe Cache(pid, ArrivalAnswers())
       }
 

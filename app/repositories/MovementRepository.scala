@@ -53,4 +53,9 @@ class MovementRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: Exec
         case None        => save(movementCache)
       }
 
+  def delete(pid: String): Future[Unit] =
+    super
+      .remove("pid" -> pid)
+      .map(_ => Unit)
+
 }

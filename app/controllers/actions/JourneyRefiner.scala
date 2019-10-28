@@ -29,7 +29,7 @@ class JourneyRefiner @Inject()(movementRepository: MovementRepository)(implicit 
     extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
-    movementRepository.findByPid(request.operator.pid).map(_.map(_.answers)).map {
+    movementRepository.findByPid(request.pid).map(_.map(_.answers)).map {
       case Some(answers: Answers) => Right(JourneyRequest(answers, request))
       case _                      => Left(Results.Redirect(controllers.routes.ChoiceController.displayChoiceForm()))
     }
