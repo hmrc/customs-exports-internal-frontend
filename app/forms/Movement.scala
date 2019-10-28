@@ -18,7 +18,7 @@ package forms
 
 import forms.Choice._
 import models.cache.Cache
-import models.requests.{MovementRequest, MovementType}
+import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
 
 object Movement {
 
@@ -26,9 +26,9 @@ object Movement {
     // TODO - implement
     MovementRequest(
       eori = "TODO",
-      choice = ???,
-      consignmentReference = ???,
-      movementDetails = ???,
+      choice = MovementType.Arrival,
+      consignmentReference = ConsignmentReferences("todo", "todo"),
+      movementDetails = MovementDetailsRequest("todo"),
       location = None,
       transport = None,
       arrivalReference = None
