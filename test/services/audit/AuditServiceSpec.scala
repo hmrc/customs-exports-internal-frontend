@@ -63,23 +63,6 @@ class AuditServiceSpec extends BaseSpec with BeforeAndAfterEach with MockitoSuga
       verify(spyAuditService).audit(AuditTypes.AuditDisassociate, dataToAudit)
     }
 
-    "get movements data in a Json format" in {
-
-      // TODO
-//      val expectedResult = Map(
-//        Location.formId -> Json.toJson(Location("PLAUcorrect")),
-//        MovementDetails.formId -> Json.toJson(
-//          ArrivalDetails(dateOfArrival = Date(LocalDate.of(2019, 1, 12)), timeOfArrival = Time(LocalTime.of(10, 10)))
-//        ),
-//        ArrivalReference.formId -> Json.toJson(ArrivalReference(Some("213"))),
-//        ConsignmentReferences.formId -> Json.toJson(ConsignmentReferences("reference", "value")),
-//        Transport.formId -> Json.toJson(Transport("1", "GB", "SHIP-123"))
-//      )
-//
-//      val cacheMap = CacheMap(id = "CacheID", data = expectedResult)
-//      spyAuditService.getMovementsData(Arrival, cacheMap) mustBe Json.toJson(expectedResult)
-    }
-
     "audit a movement" in {
       val dataToAudit = Map(
         EventData.movementReference.toString -> "",
