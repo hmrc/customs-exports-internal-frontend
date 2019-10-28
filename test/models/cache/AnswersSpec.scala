@@ -58,7 +58,7 @@ class AnswersSpec extends UnitSpec {
       val dissociateUcrAnswersJson: JsValue =
         JsObject(Map("type" -> JsString(JourneyType.DISSOCIATE_UCR.toString)))
 
-      val expectedResult = DissociateUcrAnswers(None)
+      val expectedResult = DisassociateUcrAnswers(None)
 
       Answers.format.reads(dissociateUcrAnswersJson) mustBe JsSuccess(expectedResult)
     }

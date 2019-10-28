@@ -20,7 +20,7 @@ import connectors.CustomsDeclareExportsMovementsConnector
 import forms._
 import javax.inject.{Inject, Singleton}
 import metrics.MovementsMetrics
-import models.cache.JourneyType
+import models.cache.{DisassociateUcrAnswers, JourneyType}
 import models.requests.{MovementRequest, MovementType}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import repositories.MovementRepository
@@ -36,6 +36,8 @@ class SubmissionService @Inject()(
   auditService: AuditService,
   metrics: MovementsMetrics
 )(implicit ec: ExecutionContext) {
+
+  def submit(answers: DisassociateUcrAnswers): Future[Unit] = Future.successful((): Unit)
 
   def submitMovementRequest(pid: String)(implicit hc: HeaderCarrier): Future[(Option[ConsignmentReferences], Int)] =
     movementRepository.findByPid(pid).flatMap {

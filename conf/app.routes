@@ -20,3 +20,7 @@ POST        /associate-ucr-summary             controllers.consolidations.Associ
 
 # Associate UCR confirmation page
 GET         /associate-ucr-confirmation        controllers.consolidations.AssociateUCRConfirmationController.displayPage()
+
+# Disassociate DUCR page
+GET         /disassociate-ducr                     controllers.DisassociateDucrController.display()
+POST        /disassociate-ducr                     controllers.DisassociateDucrController.submit()
