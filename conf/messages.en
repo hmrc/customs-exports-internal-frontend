@@ -1,6 +1,10 @@
 service.name=Internal Exports Movements 
 
 site.continue = Continue
+site.back = Back
+site.change = Change
+site.confirmAndSubmit = Confirm and submit
+site.backToStart = Back to start
 
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
@@ -14,6 +18,39 @@ movement.choice.disassociateDucr.label = Disassociate a consignment
 movement.choice.shutMucr.label = Shut a master consignment
 movement.choice.submissions.label = View requests
 
+associate.heading = Add to MUCR {0}
+mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
+mucrOptions.create = Create a new Master Consignment Reference (MUCR)
+mucrOptions.add = Add to an existing Master Consignment Reference (MUCR)
+mucrOptions.create.reference = Enter an alphanumeric reference
+mucrOptions.add.reference = Which MUCR do you want to add to?
+mucrOptions.createAdd.value.empty = Please select an option
+mucrOptions.reference.value.empty = Please enter a reference
+mucrOptions.reference.value.error = Please enter a valid reference
 
+associate.ucr.title = Which consignment do you want to add?
+associate.ucr.ducr = Declaration Consignment Reference (DUCR)
+associate.ucr.ducr.label = Declaration Unique Consignment Reference
+associate.ucr.mucr = Master Consignment Reference (MUCR)
+associate.ucr.mucr.label = Master Unique Consignment Reference
+associate.ucr.hint = You may want to keep a record of which consignments you have added to this MUCR.
+
+associate.ucr.summary.title = Is the information provided for this association request correct?
+associate.ucr.summary.kind.mucr = MUCR
+associate.ucr.summary.kind.ducr = DUCR
+associate.ucr.summary.addConsignment = Add consignment
+associate.ucr.summary.masterConsignment = To master consignment
+
+movement.confirmation.statusInfo = To check the status of this consignment, {0}.
+movement.confirmation.statusInfo.submissions = view requests
+movement.confirmation.whatNext = What do you want to do next?
+
+associate.ducr.confirmation.tab.heading = Add DUCR request submitted
+associate.ducr.confirmation.heading = Request to associate DUCR {0} has been submitted
+associate.mucr.confirmation.tab.heading = Add MUCR request submitted
+associate.mucr.confirmation.heading = Request to associate MUCR {0} has been submitted
+association.confirmation.associateOrDepart = {0} another consignment, or {1} a consignment.
+association.confirmation.associateOrDepart.associate = Associate
+association.confirmation.associateOrDepart.depart = depart
 
 view.unauthorized.title=You are not authorized
