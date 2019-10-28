@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package controllers
+@(title: Option[String] = None, subtitle: Option[String] = None)(implicit messages: Messages)
 
-import play.api.mvc.Request
-import play.api.test.{CSRFTokenHelper, FakeRequest}
-
-trait CSRFSupport {
-  implicit class CSRFFakeRequest[A](request: FakeRequest[A]) {
-    def withCSRFToken: Request[A] = CSRFTokenHelper.addCSRFToken(request)
-  }
-}
+<fieldset>
+    <legend class="heading-large" role="heading" aria="" level="1">
+        @if(title.nonEmpty) {
+            <h1 id="title" style="margin:0">@messages(title.get)</h1>
+        }
+        @if(subtitle.nonEmpty) {
+            <span class="form-hint">@messages(subtitle.get)</span>
+        }
+    </legend>
+</fieldset>

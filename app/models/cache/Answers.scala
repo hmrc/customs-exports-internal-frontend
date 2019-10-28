@@ -16,6 +16,7 @@
 
 package models.cache
 
+import forms.{AssociateUcr, MucrOptions}
 import models.cache
 import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
@@ -37,7 +38,10 @@ object DepartureAnswers {
   implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
 }
 
-case class AssociateUcrAnswers(field1: Option[String] = None) extends Answers {
+case class AssociateUcrAnswers(
+  mucrOptions: Option[MucrOptions] = None,
+  associateUcr: Option[AssociateUcr] = None
+) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ASSOCIATE_UCR
 }
 
