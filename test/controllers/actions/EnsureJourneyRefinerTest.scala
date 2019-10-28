@@ -41,7 +41,7 @@ class EnsureJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSu
   private val answers = ArrivalAnswers()
   private val cache = Cache("pid", answers)
 
-  private val refiner = new EnsureJourneyRefiner(movementRepository)
+  private val refiner = new JourneyRefiner(movementRepository)
 
   override def afterEach(): Unit = {
     reset(movementRepository, block)
@@ -55,7 +55,7 @@ class EnsureJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSu
           given(block.apply(any())).willReturn(Future.successful(Results.Ok))
           given(movementRepository.findByPid("pid")).willReturn(Future.successful(Some(cache)))
 
-          await(refiner.journey(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Ok
+          await(refiner(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Ok
 
           theRequestBuilt mustBe JourneyRequest(answers, request)
         }
@@ -64,7 +64,7 @@ class EnsureJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSu
           given(block.apply(any())).willReturn(Future.successful(Results.Ok))
           given(movementRepository.findByPid("pid")).willReturn(Future.successful(Some(cache)))
 
-          await(refiner.journey(JourneyType.DEPART, JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Ok
+          await(refiner(JourneyType.DEPART, JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Ok
 
           theRequestBuilt mustBe JourneyRequest(answers, request)
         }
@@ -81,7 +81,7 @@ class EnsureJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSu
       "answers not found" in {
         given(movementRepository.findByPid("pid")).willReturn(Future.successful(None))
 
-        await(refiner.journey(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Redirect(
+        await(refiner(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Redirect(
           controllers.routes.ChoiceController.displayChoiceForm()
         )
       }
@@ -89,7 +89,7 @@ class EnsureJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSu
       "answers found of a different type" in {
         given(movementRepository.findByPid("pid")).willReturn(Future.successful(None))
 
-        await(refiner.journey(JourneyType.DEPART).invokeBlock(request, block)) mustBe Results.Redirect(
+        await(refiner(JourneyType.DEPART).invokeBlock(request, block)) mustBe Results.Redirect(
           controllers.routes.ChoiceController.displayChoiceForm()
         )
       }

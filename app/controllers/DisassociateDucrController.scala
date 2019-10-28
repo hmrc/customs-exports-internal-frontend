@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.actions.{AuthenticatedAction, EnsureJourneyRefiner}
+import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import forms.DisassociateDucr
 import javax.inject.{Inject, Singleton}
 import models.cache.{DisassociateUcrAnswers, JourneyType}
@@ -32,23 +32,23 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DisassociateDucrController @Inject()(
-  authenticate: AuthenticatedAction,
-  ensure: EnsureJourneyRefiner,
-  mcc: MessagesControllerComponents,
-  submissionService: SubmissionService,
-  movementRepository: MovementRepository,
-  page: disassociate_ducr
+                                            authenticate: AuthenticatedAction,
+                                            getJourney: JourneyRefiner,
+                                            mcc: MessagesControllerComponents,
+                                            submissionService: SubmissionService,
+                                            movementRepository: MovementRepository,
+                                            page: disassociate_ducr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def display: Action[AnyContent] = (authenticate andThen ensure.journey(JourneyType.DISSOCIATE_UCR)) { implicit request =>
+  def display: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)) { implicit request =>
     request.answersAs[DisassociateUcrAnswers].ucr match {
       case Some(ucr) => Ok(page(DisassociateDucr.form.fill(ucr)))
       case _         => Ok(page(DisassociateDucr.form))
     }
   }
 
-  def submit: Action[AnyContent] = (authenticate andThen ensure.journey(JourneyType.DISSOCIATE_UCR)).async { implicit request =>
+  def submit: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)).async { implicit request =>
     DisassociateDucr.form
       .bindFromRequest()
       .fold(

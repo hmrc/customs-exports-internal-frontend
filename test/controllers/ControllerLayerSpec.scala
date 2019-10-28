@@ -18,7 +18,7 @@ package controllers
 
 import config.AppConfig
 import connectors.StrideAuthConnector
-import controllers.actions.{AuthenticatedAction, EnsureJourneyRefiner, JourneyRefiner}
+import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
 import models.cache.Answers
 import models.cache.JourneyType.JourneyType
@@ -75,16 +75,15 @@ abstract class ControllerLayerSpec extends WordSpec with ViewTemplates with Must
   case class ValidJourney(answers: Answers) extends JourneyRefiner(mock[MovementRepository]) {
     override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
       Future.successful(Right(JourneyRequest(answers, request)))
+
+    override def apply(types: JourneyType*): ActionRefiner[AuthenticatedRequest, JourneyRequest] = {
+      if (types.contains(answers.`type`)) ValidJourney(answers) else InValidJourney
+    }
   }
 
   case object InValidJourney extends JourneyRefiner(mock[MovementRepository]) {
     override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
       Future.successful(Left(Results.Forbidden))
-  }
-
-  case class TestEnsureJourneyRefiner(answers: Answers) extends EnsureJourneyRefiner(mock[MovementRepository]) {
-    override def journey(types: JourneyType*): ActionRefiner[AuthenticatedRequest, JourneyRequest] =
-      if (types.contains(answers.`type`)) ValidJourney(answers) else InValidJourney
   }
 
 }

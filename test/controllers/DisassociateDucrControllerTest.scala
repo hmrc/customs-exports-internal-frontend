@@ -21,7 +21,7 @@ import forms.DisassociateDucr
 import models.cache.{Answers, DisassociateUcrAnswers}
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.{ArgumentCaptor, ArgumentMatchers, BDDMockito, Mockito}
+import org.mockito.{ArgumentCaptor, Mockito}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -42,7 +42,7 @@ class DisassociateDucrControllerTest extends ControllerLayerSpec with MockCache 
   private def controller(auth: AuthenticatedAction, existingAnswers: Answers) =
     new DisassociateDucrController(
       auth,
-      TestEnsureJourneyRefiner(existingAnswers),
+      ValidJourney(existingAnswers),
       stubMessagesControllerComponents(),
       submissionService,
       cache,
