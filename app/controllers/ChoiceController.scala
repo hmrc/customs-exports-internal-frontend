@@ -50,15 +50,15 @@ class ChoiceController @Inject()(
 
     correctChoice match {
       case forms.Choice.Arrival | forms.Choice.Departure =>
-        proceedJourney(ArrivalAnswers(None), routes.ChoiceController.displayPage())
+        proceedJourney(ArrivalAnswers(), routes.ChoiceController.displayPage())
       case forms.Choice.AssociateUCR =>
-        proceedJourney(DepartureAnswers(None), controllers.consolidations.routes.MucrOptionsController.displayPage())
+        proceedJourney(DepartureAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
       case forms.Choice.DisassociateUCR =>
-        proceedJourney(AssociateUcrAnswers(None), routes.ChoiceController.displayPage())
+        proceedJourney(AssociateUcrAnswers(), routes.ChoiceController.displayPage())
       case forms.Choice.ShutMUCR =>
-        proceedJourney(DissociateUcrAnswers(None), routes.ChoiceController.displayPage())
+        proceedJourney(DisassociateUcrAnswers(), routes.DisassociateDucrController.display())
       case forms.Choice.Submissions =>
-        proceedJourney(ShutMucrAnswers(None), routes.ChoiceController.displayPage())
+        proceedJourney(ShutMucrAnswers(), routes.ChoiceController.displayPage())
     }
   }
 
@@ -71,11 +71,11 @@ class ChoiceController @Inject()(
           case forms.Choice.Arrival =>
             proceedJourney(ArrivalAnswers(None), routes.ConsignmentReferencesController.displayPage())
           case forms.Choice.Departure =>
-            proceedJourney(DepartureAnswers(None), routes.ChoiceController.displayPage())
+            proceedJourney(DepartureAnswers(), routes.ChoiceController.displayPage())
           case forms.Choice.AssociateUCR =>
-            proceedJourney(AssociateUcrAnswers(None), controllers.consolidations.routes.MucrOptionsController.displayPage())
+            proceedJourney(AssociateUcrAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
           case forms.Choice.DisassociateUCR =>
-            proceedJourney(DissociateUcrAnswers(None), routes.ChoiceController.displayPage())
+            proceedJourney(DisassociateUcrAnswers(), routes.DisassociateDucrController.display())
           case forms.Choice.ShutMUCR =>
             proceedJourney(ShutMucrAnswers(None), routes.ChoiceController.displayPage())
         }
