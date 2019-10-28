@@ -22,9 +22,9 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
 class AppConfig @Inject()(
-  runModeConfiguration: Configuration,
+  val runModeConfiguration: Configuration,
   servicesConfig: ServicesConfig,
-  environment: Environment,
+  val environment: Environment,
   @Named("appName") serviceIdentifier: String
 ) {
   private val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")

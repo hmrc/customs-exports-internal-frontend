@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.ErrorHandler
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import javax.inject.Inject
 import models.cache.{ArrivalAnswers, DepartureAnswers}
@@ -25,6 +26,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.MovementRepository
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.movement_confirmation_page
 import views.html.summary.{arrival_summary_page, departure_summary_page}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,11 +34,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class SummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
+  errorHandler: ErrorHandler,
   movementRepository: MovementRepository,
   submissionService: SubmissionService,
   mcc: MessagesControllerComponents,
   arrivalSummaryPage: arrival_summary_page,
-  departureSummaryPage: departure_summary_page
+  departureSummaryPage: departure_summary_page,
+  movementConfirmationPage: movement_confirmation_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -49,7 +53,7 @@ class SummaryController @Inject()(
     }
   }
 
-  def submitMovementRequest(): Action[AnyContent] = authenticate.async { implicit request =>
+  def submitMovementRequest(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
     submissionService
       .submitMovementRequest(request.pid)
       .flatMap {
