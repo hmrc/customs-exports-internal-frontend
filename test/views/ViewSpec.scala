@@ -46,7 +46,7 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
 
     override def apply(key: String, args: Any*): String =
       if (msg.isDefinedAt(key))
-        msg.apply(key, args)
+        msg.apply(key, args: _*)
       else throw new AssertionError(s"Message Key is not configured for {$key}")
 
     override def apply(keys: Seq[String], args: Any*): String =

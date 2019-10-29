@@ -28,7 +28,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     ".*(BuildInfo|Routes|Options|TestingUtilitiesController).*",
     "logger.*\\(.*\\)"
   ).mkString(";"),
-  coverageMinimum := 56,
+  coverageMinimum := 68,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
   parallelExecution in Test := false
