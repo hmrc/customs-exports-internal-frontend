@@ -6,7 +6,7 @@
 // @author       You
 // @match        http*://*/customs-exports-internal*
 // @grant        none
-// @updateURL    https://raw.githubusercontent.com/hmrc/customs-movements-frontend/master/docs/Customs%20Declare%20Exports%20Movements%20AutoComplete.js
+// @updateURL    https://raw.githubusercontent.com/hmrc/customs-exports-internal-frontend/master/docs/Customs%20Exports%20Internal%20AutoComplete.js
 // ==/UserScript==
 
 (function() {
