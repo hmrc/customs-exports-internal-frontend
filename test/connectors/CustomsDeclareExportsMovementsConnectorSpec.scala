@@ -16,118 +16,67 @@
 
 package connectors
 
-import base.UnitSpec
+import com.github.tomakehurst.wiremock.client.WireMock._
 import config.AppConfig
-import forms.Choice
-import forms.Choice.{Arrival, Departure}
-import models.requests.MovementRequest
-import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{verify, when}
-import org.scalatest.concurrent.ScalaFutures
-import play.api.libs.json.Json
-import play.api.test.Helpers.OK
-import testdata.MovementsTestData
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import connectors.exchanges.DisassociateDUCRRequest
+import forms.ConsignmentReferences
+import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
+import org.mockito.BDDMockito._
+import play.api.http.Status
+import play.api.test.Helpers._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
-class CustomsDeclareExportsMovementsConnectorSpec extends UnitSpec with ScalaFutures {
+  private val config = mock[AppConfig]
+  private val connector = new CustomsDeclareExportsMovementsConnector(config, httpClient)
 
-  import CustomsDeclareExportsMovementsConnectorSpec._
+  "Submit Movement" should {
+    given(config.customsDeclareExportsMovements).willReturn(downstreamURL)
 
-  private trait Test {
-    implicit val headerCarrierMock: HeaderCarrier = mock[HeaderCarrier]
-    val appConfigMock: AppConfig = mock[AppConfig]
-    val httpClientMock: HttpClient = mock[HttpClient]
-    val defaultHttpResponse = HttpResponse(OK, Some(Json.toJson("Success")))
+    "POST to the Back End" in {
+      stubFor(
+        post("/movements")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.ACCEPTED)
+          )
+      )
 
-    when(httpClientMock.POST[MovementRequest, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
-      .thenReturn(Future.successful(defaultHttpResponse))
-    when(httpClientMock.GET(any())(any(), any(), any())).thenReturn(Future.failed(new NotImplementedError()))
+      val request =
+        MovementRequest("eori", Some("provider-id"), MovementType.Arrival, ConsignmentReferences("ref", "value"), MovementDetailsRequest("datetime"))
+      await(connector.submit(request))
 
-    val connector = new CustomsDeclareExportsMovementsConnector(appConfigMock, httpClientMock)
-  }
-
-  "CustomsDeclareExportsMovementsConnector on sendArrivalDeclaration" should {
-
-    "call HttpClient, passing URL for Arrival submission endpoint" in new Test {
-
-      connector.sendArrivalDeclaration(movementSubmissionRequest(Arrival)).futureValue
-
-      val expectedSubmissionUrl =
-        s"${appConfigMock.customsDeclareExportsMovements}${appConfigMock.movementsSubmissionUri}"
-      verify(httpClientMock).POST(meq(expectedSubmissionUrl), any(), any())(any(), any(), any(), any())
-    }
-
-    "call HttpClient, passing body provided" in new Test {
-
-      private val request: MovementRequest = movementSubmissionRequest(Arrival)
-
-      connector.sendArrivalDeclaration(request).futureValue
-
-      verify(httpClientMock).POST(any(), meq(request), any())(any(), any(), any(), any())
-    }
-
-    "call HttpClient, passing correct headers" in new Test {
-
-      connector.sendArrivalDeclaration(movementSubmissionRequest(Arrival)).futureValue
-
-      verify(httpClientMock).POST(any(), any(), any())(any(), any(), any(), any())
-    }
-
-    "return response from HttpClient" in new Test {
-
-      val result = connector.sendArrivalDeclaration(movementSubmissionRequest(Arrival)).futureValue
-
-      result must equal(defaultHttpResponse)
+      verify(
+        postRequestedFor(urlEqualTo("/movements"))
+          .withRequestBody(
+            equalTo(
+              "{\"eori\":\"eori\",\"providerId\":\"provider-id\",\"choice\":\"EAL\",\"consignmentReference\":{\"reference\":\"ref\",\"referenceValue\":\"value\"},\"movementDetails\":{\"dateTime\":\"datetime\"}}"
+            )
+          )
+      )
     }
   }
 
-  "CustomsDeclareExportsMovementsConnector on sendDepartureDeclaration" should {
+  "Submit Consolidation" should {
+    given(config.customsDeclareExportsMovements).willReturn(downstreamURL)
 
-    "call HttpClient, passing URL for Departure submission endpoint" in new Test {
+    "POST to the Back End" in {
+      stubFor(
+        post("/consolidation")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.ACCEPTED)
+          )
+      )
 
-      connector.sendDepartureDeclaration(movementSubmissionRequest(Departure)).futureValue
+      val request = DisassociateDUCRRequest("pid", "eori", "ucr")
+      await(connector.submit(request))
 
-      val expectedSubmissionUrl =
-        s"${appConfigMock.customsDeclareExportsMovements}${appConfigMock.movementsSubmissionUri}"
-      verify(httpClientMock).POST(meq(expectedSubmissionUrl), any(), any())(any(), any(), any(), any())
-    }
-
-    "call HttpClient, passing body provided" in new Test {
-
-      private val request: MovementRequest = movementSubmissionRequest(Departure)
-      connector
-        .sendDepartureDeclaration(request)
-        .futureValue
-
-      verify(httpClientMock).POST(any(), meq(request), any())(any(), any(), any(), any())
-    }
-
-    "call HttpClient, passing correct headers" in new Test {
-
-      connector
-        .sendDepartureDeclaration(movementSubmissionRequest(Departure))
-        .futureValue
-
-      verify(httpClientMock).POST(any(), any(), any())(any(), any(), any(), any())
-    }
-
-    "return response from HttpClient" in new Test {
-
-      val result = connector
-        .sendDepartureDeclaration(movementSubmissionRequest(Departure))
-        .futureValue
-
-      result must equal(defaultHttpResponse)
+      verify(
+        postRequestedFor(urlEqualTo("/consolidation"))
+          .withRequestBody(equalTo("{\"providerId\":\"pid\",\"eori\":\"eori\",\"ucr\":\"ucr\",\"type\":\"ASSOCIATE_DUCR\"}"))
+      )
     }
   }
 
-}
-
-object CustomsDeclareExportsMovementsConnectorSpec {
-  def movementSubmissionRequest(movementType: Choice): MovementRequest =
-    MovementsTestData.validMovementRequest(movementType)
 }
