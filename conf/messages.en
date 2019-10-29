@@ -6,7 +6,6 @@ site.save_and_continue = Save and continue
 site.change = Change
 site.confirmAndSubmit = Confirm and submit
 site.backToStart = Back to start
-site.save_and_continue = Save and continue
 
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK

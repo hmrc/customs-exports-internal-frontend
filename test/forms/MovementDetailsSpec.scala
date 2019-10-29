@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package views
+package forms
 
-import play.api.i18n.Messages
+import base.BaseSpec
 
-case class Title(title: String)
+class MovementDetailsSpec extends BaseSpec {
 
-object Title {
-  def apply(headingKey: String, sectionKey: Option[String])(implicit messages: Messages): Title =
-    if (sectionKey.isEmpty) {
-      Title(messages("title.format", messages(headingKey), messages("service.name")))
-    } else {
-      Title(messages("title.withSection.format", messages(headingKey), messages(sectionKey.getOrElse("")), messages("service.name")))
+  "Movement Details object" should {
+
+    "contain correct formId" in {
+
+      MovementDetails.formId must be("MovementDetails")
     }
+  }
 }

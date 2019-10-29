@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package views
+package utils
 
-import play.api.i18n.Messages
+import play.api.libs.json.{Json, Writes}
 
-case class Title(title: String)
+import scala.util.Random
 
-object Title {
-  def apply(headingKey: String, sectionKey: Option[String])(implicit messages: Messages): Title =
-    if (sectionKey.isEmpty) {
-      Title(messages("title.format", messages(headingKey), messages("service.name")))
-    } else {
-      Title(messages("title.withSection.format", messages(headingKey), messages(sectionKey.getOrElse("")), messages("service.name")))
-    }
+object TestDataHelper {
+
+  def createRandomAlphanumericString(length: Int): String =
+    Random.alphanumeric.take(length).mkString
+
+  val maxStringLength = 150
+  def createRandomString(length: Int = maxStringLength): String =
+    Random.nextString(length)
+
+  def getDataSeq[A](size: Int, elementBuilder: () => A): Seq[A] = (1 to size).map(_ => elementBuilder())
+  def getDataSeq[A](size: Int, elementBuilder: Int => A, builderParam: Int): Seq[A] =
+    (1 to size).map(_ => elementBuilder(builderParam))
+
 }
