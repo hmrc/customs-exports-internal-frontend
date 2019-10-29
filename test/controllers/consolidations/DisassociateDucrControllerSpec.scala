@@ -78,7 +78,7 @@ class DisassociateDucrControllerSpec extends ControllerLayerSpec with MockCache 
       val result = controller(SuccessfulAuth(), DisassociateUcrAnswers()).submit(post)
 
       status(result) mustBe Status.SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.DisassociateDucrController.display().url)
+      redirectLocation(result) mustBe Some(routes.DisassociateDucrConfirmationController.display().url)
       theSubmission mustBe DisassociateUcrAnswers(ucr = Some(ucr))
       flash(result).get(FlashKeys.UCR) mustBe Some(ucr)
     }

@@ -1,33 +1,36 @@
 # microservice specific routes
-GET         /assets/*file                      controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                          controllers.Assets.versioned(path="/public", file: Asset)
 
 # Declaration choice page
-GET         /choice                            controllers.ChoiceController.displayPage()
-GET         /choice/:journey                   controllers.ChoiceController.startSpecificJourney(journey)
-POST        /choice                            controllers.ChoiceController.submit()
+GET         /choice                                controllers.ChoiceController.displayPage()
+GET         /choice/:journey                       controllers.ChoiceController.startSpecificJourney(journey)
+POST        /choice                                controllers.ChoiceController.submit()
 
 # MUCR options page
-GET         /mucr-options                      controllers.consolidations.MucrOptionsController.displayPage()
-POST        /mucr-options                      controllers.consolidations.MucrOptionsController.submit()
+GET         /mucr-options                          controllers.consolidations.MucrOptionsController.displayPage()
+POST        /mucr-options                          controllers.consolidations.MucrOptionsController.submit()
 
 # Associate UCR page
-GET         /associate-ucr                     controllers.consolidations.AssociateUCRController.displayPage()
-POST        /associate-ucr                     controllers.consolidations.AssociateUCRController.submit()
+GET         /associate-ucr                         controllers.consolidations.AssociateUCRController.displayPage()
+POST        /associate-ucr                         controllers.consolidations.AssociateUCRController.submit()
 
 # Associate UCR summary page
-GET         /associate-ucr-summary             controllers.consolidations.AssociateUCRSummaryController.displayPage()
-POST        /associate-ucr-summary             controllers.consolidations.AssociateUCRSummaryController.submit()
+GET         /associate-ucr-summary                 controllers.consolidations.AssociateUCRSummaryController.displayPage()
+POST        /associate-ucr-summary                 controllers.consolidations.AssociateUCRSummaryController.submit()
 
 # Associate UCR confirmation page
-GET         /associate-ucr-confirmation        controllers.consolidations.AssociateUCRConfirmationController.displayPage()
+GET         /associate-ucr-confirmation            controllers.consolidations.AssociateUCRConfirmationController.displayPage()
 
 # Disassociate DUCR page
-GET         /disassociate-ducr                 controllers.consolidations.DisassociateDucrController.display()
-POST        /disassociate-ducr                 controllers.consolidations.DisassociateDucrController.submit()
+GET         /disassociate-ducr                     controllers.consolidations.DisassociateDucrController.display()
+POST        /disassociate-ducr                     controllers.consolidations.DisassociateDucrController.submit()
+
+# Disassociate DUCR confirmation page
+GET         /disassociate-ducr-confirmation        controllers.consolidations.DisassociateDucrConfirmationController.display()
 
 # Enter DUCR page
-GET         /consignment-references        controllers.ConsignmentReferencesController.displayPage()
-POST        /consignment-references        controllers.ConsignmentReferencesController.saveConsignmentReferences()
+GET         /consignment-references                controllers.ConsignmentReferencesController.displayPage()
+POST        /consignment-references                controllers.ConsignmentReferencesController.saveConsignmentReferences()
 
 # Arrival Reference page
 GET         /arrival-reference                     controllers.ArrivalReferenceController.displayPage()
