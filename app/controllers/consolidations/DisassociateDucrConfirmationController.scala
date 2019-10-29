@@ -27,16 +27,16 @@ import views.html.disassociate_ducr_confirmation
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DisassociateDucrConfirmationController @Inject()(authenticate: AuthenticatedAction,
-                                                       getJourney: JourneyRefiner,
-                                                       mcc: MessagesControllerComponents,
-                                                       page: disassociate_ducr_confirmation
-                                                      )(implicit ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport {
+class DisassociateDucrConfirmationController @Inject()(
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  mcc: MessagesControllerComponents,
+  page: disassociate_ducr_confirmation
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   def display: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)) { implicit request =>
     Ok(page())
   }
 
 }
-
