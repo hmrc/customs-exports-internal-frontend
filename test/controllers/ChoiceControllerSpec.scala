@@ -49,7 +49,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "existing answers" in {
-        givenTheCacheContains(Cache("pid", MovementAnswers(`type` = JourneyType.ARRIVE)))
+        givenTheCacheContains(Cache("pid", ArrivalAnswers()))
 
         val result = controller(SuccessfulAuth()).displayPage(get)
 
@@ -74,7 +74,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe Status.SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ConsignmentReferencesController.displayPage().url)
-        theCacheUpserted mustBe Cache(pid, MovementAnswers(Answers.fakeEORI, JourneyType.ARRIVE))
+        theCacheUpserted mustBe Cache(pid, ArrivalAnswers(Answers.fakeEORI))
       }
 
       "departure" in {
@@ -83,7 +83,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe Status.SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ConsignmentReferencesController.displayPage().url)
-        theCacheUpserted mustBe Cache(pid, MovementAnswers(Answers.fakeEORI, JourneyType.DEPART))
+        theCacheUpserted mustBe Cache(pid, DepartureAnswers(Answers.fakeEORI))
       }
 
       "associate UCR" in {

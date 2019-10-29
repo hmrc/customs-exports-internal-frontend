@@ -50,9 +50,9 @@ class ChoiceController @Inject()(
 
     correctChoice match {
       case forms.Choice.Arrival =>
-        proceedJourney(MovementAnswers(eori = Answers.fakeEORI, `type` = JourneyType.ARRIVE), routes.ConsignmentReferencesController.displayPage())
+        proceedJourney(ArrivalAnswers(eori = Answers.fakeEORI), routes.ConsignmentReferencesController.displayPage())
       case forms.Choice.Departure =>
-        proceedJourney(MovementAnswers(eori = Answers.fakeEORI, `type` = JourneyType.DEPART), routes.ConsignmentReferencesController.displayPage())
+        proceedJourney(DepartureAnswers(eori = Answers.fakeEORI), routes.ConsignmentReferencesController.displayPage())
       case forms.Choice.AssociateUCR =>
         proceedJourney(AssociateUcrAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
       case forms.Choice.DisassociateUCR =>
@@ -71,15 +71,9 @@ class ChoiceController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), {
           case forms.Choice.Arrival =>
-            proceedJourney(
-              MovementAnswers(eori = Answers.fakeEORI, `type` = JourneyType.ARRIVE),
-              routes.ConsignmentReferencesController.displayPage()
-            )
+            proceedJourney(ArrivalAnswers(eori = Answers.fakeEORI), routes.ConsignmentReferencesController.displayPage())
           case forms.Choice.Departure =>
-            proceedJourney(
-              MovementAnswers(eori = Answers.fakeEORI, `type` = JourneyType.DEPART),
-              routes.ConsignmentReferencesController.displayPage()
-            )
+            proceedJourney(DepartureAnswers(eori = Answers.fakeEORI), routes.ConsignmentReferencesController.displayPage())
           case forms.Choice.AssociateUCR =>
             proceedJourney(AssociateUcrAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
           case forms.Choice.DisassociateUCR =>

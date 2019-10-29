@@ -66,7 +66,7 @@ class SubmissionServiceSpec
 
       "return response from CustomsDeclareExportsMovementsConnector" in requestAcceptedTest {
 
-        val answers = MovementsTestData.validMovementAnswers(JourneyType.ARRIVE)
+        val answers = MovementsTestData.validArrivalAnswers
         when(mockMovementsRepository.findByPid(any()))
           .thenReturn(Future.successful(Some(Cache("pid", answers))))
 

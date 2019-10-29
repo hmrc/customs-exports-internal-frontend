@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import forms.ConsignmentReferences
 import forms.ConsignmentReferences._
 import javax.inject.{Inject, Singleton}
-import models.cache.{Cache, JourneyType, MovementAnswers}
+import models.cache.{ArrivalAnswers, Cache, JourneyType}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -40,24 +40,25 @@ class ConsignmentReferencesController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    Future.successful(Ok(consignmentReferencesPage(request.answersAs[MovementAnswers].consignmentReferences.fold(form)(form.fill(_)))))
+  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
+    Ok(consignmentReferencesPage(request.answersAs[ArrivalAnswers].consignmentReferences.fold(form)(form.fill(_))))
   }
 
-  def saveConsignmentReferences(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        (formWithErrors: Form[ConsignmentReferences]) => Future.successful(BadRequest(consignmentReferencesPage(formWithErrors))),
-        validForm => {
-          val movementAnswers = request.answersAs[MovementAnswers].copy(consignmentReferences = Some(validForm))
-          movementRepository.upsert(Cache(request.pid, movementAnswers)).map { _ =>
-            movementAnswers.`type` match {
-              case JourneyType.ARRIVE => Redirect(controllers.routes.ArrivalReferenceController.displayPage())
-              case JourneyType.DEPART => Redirect(controllers.routes.MovementDetailsController.displayPage())
+  def saveConsignmentReferences(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          (formWithErrors: Form[ConsignmentReferences]) => Future.successful(BadRequest(consignmentReferencesPage(formWithErrors))),
+          validForm => {
+            val movementAnswers = request.answersAs[ArrivalAnswers].copy(consignmentReferences = Some(validForm))
+            movementRepository.upsert(Cache(request.pid, movementAnswers)).map { _ =>
+              movementAnswers.`type` match {
+                case JourneyType.ARRIVE => Redirect(controllers.routes.ArrivalReferenceController.displayPage())
+                case JourneyType.DEPART => Redirect(controllers.routes.MovementDetailsController.displayPage())
+              }
             }
           }
-        }
-      )
+        )
   }
 }

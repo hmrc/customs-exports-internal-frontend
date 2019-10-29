@@ -43,11 +43,10 @@ class MovementDetailsController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    val movementAnswers = request.answersAs[MovementAnswers]
-    movementAnswers.`type` match {
-      case JourneyType.ARRIVE => Future.successful(Ok(arrivalPage(movementAnswers.arrivalDetails)))
-      case JourneyType.DEPART => Future.successful(Ok(departurePage(movementAnswers.departureDetails)))
+  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)) { implicit request =>
+    request.answers match {
+      case arrivalAnswers: ArrivalAnswers     => Ok(arrivalPage(arrivalAnswers.arrivalDetails))
+      case departureAnswers: DepartureAnswers => Ok(departurePage(departureAnswers.departureDetails))
     }
   }
 
@@ -57,18 +56,18 @@ class MovementDetailsController @Inject()(
   private def departurePage(departureDetails: Option[DepartureDetails])(implicit request: JourneyRequest[AnyContent]): Html =
     departureDetailsPage(departureDetails.fold(departureForm)(departureForm.fill(_)))
 
-  def saveMovementDetails(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    val movementAnswers = request.answersAs[MovementAnswers]
-    (movementAnswers.`type` match {
-      case JourneyType.ARRIVE => handleSavingArrival(movementAnswers)
-      case JourneyType.DEPART => handleSavingDeparture(movementAnswers)
-    }).flatMap {
-      case Left(resultView) => Future.successful(BadRequest(resultView))
-      case Right(call)      => Future.successful(Redirect(call))
-    }
+  def saveMovementDetails(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
+    implicit request =>
+      (request.answers match {
+        case arrivalAnswers: ArrivalAnswers     => handleSavingArrival(arrivalAnswers)
+        case departureAnswers: DepartureAnswers => handleSavingDeparture(departureAnswers)
+      }).flatMap {
+        case Left(resultView) => Future.successful(BadRequest(resultView))
+        case Right(call)      => Future.successful(Redirect(call))
+      }
   }
 
-  private def handleSavingArrival(arrivalAnswers: MovementAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
+  private def handleSavingArrival(arrivalAnswers: ArrivalAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
     arrivalForm
       .bindFromRequest()
       .fold(
@@ -79,7 +78,7 @@ class MovementDetailsController @Inject()(
         }
       )
 
-  private def handleSavingDeparture(departureAnswers: MovementAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
+  private def handleSavingDeparture(departureAnswers: DepartureAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
     departureForm
       .bindFromRequest()
       .fold(

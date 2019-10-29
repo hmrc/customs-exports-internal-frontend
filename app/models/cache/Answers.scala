@@ -21,19 +21,33 @@ import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
 
-case class MovementAnswers(
+case class ArrivalAnswers(
   override val eori: Option[String] = None,
-  override val `type`: JourneyType,
   consignmentReferences: Option[ConsignmentReferences] = None,
   arrivalReference: Option[ArrivalReference] = None,
   arrivalDetails: Option[ArrivalDetails] = None,
+  location: Option[Location] = None
+) extends Answers {
+  override val `type`: JourneyType.Value = JourneyType.ARRIVE
+}
+
+object DepartureAnswers {
+  implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
+}
+
+case class DepartureAnswers(
+  override val eori: Option[String] = None,
+  consignmentReferences: Option[ConsignmentReferences] = None,
+  arrivalReference: Option[ArrivalReference] = None,
   departureDetails: Option[DepartureDetails] = None,
   location: Option[Location] = None,
   transport: Option[Transport] = None
-) extends Answers
+) extends Answers {
+  override val `type`: JourneyType.Value = JourneyType.DEPART
+}
 
-object MovementAnswers {
-  implicit val format: Format[MovementAnswers] = Json.format[MovementAnswers]
+object ArrivalAnswers {
+  implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
 }
 
 case class AssociateUcrAnswers(
@@ -72,8 +86,8 @@ trait Answers {
 object Answers {
   implicit val format: Format[Answers] = Union
     .from[Answers]("type")
-    .and[MovementAnswers](JourneyType.ARRIVE.toString)
-    .and[MovementAnswers](JourneyType.DEPART.toString)
+    .and[ArrivalAnswers](JourneyType.ARRIVE.toString)
+    .and[DepartureAnswers](JourneyType.DEPART.toString)
     .and[AssociateUcrAnswers](JourneyType.ASSOCIATE_UCR.toString)
     .and[DisassociateUcrAnswers](JourneyType.DISSOCIATE_UCR.toString)
     .and[ShutMucrAnswers](JourneyType.SHUT_MUCR.toString)

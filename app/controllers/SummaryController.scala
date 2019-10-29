@@ -19,7 +19,7 @@ package controllers
 import config.ErrorHandler
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import javax.inject.Inject
-import models.cache.{JourneyType, MovementAnswers}
+import models.cache.{ArrivalAnswers, JourneyType}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,17 +46,17 @@ class SummaryController @Inject()(
 
   private val logger = Logger(this.getClass)
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    val answers = request.answersAs[MovementAnswers]
+  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
+    val answers = request.answersAs[ArrivalAnswers]
     answers.`type` match {
-      case JourneyType.ARRIVE => Future.successful(Ok(arrivalSummaryPage(answers)))
-      case JourneyType.DEPART => Future.successful(Ok(departureSummaryPage(answers)))
+      case JourneyType.ARRIVE => Ok(arrivalSummaryPage(answers))
+      case JourneyType.DEPART => Ok(departureSummaryPage(answers))
     }
   }
 
   def submitMovementRequest(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
     submissionService
-      .submitMovementRequest(request.pid, request.answersAs[MovementAnswers])
+      .submitMovementRequest(request.pid, request.answersAs[ArrivalAnswers])
       .flatMap {
         case (Some(consignmentReferences), ACCEPTED) =>
           movementRepository.delete(request.pid).map { _ =>

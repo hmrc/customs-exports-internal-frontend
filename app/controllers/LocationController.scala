@@ -40,17 +40,17 @@ class LocationController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    Future.successful(Ok(locationPage(request.answersAs[MovementAnswers].location.fold(form)(form.fill(_)))))
+  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
+    Ok(locationPage(request.answersAs[ArrivalAnswers].location.fold(form)(form.fill(_))))
   }
 
-  def saveLocation(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
+  def saveLocation(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[Location]) => Future.successful(BadRequest(locationPage(formWithErrors))),
         validForm => {
-          val movementAnswers = request.answersAs[MovementAnswers].copy(location = Some(validForm))
+          val movementAnswers = request.answersAs[ArrivalAnswers].copy(location = Some(validForm))
           movementRepository.upsert(Cache(request.pid, movementAnswers)).map { _ =>
             movementAnswers.`type` match {
               case JourneyType.ARRIVE =>

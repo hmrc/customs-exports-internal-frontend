@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import forms.ArrivalReference
 import forms.ArrivalReference.form
 import javax.inject.{Inject, Singleton}
-import models.cache.{Cache, MovementAnswers}
+import models.cache.{ArrivalAnswers, Cache, JourneyType}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -40,17 +40,17 @@ class ArrivalReferenceController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    Future.successful(Ok(arrivalReferencePage(request.answersAs[MovementAnswers].arrivalReference.fold(form)(form.fill(_)))))
+  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
+    Ok(arrivalReferencePage(request.answersAs[ArrivalAnswers].arrivalReference.fold(form)(form.fill(_))))
   }
 
-  def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
+  def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[ArrivalReference]) => Future.successful(BadRequest(arrivalReferencePage(formWithErrors))),
         validForm => {
-          val movementAnswers = request.answersAs[MovementAnswers].copy(arrivalReference = Some(validForm))
+          val movementAnswers = request.answersAs[ArrivalAnswers].copy(arrivalReference = Some(validForm))
           movementRepository.upsert(Cache(request.pid, movementAnswers)).map { _ =>
             Redirect(controllers.routes.MovementDetailsController.displayPage())
           }

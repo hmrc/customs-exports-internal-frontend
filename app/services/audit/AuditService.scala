@@ -19,7 +19,7 @@ package services.audit
 import com.google.inject.Inject
 import forms._
 import javax.inject.Named
-import models.cache.{JourneyType, MovementAnswers}
+import models.cache.{Answers, ArrivalAnswers, DepartureAnswers, JourneyType}
 import models.requests.MovementRequest
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
@@ -100,7 +100,7 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
       Disabled
   }
 
-  def auditAllPagesUserInput(answers: MovementAnswers)(implicit hc: HeaderCarrier): Future[AuditResult] = {
+  def auditAllPagesUserInput(answers: Answers)(implicit hc: HeaderCarrier): Future[AuditResult] = {
     val auditType =
       if (answers.`type` == JourneyType.ARRIVE)
         AuditTypes.AuditArrival.toString
@@ -115,20 +115,26 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
     connector.sendExtendedEvent(extendedEvent).map(handleResponse(_, auditType))
   }
 
-  private def getMovementsData(answers: MovementAnswers): JsObject = {
+  private def getMovementsData(answers: Answers): JsObject = {
 
-    def movementDetails(answers: MovementAnswers) = answers.`type` match {
-      case JourneyType.ARRIVE => Json.toJson(answers.arrivalDetails)
-      case JourneyType.DEPART => Json.toJson(answers.departureDetails)
+    val userInput = answers match {
+      case arrivalAnswers: ArrivalAnswers =>
+        Map(
+          ConsignmentReferences.formId -> Json.toJson(arrivalAnswers.consignmentReferences),
+          Location.formId -> Json.toJson(arrivalAnswers.location),
+          MovementDetails.formId -> Json.toJson(arrivalAnswers.arrivalDetails),
+          ArrivalReference.formId -> Json.toJson(arrivalAnswers.arrivalReference)
+        )
+      case departureAnswers: DepartureAnswers =>
+        Map(
+          ConsignmentReferences.formId -> Json.toJson(departureAnswers.consignmentReferences),
+          Location.formId -> Json.toJson(departureAnswers.location),
+          MovementDetails.formId -> Json.toJson(departureAnswers.departureDetails),
+          Transport.formId -> Json.toJson(departureAnswers.transport),
+          ArrivalReference.formId -> Json.toJson(departureAnswers.arrivalReference)
+        )
     }
 
-    val userInput = Map(
-      ConsignmentReferences.formId -> Json.toJson(answers.consignmentReferences),
-      Location.formId -> Json.toJson(answers.location),
-      MovementDetails.formId -> movementDetails(answers),
-      Transport.formId -> Json.toJson(answers.transport),
-      ArrivalReference.formId -> Json.toJson(answers.arrivalReference)
-    )
     Json.toJson(userInput).as[JsObject]
   }
 

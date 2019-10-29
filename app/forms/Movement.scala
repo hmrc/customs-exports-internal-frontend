@@ -20,19 +20,34 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 import models.ReturnToStartException
-import models.cache.JourneyType.JourneyType
-import models.cache.{JourneyType, MovementAnswers}
+import models.cache.{Answers, ArrivalAnswers, DepartureAnswers}
 import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
 
 object Movement {
 
   private val departureDateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
-  def createMovementRequest(pid: String, answers: MovementAnswers): MovementRequest =
+  def createMovementRequest(pid: String, answers: Answers): MovementRequest = answers match {
+    case arrivalAnswers: ArrivalAnswers     => createMovementArrivalRequest(pid, arrivalAnswers)
+    case departureAnswers: DepartureAnswers => createMovementDepartureRequest(pid, departureAnswers)
+  }
+
+  private def createMovementArrivalRequest(pid: String, answers: ArrivalAnswers) =
     MovementRequest(
       eori = answers.eori.getOrElse(throw ReturnToStartException),
       providerId = Some(pid),
-      choice = movementType(answers.`type`),
+      choice = MovementType.Arrival,
+      consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
+      movementDetails = movementDetails(answers),
+      location = answers.location,
+      arrivalReference = answers.arrivalReference
+    )
+
+  private def createMovementDepartureRequest(pid: String, answers: DepartureAnswers) =
+    MovementRequest(
+      eori = answers.eori.getOrElse(throw ReturnToStartException),
+      providerId = Some(pid),
+      choice = MovementType.Departure,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
       movementDetails = movementDetails(answers),
       location = answers.location,
@@ -40,24 +55,17 @@ object Movement {
       transport = answers.transport
     )
 
-  private def movementType(journeyType: JourneyType) = journeyType match {
-    case JourneyType.ARRIVE => MovementType.Arrival
-    case JourneyType.DEPART => MovementType.Departure
-  }
+  private def movementDetails(answers: ArrivalAnswers) =
+    MovementDetailsRequest(
+      answers.arrivalDetails
+        .map(arrivalDetails => s"${arrivalDetails.dateOfArrival.toString}T${arrivalDetails.timeOfArrival.toString}:00")
+        .getOrElse("")
+    )
 
-  private def movementDetails(answers: MovementAnswers) =
-    answers.`type` match {
-      case JourneyType.ARRIVE =>
-        MovementDetailsRequest(
-          answers.arrivalDetails
-            .map(arrivalDetails => s"${arrivalDetails.dateOfArrival.toString}T${arrivalDetails.timeOfArrival.toString}:00")
-            .getOrElse("")
-        )
-      case JourneyType.DEPART =>
-        MovementDetailsRequest(
-          answers.departureDetails
-            .map(departureDetails => departureDateTimeFormatter.format(departureDetails.goodsDepartureMoment.atZone(ZoneId.systemDefault())))
-            .getOrElse("")
-        )
-    }
+  private def movementDetails(answers: DepartureAnswers) =
+    MovementDetailsRequest(
+      answers.departureDetails
+        .map(departureDetails => departureDateTimeFormatter.format(departureDetails.goodsDepartureMoment.atZone(ZoneId.systemDefault())))
+        .getOrElse("")
+    )
 }

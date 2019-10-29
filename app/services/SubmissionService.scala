@@ -34,7 +34,7 @@ class SubmissionService @Inject()(connector: CustomsDeclareExportsMovementsConne
 
   def submit(answers: DisassociateUcrAnswers): Future[Unit] = Future.successful((): Unit)
 
-  def submitMovementRequest(pid: String, answers: MovementAnswers)(implicit hc: HeaderCarrier): Future[(Option[ConsignmentReferences], Int)] = {
+  def submitMovementRequest(pid: String, answers: Answers)(implicit hc: HeaderCarrier): Future[(Option[ConsignmentReferences], Int)] = {
     val cache = Cache(pid, answers)
 
     val data = Movement.createMovementRequest(pid, answers)

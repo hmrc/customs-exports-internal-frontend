@@ -17,7 +17,7 @@
 package controllers.actions
 
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
-import models.cache.{AssociateUcrAnswers, Cache, JourneyType}
+import models.cache.{ArrivalAnswers, Cache, JourneyType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
@@ -38,7 +38,7 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
   private val block = mock[JourneyRequest[_] => Future[Result]]
   private val operator = Operator("pid")
   private val request = AuthenticatedRequest(operator, FakeRequest())
-  private val answers = AssociateUcrAnswers()
+  private val answers = ArrivalAnswers()
   private val cache = Cache("pid", answers)
 
   private val refiner = new JourneyRefiner(movementRepository)
@@ -55,7 +55,7 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
           given(block.apply(any())).willReturn(Future.successful(Results.Ok))
           given(movementRepository.findByPid("pid")).willReturn(Future.successful(Some(cache)))
 
-          await(refiner(JourneyType.ASSOCIATE_UCR).invokeBlock(request, block)) mustBe Results.Ok
+          await(refiner(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Ok
 
           theRequestBuilt mustBe JourneyRequest(answers, request)
         }
@@ -64,7 +64,7 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
           given(block.apply(any())).willReturn(Future.successful(Results.Ok))
           given(movementRepository.findByPid("pid")).willReturn(Future.successful(Some(cache)))
 
-          await(refiner(JourneyType.ASSOCIATE_UCR, JourneyType.DISSOCIATE_UCR).invokeBlock(request, block)) mustBe Results.Ok
+          await(refiner(JourneyType.DEPART, JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Ok
 
           theRequestBuilt mustBe JourneyRequest(answers, request)
         }
