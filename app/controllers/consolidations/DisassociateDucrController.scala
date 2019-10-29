@@ -57,7 +57,7 @@ class DisassociateDucrController @Inject()(
           for {
             _ <- submissionService.submit(request.pid, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))
           } yield
-            Redirect(controllers.consolidations.routes.DisassociateDucrController.display())
+            Redirect(controllers.consolidations.routes.DisassociateDucrConfirmationController.display())
               .flashing(FlashKeys.UCR -> answers)
       )
   }
