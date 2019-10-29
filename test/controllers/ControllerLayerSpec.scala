@@ -16,16 +16,18 @@
 
 package controllers
 
+import base.UnitSpec
 import config.AppConfig
 import connectors.StrideAuthConnector
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
 import models.cache.Answers
 import models.cache.JourneyType.JourneyType
-import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
-import org.scalatestplus.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
-import play.api.mvc.{ActionRefiner, Flash, Request, Result, Results}
+import play.api.libs.json.JsValue
+import play.api.mvc._
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
@@ -37,10 +39,13 @@ import views.html.unauthorized
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-abstract class ControllerLayerSpec extends WordSpec with ViewTemplates with MustMatchers with MockitoSugar with BeforeAndAfterEach with CSRFSupport {
+abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with BeforeAndAfterEach with CSRFSupport {
 
   protected val pid = "0"
   protected val operator = Operator(pid)
+
+  protected val getRequest: Request[AnyContent] = FakeRequest("GET", "/").withCSRFToken
+  protected def postRequest(body: JsValue): Request[AnyContentAsJson] = FakeRequest("POST", "/").withJsonBody(body).withCSRFToken
 
   protected implicit def messages(implicit request: Request[_]): Messages = stubMessagesControllerComponents().messagesApi.preferred(request)
   protected implicit val flashApi: Flash = Flash()

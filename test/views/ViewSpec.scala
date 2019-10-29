@@ -16,21 +16,20 @@
 
 package views
 
+import base.Injector
 import controllers.CSRFSupport
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.i18n.{Lang, Messages, MessagesApi}
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Request
 import play.twirl.api.Html
 
-class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMatchers with CSRFSupport {
+class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMatchers with Injector with CSRFSupport {
 
   implicit protected def htmlBodyOf(html: Html): Document = Jsoup.parse(html.toString())
 
-  private val injector = new GuiceApplicationBuilder().injector()
-  private val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
+  private val messagesApi: MessagesApi = instanceOf[MessagesApi]
 
   protected implicit def messages(implicit request: Request[_]): Messages =
     new AllMessageKeysAreMandatoryMessages(messagesApi.preferred(request))
@@ -47,7 +46,7 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
 
     override def apply(key: String, args: Any*): String =
       if (msg.isDefinedAt(key))
-        msg.apply(key, args)
+        msg.apply(key, args: _*)
       else throw new AssertionError(s"Message Key is not configured for {$key}")
 
     override def apply(keys: Seq[String], args: Any*): String =

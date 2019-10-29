@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.consolidations.{routes => consolidationsRoutes}
 import forms.MucrOptions.form
 import javax.inject.Inject
-import models.cache.{AssociateUcrAnswers, Cache}
+import models.cache.{AssociateUcrAnswers, Cache, JourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.MovementRepository
