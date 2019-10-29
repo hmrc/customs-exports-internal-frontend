@@ -51,9 +51,10 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
           logExchange("Submit Movement", response.body)
         case Failure(exception) =>
           logFailedExchange("Submit Movement", exception)
-      }.map(_ => (): Unit)
+      }
+      .map(_ => (): Unit)
 
-  def submit[T <: Consolidation](request: T)(implicit hc: HeaderCarrier): Future[Unit] = {
+  def submit[T <: Consolidation](request: T)(implicit hc: HeaderCarrier): Future[Unit] =
     httpClient
       .POST[T, HttpResponse](appConfig.customsDeclareExportsMovements + "/consolidation", request, JsonHeaders)
       .andThen {
@@ -63,13 +64,10 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
           logFailedExchange("Submit Consolidation", exception)
       }
       .map(_ => (): Unit)
-  }
 
-  private def logExchange[T](`type`: String, payload: T)(implicit fmt: Format[T]): Unit = {
+  private def logExchange[T](`type`: String, payload: T)(implicit fmt: Format[T]): Unit =
     logger.debug(`type` + "\n" + Json.toJson(payload))
-  }
 
-  private def logFailedExchange(`type`: String, exception: Throwable): Unit = {
+  private def logFailedExchange(`type`: String, exception: Throwable): Unit =
     logger.warn(`type` + " failed", exception)
-  }
 }

@@ -33,11 +33,12 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class SubmissionService @Inject()(movementRepository: MovementRepository,
-                                  connector: CustomsDeclareExportsMovementsConnector,
-                                  auditService: AuditService,
-                                  metrics: MovementsMetrics
-                                 )(implicit ec: ExecutionContext) {
+class SubmissionService @Inject()(
+  movementRepository: MovementRepository,
+  connector: CustomsDeclareExportsMovementsConnector,
+  auditService: AuditService,
+  metrics: MovementsMetrics
+)(implicit ec: ExecutionContext) {
 
   def submit(pid: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
@@ -79,12 +80,12 @@ class SubmissionService @Inject()(movementRepository: MovementRepository,
 
   private def sendMovementRequest(movementRequest: MovementRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     movementRequest.choice match {
-      case MovementType.Arrival => connector.sendArrivalDeclaration(movementRequest)
+      case MovementType.Arrival   => connector.sendArrivalDeclaration(movementRequest)
       case MovementType.Departure => connector.sendDepartureDeclaration(movementRequest)
     }
 
   private def createMovementRequest(cache: Cache): MovementRequest =
-  // TODO - implement
+    // TODO - implement
     MovementRequest(
       eori = "TODO",
       choice = MovementType.Arrival,
