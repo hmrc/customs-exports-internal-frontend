@@ -55,7 +55,7 @@ class SubmissionService @Inject()(
       }
   }
 
-  def submitMovementRequest(pid: String, answers: Answers)(implicit hc: HeaderCarrier): Future[(Option[ConsignmentReferences], Int)] = {
+  def submitMovementRequest(pid: String, answers: Answers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
     val cache = Cache(pid, answers)
 
     val data = Movement.createMovementRequest(pid, answers)
@@ -71,7 +71,7 @@ class SubmissionService @Inject()(
       auditService
         .auditMovements(data, Status.OK.toString, movementAuditType)
       timer.stop()
-      (Some(data.consignmentReference), 200)
+      data.consignmentReference
     }
   }
 }

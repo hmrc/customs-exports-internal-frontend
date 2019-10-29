@@ -17,9 +17,8 @@
 package config
 
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.Results.InternalServerError
-import play.api.mvc.{Request, Result}
+import play.api.i18n.MessagesApi
+import play.api.mvc.Request
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.error
@@ -28,13 +27,4 @@ import views.html.error
 class ErrorHandler @Inject()(val messagesApi: MessagesApi, errorTemplate: error) extends FrontendErrorHandler {
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
     errorTemplate(pageTitle, heading, message)
-
-  def getInternalServerErrorPage()(implicit request: Request[_]): Result =
-    InternalServerError(
-      standardErrorTemplate(
-        pageTitle = Messages("global.error.title"),
-        heading = Messages("global.error.heading"),
-        message = Messages("global.error.message")
-      )
-    )
 }

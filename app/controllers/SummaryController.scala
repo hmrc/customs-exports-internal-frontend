@@ -20,7 +20,6 @@ import config.ErrorHandler
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import javax.inject.Inject
 import models.cache.{ArrivalAnswers, DepartureAnswers, JourneyType}
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.MovementRepository
@@ -29,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.movement_confirmation_page
 import views.html.summary.{arrival_summary_page, departure_summary_page}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class SummaryController @Inject()(
   authenticate: AuthenticatedAction,
@@ -44,8 +43,6 @@ class SummaryController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  private val logger = Logger(this.getClass)
-
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)) { implicit request =>
     request.answers match {
       case arrivalAnswers: ArrivalAnswers     => Ok(arrivalSummaryPage(arrivalAnswers))
@@ -57,16 +54,10 @@ class SummaryController @Inject()(
     implicit request =>
       submissionService
         .submitMovementRequest(request.pid, request.answers)
-        .flatMap {
-          case (Some(consignmentReferences), ACCEPTED) =>
-            movementRepository.delete(request.pid).map { _ =>
-              Ok(movementConfirmationPage(consignmentReferences))
-            }
-          case _ =>
-            Future.successful {
-              logger.warn(s"No movement data found in cache.")
-              errorHandler.getInternalServerErrorPage
-            }
+        .flatMap { consignmentReferences =>
+          movementRepository.removeByPid(request.pid).map { _ =>
+            Ok(movementConfirmationPage(consignmentReferences))
+          }
         }
   }
 }

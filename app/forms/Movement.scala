@@ -35,7 +35,7 @@ object Movement {
   private def createMovementArrivalRequest(pid: String, answers: ArrivalAnswers) =
     MovementRequest(
       eori = answers.eori.getOrElse(throw ReturnToStartException),
-      providerId = Some(pid),
+      providerId = pid,
       choice = MovementType.Arrival,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
       movementDetails = movementDetails(answers),
@@ -46,7 +46,7 @@ object Movement {
   private def createMovementDepartureRequest(pid: String, answers: DepartureAnswers) =
     MovementRequest(
       eori = answers.eori.getOrElse(throw ReturnToStartException),
-      providerId = Some(pid),
+      providerId = pid,
       choice = MovementType.Departure,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
       movementDetails = movementDetails(answers),

@@ -21,7 +21,7 @@ import play.api.libs.json.{Json, OFormat}
 
 case class MovementRequest(
   eori: String,
-  providerId: Option[String] = None,
+  providerId: String,
   choice: MovementType,
   consignmentReference: ConsignmentReferences,
   movementDetails: MovementDetailsRequest,
