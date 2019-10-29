@@ -15,9 +15,15 @@
  */
 
 package testdata
+
+import java.time.Instant
+
 import forms.{Choice, ConsignmentReferences, Movement}
+import models.UcrBlock
 import models.cache.{ArrivalAnswers, DepartureAnswers}
 import models.requests.MovementRequest
+import models.submissions.{ActionType, SubmissionFrontendModel}
+import testdata.CommonTestData.{conversationId, correctUcr, validEori}
 
 object MovementsTestData {
 
@@ -32,4 +38,20 @@ object MovementsTestData {
 
   def validDepartureAnswers =
     DepartureAnswers(Some("eori"), consignmentReferences = Some(ConsignmentReferences("ref", "value")))
+
+  def exampleSubmissionFrontendModel(
+    eori: String = validEori,
+    conversationId: String = conversationId,
+    ucr: String = correctUcr,
+    ucrType: String = "D",
+    actionType: ActionType = ActionType.Arrival,
+    requestTimestamp: Instant = Instant.now()
+  ): SubmissionFrontendModel =
+    SubmissionFrontendModel(
+      eori = eori,
+      conversationId = conversationId,
+      ucrBlocks = Seq(UcrBlock(ucr = ucr, ucrType = ucrType)),
+      actionType = actionType,
+      requestTimestamp = requestTimestamp
+    )
 }
