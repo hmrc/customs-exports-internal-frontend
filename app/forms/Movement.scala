@@ -16,27 +16,48 @@
 
 package forms
 
-import forms.Choice._
-import models.cache.Cache
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
+import models.ReturnToStartException
+import models.cache.JourneyType.JourneyType
+import models.cache.{JourneyType, MovementAnswers}
 import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
 
 object Movement {
 
-  def createMovementRequest(cache: Cache): MovementRequest =
-    // TODO - implement
+  private val departureDateTimeFormatter = DateTimeFormatter.ISO_INSTANT
+
+  def createMovementRequest(pid: String, answers: MovementAnswers): MovementRequest =
     MovementRequest(
-      eori = "TODO",
-      choice = MovementType.Arrival,
-      consignmentReference = ConsignmentReferences("todo", "todo"),
-      movementDetails = MovementDetailsRequest("todo"),
-      location = None,
-      transport = None,
-      arrivalReference = None
+      eori = answers.eori.getOrElse(throw ReturnToStartException),
+      providerId = Some(pid),
+      choice = movementType(answers.`type`),
+      consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
+      movementDetails = movementDetails(answers),
+      location = answers.location,
+      arrivalReference = answers.arrivalReference,
+      transport = answers.transport
     )
 
-  private def extractChoice(choice: Choice) = choice match {
-    case Arrival   => MovementType.Arrival
-    case Departure => MovementType.Departure
-    case _         => throw new IllegalArgumentException("Allowed is only arrival or departure here")
+  private def movementType(journeyType: JourneyType) = journeyType match {
+    case JourneyType.ARRIVE => MovementType.Arrival
+    case JourneyType.DEPART => MovementType.Departure
   }
+
+  private def movementDetails(answers: MovementAnswers) =
+    answers.`type` match {
+      case JourneyType.ARRIVE =>
+        MovementDetailsRequest(
+          answers.arrivalDetails
+            .map(arrivalDetails => s"${arrivalDetails.dateOfArrival.toString}T${arrivalDetails.timeOfArrival.toString}:00")
+            .getOrElse("")
+        )
+      case JourneyType.DEPART =>
+        MovementDetailsRequest(
+          answers.departureDetails
+            .map(departureDetails => departureDateTimeFormatter.format(departureDetails.goodsDepartureMoment.atZone(ZoneId.systemDefault())))
+            .getOrElse("")
+        )
+    }
 }

@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import forms.Location
 import forms.Location.form
 import javax.inject.{Inject, Singleton}
-import models.cache.{ArrivalAnswers, Cache, DepartureAnswers}
+import models.cache._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -41,7 +41,7 @@ class LocationController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    Future.successful(Ok(locationPage(request.answersAs[ArrivalAnswers].location.fold(form)(form.fill(_)))))
+    Future.successful(Ok(locationPage(request.answersAs[MovementAnswers].location.fold(form)(form.fill(_)))))
   }
 
   def saveLocation(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
@@ -50,12 +50,12 @@ class LocationController @Inject()(
       .fold(
         (formWithErrors: Form[Location]) => Future.successful(BadRequest(locationPage(formWithErrors))),
         validForm => {
-          val arrivalAnswers = request.answersAs[ArrivalAnswers].copy(location = Some(validForm))
-          movementRepository.upsert(Cache(request.pid, arrivalAnswers)).map { _ =>
-            request.answers match {
-              case arrivalAnswers: ArrivalAnswers =>
+          val movementAnswers = request.answersAs[MovementAnswers].copy(location = Some(validForm))
+          movementRepository.upsert(Cache(request.pid, movementAnswers)).map { _ =>
+            movementAnswers.`type` match {
+              case JourneyType.ARRIVE =>
                 Redirect(controllers.routes.SummaryController.displayPage())
-              case departureAnswers: DepartureAnswers =>
+              case JourneyType.DEPART =>
                 Redirect(controllers.routes.TransportController.displayPage())
             }
           }

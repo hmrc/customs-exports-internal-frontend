@@ -83,6 +83,12 @@ summary.departure.time = Time of departure
 
 summary.arrivalReference.reference = Unique reference
 
+movement.ARRIVE.confirmation.tab.heading = Arrival request submitted
+movement.ARRIVE.confirmation.heading = Request to arrive {0} {1} has been submitted
+movement.arrival.confirmation.nextSteps = {0} a consignment, or {1} a consignment.
+movement.arrival.confirmation.nextSteps.associate = Associate
+movement.arrival.confirmation.nextSteps.depart = depart
+
 associate.heading = Add to MUCR {0}
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
 mucrOptions.create = Create a new Master Consignment Reference (MUCR)

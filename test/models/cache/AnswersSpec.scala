@@ -28,7 +28,7 @@ class AnswersSpec extends UnitSpec {
       val arrivalAnswersJson: JsValue =
         JsObject(Map("type" -> JsString(JourneyType.ARRIVE.toString)))
 
-      val expectedResult = ArrivalAnswers(None)
+      val expectedResult = MovementAnswers(None, JourneyType.ARRIVE)
 
       Answers.format.reads(arrivalAnswersJson) mustBe JsSuccess(expectedResult)
     }
@@ -38,7 +38,7 @@ class AnswersSpec extends UnitSpec {
       val departureAnswersJson: JsValue =
         JsObject(Map("type" -> JsString(JourneyType.DEPART.toString)))
 
-      val expectedResult = DepartureAnswers(None)
+      val expectedResult = MovementAnswers(None, JourneyType.DEPART)
 
       Answers.format.reads(departureAnswersJson) mustBe JsSuccess(expectedResult)
     }

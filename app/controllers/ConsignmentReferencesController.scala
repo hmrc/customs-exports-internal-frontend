@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import forms.ConsignmentReferences
 import forms.ConsignmentReferences._
 import javax.inject.{Inject, Singleton}
-import models.cache.{ArrivalAnswers, Cache}
+import models.cache.{Cache, JourneyType, MovementAnswers}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -41,7 +41,7 @@ class ConsignmentReferencesController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    Future.successful(Ok(consignmentReferencesPage(request.answersAs[ArrivalAnswers].consignmentReferences.fold(form)(form.fill(_)))))
+    Future.successful(Ok(consignmentReferencesPage(request.answersAs[MovementAnswers].consignmentReferences.fold(form)(form.fill(_)))))
   }
 
   def saveConsignmentReferences(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
@@ -50,11 +50,12 @@ class ConsignmentReferencesController @Inject()(
       .fold(
         (formWithErrors: Form[ConsignmentReferences]) => Future.successful(BadRequest(consignmentReferencesPage(formWithErrors))),
         validForm => {
-          val arrivalAnswers = request.answersAs[ArrivalAnswers].copy(consignmentReferences = Some(validForm))
-          movementRepository.upsert(Cache(request.pid, arrivalAnswers)).map { _ =>
-            // TODO depart/arrive logic
-            Redirect(controllers.routes.ArrivalReferenceController.displayPage())
-
+          val movementAnswers = request.answersAs[MovementAnswers].copy(consignmentReferences = Some(validForm))
+          movementRepository.upsert(Cache(request.pid, movementAnswers)).map { _ =>
+            movementAnswers.`type` match {
+              case JourneyType.ARRIVE => Redirect(controllers.routes.ArrivalReferenceController.displayPage())
+              case JourneyType.DEPART => Redirect(controllers.routes.MovementDetailsController.displayPage())
+            }
           }
         }
       )

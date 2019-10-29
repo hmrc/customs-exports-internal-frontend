@@ -16,8 +16,8 @@
 
 package services
 
-import base.{MetricsMatchers, MockCustomsExportsMovement, MockMovementsRepository, MovementsMetricsStub, UnitSpec}
-import models.cache.{ArrivalAnswers, Cache}
+import base._
+import models.cache.{Cache, JourneyType}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -26,6 +26,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.test.Helpers._
 import services.audit.{AuditService, AuditTypes}
+import testdata.MovementsTestData
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -43,7 +44,7 @@ class SubmissionServiceSpec
   val mockAuditService = mock[AuditService]
 
   val submissionService =
-    new SubmissionService(mockMovementsRepository, mockCustomsExportsMovementConnector, mockAuditService, movementsMetricsStub)
+    new SubmissionService(mockCustomsExportsMovementConnector, mockAuditService, movementsMetricsStub)
 
   override def afterEach(): Unit = {
     reset(mockMovementsRepository, mockCustomsExportsMovementConnector, mockAuditService)
@@ -65,17 +66,18 @@ class SubmissionServiceSpec
 
       "return response from CustomsDeclareExportsMovementsConnector" in requestAcceptedTest {
 
+        val answers = MovementsTestData.validMovementAnswers(JourneyType.ARRIVE)
         when(mockMovementsRepository.findByPid(any()))
-          .thenReturn(Future.successful(Some(Cache("pid", ArrivalAnswers(Some("eori"))))))
+          .thenReturn(Future.successful(Some(Cache("pid", answers))))
 
         val CustomHttpResponseCode = 123
         when(mockCustomsExportsMovementConnector.sendArrivalDeclaration(any())(any()))
           .thenReturn(Future.successful(HttpResponse(CustomHttpResponseCode)))
 
-        await(submissionService.submitMovementRequest("pid").map(_._2)) must equal(CustomHttpResponseCode)
+        await(submissionService.submitMovementRequest("pid", answers).map(_._2)) must equal(CustomHttpResponseCode)
         verify(mockAuditService).auditMovements(any(), any(), ArgumentMatchers.eq(AuditTypes.AuditArrival))(any())
         verify(mockAuditService)
-          .auditAllPagesUserInput(ArgumentMatchers.eq(ArrivalAnswers(Some("eori"))))(any())
+          .auditAllPagesUserInput(ArgumentMatchers.eq(answers))(any())
       }
     }
   }

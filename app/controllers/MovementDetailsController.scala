@@ -21,7 +21,7 @@ import controllers.exchanges.JourneyRequest
 import forms.MovementDetails._
 import forms.{ArrivalDetails, DepartureDetails}
 import javax.inject.{Inject, Singleton}
-import models.cache.{ArrivalAnswers, Cache, DepartureAnswers}
+import models.cache._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -44,29 +44,31 @@ class MovementDetailsController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    request.answers match {
-      case arrivalAnswers: ArrivalAnswers     => Future.successful(Ok(arrivalPage(arrivalAnswers)))
-      case departureAnswers: DepartureAnswers => Future.successful(Ok(departurePage(departureAnswers)))
+    val movementAnswers = request.answersAs[MovementAnswers]
+    movementAnswers.`type` match {
+      case JourneyType.ARRIVE => Future.successful(Ok(arrivalPage(movementAnswers.arrivalDetails)))
+      case JourneyType.DEPART => Future.successful(Ok(departurePage(movementAnswers.departureDetails)))
     }
   }
 
-  private def arrivalPage(arrivalAnswers: ArrivalAnswers)(implicit request: JourneyRequest[AnyContent]): Html =
-    arrivalDetailsPage(arrivalAnswers.arrivalDetails.fold(arrivalForm)(arrivalForm.fill(_)))
+  private def arrivalPage(arrivalDetails: Option[ArrivalDetails])(implicit request: JourneyRequest[AnyContent]): Html =
+    arrivalDetailsPage(arrivalDetails.fold(arrivalForm)(arrivalForm.fill(_)))
 
-  private def departurePage(departureAnswers: DepartureAnswers)(implicit request: JourneyRequest[AnyContent]): Html =
-    departureDetailsPage(departureAnswers.departureDetails.fold(departureForm)(departureForm.fill(_)))
+  private def departurePage(departureDetails: Option[DepartureDetails])(implicit request: JourneyRequest[AnyContent]): Html =
+    departureDetailsPage(departureDetails.fold(departureForm)(departureForm.fill(_)))
 
   def saveMovementDetails(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    (request.answers match {
-      case arrivalAnswers: ArrivalAnswers     => handleSavingArrival(arrivalAnswers)
-      case departureAnswers: DepartureAnswers => handleSavingDeparture(departureAnswers)
+    val movementAnswers = request.answersAs[MovementAnswers]
+    (movementAnswers.`type` match {
+      case JourneyType.ARRIVE => handleSavingArrival(movementAnswers)
+      case JourneyType.DEPART => handleSavingDeparture(movementAnswers)
     }).flatMap {
       case Left(resultView) => Future.successful(BadRequest(resultView))
       case Right(call)      => Future.successful(Redirect(call))
     }
   }
 
-  private def handleSavingArrival(arrivalAnswers: ArrivalAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
+  private def handleSavingArrival(arrivalAnswers: MovementAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
     arrivalForm
       .bindFromRequest()
       .fold(
@@ -77,7 +79,7 @@ class MovementDetailsController @Inject()(
         }
       )
 
-  private def handleSavingDeparture(departureAnswers: DepartureAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
+  private def handleSavingDeparture(departureAnswers: MovementAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
     departureForm
       .bindFromRequest()
       .fold(

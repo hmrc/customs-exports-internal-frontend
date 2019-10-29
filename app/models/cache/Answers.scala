@@ -16,33 +16,24 @@
 
 package models.cache
 
-import forms._
+import forms.{AssociateUcr, MucrOptions, _}
 import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
-import forms.{AssociateUcr, MucrOptions}
 
-case class ArrivalAnswers(
+case class MovementAnswers(
   override val eori: Option[String] = None,
+  override val `type`: JourneyType,
   consignmentReferences: Option[ConsignmentReferences] = None,
   arrivalReference: Option[ArrivalReference] = None,
   arrivalDetails: Option[ArrivalDetails] = None,
+  departureDetails: Option[DepartureDetails] = None,
   location: Option[Location] = None,
   transport: Option[Transport] = None
-) extends Answers {
-  override val `type`: JourneyType.Value = JourneyType.ARRIVE
-}
+) extends Answers
 
-object ArrivalAnswers {
-  implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
-}
-
-case class DepartureAnswers(override val eori: Option[String] = None, departureDetails: Option[DepartureDetails] = None) extends Answers {
-  override val `type`: JourneyType.Value = JourneyType.DEPART
-}
-
-object DepartureAnswers {
-  implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
+object MovementAnswers {
+  implicit val format: Format[MovementAnswers] = Json.format[MovementAnswers]
 }
 
 case class AssociateUcrAnswers(
@@ -75,16 +66,19 @@ object ShutMucrAnswers {
 
 trait Answers {
   val `type`: JourneyType
-  val eori: Option[String]
+  val eori: Option[String] = None
 }
 
 object Answers {
   implicit val format: Format[Answers] = Union
     .from[Answers]("type")
-    .and[ArrivalAnswers](JourneyType.ARRIVE.toString)
-    .and[DepartureAnswers](JourneyType.DEPART.toString)
+    .and[MovementAnswers](JourneyType.ARRIVE.toString)
+    .and[MovementAnswers](JourneyType.DEPART.toString)
     .and[AssociateUcrAnswers](JourneyType.ASSOCIATE_UCR.toString)
     .and[DisassociateUcrAnswers](JourneyType.DISSOCIATE_UCR.toString)
     .and[ShutMucrAnswers](JourneyType.SHUT_MUCR.toString)
     .format
+
+  // TODO - remove this when we have user input
+  val fakeEORI = Some("GB1234567890")
 }

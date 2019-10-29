@@ -17,7 +17,7 @@
 package controllers.actions
 
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
-import models.cache.{ArrivalAnswers, Cache}
+import models.cache.{AssociateUcrAnswers, Cache}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
@@ -38,7 +38,7 @@ class JourneyRefinerSpec extends WordSpec with MustMatchers with MockitoSugar wi
   private val block = mock[JourneyRequest[_] => Future[Result]]
   private val operator = Operator("pid")
   private val request = AuthenticatedRequest(operator, FakeRequest())
-  private val answers = ArrivalAnswers()
+  private val answers = AssociateUcrAnswers()
   private val cache = Cache("pid", answers)
 
   private val refiner = new JourneyRefiner(movementRepository)

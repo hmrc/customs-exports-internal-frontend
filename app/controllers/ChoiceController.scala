@@ -49,10 +49,12 @@ class ChoiceController @Inject()(
     val correctChoice = Choice(choice)
 
     correctChoice match {
-      case forms.Choice.Arrival | forms.Choice.Departure =>
-        proceedJourney(ArrivalAnswers(), routes.ChoiceController.displayPage())
+      case forms.Choice.Arrival =>
+        proceedJourney(MovementAnswers(eori = Answers.fakeEORI, `type` = JourneyType.ARRIVE), routes.ConsignmentReferencesController.displayPage())
+      case forms.Choice.Departure =>
+        proceedJourney(MovementAnswers(eori = Answers.fakeEORI, `type` = JourneyType.DEPART), routes.ConsignmentReferencesController.displayPage())
       case forms.Choice.AssociateUCR =>
-        proceedJourney(DepartureAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
+        proceedJourney(AssociateUcrAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
       case forms.Choice.DisassociateUCR =>
         proceedJourney(AssociateUcrAnswers(), routes.ChoiceController.displayPage())
       case forms.Choice.ShutMUCR =>
@@ -69,9 +71,15 @@ class ChoiceController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), {
           case forms.Choice.Arrival =>
-            proceedJourney(ArrivalAnswers(None), routes.ConsignmentReferencesController.displayPage())
+            proceedJourney(
+              MovementAnswers(eori = Answers.fakeEORI, `type` = JourneyType.ARRIVE),
+              routes.ConsignmentReferencesController.displayPage()
+            )
           case forms.Choice.Departure =>
-            proceedJourney(DepartureAnswers(), routes.ChoiceController.displayPage())
+            proceedJourney(
+              MovementAnswers(eori = Answers.fakeEORI, `type` = JourneyType.DEPART),
+              routes.ConsignmentReferencesController.displayPage()
+            )
           case forms.Choice.AssociateUCR =>
             proceedJourney(AssociateUcrAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
           case forms.Choice.DisassociateUCR =>

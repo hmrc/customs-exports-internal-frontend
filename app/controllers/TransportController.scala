@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import forms.Transport
 import forms.Transport.form
 import javax.inject.{Inject, Singleton}
-import models.cache.{ArrivalAnswers, Cache}
+import models.cache.{Cache, MovementAnswers}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -41,7 +41,7 @@ class TransportController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    Future.successful(Ok(transportPage(request.answersAs[ArrivalAnswers].transport.fold(form)(form.fill(_)))))
+    Future.successful(Ok(transportPage(request.answersAs[MovementAnswers].transport.fold(form)(form.fill(_)))))
   }
 
   def saveTransport(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
@@ -50,8 +50,8 @@ class TransportController @Inject()(
       .fold(
         (formWithErrors: Form[Transport]) => Future.successful(BadRequest(transportPage(formWithErrors))),
         validForm => {
-          val arrivalAnswers = request.answersAs[ArrivalAnswers].copy(transport = Some(validForm))
-          movementRepository.upsert(Cache(request.pid, arrivalAnswers)).map { _ =>
+          val movementAnswers = request.answersAs[MovementAnswers].copy(transport = Some(validForm))
+          movementRepository.upsert(Cache(request.pid, movementAnswers)).map { _ =>
             Redirect(controllers.routes.SummaryController.displayPage())
           }
         }

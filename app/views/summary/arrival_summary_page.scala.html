@@ -21,11 +21,11 @@
 @import forms.ConsignmentReferences.AllowedReferences
 @import views.Title
 @import views.html.templates.main_template
-@import models.cache.ArrivalAnswers
+@import models.cache.MovementAnswers
 
 @this(main_template: main_template)
 
-@(data: ArrivalAnswers)(implicit request: Request[_], messages: Messages)
+@(data: MovementAnswers)(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Title("summary.arrival.title")){
     @components.back_link(routes.LocationController.displayPage())

@@ -20,46 +20,39 @@ import connectors.CustomsDeclareExportsMovementsConnector
 import forms._
 import javax.inject.{Inject, Singleton}
 import metrics.MovementsMetrics
-import models.cache.{DisassociateUcrAnswers, JourneyType}
+import models.cache._
 import models.requests.{MovementRequest, MovementType}
-import play.api.http.Status.INTERNAL_SERVER_ERROR
-import repositories.MovementRepository
 import services.audit.{AuditService, AuditTypes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmissionService @Inject()(
-  movementRepository: MovementRepository,
-  connector: CustomsDeclareExportsMovementsConnector,
-  auditService: AuditService,
-  metrics: MovementsMetrics
-)(implicit ec: ExecutionContext) {
+class SubmissionService @Inject()(connector: CustomsDeclareExportsMovementsConnector, auditService: AuditService, metrics: MovementsMetrics)(
+  implicit ec: ExecutionContext
+) {
 
   def submit(answers: DisassociateUcrAnswers): Future[Unit] = Future.successful((): Unit)
 
-  def submitMovementRequest(pid: String)(implicit hc: HeaderCarrier): Future[(Option[ConsignmentReferences], Int)] =
-    movementRepository.findByPid(pid).flatMap {
-      case Some(cache) =>
-        val data = Movement.createMovementRequest(cache)
-        val timer = metrics.startTimer(cache.answers.`type`)
+  def submitMovementRequest(pid: String, answers: MovementAnswers)(implicit hc: HeaderCarrier): Future[(Option[ConsignmentReferences], Int)] = {
+    val cache = Cache(pid, answers)
 
-        auditService.auditAllPagesUserInput(cache.answers)
+    val data = Movement.createMovementRequest(pid, answers)
+    val timer = metrics.startTimer(cache.answers.`type`)
 
-        val movementAuditType =
-          if (cache.answers.`type` == JourneyType.ARRIVE) AuditTypes.AuditArrival else AuditTypes.AuditDeparture
+    auditService.auditAllPagesUserInput(answers)
 
-        sendMovementRequest(data).map { submitResponse =>
-          metrics.incrementCounter(cache.answers.`type`)
-          auditService
-            .auditMovements(data, submitResponse.status.toString, movementAuditType)
-          timer.stop()
-          (Some(data.consignmentReference), submitResponse.status)
-        }
-      case _ =>
-        Future.successful((None, INTERNAL_SERVER_ERROR))
+    val movementAuditType =
+      if (cache.answers.`type` == JourneyType.ARRIVE) AuditTypes.AuditArrival else AuditTypes.AuditDeparture
+
+    sendMovementRequest(data).map { submitResponse =>
+      metrics.incrementCounter(cache.answers.`type`)
+      auditService
+        .auditMovements(data, submitResponse.status.toString, movementAuditType)
+      timer.stop()
+      (Some(data.consignmentReference), submitResponse.status)
     }
+  }
 
   private def sendMovementRequest(movementRequest: MovementRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
     movementRequest.choice match {
