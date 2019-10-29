@@ -34,6 +34,8 @@ class MovementRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: Exec
 
   def findByPid(pid: String): Future[Option[Cache]] = find("pid" -> pid).map(_.headOption)
 
+  def removeByPid(pid: String): Future[Unit] = remove("pid" -> pid).filter(_.ok).map(_ => (): Unit)
+
   def findOrCreate(pid: String, onMissing: Cache): Future[Cache] =
     findByPid(pid).flatMap {
       case Some(movementCache) => Future.successful(movementCache)

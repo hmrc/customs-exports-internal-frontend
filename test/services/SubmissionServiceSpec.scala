@@ -16,67 +16,92 @@
 
 package services
 
-import base.{MetricsMatchers, MockCustomsExportsMovement, MockMovementsRepository, MovementsMetricsStub, UnitSpec}
-import models.cache.{ArrivalAnswers, Cache}
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import base.UnitSpec
+import connectors.CustomsDeclareExportsMovementsConnector
+import connectors.exchanges.{Consolidation, DisassociateDUCRRequest}
+import metrics.MovementsMetrics
+import models.ReturnToStartException
+import models.cache.DisassociateUcrAnswers
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.test.Helpers._
-import services.audit.{AuditService, AuditTypes}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import repositories.MovementRepository
+import services.audit.AuditService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class SubmissionServiceSpec
-    extends UnitSpec with ScalaFutures with MovementsMetricsStub with MockCustomsExportsMovement with MetricsMatchers with BeforeAndAfterEach
-    with MockMovementsRepository {
+class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
-  implicit val defaultPatience: PatienceConfig =
-    PatienceConfig(timeout = Span(5, Seconds), interval = Span(100, Millis))
-
-  implicit val headerCarrierMock = mock[HeaderCarrier]
-
-  val mockAuditService = mock[AuditService]
-
-  val submissionService =
-    new SubmissionService(mockMovementsRepository, mockCustomsExportsMovementConnector, mockAuditService, movementsMetricsStub)
+  private implicit val hc: HeaderCarrier = mock[HeaderCarrier]
+  private val metrics = mock[MovementsMetrics]
+  private val audit = mock[AuditService]
+  private val repository = mock[MovementRepository]
+  private val connector = mock[CustomsDeclareExportsMovementsConnector]
+  private val service = new SubmissionService(repository, connector, audit, metrics)
 
   override def afterEach(): Unit = {
-    reset(mockMovementsRepository, mockCustomsExportsMovementConnector, mockAuditService)
+    reset(audit, connector, metrics, repository)
     super.afterEach()
   }
 
-  private def requestAcceptedTest(block: => Any): Any = {
-    when(mockCustomsExportsMovementConnector.sendArrivalDeclaration(any())(any()))
-      .thenReturn(Future.successful(HttpResponse(ACCEPTED)))
-    when(mockCustomsExportsMovementConnector.sendDepartureDeclaration(any())(any()))
-      .thenReturn(Future.successful(HttpResponse(ACCEPTED)))
+  "Submit Disassociate" should {
+    "delegate to connector" in {
+      given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
+      given(repository.removeByPid(anyString())).willReturn(Future.successful((): Unit))
 
-    block
-  }
+      val answers = DisassociateUcrAnswers(Some("eori"), Some("ucr"))
+      await(service.submit("pid", answers))
 
-  "SubmissionService on submitMovementRequest" when {
+      theDisassociationSubmitted mustBe DisassociateDUCRRequest("pid", "eori", "ucr")
+      verify(repository).removeByPid("pid")
+      verify(audit).auditAllPagesUserInput(answers)
+      verify(audit).auditDisassociate("eori", "ucr", "Success")
+    }
 
-    "submitting Arrival" should {
+    "audit when failed" in {
+      given(connector.submit(any[Consolidation]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
 
-      "return response from CustomsDeclareExportsMovementsConnector" in requestAcceptedTest {
-
-        when(mockMovementsRepository.findByPid(any()))
-          .thenReturn(Future.successful(Some(Cache("pid", ArrivalAnswers(Some("eori"))))))
-
-        val CustomHttpResponseCode = 123
-        when(mockCustomsExportsMovementConnector.sendArrivalDeclaration(any())(any()))
-          .thenReturn(Future.successful(HttpResponse(CustomHttpResponseCode)))
-
-        await(submissionService.submitMovementRequest("pid").map(_._2)) must equal(CustomHttpResponseCode)
-        verify(mockAuditService).auditMovements(any(), any(), ArgumentMatchers.eq(AuditTypes.AuditArrival))(any())
-        verify(mockAuditService)
-          .auditAllPagesUserInput(ArgumentMatchers.eq(ArrivalAnswers(Some("eori"))))(any())
+      val answers = DisassociateUcrAnswers(Some("eori"), Some("ucr"))
+      intercept[RuntimeException] {
+        await(service.submit("pid", answers))
       }
+
+      theDisassociationSubmitted mustBe DisassociateDUCRRequest("pid", "eori", "ucr")
+      verify(repository, never()).removeByPid("pid")
+      verify(audit).auditAllPagesUserInput(answers)
+      verify(audit).auditDisassociate("eori", "ucr", "Failed")
+    }
+
+    "handle missing eori" in {
+      val answers = DisassociateUcrAnswers(None, Some("ucr"))
+      intercept[Throwable] {
+        await(service.submit("pid", answers))
+      } mustBe ReturnToStartException
+
+      verifyZeroInteractions(repository)
+      verifyZeroInteractions(audit)
+    }
+
+    "handle missing ucr" in {
+      val answers = DisassociateUcrAnswers(Some("eori"), None)
+      intercept[Throwable] {
+        await(service.submit("pid", answers))
+      } mustBe ReturnToStartException
+
+      verifyZeroInteractions(repository)
+      verifyZeroInteractions(audit)
+    }
+
+    def theDisassociationSubmitted: DisassociateDUCRRequest = {
+      val captor: ArgumentCaptor[DisassociateDUCRRequest] = ArgumentCaptor.forClass(classOf[DisassociateDUCRRequest])
+      verify(connector).submit(captor.capture())(any())
+      captor.getValue
     }
   }
+
 }
