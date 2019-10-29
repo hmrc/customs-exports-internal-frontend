@@ -31,8 +31,8 @@ case class ArrivalAnswers(
   override val `type`: JourneyType.Value = JourneyType.ARRIVE
 }
 
-object DepartureAnswers {
-  implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
+object ArrivalAnswers {
+  implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
 }
 
 case class DepartureAnswers(
@@ -46,8 +46,8 @@ case class DepartureAnswers(
   override val `type`: JourneyType.Value = JourneyType.DEPART
 }
 
-object ArrivalAnswers {
-  implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
+object DepartureAnswers {
+  implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
 }
 
 case class AssociateUcrAnswers(
@@ -71,11 +71,19 @@ object DisassociateUcrAnswers {
 }
 
 case class ShutMucrAnswers(override val eori: Option[String] = None) extends Answers {
-  override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
+  override val `type`: JourneyType.Value = JourneyType.SHUT_MUCR
 }
 
 object ShutMucrAnswers {
   implicit val format: Format[ShutMucrAnswers] = Json.format[ShutMucrAnswers]
+}
+
+case class ViewSubmissionsAnswers(override val eori: Option[String] = None) extends Answers {
+  override val `type`: JourneyType.Value = JourneyType.VIEW_SUBMISSIONS
+}
+
+object ViewSubmissionsAnswers {
+  implicit val format: Format[ViewSubmissionsAnswers] = Json.format[ViewSubmissionsAnswers]
 }
 
 trait Answers {
@@ -91,6 +99,7 @@ object Answers {
     .and[AssociateUcrAnswers](JourneyType.ASSOCIATE_UCR.toString)
     .and[DisassociateUcrAnswers](JourneyType.DISSOCIATE_UCR.toString)
     .and[ShutMucrAnswers](JourneyType.SHUT_MUCR.toString)
+    .and[ViewSubmissionsAnswers](JourneyType.VIEW_SUBMISSIONS.toString)
     .format
 
   val fakeEORI = Some("GB1234567890")

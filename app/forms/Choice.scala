@@ -16,11 +16,10 @@
 
 package forms
 
-import models.cache.JourneyType._
+import forms.Mapping.requiredRadio
+import models.cache.JourneyType.{JourneyType, _}
 import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.json._
-import Mapping.requiredRadio
-import models.cache.JourneyType.JourneyType
 import utils.FieldValidator.isContainedIn
 
 sealed abstract class Choice(val value: String) {
@@ -37,11 +36,12 @@ object Choice {
     allChoices.find(_.value == input).getOrElse(throw new IllegalArgumentException("Incorrect choice"))
 
   def apply(`type`: JourneyType): Choice = `type` match {
-    case ARRIVE         => Arrival
-    case DEPART         => Departure
-    case ASSOCIATE_UCR  => AssociateUCR
-    case DISSOCIATE_UCR => DisassociateUCR
-    case SHUT_MUCR      => ShutMUCR
+    case ARRIVE           => Arrival
+    case DEPART           => Departure
+    case ASSOCIATE_UCR    => AssociateUCR
+    case DISSOCIATE_UCR   => DisassociateUCR
+    case SHUT_MUCR        => ShutMUCR
+    case VIEW_SUBMISSIONS => ViewSubmissions
   }
 
   implicit object ChoiceValueFormat extends Format[Choice] {
@@ -59,15 +59,15 @@ object Choice {
   case object AssociateUCR extends Choice("associateUCR")
   case object DisassociateUCR extends Choice("disassociateUCR")
   case object ShutMUCR extends Choice("shutMUCR")
-  case object Submissions extends Choice("submissions")
+  case object ViewSubmissions extends Choice("viewSubmissions")
 
-  val allChoices = Seq(Arrival, Departure, AssociateUCR, DisassociateUCR, ShutMUCR, Submissions)
+  val allChoices: Seq[Choice] = Seq(Arrival, Departure, AssociateUCR, DisassociateUCR, ShutMUCR, ViewSubmissions)
 
-  val choiceId = "Choice"
+  val choiceValueKey = "choice"
 
   val choiceMapping: Mapping[Choice] =
     Forms.mapping(
-      "choice" -> requiredRadio("choicePage.input.error.empty")
+      choiceValueKey -> requiredRadio("choicePage.input.error.empty")
         .verifying("choicePage.input.error.incorrectValue", isContainedIn(allChoices.map(_.value)))
     )(Choice.apply)(Choice.unapply)
 
