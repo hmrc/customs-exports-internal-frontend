@@ -24,6 +24,7 @@ import metrics.MovementsMetrics
 import models.ReturnToStartException
 import models.cache.{Cache, DisassociateUcrAnswers, JourneyType}
 import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
+import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import repositories.MovementRepository
 import services.audit.{AuditService, AuditTypes}
@@ -67,21 +68,15 @@ class SubmissionService @Inject()(
         val movementAuditType =
           if (cache.answers.`type` == JourneyType.ARRIVE) AuditTypes.AuditArrival else AuditTypes.AuditDeparture
 
-        sendMovementRequest(data).map { _ =>
+        connector.submit(data).map { _ =>
           metrics.incrementCounter(cache.answers.`type`)
           auditService
-            .auditMovements(data, "200", movementAuditType)
+            .auditMovements(data, Status.OK.toString, movementAuditType)
           timer.stop()
           (Some(data.consignmentReference), 200)
         }
       case _ =>
         Future.successful((None, INTERNAL_SERVER_ERROR))
-    }
-
-  private def sendMovementRequest(movementRequest: MovementRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
-    movementRequest.choice match {
-      case MovementType.Arrival   => connector.sendArrivalDeclaration(movementRequest)
-      case MovementType.Departure => connector.sendDepartureDeclaration(movementRequest)
     }
 
   private def createMovementRequest(cache: Cache): MovementRequest =

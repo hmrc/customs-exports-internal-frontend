@@ -35,14 +35,6 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
   private val logger = Logger(this.getClass)
   private val JsonHeaders = Seq(HeaderNames.CONTENT_TYPE -> ContentTypes.JSON, HeaderNames.ACCEPT -> ContentTypes.JSON)
 
-  @Deprecated()
-  def sendArrivalDeclaration(movementRequest: MovementRequest)(implicit hc: HeaderCarrier): Future[Unit] =
-    submit(movementRequest)
-
-  @Deprecated()
-  def sendDepartureDeclaration(movementRequest: MovementRequest)(implicit hc: HeaderCarrier): Future[Unit] =
-    submit(movementRequest)
-
   def submit(request: MovementRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     httpClient
       .POST[MovementRequest, HttpResponse](appConfig.customsDeclareExportsMovements + "/movements", request, JsonHeaders)

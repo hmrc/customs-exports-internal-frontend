@@ -35,7 +35,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class SubmissionServiceTest extends UnitSpec with BeforeAndAfterEach {
+class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
   private implicit val hc: HeaderCarrier = mock[HeaderCarrier]
   private val metrics = mock[MovementsMetrics]
