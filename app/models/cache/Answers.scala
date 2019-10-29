@@ -49,7 +49,7 @@ object AssociateUcrAnswers {
   implicit val format: Format[AssociateUcrAnswers] = Json.format[AssociateUcrAnswers]
 }
 
-case class DisassociateUcrAnswers(override val eori: Option[String] = Some("eori"), ucr: Option[String] = None) extends Answers {
+case class DisassociateUcrAnswers(override val eori: Option[String] = Answers.fakeEORI, ucr: Option[String] = None) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
 }
 
@@ -79,4 +79,6 @@ object Answers {
     .and[DisassociateUcrAnswers](JourneyType.DISSOCIATE_UCR.toString)
     .and[ShutMucrAnswers](JourneyType.SHUT_MUCR.toString)
     .format
+
+  val fakeEORI = Some("GB1234567890")
 }

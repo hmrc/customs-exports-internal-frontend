@@ -117,7 +117,7 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
 
   def getMovementsData(answers: Answers): JsObject = {
 
-    val userInput = Map(
+    val userInput = Map[String, String](
       // TODO
 //      ConsignmentReferences.formId -> Json.toJson(cacheMap.getEntry[ConsignmentReferences](ConsignmentReferences.formId)),
 //      Location.formId -> Json.toJson(cacheMap.getEntry[Location](Location.formId)),

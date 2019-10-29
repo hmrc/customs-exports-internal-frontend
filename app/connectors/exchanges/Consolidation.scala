@@ -23,26 +23,26 @@ import uk.gov.hmrc.play.json.Union
 
 object ConsolidationType extends Enumeration {
   type ConsolidationType = Value
-  val ASSOCIATE_DUCR, DISSOCIATE_DUCR, SHUT_MUCR = Value
+  val ASSOCIATE_DUCR, DISASSOCIATE_DUCR, SHUT_MUCR = Value
   implicit val format: Format[ConsolidationType] = Format(Reads.enumNameReads(ConsolidationType), Writes.enumNameWrites)
 }
 
 case class DisassociateDUCRRequest(override val providerId: String, override val eori: String, ucr: String) extends Consolidation {
-  override val `type`: exchanges.ConsolidationType.Value = ConsolidationType.DISSOCIATE_DUCR
+  override val consolidationType: exchanges.ConsolidationType.Value = ConsolidationType.DISASSOCIATE_DUCR
 }
 object DisassociateDUCRRequest {
   implicit val format: OFormat[DisassociateDUCRRequest] = Json.format[DisassociateDUCRRequest]
 }
 
 trait Consolidation {
-  val `type`: ConsolidationType
+  val consolidationType: ConsolidationType
   val eori: String
   val providerId: String
 }
 
 object Consolidation {
   implicit val format: Format[Consolidation] = Union
-    .from[Consolidation](typeField = "type")
-    .and[DisassociateDUCRRequest](typeTag = ConsolidationType.ASSOCIATE_DUCR.toString)
+    .from[Consolidation](typeField = "consolidationType")
+    .and[DisassociateDUCRRequest](typeTag = ConsolidationType.DISASSOCIATE_DUCR.toString)
     .format
 }
