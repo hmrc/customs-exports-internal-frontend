@@ -33,7 +33,10 @@ class DisassociateDucrViewSpec extends ViewSpec {
     }
 
     "render back button" in {
-      page(DisassociateDucr.form).getBackButton must haveHref(controllers.routes.ChoiceController.displayPage())
+      val backButton = page(DisassociateDucr.form).getBackButton
+
+      backButton mustBe defined
+      backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
     }
 
     "render error summary" when {

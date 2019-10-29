@@ -98,13 +98,15 @@ trait ViewMatchers { self: MustMatchers =>
       )
   }
 
-  class ElementContainsMessageMatcher(key: String, args: Any*)(implicit messages: Messages) extends Matcher[Element] {
-    override def apply(left: Element): MatchResult =
+  class ElementContainsMessageMatcher(key: String, args: Seq[Any])(implicit messages: Messages) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      val message = messages(key, args: _*)
       MatchResult(
-        left != null && left.text().contains(messages(key, args)),
-        s"Element did not contain message with key {$key}\n${actualContentWas(left)}",
-        s"Element contained message with key {$key}"
+        left != null && left.text().contains(message),
+        s"Element did not contain message {$message}\n${actualContentWas(left)}",
+        s"Element contained message {$message}"
       )
+    }
   }
 
   class MessageIsDefinedAt(key: String)(implicit messages: Messages) extends Matcher[Element] {

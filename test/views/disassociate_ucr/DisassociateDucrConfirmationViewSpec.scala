@@ -29,17 +29,14 @@ class DisassociateDucrConfirmationViewSpec extends ViewSpec {
 
   "View" should {
     implicit val flash: Flash = Flash(Map(FlashKeys.UCR -> "ucr"))
+    val view = page()
 
     "render title" in {
-      page().getTitle must containMessage("disassociateDucr.confirmation.tab.heading", "ucr")
-    }
-
-    "render back button" in {
-      page().getBackButton must haveHref(controllers.routes.ChoiceController.displayPage())
+      view.getTitle must containMessage("disassociateDucr.confirmation.tab.heading", "ucr")
     }
 
     "render confirmation dialogue" in {
-      page().getElementById("highlight-box-heading") must containMessage("disassociateDucr.confirmation.tab.heading", "ucr")
+      view.getElementById("highlight-box-heading") must containMessage("disassociateDucr.confirmation.heading", "ucr")
     }
   }
 

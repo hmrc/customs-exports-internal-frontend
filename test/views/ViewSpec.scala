@@ -68,7 +68,7 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
 
     def getTitle: Element = document.getElementsByTag("title").first()
 
-    def getBackButton: Element = document.getElementById("link-back")
+    def getBackButton: Option[Element] = Option(document.getElementById("link-back"))
 
     def getErrorSummary: Option[Element] = Option(document.getElementById("error-summary"))
   }
