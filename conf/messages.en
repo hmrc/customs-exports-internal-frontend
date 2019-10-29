@@ -50,6 +50,16 @@ arrivalDetails.date.hint = For example, 01 08 2007
 arrivalDetails.time.question = Time of Arrival
 arrivalDetails.time.hint = Enter the time in 24 hour format. For example, 13 30
 
+departureDetails.title = Departure date and time
+departureDetails.header = Enter departure details
+departureDetails.date.question = Date of departure
+departureDetails.date.hint = For example, 01 08 2007
+departureDetails.time.question = Time of departure
+departureDetails.time.hint = For example, 21 37
+
+departure.details.error.overdue = Time of Departure cannot be more than 60 days in the past
+departure.details.error.future = Time of Departure cannot be in the future
+
 dateTime.date.error.format = Date format is incorrect
 dateTime.date.day.empty = Day cannot be empty
 dateTime.date.day.error = Day is incorrect
@@ -68,10 +78,34 @@ location.hint = The is an alphanumeric code. For example, GBAUEMAEMAEMA
 location.code.empty = Goods location code cannot be empty
 location.code.error = Goods location code is incorrect
 
+transport.title = Transport
+transport.modeOfTransport.question = What transport type took the goods across the border?
+transport.modeOfTransport.empty = You need to choose mode of transport
+transport.modeOfTransport.error = Mode of transport is incorrect
+transport.modeOfTransport.1 = Sea transport
+transport.modeOfTransport.2 = Rail transport
+transport.modeOfTransport.3 = Road transport
+transport.modeOfTransport.4 = Air transport
+transport.modeOfTransport.5 = Postal or mail
+transport.modeOfTransport.6 = Fixed transport installations
+transport.modeOfTransport.7 = Inland waterway transport
+transport.modeOfTransport.8 = Other, for example own propulsion
+transport.transportId.question = What is the ID for the selected transport type?
+transport.transportId.hint = This can be up to 35 characters. For example a vehicle registration number or an IATA flight number. If postal or fixed installation selected, type unknown in the box.
+transport.transportId.empty = You need to provide the transport ID
+transport.transportId.error = Transport reference is incorrect
+transport.nationality.question = What is the nationality of the transport type?
+transport.nationality.hint = This is a 2 digit country code. For example FR for France.
+transport.nationality.empty = You need to provide the transport nationality
+transport.nationality.error = Nationality of transport is incorrect
+
 summary.referenceType = Consignment type
 summary.referenceValue = Consignment reference
 summary.consignmentDetails = Consignment details
 summary.goodsLocation = Goods location code
+summary.modeOfTransport = Transport type
+summary.transportId = Transport ID
+summary.nationality = Transport nationality
 
 summary.arrival.title = Is the information provided for this arrival correct?
 summary.arrival.date = Date of arrival
@@ -88,6 +122,12 @@ movement.ARRIVE.confirmation.heading = Request to arrive {0} {1} has been submit
 movement.arrival.confirmation.nextSteps = {0} a consignment, or {1} a consignment.
 movement.arrival.confirmation.nextSteps.associate = Associate
 movement.arrival.confirmation.nextSteps.depart = depart
+
+movement.DEPART.confirmation.tab.heading = Departure request submitted
+movement.DEPART.confirmation.heading = Request to depart {0} {1} has been submitted
+movement.departure.confirmation.nextSteps = {0}. {1} a new consignment.
+movement.departure.confirmation.nextSteps.depart = Depart another consignment
+movement.departure.confirmation.nextSteps.arrive = Arrive
 
 associate.heading = Add to MUCR {0}
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with

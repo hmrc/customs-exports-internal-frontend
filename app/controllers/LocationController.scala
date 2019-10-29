@@ -41,7 +41,11 @@ class LocationController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
-    Ok(locationPage(request.answersAs[ArrivalAnswers].location.fold(form)(form.fill(_))))
+    val location = request.answers match {
+      case arrivalAnswers: ArrivalAnswers     => arrivalAnswers.location
+      case departureAnswers: DepartureAnswers => departureAnswers.location
+    }
+    Ok(locationPage(location.fold(form)(form.fill(_))))
   }
 
   def saveLocation(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async { implicit request =>
@@ -50,14 +54,15 @@ class LocationController @Inject()(
       .fold(
         (formWithErrors: Form[Location]) => Future.successful(BadRequest(locationPage(formWithErrors))),
         validForm => {
-          val movementAnswers = request.answersAs[ArrivalAnswers].copy(location = Some(validForm))
-          movementRepository.upsert(Cache(request.pid, movementAnswers)).map { _ =>
-            movementAnswers.`type` match {
-              case JourneyType.ARRIVE =>
+          request.answers match {
+            case arrivalAnswers: ArrivalAnswers =>
+              movementRepository.upsert(Cache(request.pid, arrivalAnswers.copy(location = Some(validForm)))).map { _ =>
                 Redirect(controllers.routes.SummaryController.displayPage())
-              case JourneyType.DEPART =>
+              }
+            case departureAnswers: DepartureAnswers =>
+              movementRepository.upsert(Cache(request.pid, departureAnswers.copy(location = Some(validForm)))).map { _ =>
                 Redirect(controllers.routes.TransportController.displayPage())
-            }
+              }
           }
         }
       )
