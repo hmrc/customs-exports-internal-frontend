@@ -48,24 +48,25 @@ class SummaryController @Inject()(
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)) { implicit request =>
     request.answers match {
-      case arrivalAnswers: ArrivalAnswers => Ok(arrivalSummaryPage(arrivalAnswers))
+      case arrivalAnswers: ArrivalAnswers     => Ok(arrivalSummaryPage(arrivalAnswers))
       case departureAnswers: DepartureAnswers => Ok(departureSummaryPage(departureAnswers))
     }
   }
 
-  def submitMovementRequest(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async { implicit request =>
-    submissionService
-      .submitMovementRequest(request.pid, request.answers)
-      .flatMap {
-        case (Some(consignmentReferences), ACCEPTED) =>
-          movementRepository.delete(request.pid).map { _ =>
-            Ok(movementConfirmationPage(consignmentReferences))
-          }
-        case _ =>
-          Future.successful {
-            logger.warn(s"No movement data found in cache.")
-            errorHandler.getInternalServerErrorPage
-          }
-      }
+  def submitMovementRequest(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
+    implicit request =>
+      submissionService
+        .submitMovementRequest(request.pid, request.answers)
+        .flatMap {
+          case (Some(consignmentReferences), ACCEPTED) =>
+            movementRepository.delete(request.pid).map { _ =>
+              Ok(movementConfirmationPage(consignmentReferences))
+            }
+          case _ =>
+            Future.successful {
+              logger.warn(s"No movement data found in cache.")
+              errorHandler.getInternalServerErrorPage
+            }
+        }
   }
 }
