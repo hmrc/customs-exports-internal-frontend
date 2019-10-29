@@ -17,9 +17,9 @@
 package services.audit
 
 import com.google.inject.Inject
-import forms.Choice._
+import forms._
 import javax.inject.Named
-import models.cache.{Answers, JourneyType}
+import models.cache.{Answers, ArrivalAnswers, DepartureAnswers, JourneyType}
 import models.requests.MovementRequest
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
@@ -115,16 +115,26 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
     connector.sendExtendedEvent(extendedEvent).map(handleResponse(_, auditType))
   }
 
-  def getMovementsData(answers: Answers): JsObject = {
+  private def getMovementsData(answers: Answers): JsObject = {
 
-    val userInput = Map[String, String](
-      // TODO
-//      ConsignmentReferences.formId -> Json.toJson(cacheMap.getEntry[ConsignmentReferences](ConsignmentReferences.formId)),
-//      Location.formId -> Json.toJson(cacheMap.getEntry[Location](Location.formId)),
-//      MovementDetails.formId -> movementDetails,
-//      Transport.formId -> Json.toJson(cacheMap.getEntry[Transport](Transport.formId)),
-//      ArrivalReference.formId -> Json.toJson(cacheMap.getEntry[ArrivalReference](ArrivalReference.formId))
-    )
+    val userInput = answers match {
+      case arrivalAnswers: ArrivalAnswers =>
+        Map(
+          ConsignmentReferences.formId -> Json.toJson(arrivalAnswers.consignmentReferences),
+          Location.formId -> Json.toJson(arrivalAnswers.location),
+          MovementDetails.formId -> Json.toJson(arrivalAnswers.arrivalDetails),
+          ArrivalReference.formId -> Json.toJson(arrivalAnswers.arrivalReference)
+        )
+      case departureAnswers: DepartureAnswers =>
+        Map(
+          ConsignmentReferences.formId -> Json.toJson(departureAnswers.consignmentReferences),
+          Location.formId -> Json.toJson(departureAnswers.location),
+          MovementDetails.formId -> Json.toJson(departureAnswers.departureDetails),
+          Transport.formId -> Json.toJson(departureAnswers.transport),
+          ArrivalReference.formId -> Json.toJson(departureAnswers.arrivalReference)
+        )
+    }
+
     Json.toJson(userInput).as[JsObject]
   }
 

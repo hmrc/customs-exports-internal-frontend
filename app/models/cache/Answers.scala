@@ -16,25 +16,38 @@
 
 package models.cache
 
+import forms.{AssociateUcr, MucrOptions, _}
 import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
-import forms.{AssociateUcr, MucrOptions}
 
-case class ArrivalAnswers(override val eori: Option[String] = None) extends Answers {
+case class ArrivalAnswers(
+  override val eori: Option[String] = None,
+  consignmentReferences: Option[ConsignmentReferences] = None,
+  arrivalReference: Option[ArrivalReference] = None,
+  arrivalDetails: Option[ArrivalDetails] = None,
+  location: Option[Location] = None
+) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ARRIVE
-}
-
-object ArrivalAnswers {
-  implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
-}
-
-case class DepartureAnswers(override val eori: Option[String] = None) extends Answers {
-  override val `type`: JourneyType.Value = JourneyType.DEPART
 }
 
 object DepartureAnswers {
   implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
+}
+
+case class DepartureAnswers(
+  override val eori: Option[String] = None,
+  consignmentReferences: Option[ConsignmentReferences] = None,
+  arrivalReference: Option[ArrivalReference] = None,
+  departureDetails: Option[DepartureDetails] = None,
+  location: Option[Location] = None,
+  transport: Option[Transport] = None
+) extends Answers {
+  override val `type`: JourneyType.Value = JourneyType.DEPART
+}
+
+object ArrivalAnswers {
+  implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
 }
 
 case class AssociateUcrAnswers(

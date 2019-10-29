@@ -75,6 +75,7 @@ class AuditServiceSpec extends BaseSpec with BeforeAndAfterEach with MockitoSuga
       val data =
         MovementRequest(
           eori = "GB12345678",
+          providerId = "122343",
           choice = MovementType.Arrival,
           consignmentReference = ConsignmentReferences("UCR", "D"),
           movementDetails = MovementDetailsRequest("dateTime")

@@ -39,7 +39,7 @@ class ChoiceController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage: Action[AnyContent] = authenticate.async { implicit request =>
-    movementRepository.findByPid(request.operator.pid).map {
+    movementRepository.findByPid(request.pid).map {
       case Some(cache) => Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
       case None        => Ok(choicePage(Choice.form()))
     }
@@ -49,10 +49,12 @@ class ChoiceController @Inject()(
     val correctChoice = Choice(choice)
 
     correctChoice match {
-      case forms.Choice.Arrival | forms.Choice.Departure =>
-        proceedJourney(ArrivalAnswers(), routes.ChoiceController.displayPage())
+      case forms.Choice.Arrival =>
+        proceedJourney(ArrivalAnswers(eori = Answers.fakeEORI), routes.ConsignmentReferencesController.displayPage())
+      case forms.Choice.Departure =>
+        proceedJourney(DepartureAnswers(eori = Answers.fakeEORI), routes.ConsignmentReferencesController.displayPage())
       case forms.Choice.AssociateUCR =>
-        proceedJourney(DepartureAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
+        proceedJourney(AssociateUcrAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
       case forms.Choice.DisassociateUCR =>
         proceedJourney(DisassociateUcrAnswers(), controllers.consolidations.routes.DisassociateDucrController.display())
       case forms.Choice.ShutMUCR =>
@@ -69,9 +71,9 @@ class ChoiceController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), {
           case forms.Choice.Arrival =>
-            proceedJourney(ArrivalAnswers(), routes.ChoiceController.displayPage())
+            proceedJourney(ArrivalAnswers(eori = Answers.fakeEORI), routes.ConsignmentReferencesController.displayPage())
           case forms.Choice.Departure =>
-            proceedJourney(DepartureAnswers(), routes.ChoiceController.displayPage())
+            proceedJourney(DepartureAnswers(eori = Answers.fakeEORI), routes.ConsignmentReferencesController.displayPage())
           case forms.Choice.AssociateUCR =>
             proceedJourney(AssociateUcrAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
           case forms.Choice.DisassociateUCR =>

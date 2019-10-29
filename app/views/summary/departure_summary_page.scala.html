@@ -1,0 +1,92 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.routes
+@import models.viewmodels.HtmlTableRow
+@import forms._
+@import uk.gov.hmrc.play.views.html._
+@import forms.ConsignmentReferences.AllowedReferences
+@import views.html.templates.main_template
+@import models.cache.DepartureAnswers
+@import uk.gov.hmrc.play.views.html._
+@import views.Title
+
+@this(main_template: main_template)
+
+@(data: DepartureAnswers)(implicit request: Request[_], messages: Messages)
+
+    @main_template(title = Title("summary.departure.title")) {
+
+        @components.back_link(routes.TransportController.displayPage())
+
+        @components.page_title(Some("summary.departure.title"))
+
+    @components.summary_list(Some(messages("summary.consignmentDetails"))) {
+        @components.table_row_no_change_link(HtmlTableRow(
+            label = messages("summary.referenceType"),
+            value = data.consignmentReferences.map(ref =>
+                if(ref.reference.equals(AllowedReferences.Ducr)) {
+                    messages("consignmentReferences.reference.ducr")
+                } else {
+                    messages("consignmentReferences.reference.mucr")
+                }
+            )
+        ))
+        @components.table_row_no_change_link(HtmlTableRow(
+            label = messages("summary.referenceValue"),
+            value = data.consignmentReferences.map(_.referenceValue)
+        ))
+    }
+
+    @components.summary_list(Some(messages("location.title"))) {
+        @components.table_row_no_change_link(HtmlTableRow(
+            label = messages("summary.goodsLocation"),
+            value = data.location.map(_.code)
+        ))
+    }
+
+    @components.summary_list(Some(messages("departureDetails.title"))) {
+        @components.table_row_no_change_link(HtmlTableRow(
+            label = messages("summary.departure.date"),
+            value = data.departureDetails.map(_.dateOfDeparture.toString)
+        ))
+        @components.table_row_no_change_link(HtmlTableRow(
+            label = messages("summary.departure.time"),
+            value = data.departureDetails.map(_.timeOfDeparture.toString)
+        ))
+    }
+
+    @components.summary_list(Some(messages("transport.title"))) {
+        @components.table_row_no_change_link(HtmlTableRow(
+            label = messages("summary.modeOfTransport"),
+            value = data.transport.map(transport => messages(s"transport.modeOfTransport.${transport.modeOfTransport}"))
+        ))
+        @components.table_row_no_change_link(HtmlTableRow(
+            label = messages("summary.transportId"),
+            value = data.transport.map(_.transportId)
+        ))
+        @components.table_row_no_change_link(HtmlTableRow(
+            label = messages("summary.nationality"),
+            value = data.transport.map(_.nationality)
+        ))
+    }
+
+        @helper.form(action = routes.SummaryController.submitMovementRequest()) {
+            @helper.CSRF.formField
+
+            @components.submit_button(messages("site.confirmAndSubmit"))
+        }
+    }

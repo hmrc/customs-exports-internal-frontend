@@ -18,11 +18,14 @@ package views
 
 import base.Injector
 import controllers.CSRFSupport
+import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
+import models.cache.Answers
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.mvc.Request
+import play.api.test.FakeRequest
 import play.twirl.api.Html
 
 class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMatchers with Injector with CSRFSupport {
@@ -35,6 +38,8 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
     new AllMessageKeysAreMandatoryMessages(messagesApi.preferred(request))
 
   protected implicit def messages(key: String)(implicit request: Request[_]): String = messages(request)(key)
+
+  protected def journeyRequest(answers: Answers) = JourneyRequest(answers, AuthenticatedRequest(Operator("pid"), FakeRequest().withCSRFToken))
 
   /*
     Fails the test if a view is configured with a message key that doesnt exist in the messages file

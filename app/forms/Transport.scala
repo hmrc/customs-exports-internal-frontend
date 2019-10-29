@@ -15,11 +15,47 @@
  */
 
 package forms
-import play.api.libs.json.Json
 
-// TODO replace with complete form
+import forms.Mapping.requiredRadio
+import play.api.data.Forms.text
+import play.api.data.{Form, Forms}
+import play.api.libs.json.Json
+import utils.FieldValidator._
+
 case class Transport(modeOfTransport: String, nationality: String, transportId: String)
 
 object Transport {
   implicit val format = Json.format[Transport]
+
+  val formId = "Transport"
+
+  object ModesOfTransport {
+    val Sea = "1"
+    val Rail = "2"
+    val Road = "3"
+    val Air = "4"
+    val PostalOrMail = "5"
+    val FixedInstallations = "6"
+    val InlandWaterway = "7"
+    val Other = "8"
+  }
+
+  import ModesOfTransport._
+
+  val allowedModeOfTransport =
+    Seq(Sea, Rail, Road, Air, PostalOrMail, FixedInstallations, InlandWaterway, Other)
+
+  val mapping = Forms.mapping(
+    "modeOfTransport" -> requiredRadio("transport.modeOfTransport.empty")
+      .verifying("transport.modeOfTransport.error", isContainedIn(allowedModeOfTransport)),
+    "nationality" -> text()
+      .verifying("transport.nationality.empty", nonEmpty)
+      .verifying("transport.nationality.error", isEmpty or isValidCountryCode),
+    "transportId" -> text()
+      .verifying("transport.transportId.empty", nonEmpty)
+      .verifying("transport.transportId.error", isEmpty or (noLongerThan(35) and isAlphanumericWithAllowedSpecialCharacters))
+  )(Transport.apply)(Transport.unapply)
+
+  def form: Form[Transport] =
+    Form(mapping)
 }

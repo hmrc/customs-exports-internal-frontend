@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.requests
+@(heading: Option[String] = None)(content: Html)
 
-import forms._
-import play.api.libs.json.{Json, OFormat}
+<table>
+    @heading.map { header =>
+        <caption class="heading-medium">@header</caption>
+    }
 
-case class MovementRequest(
-  eori: String,
-  providerId: String,
-  choice: MovementType,
-  consignmentReference: ConsignmentReferences,
-  movementDetails: MovementDetailsRequest,
-  location: Option[Location] = None,
-  arrivalReference: Option[ArrivalReference] = None,
-  transport: Option[Transport] = None
-)
-
-object MovementRequest {
-  implicit val format: OFormat[MovementRequest] = Json.format[MovementRequest]
-}
+    <tbody>
+        @content
+    </tbody>
+</table>

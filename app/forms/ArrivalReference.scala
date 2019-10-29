@@ -15,11 +15,22 @@
  */
 
 package forms
-import play.api.libs.json.Json
 
-// TODO replace with complete form
+import play.api.data.Forms.{optional, text}
+import play.api.data.{Form, Forms}
+import play.api.libs.json.Json
+import utils.FieldValidator._
+
 case class ArrivalReference(reference: Option[String])
 
 object ArrivalReference {
+  val formId: String = "ArrivalReference"
+
   implicit val format = Json.format[ArrivalReference]
+
+  val mapping = Forms.mapping("reference" -> optional(text().verifying("arrivalReference.error", isAlphanumeric and noLongerThan(25))))(
+    ArrivalReference.apply
+  )(ArrivalReference.unapply)
+
+  val form: Form[ArrivalReference] = Form(mapping)
 }

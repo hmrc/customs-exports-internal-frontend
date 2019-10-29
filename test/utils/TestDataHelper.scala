@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package models.requests
+package utils
 
-import forms._
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, Writes}
 
-case class MovementRequest(
-  eori: String,
-  providerId: String,
-  choice: MovementType,
-  consignmentReference: ConsignmentReferences,
-  movementDetails: MovementDetailsRequest,
-  location: Option[Location] = None,
-  arrivalReference: Option[ArrivalReference] = None,
-  transport: Option[Transport] = None
-)
+import scala.util.Random
 
-object MovementRequest {
-  implicit val format: OFormat[MovementRequest] = Json.format[MovementRequest]
+object TestDataHelper {
+
+  def createRandomAlphanumericString(length: Int): String =
+    Random.alphanumeric.take(length).mkString
+
+  val maxStringLength = 150
+  def createRandomString(length: Int = maxStringLength): String =
+    Random.nextString(length)
+
+  def getDataSeq[A](size: Int, elementBuilder: () => A): Seq[A] = (1 to size).map(_ => elementBuilder())
+  def getDataSeq[A](size: Int, elementBuilder: Int => A, builderParam: Int): Seq[A] =
+    (1 to size).map(_ => elementBuilder(builderParam))
+
 }

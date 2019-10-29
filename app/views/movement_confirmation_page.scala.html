@@ -1,0 +1,61 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import forms.{Choice, ConsignmentReferences}
+@import views.Title
+@import controllers.exchanges.JourneyRequest
+@import views.html.templates.main_template
+@import models.cache.JourneyType
+
+@this(main_template: main_template)
+
+@(consignmentReferences: ConsignmentReferences)(implicit request: JourneyRequest[_], messages: Messages)
+
+
+@associateLink = {<a href="@routes.ChoiceController.startSpecificJourney("associateDUCR")">@messages("movement.arrival.confirmation.nextSteps.associate")</a>}
+@departureLinkForArrival = {<a href="@routes.ChoiceController.startSpecificJourney("departure")">@messages("movement.arrival.confirmation.nextSteps.depart")</a>}
+@departureLinkForDeparture = {<a href="@routes.ChoiceController.startSpecificJourney("departure")">@messages("movement.departure.confirmation.nextSteps.depart")</a>}
+@arrivalLink = {<a href="@routes.ChoiceController.startSpecificJourney("arrival")">@messages("movement.departure.confirmation.nextSteps.arrive")</a>}
+
+@main_template(
+    title = Title(s"movement.${request.answers.`type`}.confirmation.tab.heading")
+) {
+
+    @components.highlight_box_with_reference(
+        headingText = messages(
+            s"movement.${request.answers.`type`}.confirmation.heading",
+            if(consignmentReferences.reference == "D") "DUCR" else "MUCR",
+            consignmentReferences.referenceValue
+        )
+    )
+
+    @components.confirmation_status_info()
+
+    <h2 id="what-next">@messages("movement.confirmation.whatNext")</h2>
+
+    @if(request.answers.`type` == JourneyType.ARRIVE) {
+        <div id="next-steps">
+            @Html(messages("movement.arrival.confirmation.nextSteps", associateLink, departureLinkForArrival))
+        </div>
+    }
+    @if(request.answers.`type` == JourneyType.DEPART) {
+        <div id="next-steps">
+            @Html(messages("movement.departure.confirmation.nextSteps", departureLinkForDeparture, arrivalLink))
+        </div>
+    }
+
+    @components.button_link("site.backToStart", routes.ChoiceController.displayPage())
+}

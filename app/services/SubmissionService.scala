@@ -22,10 +22,8 @@ import forms._
 import javax.inject.{Inject, Singleton}
 import metrics.MovementsMetrics
 import models.ReturnToStartException
-import models.cache.{Cache, DisassociateUcrAnswers, JourneyType}
-import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
+import models.cache.{Answers, Cache, DisassociateUcrAnswers, JourneyType}
 import play.api.http.Status
-import play.api.http.Status.INTERNAL_SERVER_ERROR
 import repositories.MovementRepository
 import services.audit.{AuditService, AuditTypes}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -57,38 +55,23 @@ class SubmissionService @Inject()(
       }
   }
 
-  def submitMovementRequest(pid: String)(implicit hc: HeaderCarrier): Future[(Option[ConsignmentReferences], Int)] =
-    movementRepository.findByPid(pid).flatMap {
-      case Some(cache) =>
-        val data = createMovementRequest(cache)
-        val timer = metrics.startTimer(cache.answers.`type`)
+  def submitMovementRequest(pid: String, answers: Answers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
+    val cache = Cache(pid, answers)
 
-        auditService.auditAllPagesUserInput(cache.answers)
+    val data = Movement.createMovementRequest(pid, answers)
+    val timer = metrics.startTimer(cache.answers.`type`)
 
-        val movementAuditType =
-          if (cache.answers.`type` == JourneyType.ARRIVE) AuditTypes.AuditArrival else AuditTypes.AuditDeparture
+    auditService.auditAllPagesUserInput(answers)
 
-        connector.submit(data).map { _ =>
-          metrics.incrementCounter(cache.answers.`type`)
-          auditService
-            .auditMovements(data, Status.OK.toString, movementAuditType)
-          timer.stop()
-          (Some(data.consignmentReference), 200)
-        }
-      case _ =>
-        Future.successful((None, INTERNAL_SERVER_ERROR))
+    val movementAuditType =
+      if (cache.answers.`type` == JourneyType.ARRIVE) AuditTypes.AuditArrival else AuditTypes.AuditDeparture
+
+    connector.submit(data).map { _ =>
+      metrics.incrementCounter(cache.answers.`type`)
+      auditService
+        .auditMovements(data, Status.OK.toString, movementAuditType)
+      timer.stop()
+      data.consignmentReference
     }
-
-  private def createMovementRequest(cache: Cache): MovementRequest =
-    // TODO - implement
-    MovementRequest(
-      eori = "TODO",
-      choice = MovementType.Arrival,
-      consignmentReference = ConsignmentReferences("todo", "todo"),
-      movementDetails = MovementDetailsRequest("todo"),
-      location = None,
-      transport = None,
-      arrivalReference = None
-    )
-
+  }
 }

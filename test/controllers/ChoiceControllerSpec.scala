@@ -80,7 +80,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().startSpecificJourney(Choice.Arrival.value)(getRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.ConsignmentReferencesController.displayPage().url)
       }
 
       "user choose departure" in {
@@ -88,7 +88,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().startSpecificJourney(Choice.Departure.value)(getRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.ConsignmentReferencesController.displayPage().url)
       }
 
       "user choose associate ucr" in {
@@ -138,8 +138,8 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(Choice.Arrival))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
-        theCacheUpserted mustBe Cache(pid, ArrivalAnswers())
+        redirectLocation(result) mustBe Some(routes.ConsignmentReferencesController.displayPage().url)
+        theCacheUpserted mustBe Cache(pid, ArrivalAnswers(Answers.fakeEORI))
       }
 
       "departure" in {
@@ -147,8 +147,8 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(Choice.Departure))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
-        theCacheUpserted mustBe Cache(pid, DepartureAnswers())
+        redirectLocation(result) mustBe Some(routes.ConsignmentReferencesController.displayPage().url)
+        theCacheUpserted mustBe Cache(pid, DepartureAnswers(Answers.fakeEORI))
       }
 
       "associate UCR" in {

@@ -24,6 +24,113 @@ movement.choice.disassociateDucr.label = Disassociate a consignment
 movement.choice.shutMucr.label = Shut a master consignment
 movement.choice.submissions.label = View requests
 
+consignmentReferences.title = Consignment references
+consignmentReferences.ARRIVE.heading = Arrive consignment
+consignmentReferences.DEPART.heading = Depart consignment
+consignmentReferences.ARRIVE.question = What consignment do you want to arrive?
+consignmentReferences.DEPART.question = What consignment do you want to depart?
+consignmentReferences.reference.ducr = Declaration Consignment Reference (DUCR)
+consignmentReferences.reference.mucr = Master Consignment Reference (MUCR)
+consignmentReferences.reference.empty = Please choose reference
+consignmentReferences.reference.error = Incorrect reference
+consignmentReferences.reference.ducrValue = Declaration Unique Consignment Reference
+consignmentReferences.reference.mucrValue = Master Unique Consignment Reference
+consignmentReferences.reference.mucrValue.empty = Enter a Master Unique Consignment Reference
+consignmentReferences.reference.ducrValue.empty = Enter a Declaration Unique Consignment Reference
+consignmentReferences.reference.mucrValue.error = Master Unique Consignment Reference is incorrect
+consignmentReferences.reference.ducrValue.error = Declaration Unique Consignment Reference is incorrect
+
+arrivalReference = Arrival reference
+arrivalReference.question = Give this arrival a unique reference
+arrivalReference.hint = This will help you identify it if you need to find it in the future. It can be up to 25 characters.
+arrivalReference.error = The reference should be no more than 25 characters.
+
+arrivalDetails.title = Arrival date and time
+arrivalDetails.header = Enter date and time of arrival
+arrivalDetails.date.question = Date of Arrival
+arrivalDetails.date.hint = For example, 01 08 2007
+arrivalDetails.time.question = Time of Arrival
+arrivalDetails.time.hint = Enter the time in 24 hour format. For example, 13 30
+
+departureDetails.title = Departure date and time
+departureDetails.header = Enter departure details
+departureDetails.date.question = Date of departure
+departureDetails.date.hint = For example, 01 08 2007
+departureDetails.time.question = Time of departure
+departureDetails.time.hint = For example, 21 37
+
+departure.details.error.overdue = Time of Departure cannot be more than 60 days in the past
+departure.details.error.future = Time of Departure cannot be in the future
+
+dateTime.date.error.format = Date format is incorrect
+dateTime.date.day.empty = Day cannot be empty
+dateTime.date.day.error = Day is incorrect
+dateTime.date.month.empty = Month cannot be empty
+dateTime.date.month.error = Month is incorrect
+dateTime.date.year.empty = Year cannot be empty
+dateTime.date.year.error = Year is incorrect
+dateTime.time.hour.empty = Hour cannot be empty
+dateTime.time.hour.error = Hour is incorrect
+dateTime.time.minute.empty = Minute cannot be empty
+dateTime.time.minute.error = Minute is incorrect
+
+location.title = Location
+location.question = What is the goods location code?
+location.hint = The is an alphanumeric code. For example, GBAUEMAEMAEMA
+location.code.empty = Goods location code cannot be empty
+location.code.error = Goods location code is incorrect
+
+transport.title = Transport
+transport.modeOfTransport.question = What transport type took the goods across the border?
+transport.modeOfTransport.empty = You need to choose mode of transport
+transport.modeOfTransport.error = Mode of transport is incorrect
+transport.modeOfTransport.1 = Sea transport
+transport.modeOfTransport.2 = Rail transport
+transport.modeOfTransport.3 = Road transport
+transport.modeOfTransport.4 = Air transport
+transport.modeOfTransport.5 = Postal or mail
+transport.modeOfTransport.6 = Fixed transport installations
+transport.modeOfTransport.7 = Inland waterway transport
+transport.modeOfTransport.8 = Other, for example own propulsion
+transport.transportId.question = What is the ID for the selected transport type?
+transport.transportId.hint = This can be up to 35 characters. For example a vehicle registration number or an IATA flight number. If postal or fixed installation selected, type unknown in the box.
+transport.transportId.empty = You need to provide the transport ID
+transport.transportId.error = Transport reference is incorrect
+transport.nationality.question = What is the nationality of the transport type?
+transport.nationality.hint = This is a 2 digit country code. For example FR for France.
+transport.nationality.empty = You need to provide the transport nationality
+transport.nationality.error = Nationality of transport is incorrect
+
+summary.referenceType = Consignment type
+summary.referenceValue = Consignment reference
+summary.consignmentDetails = Consignment details
+summary.goodsLocation = Goods location code
+summary.modeOfTransport = Transport type
+summary.transportId = Transport ID
+summary.nationality = Transport nationality
+
+summary.arrival.title = Is the information provided for this arrival correct?
+summary.arrival.date = Date of arrival
+summary.arrival.time = Time of arrival
+
+summary.departure.title = Is the information provided for this departure correct?
+summary.departure.date = Date of departure
+summary.departure.time = Time of departure
+
+summary.arrivalReference.reference = Unique reference
+
+movement.ARRIVE.confirmation.tab.heading = Arrival request submitted
+movement.ARRIVE.confirmation.heading = Request to arrive {0} {1} has been submitted
+movement.arrival.confirmation.nextSteps = {0} a consignment, or {1} a consignment.
+movement.arrival.confirmation.nextSteps.associate = Associate
+movement.arrival.confirmation.nextSteps.depart = depart
+
+movement.DEPART.confirmation.tab.heading = Departure request submitted
+movement.DEPART.confirmation.heading = Request to depart {0} {1} has been submitted
+movement.departure.confirmation.nextSteps = {0}. {1} a new consignment.
+movement.departure.confirmation.nextSteps.depart = Depart another consignment
+movement.departure.confirmation.nextSteps.arrive = Arrive
+
 associate.heading = Add to MUCR {0}
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
 mucrOptions.create = Create a new Master Consignment Reference (MUCR)

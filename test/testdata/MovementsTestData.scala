@@ -15,12 +15,21 @@
  */
 
 package testdata
-import forms.{Choice, ConsignmentReferences}
-import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
+import forms.{Choice, ConsignmentReferences, Movement}
+import models.cache.{ArrivalAnswers, DepartureAnswers}
+import models.requests.MovementRequest
 
 object MovementsTestData {
 
   def validMovementRequest(movementType: Choice): MovementRequest =
-    MovementRequest("eori", Some("provider-id"), MovementType.Arrival, ConsignmentReferences("ref", "value"), MovementDetailsRequest("datetime"))
+    movementType match {
+      case Choice.Arrival   => Movement.createMovementRequest("pid", validArrivalAnswers)
+      case Choice.Departure => Movement.createMovementRequest("pid", validDepartureAnswers)
+    }
 
+  def validArrivalAnswers =
+    ArrivalAnswers(Some("eori"), consignmentReferences = Some(ConsignmentReferences("ref", "value")))
+
+  def validDepartureAnswers =
+    DepartureAnswers(Some("eori"), consignmentReferences = Some(ConsignmentReferences("ref", "value")))
 }

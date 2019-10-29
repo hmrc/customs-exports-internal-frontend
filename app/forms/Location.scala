@@ -15,12 +15,58 @@
  */
 
 package forms
-import play.api.libs.json.{Json, OFormat}
 
-// TODO replace with complete form
+import play.api.data.Forms.text
+import play.api.data.{Form, Forms}
+import play.api.libs.json.{Json, OFormat}
+import services.Countries.allCountries
+import utils.FieldValidator._
+
 case class Location(code: String)
 
 object Location {
 
   implicit val format: OFormat[Location] = Json.format[Location]
+
+  val formId = "Location"
+
+  /**
+    * Country is in two first characters in Location Code
+    */
+  private val validateCountry: String => Boolean = (input: String) => {
+    val countryCode = input.take(2)
+    allCountries.exists(_.countryCode == countryCode)
+  }
+
+  /**
+    * Location Type is defined as third character in Location Code
+    */
+  private val validateLocationType: String => Boolean = (input: String) => {
+    val correctLocationType: Set[String] = Set("A", "B", "C", "D")
+    val predicate = isContainedIn(correctLocationType)
+    input.drop(2).headOption.map(_.toString).exists(predicate)
+  }
+
+  /**
+    * Qualifier Code is defined in fourth characted in Location Code
+    */
+  private val validateQualifierCode: String => Boolean = (input: String) => {
+    val correctQualifierCode: Set[String] = Set("U", "Y")
+    val predicate = isContainedIn(correctQualifierCode)
+    input.drop(3).headOption.map(_.toString).exists(predicate)
+  }
+
+  val mapping = Forms.mapping(
+    "code" -> text()
+      .verifying("location.code.empty", nonEmpty)
+      .verifying(
+        "location.code.error",
+        isEmpty or (
+          validateCountry and validateLocationType and validateQualifierCode and noShorterThan(10) and noLongerThan(17)
+        )
+      )
+  )(Location.apply)(Location.unapply)
+
+  def form(): Form[Location] = Form(mapping)
+
 }

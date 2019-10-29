@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package models.requests
+package forms
 
-import forms._
-import play.api.libs.json.{Json, OFormat}
+import base.BaseSpec
 
-case class MovementRequest(
-  eori: String,
-  providerId: String,
-  choice: MovementType,
-  consignmentReference: ConsignmentReferences,
-  movementDetails: MovementDetailsRequest,
-  location: Option[Location] = None,
-  arrivalReference: Option[ArrivalReference] = None,
-  transport: Option[Transport] = None
-)
+class MovementDetailsSpec extends BaseSpec {
 
-object MovementRequest {
-  implicit val format: OFormat[MovementRequest] = Json.format[MovementRequest]
+  "Movement Details object" should {
+
+    "contain correct formId" in {
+
+      MovementDetails.formId must be("MovementDetails")
+    }
+  }
 }

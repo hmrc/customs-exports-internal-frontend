@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package models.requests
+package forms
 
-import forms._
-import play.api.libs.json.{Json, OFormat}
+import play.api.data.Form
 
-case class MovementRequest(
-  eori: String,
-  providerId: String,
-  choice: MovementType,
-  consignmentReference: ConsignmentReferences,
-  movementDetails: MovementDetailsRequest,
-  location: Option[Location] = None,
-  arrivalReference: Option[ArrivalReference] = None,
-  transport: Option[Transport] = None
-)
+object MovementDetails {
 
-object MovementRequest {
-  implicit val format: OFormat[MovementRequest] = Json.format[MovementRequest]
+  val formId = "MovementDetails"
+
+  def arrivalForm(): Form[ArrivalDetails] = Form(ArrivalDetails.mapping)
+
+  def departureForm(): Form[DepartureDetails] = Form(DepartureDetails.mapping)
 }

@@ -43,7 +43,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
       )
 
       val request =
-        MovementRequest("eori", Some("provider-id"), MovementType.Arrival, ConsignmentReferences("ref", "value"), MovementDetailsRequest("datetime"))
+        MovementRequest("eori", "provider-id", MovementType.Arrival, ConsignmentReferences("ref", "value"), MovementDetailsRequest("datetime"))
       await(connector.submit(request))
 
       verify(
