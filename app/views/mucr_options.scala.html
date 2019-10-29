@@ -24,7 +24,7 @@
 
 @(form: Form[MucrOptions])(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title("mucrOptions.title")) {
+@main_template(title = Title(messages("mucrOptions.title"))) {
     @helper.form(consolidations.routes.MucrOptionsController.submit(), 'autoComplete -> "off") {
         @helper.CSRF.formField
 
