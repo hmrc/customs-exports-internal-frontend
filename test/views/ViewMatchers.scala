@@ -98,13 +98,15 @@ trait ViewMatchers { self: MustMatchers =>
       )
   }
 
-  class ElementContainsMessageMatcher(key: String)(implicit messages: Messages) extends Matcher[Element] {
-    override def apply(left: Element): MatchResult =
+  class ElementContainsMessageMatcher(key: String, args: Seq[Any])(implicit messages: Messages) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      val message = messages(key, args: _*)
       MatchResult(
-        left != null && left.text().contains(messages(key)),
-        s"Element did not contain message with key {$key}\n${actualContentWas(left)}",
-        s"Element contained message with key {$key}"
+        left != null && left.text().contains(message),
+        s"Element did not contain message {$message}\n${actualContentWas(left)}",
+        s"Element contained message {$message}"
       )
+    }
   }
 
   class MessageIsDefinedAt(key: String)(implicit messages: Messages) extends Matcher[Element] {
@@ -212,8 +214,8 @@ trait ViewMatchers { self: MustMatchers =>
     new ContainElementWithAttribute(key, value)
   def containElementWithTag(tag: String): Matcher[Element] = new ContainElementWithTagMatcher(tag)
   def containText(text: String): Matcher[Element] = new ElementContainsTextMatcher(text)
-  def containMessage(key: String)(implicit messages: Messages): Matcher[Element] =
-    new MessageIsDefinedAt(key) and new ElementContainsMessageMatcher(key)
+  def containMessage(key: String, args: Any*)(implicit messages: Messages): Matcher[Element] =
+    new MessageIsDefinedAt(key) and new ElementContainsMessageMatcher(key, args)
   def haveClass(text: String): Matcher[Element] = new ElementHasClassMatcher(text)
   def containHtml(text: String): Matcher[Element] = new ElementContainsHtmlMatcher(text)
   def haveSize(size: Int): Matcher[Elements] = new ElementsHasSizeMatcher(size)

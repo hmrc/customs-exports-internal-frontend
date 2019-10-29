@@ -22,8 +22,8 @@ POST        /associate-ucr-summary             controllers.consolidations.Associ
 GET         /associate-ucr-confirmation        controllers.consolidations.AssociateUCRConfirmationController.displayPage()
 
 # Disassociate DUCR page
-GET         /disassociate-ducr                     controllers.DisassociateDucrController.display()
-POST        /disassociate-ducr                     controllers.DisassociateDucrController.submit()
+GET         /disassociate-ducr                 controllers.consolidations.DisassociateDucrController.display()
+POST        /disassociate-ducr                 controllers.consolidations.DisassociateDucrController.submit()
 
 # Enter DUCR page
 GET         /consignment-references        controllers.ConsignmentReferencesController.displayPage()
