@@ -29,7 +29,7 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
 
   implicit protected def htmlBodyOf(html: Html): Document = Jsoup.parse(html.toString())
 
-  protected val messagesApi: MessagesApi = instanceOf[MessagesApi]
+  private val messagesApi: MessagesApi = instanceOf[MessagesApi]
 
   protected implicit def messages(implicit request: Request[_]): Messages =
     new AllMessageKeysAreMandatoryMessages(messagesApi.preferred(request))
