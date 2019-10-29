@@ -16,37 +16,27 @@
 
 package views.disassociate_ucr
 
-import forms.DisassociateDucr
-import play.api.mvc.{AnyContentAsEmpty, Request}
+import controllers.storage.FlashKeys
+import play.api.mvc.{AnyContentAsEmpty, Flash, Request}
 import play.api.test.FakeRequest
 import views.ViewSpec
-import views.html.disassociate_ducr
+import views.html.disassociate_ducr_confirmation
 
-class DisassociateDucrViewSpec extends ViewSpec {
+class DisassociateDucrConfirmationViewSpec extends ViewSpec {
 
   private implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
-  private val page = new disassociate_ducr(main_template)
+  private val page = new disassociate_ducr_confirmation(main_template)
 
   "View" should {
+    implicit val flash: Flash = Flash(Map(FlashKeys.UCR -> "ucr"))
+    val view = page()
+
     "render title" in {
-      page(DisassociateDucr.form).getTitle must containMessage("disassociateDucr.title")
+      view.getTitle must containMessage("disassociateDucr.confirmation.tab.heading", "ucr")
     }
 
-    "render back button" in {
-      val backButton = page(DisassociateDucr.form).getBackButton
-
-      backButton mustBe defined
-      backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
-    }
-
-    "render error summary" when {
-      "no errors" in {
-        page(DisassociateDucr.form).getErrorSummary mustBe empty
-      }
-
-      "some errors" in {
-        page(DisassociateDucr.form.withError("error", "error.required")).getErrorSummary mustBe defined
-      }
+    "render confirmation dialogue" in {
+      view.getElementById("highlight-box-heading") must containMessage("disassociateDucr.confirmation.heading", "ucr")
     }
   }
 

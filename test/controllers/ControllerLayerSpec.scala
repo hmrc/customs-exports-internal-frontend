@@ -25,7 +25,7 @@ import models.cache.JourneyType.JourneyType
 import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
-import play.api.mvc.{ActionRefiner, Request, Result, Results}
+import play.api.mvc.{ActionRefiner, Flash, Request, Result, Results}
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
@@ -43,6 +43,7 @@ abstract class ControllerLayerSpec extends WordSpec with ViewTemplates with Must
   protected val operator = Operator(pid)
 
   protected implicit def messages(implicit request: Request[_]): Messages = stubMessagesControllerComponents().messagesApi.preferred(request)
+  protected implicit val flashApi: Flash = Flash()
 
   protected def contentAsHtml(of: Future[Result]): Html = Html(contentAsBytes(of).decodeString(charset(of).getOrElse("utf-8")))
 
