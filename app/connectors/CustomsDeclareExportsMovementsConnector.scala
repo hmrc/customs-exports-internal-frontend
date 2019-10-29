@@ -17,12 +17,12 @@
 package connectors
 
 import config.AppConfig
+import connectors.exchanges.Consolidation
 import javax.inject.{Inject, Singleton}
-import models.cache.JourneyType
-import models.cache.JourneyType.JourneyType
 import models.requests.MovementRequest
 import play.api.Logger
 import play.api.http.{ContentTypes, HeaderNames}
+import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -33,31 +33,43 @@ import scala.util.{Failure, Success}
 class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, httpClient: HttpClient)(implicit ec: ExecutionContext) {
 
   private val logger = Logger(this.getClass)
-
-  private val CustomsDeclareExportsMovementsUrl = s"${appConfig.customsDeclareExportsMovements}"
-
-  private val movementSubmissionUrl: PartialFunction[JourneyType, String] = {
-    case JourneyType.ARRIVE | JourneyType.DEPART => s"$CustomsDeclareExportsMovementsUrl${appConfig.movementsSubmissionUri}"
-  }
-
   private val JsonHeaders = Seq(HeaderNames.CONTENT_TYPE -> ContentTypes.JSON, HeaderNames.ACCEPT -> ContentTypes.JSON)
 
-  def sendArrivalDeclaration(movementRequest: MovementRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    postRequest(JourneyType.ARRIVE, movementRequest)
+  @Deprecated()
+  def sendArrivalDeclaration(movementRequest: MovementRequest)(implicit hc: HeaderCarrier): Future[Unit] =
+    submit(movementRequest)
 
-  def sendDepartureDeclaration(movementRequest: MovementRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    postRequest(JourneyType.DEPART, movementRequest)
+  @Deprecated()
+  def sendDepartureDeclaration(movementRequest: MovementRequest)(implicit hc: HeaderCarrier): Future[Unit] =
+    submit(movementRequest)
 
-  private def postRequest(
-    actionType: JourneyType,
-    movementRequest: MovementRequest
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
+  def submit(request: MovementRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     httpClient
-      .POST[MovementRequest, HttpResponse](movementSubmissionUrl(actionType), movementRequest, JsonHeaders)
+      .POST[MovementRequest, HttpResponse](appConfig.customsDeclareExportsMovements + "/movements", request, JsonHeaders)
       .andThen {
         case Success(response) =>
-          logger.debug(s"CUSTOMS_DECLARE_EXPORTS_MOVEMENTS response on ${actionType}. $response")
+          logExchange("Submit Movement", response.body)
         case Failure(exception) =>
-          logger.warn(s"CUSTOMS_DECLARE_EXPORTS_MOVEMENTS failure on ${actionType}. $exception ")
+          logFailedExchange("Submit Movement", exception)
+      }.map(_ => (): Unit)
+
+  def submit[T <: Consolidation](request: T)(implicit hc: HeaderCarrier): Future[Unit] = {
+    httpClient
+      .POST[T, HttpResponse](appConfig.customsDeclareExportsMovements + "/consolidation", request, JsonHeaders)
+      .andThen {
+        case Success(response) =>
+          logExchange("Submit Consolidation", response.body)
+        case Failure(exception) =>
+          logFailedExchange("Submit Consolidation", exception)
       }
+      .map(_ => (): Unit)
+  }
+
+  private def logExchange[T](`type`: String, payload: T)(implicit fmt: Format[T]): Unit = {
+    logger.debug(`type` + "\n" + Json.toJson(payload))
+  }
+
+  private def logFailedExchange(`type`: String, exception: Throwable): Unit = {
+    logger.warn(`type` + " failed", exception)
+  }
 }

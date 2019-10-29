@@ -72,7 +72,7 @@ class DisassociateDucrControllerSpec extends ControllerLayerSpec with MockCache 
 
   "POST" should {
     "return 200 when authenticated" in {
-      given(submissionService.submit(any[DisassociateUcrAnswers])).willReturn(Future.successful((): Unit))
+      given(submissionService.submit(anyString(), any[DisassociateUcrAnswers])(any())).willReturn(Future.successful((): Unit))
 
       val post = FakeRequest("POST", "/").withFormUrlEncodedBody("ducr" -> ucr).withCSRFToken
       val result = controller(SuccessfulAuth(), DisassociateUcrAnswers()).submit(post)
@@ -85,7 +85,7 @@ class DisassociateDucrControllerSpec extends ControllerLayerSpec with MockCache 
 
     def theSubmission: DisassociateUcrAnswers = {
       val captor = ArgumentCaptor.forClass(classOf[DisassociateUcrAnswers])
-      Mockito.verify(submissionService).submit(captor.capture())
+      Mockito.verify(submissionService).submit(anyString(), captor.capture())(any())
       captor.getValue
     }
 

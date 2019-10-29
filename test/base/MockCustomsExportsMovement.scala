@@ -31,17 +31,17 @@ trait MockCustomsExportsMovement extends MockitoSugar with BeforeAndAfterEach { 
   val mockCustomsExportsMovementConnector: CustomsDeclareExportsMovementsConnector =
     mock[CustomsDeclareExportsMovementsConnector]
 
-  def sendMovementRequest202Response(): OngoingStubbing[Future[HttpResponse]] =
+  def sendMovementRequest202Response(): OngoingStubbing[Future[Unit]] =
     when(
       mockCustomsExportsMovementConnector
         .sendArrivalDeclaration(any())(any())
-    ).thenReturn(Future.successful(HttpResponse(ACCEPTED)))
+    ).thenReturn(Future.successful((): Unit))
 
-  def sendMovementRequest400Response(): OngoingStubbing[Future[HttpResponse]] =
+  def sendMovementRequest400Response(): OngoingStubbing[Future[Unit]] =
     when(
       mockCustomsExportsMovementConnector
         .sendArrivalDeclaration(any())(any())
-    ).thenReturn(Future.successful(HttpResponse(BAD_REQUEST)))
+    ).thenReturn(Future.successful((): Unit))
 
   override protected def afterEach(): Unit = {
     reset(mockCustomsExportsMovementConnector)
