@@ -41,7 +41,6 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
 
   protected def journeyRequest(answers: Answers) = JourneyRequest(answers, AuthenticatedRequest(Operator("pid"), FakeRequest().withCSRFToken))
 
-
   /*
     Fails the test if a view is configured with a message key that doesnt exist in the messages file
    */

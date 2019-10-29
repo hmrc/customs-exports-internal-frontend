@@ -20,7 +20,7 @@ import base.BaseSpec
 import forms.ConsignmentReferences.AllowedReferences
 import play.api.data.FormError
 
-class ConsignmentReferencesSpec extends BaseSpec  {
+class ConsignmentReferencesSpec extends BaseSpec {
 
   val validDucr = "9GB123456"
   val validMucr = "GB/ABC-12342"

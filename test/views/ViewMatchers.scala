@@ -215,7 +215,7 @@ trait ViewMatchers { self: MustMatchers =>
   def containElementWithTag(tag: String): Matcher[Element] = new ContainElementWithTagMatcher(tag)
   def containText(text: String): Matcher[Element] = new ElementContainsTextMatcher(text)
   def containMessage(key: String, args: Any*)(implicit messages: Messages): Matcher[Element] =
-    new ElementContainsMessageMatcher(key, args )
+    new ElementContainsMessageMatcher(key, args)
   def haveClass(text: String): Matcher[Element] = new ElementHasClassMatcher(text)
   def containHtml(text: String): Matcher[Element] = new ElementContainsHtmlMatcher(text)
   def haveSize(size: Int): Matcher[Elements] = new ElementsHasSizeMatcher(size)
