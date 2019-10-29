@@ -26,7 +26,7 @@
 @associateLink = {<a href="@routes.ChoiceController.startSpecificJourney("associateDUCR")">@messages("disassociation.confirmation.associateOrShut.associate")</a>}
 @shutMucrLink = {<a href="@routes.ChoiceController.startSpecificJourney("shutMUCR")">@messages("disassociation.confirmation.associateOrShut.shut")</a>}
 
-@main_template(title = Title("disassociateDucr.confirmation.tab.heading")) {
+@main_template(title = Title(messages("disassociateDucr.confirmation.tab.heading"))) {
 
     @components.highlight_box_with_reference(
         headingText = messages("disassociateDucr.confirmation.heading", flash.get(FlashKeys.UCR).getOrElse("-"))

@@ -17,9 +17,10 @@
 package controllers
 
 import controllers.actions.AuthenticatedAction
+import controllers.consolidations.{routes => consolidationRoutes}
 import forms.Choice
 import models.cache._
-import play.api.http.Status
+import play.api.mvc.{AnyContentAsFormUrlEncoded, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repository.MockCache
@@ -32,8 +33,11 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
   private val page = new choice_page(main_template)
 
-  private def controller(auth: AuthenticatedAction) =
+  private def controller(auth: AuthenticatedAction = SuccessfulAuth()) =
     new ChoiceController(auth, stubMessagesControllerComponents(), cache, page)
+
+  private def postWithChoice(choice: Choice): Request[AnyContentAsFormUrlEncoded] =
+    FakeRequest("POST", "/").withFormUrlEncodedBody("choice" -> choice.value).withCSRFToken
 
   "GET" should {
     implicit val get = FakeRequest("GET", "/").withCSRFToken
@@ -42,18 +46,18 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       "empty answers" in {
         givenTheCacheIsEmpty()
 
-        val result = controller(SuccessfulAuth()).displayPage(get)
+        val result = controller().displayPage(get)
 
-        status(result) mustBe Status.OK
+        status(result) mustBe OK
         contentAsHtml(result) mustBe page(Choice.form())
       }
 
       "existing answers" in {
         givenTheCacheContains(Cache("pid", ArrivalAnswers()))
 
-        val result = controller(SuccessfulAuth()).displayPage(get)
+        val result = controller().displayPage(get)
 
-        status(result) mustBe Status.OK
+        status(result) mustBe OK
         contentAsHtml(result) mustBe page(Choice.form().fill(Choice.Arrival))
       }
     }
@@ -61,74 +65,133 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     "return 403 when unauthenticated" in {
       val result = controller(UnsuccessfulAuth).displayPage(get)
 
-      status(result) mustBe Status.FORBIDDEN
+      status(result) mustBe FORBIDDEN
+    }
+  }
+
+  "GET for specific journey" should {
+
+    implicit val getRequest = FakeRequest("GET", "/").withCSRFToken
+
+    "return 303 (SEE_OTHER) and redirect to the correct controller" when {
+
+      "user choose arrival" in {
+
+        val result = controller().startSpecificJourney(Choice.Arrival.value)(getRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
+      }
+
+      "user choose departure" in {
+
+        val result = controller().startSpecificJourney(Choice.Departure.value)(getRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
+      }
+
+      "user choose associate ucr" in {
+
+        val result = controller().startSpecificJourney(Choice.AssociateUCR.value)(getRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
+      }
+
+      "user choose dissociate ucr" in {
+
+        val result = controller().startSpecificJourney(Choice.DisassociateUCR.value)(getRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateDucrController.display().url)
+      }
+
+      "user choose shut mucr" in {
+
+        val result = controller().startSpecificJourney(Choice.ShutMUCR.value)(getRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
+      }
+    }
+
+    "throw an exception" when {
+
+      "choice is incorrect" in {
+
+        intercept[IllegalArgumentException] {
+          await(controller().startSpecificJourney("Incorrect")(getRequest))
+        }
+      }
     }
   }
 
   "POST" should {
 
-    "return 200 when authenticated" when {
-      "arrival" in {
-        val post = FakeRequest("POST", "/").withFormUrlEncodedBody("choice" -> Choice.Arrival.value).withCSRFToken
-        val result = controller(SuccessfulAuth()).submit(post)
+    implicit val postRequest = FakeRequest("POST", "/").withCSRFToken
 
-        status(result) mustBe Status.SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ConsignmentReferencesController.displayPage().url)
-        theCacheUpserted mustBe Cache(pid, ArrivalAnswers(Answers.fakeEORI))
+    "return 303 (SEE_OTHER) when authenticated" when {
+
+      "arrival" in {
+
+        val result = controller().submit(postWithChoice(Choice.Arrival))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
+        theCacheUpserted mustBe Cache(pid, ArrivalAnswers())
       }
 
       "departure" in {
-        val post = FakeRequest("POST", "/").withFormUrlEncodedBody("choice" -> Choice.Departure.value).withCSRFToken
-        val result = controller(SuccessfulAuth()).submit(post)
 
-        status(result) mustBe Status.SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ConsignmentReferencesController.displayPage().url)
-        theCacheUpserted mustBe Cache(pid, DepartureAnswers(Answers.fakeEORI))
+        val result = controller().submit(postWithChoice(Choice.Departure))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
+        theCacheUpserted mustBe Cache(pid, DepartureAnswers())
       }
 
       "associate UCR" in {
-        val post = FakeRequest("POST", "/").withFormUrlEncodedBody("choice" -> Choice.AssociateUCR.value).withCSRFToken
-        val result = controller(SuccessfulAuth()).submit(post)
 
-        status(result) mustBe Status.SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.consolidations.routes.MucrOptionsController.displayPage().url)
+        val result = controller().submit(postWithChoice(Choice.AssociateUCR))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
         theCacheUpserted mustBe Cache(pid, AssociateUcrAnswers())
       }
 
       "disassociate UCR" in {
-        val post = FakeRequest("POST", "/").withFormUrlEncodedBody("choice" -> Choice.DisassociateUCR.value).withCSRFToken
-        val result = controller(SuccessfulAuth()).submit(post)
 
-        status(result) mustBe Status.SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.consolidations.routes.DisassociateDucrController.display().url)
+        val result = controller().submit(postWithChoice(Choice.DisassociateUCR))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateDucrController.display().url)
         theCacheUpserted mustBe Cache(pid, DisassociateUcrAnswers())
       }
 
       "shut MUCR" in {
-        val post = FakeRequest("POST", "/").withFormUrlEncodedBody("choice" -> Choice.ShutMUCR.value).withCSRFToken
-        val result = controller(SuccessfulAuth()).submit(post)
 
-        status(result) mustBe Status.SEE_OTHER
+        val result = controller().submit(postWithChoice(Choice.ShutMUCR))
+
+        status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
         theCacheUpserted mustBe Cache(pid, ShutMucrAnswers())
       }
     }
 
     "return 400 when invalid" in {
-      implicit val post = FakeRequest("POST", "/").withCSRFToken
 
-      val result = controller(SuccessfulAuth()).submit(post)
+      val result = controller().submit(postRequest)
 
-      status(result) mustBe Status.BAD_REQUEST
+      status(result) mustBe BAD_REQUEST
       contentAsHtml(result) mustBe page(Choice.form().bind(Map[String, String]()))
     }
 
     "return 403 when unauthenticated" in {
-      val post = FakeRequest("POST", "/").withCSRFToken
 
-      val result = controller(UnsuccessfulAuth).submit(post)
+      val result = controller(UnsuccessfulAuth).submit(postRequest)
 
-      status(result) mustBe Status.FORBIDDEN
+      status(result) mustBe FORBIDDEN
     }
   }
 }

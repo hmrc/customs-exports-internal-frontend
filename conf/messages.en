@@ -10,6 +10,9 @@ site.backToStart = Back to start
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
+error.unknown = Unknown error
+error.required = Please enter a value
+
 error.summary.title = There’s been a problem
 error.summary.text = Check the following
 
@@ -144,6 +147,11 @@ associate.ucr.ducr.label = Declaration Unique Consignment Reference
 associate.ucr.mucr = Master Consignment Reference (MUCR)
 associate.ucr.mucr.label = Master Unique Consignment Reference
 associate.ucr.hint = You may want to keep a record of which consignments you have added to this MUCR.
+
+ducr.error.empty = Please provide Declaration Unique Consignment Reference
+ducr.error.format = Declaration Unique Consignment Reference is in incorrect format
+mucr.error.empty = Please provide Master Unique Consignment Reference
+mucr.error.format = Master Unique Consignment Reference is in incorrect format
 
 associate.ucr.summary.title = Is the information provided for this association request correct?
 associate.ucr.summary.kind.mucr = MUCR
