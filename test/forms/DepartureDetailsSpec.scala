@@ -18,11 +18,11 @@ package forms
 
 import java.time.{LocalDate, LocalTime}
 
-import base.BaseSpec
+import base.UnitSpec
 import forms.common.{Date, Time}
 import helpers.FormMatchers
 
-class DepartureDetailsSpec extends BaseSpec with FormMatchers {
+class DepartureDetailsSpec extends UnitSpec with FormMatchers {
 
   "Departure mapping" should {
 

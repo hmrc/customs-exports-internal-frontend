@@ -16,10 +16,10 @@
 
 package forms
 
-import base.BaseSpec
+import base.UnitSpec
 import play.api.data.FormError
 
-class LocationSpec extends BaseSpec {
+class LocationSpec extends UnitSpec {
 
   "Location model" should {
 
