@@ -74,7 +74,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
       verify(
         postRequestedFor(urlEqualTo("/consolidation"))
-          .withRequestBody(equalTo("{\"providerId\":\"pid\",\"eori\":\"eori\",\"ucr\":\"ucr\",\"type\":\"ASSOCIATE_DUCR\"}"))
+          .withRequestBody(equalTo("{\"providerId\":\"pid\",\"eori\":\"eori\",\"ucr\":\"ucr\",\"consolidationType\":\"DISASSOCIATE_DUCR\"}"))
       )
     }
   }
