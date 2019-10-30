@@ -45,7 +45,6 @@ class AppConfig @Inject()(
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
 
   // from external UI
-
   private def loadConfig(key: String): String =
     runModeConfiguration
       .getOptional[String](key)
@@ -55,9 +54,4 @@ class AppConfig @Inject()(
   lazy val serviceAvailabilityUrl = loadConfig("urls.serviceAvailability")
 
   lazy val customsDeclareExportsMovements = servicesConfig.baseUrl("customs-declare-exports-movements")
-
-  lazy val movementsSubmissionUri = servicesConfig.getConfString(
-    "customs-declare-exports-movements.submit-movements",
-    throw new IllegalStateException("Missing configuration for Customs Declarations Exports Movements submission URI")
-  )
 }

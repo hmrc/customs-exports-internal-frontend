@@ -43,7 +43,6 @@ class SubmissionService @Inject()(
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
     val ucr = answers.ucr.getOrElse(throw ReturnToStartException)
 
-    auditService.auditAllPagesUserInput(answers)
     connector
       .submit(DisassociateDUCRRequest(pid, eori, ucr))
       .flatMap(_ => movementRepository.removeByPid(pid))
