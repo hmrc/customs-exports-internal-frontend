@@ -45,10 +45,11 @@ class SubmissionService @Inject()(
 
     connector
       .submit(DisassociateDUCRRequest(pid, eori, ucr))
-      .flatMap(_ => movementRepository.removeByPid(pid))
       .andThen {
         case Success(_) =>
-          auditService.auditDisassociate(eori, ucr, "Success")
+          movementRepository.removeByPid(pid).flatMap { _ =>
+            auditService.auditDisassociate(eori, ucr, "Success")
+          }
         case Failure(_) =>
           auditService.auditDisassociate(eori, ucr, "Failed")
       }
@@ -61,10 +62,11 @@ class SubmissionService @Inject()(
 
     connector
       .submit(AssociateUCRRequest(pid, eori, mucr, ucr))
-      .flatMap(_ => movementRepository.removeByPid(pid))
       .andThen {
         case Success(_) =>
-          auditService.auditAssociate(eori, mucr, ucr, "Success")
+          movementRepository.removeByPid(pid).flatMap { _ =>
+            auditService.auditAssociate(eori, mucr, ucr, "Success")
+          }
         case Failure(_) =>
           auditService.auditAssociate(eori, mucr, ucr, "Failed")
       }
