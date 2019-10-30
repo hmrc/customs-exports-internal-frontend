@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.movements
 
-import config.ErrorHandler
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import javax.inject.Inject
 import models.cache.{ArrivalAnswers, DepartureAnswers, JourneyType}
@@ -33,7 +32,6 @@ import scala.concurrent.ExecutionContext
 class SummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  errorHandler: ErrorHandler,
   movementRepository: MovementRepository,
   submissionService: SubmissionService,
   mcc: MessagesControllerComponents,

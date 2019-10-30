@@ -14,45 +14,45 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import forms.Transport
-import forms.Transport.form
+import forms.ArrivalReference
+import forms.ArrivalReference.form
 import javax.inject.{Inject, Singleton}
-import models.cache.{Cache, DepartureAnswers, JourneyType}
+import models.cache.{ArrivalAnswers, Cache, JourneyType}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.MovementRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.transport
+import views.html.arrival_reference
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TransportController @Inject()(
+class ArrivalReferenceController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   movementRepository: MovementRepository,
   mcc: MessagesControllerComponents,
-  transportPage: transport
+  arrivalReferencePage: arrival_reference
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)) { implicit request =>
-    Ok(transportPage(request.answersAs[DepartureAnswers].transport.fold(form)(form.fill(_))))
+  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
+    Ok(arrivalReferencePage(request.answersAs[ArrivalAnswers].arrivalReference.fold(form)(form.fill(_))))
   }
 
-  def saveTransport(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
+  def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[Transport]) => Future.successful(BadRequest(transportPage(formWithErrors))),
+        (formWithErrors: Form[ArrivalReference]) => Future.successful(BadRequest(arrivalReferencePage(formWithErrors))),
         validForm => {
-          val movementAnswers = request.answersAs[DepartureAnswers].copy(transport = Some(validForm))
+          val movementAnswers = request.answersAs[ArrivalAnswers].copy(arrivalReference = Some(validForm))
           movementRepository.upsert(Cache(request.pid, movementAnswers)).map { _ =>
-            Redirect(controllers.routes.SummaryController.displayPage())
+            Redirect(controllers.movements.routes.MovementDetailsController.displayPage())
           }
         }
       )

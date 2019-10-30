@@ -24,10 +24,10 @@
 
 @main_template(Title("arrivalReference.question")) {
 
-    @helper.form(controllers.routes.ArrivalReferenceController.submit(), 'autoComplete -> "off") {
+    @helper.form(controllers.movements.routes.ArrivalReferenceController.submit(), 'autoComplete -> "off") {
         @helper.CSRF.formField
 
-        @components.back_link(controllers.routes.ConsignmentReferencesController.displayPage())
+        @components.back_link(controllers.movements.routes.ConsignmentReferencesController.displayPage())
 
         @components.error_summary(form.errors)
 

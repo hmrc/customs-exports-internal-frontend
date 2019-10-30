@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import forms.ConsignmentReferences
@@ -58,11 +58,11 @@ class ConsignmentReferencesController @Inject()(
             request.answers match {
               case arrivalAnswers: ArrivalAnswers =>
                 movementRepository.upsert(Cache(request.pid, arrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
-                  Redirect(controllers.routes.ArrivalReferenceController.displayPage())
+                  Redirect(controllers.movements.routes.ArrivalReferenceController.displayPage())
                 }
               case departureAnswers: DepartureAnswers =>
                 movementRepository.upsert(Cache(request.pid, departureAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
-                  Redirect(controllers.routes.MovementDetailsController.displayPage())
+                  Redirect(controllers.movements.routes.MovementDetailsController.displayPage())
                 }
             }
           }
