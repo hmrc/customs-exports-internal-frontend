@@ -53,18 +53,12 @@ class AssociateUCRController @Inject()(
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    val mucrOptions = request.answersAs[AssociateUcrAnswers].mucrOptions
+    val mucrOptions = request.answersAs[AssociateUcrAnswers].mucrOptions.getOrElse(throw ReturnToStartException)
 
-    if(mucrOptions.isEmpty) throw ReturnToStartException
-    else processForm(mucrOptions)
-  }
-
-  private def processForm(mucrOptions: Option[MucrOptions])(implicit request: JourneyRequest[AnyContent]): Future[Result] =
     form
       .bindFromRequest()
       .fold(
-        formWithErrors =>
-          Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions.get))),
+        formWithErrors => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions))),
         formData => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(associateUcr = Some(formData))
           movementRepository.upsert(Cache(request.pid, updatedCache)).map { _ =>
@@ -72,4 +66,5 @@ class AssociateUCRController @Inject()(
           }
         }
       )
+  }
 }

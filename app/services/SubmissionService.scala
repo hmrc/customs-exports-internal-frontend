@@ -61,6 +61,7 @@ class SubmissionService @Inject()(
 
     connector
       .submit(AssociateUCRRequest(pid, eori, mucr, ucr))
+      .flatMap(_ => movementRepository.removeByPid(pid))
       .andThen {
         case Success(_) =>
           auditService.auditAssociate(eori, mucr, ucr, "Success")

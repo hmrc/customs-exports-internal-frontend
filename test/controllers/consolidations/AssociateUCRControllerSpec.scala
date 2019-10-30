@@ -36,13 +36,9 @@ class AssociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
   val associateUcrPage = mock[associate_ucr]
 
   def controller(associateUcrAnswers: AssociateUcrAnswers) =
-    new AssociateUCRController(
-      SuccessfulAuth(),
-      ValidJourney(associateUcrAnswers),
-      stubMessagesControllerComponents(),
-      cache,
-      associateUcrPage
-    )(global)
+    new AssociateUCRController(SuccessfulAuth(), ValidJourney(associateUcrAnswers), stubMessagesControllerComponents(), cache, associateUcrPage)(
+      global
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -75,9 +71,7 @@ class AssociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
 
         val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")))
         val correctForm =
-          Json.toJson(
-            AssociateUcr.mapping.unbind(AssociateUcr(AssociateKind.Ducr, "5GB123456789000-123ABC456DEFIIIII"))
-          )
+          Json.toJson(AssociateUcr.mapping.unbind(AssociateUcr(AssociateKind.Ducr, "5GB123456789000-123ABC456DEFIIIII")))
         val result = controller(cachedData).submit()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
@@ -90,9 +84,7 @@ class AssociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
 
         val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")))
         val correctForm =
-          Json.toJson(
-            AssociateUcr.mapping.unbind(AssociateUcr(AssociateKind.Ducr, "incorrect"))
-          )
+          Json.toJson(AssociateUcr.mapping.unbind(AssociateUcr(AssociateKind.Ducr, "incorrect")))
         val result = controller(cachedData).submit()(postRequest(correctForm))
 
         status(result) mustBe BAD_REQUEST
