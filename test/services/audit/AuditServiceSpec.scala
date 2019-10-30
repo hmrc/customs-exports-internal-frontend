@@ -16,21 +16,20 @@
 
 package services.audit
 
-import base.BaseSpec
+import base.UnitSpec
 import forms._
 import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import services.audit.EventData._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuditServiceSpec extends BaseSpec with BeforeAndAfterEach with MockitoSugar {
+class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
   implicit val headerCarrier = HeaderCarrier()

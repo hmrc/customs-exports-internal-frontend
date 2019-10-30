@@ -16,6 +16,7 @@
 
 package controllers.movements
 
+import base.MockCache
 import controllers.ControllerLayerSpec
 import forms.ConsignmentReferences
 import models.cache._
@@ -25,7 +26,6 @@ import org.mockito.Mockito.{reset, verify, when}
 import play.api.libs.json.JsString
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import repository.MockCache
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.movement_confirmation_page

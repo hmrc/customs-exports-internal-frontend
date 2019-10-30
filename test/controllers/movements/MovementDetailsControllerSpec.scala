@@ -18,6 +18,7 @@ package controllers.movements
 
 import java.time.{LocalDate, LocalTime}
 
+import base.MockCache
 import controllers.ControllerLayerSpec
 import forms.common.{Date, Time}
 import forms.{ArrivalDetails, DepartureDetails}
@@ -29,7 +30,6 @@ import play.api.data.Form
 import play.api.libs.json.{JsNumber, JsObject, Json}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import repository.MockCache
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.{arrival_details, departure_details}
 

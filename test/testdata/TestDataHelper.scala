@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package base
+package testdata
 
-import org.mockito.Mockito.reset
-import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatestplus.mockito.MockitoSugar
-import repositories.MovementRepository
+import scala.util.Random
 
-trait MockMovementsRepository extends MockitoSugar with BeforeAndAfterEach { self: Suite =>
+object TestDataHelper {
 
-  val mockMovementsRepository: MovementRepository = mock[MovementRepository]
+  def createRandomAlphanumericString(length: Int): String =
+    Random.alphanumeric.take(length).mkString
 
-  override protected def afterEach(): Unit = {
-    reset(mockMovementsRepository)
+  val maxStringLength = 150
+  def createRandomString(length: Int = maxStringLength): String =
+    Random.nextString(length)
 
-    super.afterEach()
-  }
+  def getDataSeq[A](size: Int, elementBuilder: () => A): Seq[A] = (1 to size).map(_ => elementBuilder())
+  def getDataSeq[A](size: Int, elementBuilder: Int => A, builderParam: Int): Seq[A] =
+    (1 to size).map(_ => elementBuilder(builderParam))
+
 }

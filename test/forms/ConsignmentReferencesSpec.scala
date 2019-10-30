@@ -16,11 +16,11 @@
 
 package forms
 
-import base.BaseSpec
+import base.UnitSpec
 import forms.ConsignmentReferences.AllowedReferences
 import play.api.data.FormError
 
-class ConsignmentReferencesSpec extends BaseSpec {
+class ConsignmentReferencesSpec extends UnitSpec {
 
   val validDucr = "9GB123456"
   val validMucr = "GB/ABC-12342"

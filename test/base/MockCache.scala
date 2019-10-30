@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repository
+package base
 
 import models.cache.Cache
 import org.mockito.ArgumentMatchers.any

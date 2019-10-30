@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json
 
-import scala.util.Random
+case class UcrBlock(ucr: String, ucrType: String)
 
-object TestDataHelper {
-
-  def createRandomAlphanumericString(length: Int): String =
-    Random.alphanumeric.take(length).mkString
-
-  val maxStringLength = 150
-  def createRandomString(length: Int = maxStringLength): String =
-    Random.nextString(length)
-
-  def getDataSeq[A](size: Int, elementBuilder: () => A): Seq[A] = (1 to size).map(_ => elementBuilder())
-  def getDataSeq[A](size: Int, elementBuilder: Int => A, builderParam: Int): Seq[A] =
-    (1 to size).map(_ => elementBuilder(builderParam))
-
+object UcrBlock {
+  implicit val format = Json.format[UcrBlock]
 }
