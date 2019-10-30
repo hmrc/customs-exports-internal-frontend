@@ -63,5 +63,4 @@ trait MockCache extends MockitoSugar with BeforeAndAfterEach {
   protected def withTheCacheUpserted: Answer[Future[Cache]] = new Answer[Future[Cache]] {
     override def answer(invocation: InvocationOnMock): Future[Cache] = Future.successful(invocation.getArgument(0))
   }
-
 }
