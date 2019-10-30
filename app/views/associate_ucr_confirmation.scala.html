@@ -22,16 +22,16 @@
 
 @this(main_template: main_template)
 
-@()(implicit request: Request[_], flash: Flash, messages: Messages)
+@(associateUcrKind: String, ucr: String)(implicit request: Request[_], messages: Messages)
 
-@prefix = @{ s"associate.${flash(FlashKeys.CONSOLIDATION_KIND)}.confirmation" }
+@prefix = @{ s"associate.$associateUcrKind.confirmation" }
 @associateLink = {<a href="@routes.ChoiceController.startSpecificJourney("associateDUCR")">@messages("association.confirmation.associateOrDepart.associate")</a>}
 @shutMucrLink = {<a href="@routes.ChoiceController.startSpecificJourney("departure")">@messages("association.confirmation.associateOrDepart.depart")</a>}
 
-@main_template(title = Title(messages(s"${prefix}.tab.heading"))) {
+@main_template(title = Title(messages(s"$prefix.tab.heading"))) {
 
     @components.highlight_box_with_reference(
-        headingText = messages(s"${prefix}.heading", flash.get(FlashKeys.UCR).getOrElse("-"))
+        headingText = messages(s"$prefix.heading", ucr)
     )
 
     @components.confirmation_status_info()

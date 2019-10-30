@@ -17,12 +17,12 @@
 package services
 
 import connectors.CustomsDeclareExportsMovementsConnector
-import connectors.exchanges.DisassociateDUCRRequest
+import connectors.exchanges.{AssociateUCRRequest, DisassociateDUCRRequest}
 import forms._
 import javax.inject.{Inject, Singleton}
 import metrics.MovementsMetrics
 import models.ReturnToStartException
-import models.cache.{Answers, Cache, DisassociateUcrAnswers, JourneyType}
+import models.cache.{Answers, AssociateUcrAnswers, Cache, DisassociateUcrAnswers, JourneyType}
 import play.api.http.Status
 import repositories.MovementRepository
 import services.audit.{AuditService, AuditTypes}
@@ -45,12 +45,30 @@ class SubmissionService @Inject()(
 
     connector
       .submit(DisassociateDUCRRequest(pid, eori, ucr))
-      .flatMap(_ => movementRepository.removeByPid(pid))
       .andThen {
         case Success(_) =>
-          auditService.auditDisassociate(eori, ucr, "Success")
+          movementRepository.removeByPid(pid).flatMap { _ =>
+            auditService.auditDisassociate(eori, ucr, "Success")
+          }
         case Failure(_) =>
           auditService.auditDisassociate(eori, ucr, "Failed")
+      }
+  }
+
+  def submit(pid: String, answers: AssociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
+    val eori = answers.eori.getOrElse(throw ReturnToStartException)
+    val mucr = answers.mucrOptions.map(_.mucr).getOrElse(throw ReturnToStartException)
+    val ucr = answers.associateUcr.map(_.ucr).getOrElse(throw ReturnToStartException)
+
+    connector
+      .submit(AssociateUCRRequest(pid, eori, mucr, ucr))
+      .andThen {
+        case Success(_) =>
+          movementRepository.removeByPid(pid).flatMap { _ =>
+            auditService.auditAssociate(eori, mucr, ucr, "Success")
+          }
+        case Failure(_) =>
+          auditService.auditAssociate(eori, mucr, ucr, "Failed")
       }
   }
 

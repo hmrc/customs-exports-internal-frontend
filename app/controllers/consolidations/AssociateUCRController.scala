@@ -18,11 +18,14 @@ package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.consolidations.{routes => consolidationRoutes}
+import controllers.exchanges.JourneyRequest
 import forms.AssociateUcr.form
+import forms.MucrOptions
 import javax.inject.Inject
+import models.ReturnToStartException
 import models.cache.{AssociateUcrAnswers, Cache}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.MovementRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.associate_ucr
@@ -45,20 +48,17 @@ class AssociateUCRController @Inject()(
 
     mucrOptions match {
       case Some(mucrOptions) => Ok(associateUcrPage(associateUcr.fold(form)(form.fill), mucrOptions))
-      case None              => Redirect(controllers.routes.ChoiceController.displayPage())
+      case None              => throw ReturnToStartException
     }
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
+    val mucrOptions = request.answersAs[AssociateUcrAnswers].mucrOptions.getOrElse(throw ReturnToStartException)
+
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => {
-          request.answersAs[AssociateUcrAnswers].mucrOptions match {
-            case Some(mucr) => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucr)))
-            case None       => Future.successful(Redirect(controllers.routes.ChoiceController.displayPage()))
-          }
-        },
+        formWithErrors => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions))),
         formData => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(associateUcr = Some(formData))
           movementRepository.upsert(Cache(request.pid, updatedCache)).map { _ =>

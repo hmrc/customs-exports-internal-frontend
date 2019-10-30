@@ -16,7 +16,6 @@
 
 package connectors.exchanges
 
-import connectors.exchanges
 import connectors.exchanges.ConsolidationType.ConsolidationType
 import play.api.libs.json._
 import uk.gov.hmrc.play.json.Union
@@ -27,9 +26,18 @@ object ConsolidationType extends Enumeration {
   implicit val format: Format[ConsolidationType] = Format(Reads.enumNameReads(ConsolidationType), Writes.enumNameWrites)
 }
 
-case class DisassociateDUCRRequest(override val providerId: String, override val eori: String, ucr: String) extends Consolidation {
-  override val consolidationType: exchanges.ConsolidationType.Value = ConsolidationType.DISASSOCIATE_DUCR
+case class AssociateUCRRequest(override val providerId: String, override val eori: String, mucr: String, ucr: String) extends Consolidation {
+  override val consolidationType: ConsolidationType.Value = ConsolidationType.ASSOCIATE_DUCR
 }
+
+object AssociateUCRRequest {
+  implicit val format: OFormat[AssociateUCRRequest] = Json.format[AssociateUCRRequest]
+}
+
+case class DisassociateDUCRRequest(override val providerId: String, override val eori: String, ucr: String) extends Consolidation {
+  override val consolidationType: ConsolidationType.Value = ConsolidationType.DISASSOCIATE_DUCR
+}
+
 object DisassociateDUCRRequest {
   implicit val format: OFormat[DisassociateDUCRRequest] = Json.format[DisassociateDUCRRequest]
 }
@@ -43,6 +51,7 @@ trait Consolidation {
 object Consolidation {
   implicit val format: Format[Consolidation] = Union
     .from[Consolidation](typeField = "consolidationType")
+    .and[AssociateUCRRequest](typeTag = ConsolidationType.ASSOCIATE_DUCR.toString)
     .and[DisassociateDUCRRequest](typeTag = ConsolidationType.DISASSOCIATE_DUCR.toString)
     .format
 }

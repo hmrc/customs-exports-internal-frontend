@@ -71,9 +71,9 @@ class ChoiceController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), {
           case forms.Choice.Arrival =>
-            proceedJourney(ArrivalAnswers(eori = Answers.fakeEORI), movements.routes.ConsignmentReferencesController.displayPage())
+            proceedJourney(ArrivalAnswers(), movements.routes.ConsignmentReferencesController.displayPage())
           case forms.Choice.Departure =>
-            proceedJourney(DepartureAnswers(eori = Answers.fakeEORI), movements.routes.ConsignmentReferencesController.displayPage())
+            proceedJourney(DepartureAnswers(), movements.routes.ConsignmentReferencesController.displayPage())
           case forms.Choice.AssociateUCR =>
             proceedJourney(AssociateUcrAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
           case forms.Choice.DisassociateUCR =>
