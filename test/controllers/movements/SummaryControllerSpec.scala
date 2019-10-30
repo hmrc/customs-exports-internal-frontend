@@ -42,7 +42,7 @@ class SummaryControllerSpec extends ControllerLayerSpec with MockCache {
 
   val submissionService: SubmissionService = mock[SubmissionService]
 
-  private def controller(answers: Answers = ArrivalAnswers()) =
+  private def controller(answers: Answers) =
     new SummaryController(
       SuccessfulAuth(),
       ValidJourney(answers),
@@ -76,9 +76,10 @@ class SummaryControllerSpec extends ControllerLayerSpec with MockCache {
 
         givenTheCacheIsEmpty()
 
-        val result = controller().displayPage()(getRequest)
+        val result = controller(DepartureAnswers()).displayPage()(getRequest)
 
         status(result) mustBe OK
+        verify(mockDepartureSummaryPage).apply(any())(any(), any())
       }
 
       "GET displayPage is invoked with data in cache" in {
@@ -88,17 +89,12 @@ class SummaryControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller(ArrivalAnswers()).displayPage()(getRequest)
 
         status(result) mustBe OK
-
+        verify(mockArrivalSummaryPage).apply(any())(any(), any())
       }
 
-    }
-
-    "return 400 (BAD_REQUEST)" when {
-
-      "submission service return different status than ACCEPTED" in {
+      "submission service return status ACCEPTED" in {
 
         givenTheCacheIsEmpty()
-        givenTheCacheIsCleared()
         given(submissionService.submitMovementRequest(anyString(), any[Answers])(any()))
           .willReturn(Future.successful(ConsignmentReferences("D", "9GB23456543")))
 

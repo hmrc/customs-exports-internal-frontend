@@ -37,6 +37,7 @@ trait MockCache extends MockitoSugar with BeforeAndAfterEach {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     given(cache.upsert(any())).willAnswer(withTheCacheUpserted)
+    given(cache.removeByPid(any())).willReturn(Future.successful((): Unit))
   }
 
   override protected def afterEach(): Unit = {
@@ -49,9 +50,6 @@ trait MockCache extends MockitoSugar with BeforeAndAfterEach {
 
   protected def givenTheCacheIsEmpty(): Unit =
     given(cache.findByPid(any())).willReturn(Future.successful(None))
-
-  protected def givenTheCacheIsCleared(): Unit =
-    given(cache.removeByPid(any())).willReturn(Future.successful((): Unit))
 
   protected def theCacheUpserted: Cache = {
     val captor: ArgumentCaptor[Cache] = ArgumentCaptor.forClass(classOf[Cache])
