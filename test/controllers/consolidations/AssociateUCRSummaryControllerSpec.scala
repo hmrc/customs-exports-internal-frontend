@@ -21,7 +21,7 @@ import forms.{AssociateKind, AssociateUcr, MucrOptions}
 import models.ReturnToStartException
 import models.cache.AssociateUcrAnswers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.SubmissionService
@@ -71,6 +71,7 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec {
         val result = controller(cachedData).displayPage()(getRequest)
 
         status(result) mustBe OK
+        verify(summaryPage).apply(any(), any())(any(), any())
       }
 
       "submission finished with success" in {
@@ -83,6 +84,7 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec {
         val result = controller(cachedData).submit()(postRequest)
 
         status(result) mustBe OK
+        verify(confirmPage).apply(any(), any())(any(), any())
       }
     }
 
