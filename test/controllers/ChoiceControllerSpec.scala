@@ -26,8 +26,8 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.Form
-import play.api.mvc.{AnyContentAsFormUrlEncoded, Request}
-import play.api.test.FakeRequest
+import play.api.libs.json.Json
+import play.api.mvc.{AnyContentAsJson, Request}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -154,14 +154,13 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
   "POST" should {
 
-    def postWithChoice(choice: Choice): Request[AnyContentAsFormUrlEncoded] =
-      FakeRequest("POST", "/").withFormUrlEncodedBody("choice" -> choice.value).withCSRFToken
+    def postWithChoice(choice: Choice): Request[AnyContentAsJson] = postRequest(Json.obj("choice" -> choice.value))
 
     "return 303 (SEE_OTHER) when authenticated" when {
 
       "user chooses arrival" in {
 
-        val result = controller().submit(postWithChoice(Choice.Arrival))
+        val result = controller().submit(postWithChoice(Arrival))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
@@ -170,7 +169,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "user chooses departure" in {
 
-        val result = controller().submit(postWithChoice(Choice.Departure))
+        val result = controller().submit(postWithChoice(Departure))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
@@ -179,7 +178,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "user chooses associate UCR" in {
 
-        val result = controller().submit(postWithChoice(Choice.AssociateUCR))
+        val result = controller().submit(postWithChoice(AssociateUCR))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
@@ -188,7 +187,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "user chooses disassociate UCR" in {
 
-        val result = controller().submit(postWithChoice(Choice.DisassociateUCR))
+        val result = controller().submit(postWithChoice(DisassociateUCR))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateDucrController.display().url)
@@ -197,7 +196,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "user chooses shut MUCR" in {
 
-        val result = controller().submit(postWithChoice(Choice.ShutMUCR))
+        val result = controller().submit(postWithChoice(ShutMUCR))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
@@ -206,7 +205,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "user chooses view submissions" in {
 
-        val result = controller(SuccessfulAuth()).submit(postWithChoice(Choice.ViewSubmissions))
+        val result = controller(SuccessfulAuth()).submit(postWithChoice(ViewSubmissions))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
@@ -215,14 +214,14 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
     "return 400 when invalid" in {
 
-      val result = controller().submit(FakeRequest("POST", "/").withCSRFToken)
+      val result = controller().submit(postRequest)
 
       status(result) mustBe BAD_REQUEST
     }
 
     "return 403 when unauthenticated" in {
 
-      val result = controller(UnsuccessfulAuth).submit(FakeRequest("POST", "/").withCSRFToken)
+      val result = controller(UnsuccessfulAuth).submit(postRequest)
 
       status(result) mustBe FORBIDDEN
     }

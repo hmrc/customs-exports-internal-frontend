@@ -44,8 +44,9 @@ abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with Befo
   protected val pid = "0"
   protected val operator = Operator(pid)
 
-  protected val getRequest: Request[AnyContent] = FakeRequest("GET", "/").withCSRFToken
-  protected def postRequest(body: JsValue): Request[AnyContentAsJson] = FakeRequest("POST", "/").withJsonBody(body).withCSRFToken
+  protected val getRequest: Request[AnyContent] = FakeRequest(GET, "/").withCSRFToken
+  protected def postRequest: Request[AnyContent] = FakeRequest(POST, "/").withCSRFToken
+  protected def postRequest(body: JsValue): Request[AnyContentAsJson] = FakeRequest(POST, "/").withJsonBody(body).withCSRFToken
 
   protected implicit def messages(implicit request: Request[_]): Messages = stubMessagesControllerComponents().messagesApi.preferred(request)
   protected implicit val flashApi: Flash = Flash()
