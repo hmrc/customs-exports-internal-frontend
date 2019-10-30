@@ -41,7 +41,7 @@ class DepartureSummaryViewSpec extends ViewSpec {
       val backButton = page(answers).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.routes.TransportController.displayPage())
+      backButton.get must haveHref(controllers.movements.routes.TransportController.displayPage())
     }
   }
 

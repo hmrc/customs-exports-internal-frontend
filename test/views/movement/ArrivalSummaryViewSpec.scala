@@ -16,7 +16,6 @@
 
 package views.movement
 
-import forms.Location
 import models.cache.ArrivalAnswers
 import views.ViewSpec
 import views.html.summary.arrival_summary_page
@@ -42,7 +41,7 @@ class ArrivalSummaryViewSpec extends ViewSpec {
       val backButton = page(answers).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.routes.LocationController.displayPage())
+      backButton.get must haveHref(controllers.movements.routes.LocationController.displayPage())
     }
   }
 
