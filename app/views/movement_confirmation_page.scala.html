@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@import forms.{Choice, ConsignmentReferences}
-@import views.Title
 @import controllers.exchanges.JourneyRequest
 @import views.html.templates.main_template
 @import models.cache.JourneyType
+@import views.Title
+@import forms.ConsignmentReferences
 
 @this(main_template: main_template)
 
@@ -31,7 +31,7 @@
 @arrivalLink = {<a href="@routes.ChoiceController.startSpecificJourney("arrival")">@messages("movement.departure.confirmation.nextSteps.arrive")</a>}
 
 @main_template(
-    title = Title(s"movement.${request.answers.`type`}.confirmation.tab.heading")
+    title = Title(s"movement.${request.answers.`type`}.confirmation.tab.heading", None)
 ) {
 
     @components.highlight_box_with_reference(

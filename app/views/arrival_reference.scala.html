@@ -22,7 +22,7 @@
 
 @(form: Form[ArrivalReference])(implicit request: Request[_], messages: Messages)
 
-@main_template(Title("arrivalReference.question")) {
+@main_template(Title("arrivalReference.question", None)) {
 
     @helper.form(controllers.movements.routes.ArrivalReferenceController.submit(), 'autoComplete -> "off") {
         @helper.CSRF.formField
