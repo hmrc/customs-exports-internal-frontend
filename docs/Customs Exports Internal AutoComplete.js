@@ -9,19 +9,17 @@
 // @updateURL    https://raw.githubusercontent.com/hmrc/customs-exports-internal-frontend/master/docs/Customs%20Exports%20Internal%20AutoComplete.js
 // ==/UserScript==
 
-(function () {
+(function() {
     'use strict';
     document.getElementById('global-header').appendChild(createQuickButton());
 })();
 
 function createQuickButton() {
     let button = document.createElement('button');
-    button.id = "quickSubmit";
+    button.id="quickSubmit";
     button.classList.add('button-start');
     button.innerHTML = 'Quick Submit';
-    button.onclick = () =
->
-    completePage();
+    button.onclick = () => completePage();
     return button;
 }
 
@@ -30,12 +28,12 @@ function selectFromAutoPredict(element, selected) {
     let index = typeof selected == "number" ? selected : 0;
     let selects = element.getElementsByTagName('select');
     let inputs = element.getElementsByTagName('input');
-    for (let j = 0; j < selects.length; j++) {
+    for(let j = 0; j < selects.length; j++){
         let options = selects[j].getElementsByTagName('option');
         let option = options[index];
-        if (typeof selected == "string") {
-            for (let o = 0; o < options.length; o++) {
-                if (options[o].value === selected) {
+        if(typeof selected == "string"){
+            for(let o = 0; o < options.length; o++) {
+                if(options[o].value === selected) {
                     option = options[o];
                 }
             }
@@ -46,7 +44,7 @@ function selectFromAutoPredict(element, selected) {
     }
 }
 
-function selectRadioOption(element, index) {
+function selectRadioOption(element, index){
     let inputs = element.getElementsByTagName('input');
     if (inputs && index < inputs.length) {
         inputs[index].checked = true
@@ -62,23 +60,22 @@ function completePage() {
     if (currentPageIs('/customs-exports-internal/start')) {
         document.getElementsByClassName('button')[0].click()
     }
-    if (currentPageIs("/customs-exports-internal/choice")) {
+    if(currentPageIs("/customs-exports-internal/choice")){
         selectRadioOption(document.getElementById("choice"), 0);
         document.getElementsByClassName('button')[0].click()
     }
 
-    if (currentPageIs("/customs-exports-internal/consignment-references")) {
+    if(currentPageIs("/customs-exports-internal/consignment-references")){
         selectRadioOption(document.getElementById("reference"), 0);
         document.getElementById('ducrValue').value = '8GB12345' + Math.floor(Math.random() * 8999) + 100 + '-101SHIP1';
         document.getElementsByClassName('button')[0].click()
     }
-    if (currentPageIs("/customs-exports-internal/arrival-reference")) {
+    if(currentPageIs("/customs-exports-internal/arrival-reference")){
         document.getElementById("reference").value = "REF" + Math.floor(Math.random() * 8999) + 100;
         document.getElementsByClassName('button')[0].click()
     }
-    if (currentPageIs("/customs-exports-internal/movement-details")) {
+    if(currentPageIs("/customs-exports-internal/movement-details")){
         let title = document.title.toLowerCase();
-
         const validDate = new Date();
         validDate.setDate(validDate.getDate() - 1); // One day before
         if (title.indexOf('departure') != -1) {
@@ -97,43 +94,43 @@ function completePage() {
         }
         document.getElementsByClassName('button')[0].click()
     }
-    if (currentPageIs("/customs-exports-internal/location")) {
+    if(currentPageIs("/customs-exports-internal/location")){
         document.getElementById('code').value = 'GBAUEMAEMAEMA';
         document.getElementsByClassName('button')[0].click()
     }
-    if (currentPageIs("/customs-exports-internal/transport")) {
+    if(currentPageIs("/customs-exports-internal/transport")){
         selectRadioOption(document.getElementById("modeOfTransport"), 0);
         document.getElementById('nationality').value = 'GB';
         document.getElementById('transportId').value = 'TransportReference';
         document.getElementsByClassName('button')[0].click()
     }
-    if (currentPageIs("/customs-exports-internal/summary")) {
+    if(currentPageIs("/customs-exports-internal/summary")){
         document.getElementsByClassName('button')[0].click()
     }
-    if (currentPageIs("/customs-exports-internal/mucr-options")) {
+    if(currentPageIs("/customs-exports-internal/mucr-options")){
         document.getElementById("mucrOptions.create").checked = true;
         document.getElementById("newMucr").value = "GB/1234-123ABC456DEFIIIII"
         document.getElementsByClassName('button')[0].click()
     }
-    if (currentPageIs("/customs-exports-internal/associate-ducr$")) {
+    if(currentPageIs("/customs-exports-internal/associate-ducr$")){
         selectRadioOption(document.getElementById("kind"), 0);
         const now = new Date()
         document.getElementById("ducr").value = `5GB123456789000-${now.valueOf()}IIIII`
         document.getElementsByClassName('button')[0].click()
     }
-    if (currentPageIs("/customs-exports-internal/associate-ducr-summary")) {
+    if(currentPageIs("/customs-exports-internal/associate-ducr-summary")){
         document.getElementsByClassName('button')[0].click()
     }
-    if (currentPageIs("/customs-exports-internal/disassociate-ucr-summary")) {
+    if(currentPageIs("/customs-exports-internal/disassociate-ucr-summary")){
         document.getElementsByClassName('button')[0].click()
     }
-    if (currentPageIs("/customs-exports-internal/disassociate-ucr")) {
+    if(currentPageIs("/customs-exports-internal/disassociate-ucr")){
         selectRadioOption(document.getElementById("kind"), 0);
         const now = new Date()
         document.getElementById("ducr").value = `5GB123456789000-${now.valueOf()}IIIII`
         document.getElementsByClassName('button')[0].click()
     }
-    if (currentPageIs("customs-exports-internal/shut-mucr")) {
+    if(currentPageIs("customs-exports-internal/shut-mucr")){
         const now = new Date()
         document.getElementById("mucr").value = `GB/ABCDE1234-${now.valueOf()}IIIII`
         document.getElementsByClassName('button')[0].click()
