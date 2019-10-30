@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package utils
-
-import play.api.libs.json.{Json, Writes}
+package testdata
 
 import scala.util.Random
 
