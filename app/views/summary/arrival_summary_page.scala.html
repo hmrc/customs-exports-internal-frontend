@@ -27,7 +27,7 @@
 
 @(data: ArrivalAnswers)(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title("summary.arrival.title")){
+@main_template(title = Title("summary.arrival.title", None)){
     @components.back_link(routes.LocationController.displayPage())
 
     @components.page_title(Some("summary.arrival.title"))
@@ -79,6 +79,6 @@
     @helper.form(action = routes.SummaryController.submitMovementRequest()) {
         @helper.CSRF.formField
 
-        @components.submit_button(messages("site.confirmAndSubmit"))
+        @components.submit_button("site.confirmAndSubmit")
     }
 }
