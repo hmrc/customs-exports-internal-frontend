@@ -20,6 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.consolidations.{routes => consolidationRoutes}
 import forms.AssociateUcr.form
 import javax.inject.Inject
+import models.ReturnToStartException
 import models.cache.{AssociateUcrAnswers, Cache}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,26 +46,29 @@ class AssociateUCRController @Inject()(
 
     mucrOptions match {
       case Some(mucrOptions) => Ok(associateUcrPage(associateUcr.fold(form)(form.fill), mucrOptions))
-      case None              => Redirect(controllers.routes.ChoiceController.displayPage())
+      case None              => throw ReturnToStartException
     }
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => {
-          request.answersAs[AssociateUcrAnswers].mucrOptions match {
-            case Some(mucr) => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucr)))
-            case None       => Future.successful(Redirect(controllers.routes.ChoiceController.displayPage()))
+    val mucrOptions = request.answersAs[AssociateUcrAnswers].mucrOptions
+
+    if(mucrOptions.isEmpty) throw ReturnToStartException
+    else {
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions.get))),
+          formData => {
+            val updatedCache = request.answersAs[AssociateUcrAnswers].copy(associateUcr = Some(formData))
+            movementRepository.upsert(Cache(request.pid, updatedCache)).map { _ =>
+              Redirect(consolidationRoutes.AssociateUCRSummaryController.displayPage())
+            }
           }
-        },
-        formData => {
-          val updatedCache = request.answersAs[AssociateUcrAnswers].copy(associateUcr = Some(formData))
-          movementRepository.upsert(Cache(request.pid, updatedCache)).map { _ =>
-            Redirect(consolidationRoutes.AssociateUCRSummaryController.displayPage())
-          }
-        }
-      )
+        )
+    }
   }
+
+  private def processForm() = ???
 }

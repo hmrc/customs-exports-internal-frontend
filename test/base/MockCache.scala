@@ -57,6 +57,9 @@ trait MockCache extends MockitoSugar with BeforeAndAfterEach {
     captor.getValue
   }
 
+  protected def successfulRemoving(): Unit =
+    given(cache.removeByPid(any())).willReturn(Future.successful((): Unit))
+
   protected def withTheCacheUpserted: Answer[Future[Cache]] = new Answer[Future[Cache]] {
     override def answer(invocation: InvocationOnMock): Future[Cache] = Future.successful(invocation.getArgument(0))
   }

@@ -17,15 +17,15 @@
 package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashKeys
 import javax.inject.Inject
 import models.ReturnToStartException
 import models.cache.AssociateUcrAnswers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.MovementRepository
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.associate_ucr_summary
+import views.html.{associate_ucr_confirmation, associate_ucr_summary}
 
 import scala.concurrent.ExecutionContext
 
@@ -33,8 +33,10 @@ class AssociateUCRSummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
+  movementRepository: MovementRepository,
   submissionService: SubmissionService,
-  associateUcrSummaryPage: associate_ucr_summary
+  associateUcrSummaryPage: associate_ucr_summary,
+  associateUCRConfirmPage: associate_ucr_confirmation
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -53,9 +55,10 @@ class AssociateUCRSummaryController @Inject()(
     val answers = request.answersAs[AssociateUcrAnswers]
     val associateUcr = answers.associateUcr.getOrElse(throw ReturnToStartException)
 
-    submissionService.submit(request.pid, answers).map { _ =>
-      Redirect(routes.AssociateUCRConfirmationController.displayPage())
-        .flashing(FlashKeys.UCR -> associateUcr.ucr, FlashKeys.CONSOLIDATION_KIND -> associateUcr.kind.formValue)
+    submissionService.submit(request.pid, answers).flatMap { _ =>
+      movementRepository.removeByPid(request.pid).map { _ =>
+        Ok(associateUCRConfirmPage(associateUcr.kind.formValue, associateUcr.ucr))
+      }
     }
   }
 }
