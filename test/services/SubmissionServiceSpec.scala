@@ -59,7 +59,6 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
       theDisassociationSubmitted mustBe DisassociateDUCRRequest("pid", "eori", "ucr")
       verify(repository).removeByPid("pid")
-      verify(audit).auditAllPagesUserInput(answers)
       verify(audit).auditDisassociate("eori", "ucr", "Success")
     }
 
@@ -73,7 +72,6 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
       theDisassociationSubmitted mustBe DisassociateDUCRRequest("pid", "eori", "ucr")
       verify(repository, never()).removeByPid("pid")
-      verify(audit).auditAllPagesUserInput(answers)
       verify(audit).auditDisassociate("eori", "ucr", "Failed")
     }
 
