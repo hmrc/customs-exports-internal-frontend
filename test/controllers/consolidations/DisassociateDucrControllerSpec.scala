@@ -16,6 +16,7 @@
 
 package controllers.consolidations
 
+import base.MockCache
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
@@ -27,7 +28,6 @@ import org.mockito.{ArgumentCaptor, Mockito}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repository.MockCache
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.disassociate_ducr

@@ -16,6 +16,7 @@
 
 package controllers.consolidations
 
+import base.MockCache
 import controllers.ControllerLayerSpec
 import forms.MucrOptions
 import models.cache.{AssociateUcrAnswers, Cache}
@@ -26,7 +27,6 @@ import play.api.data.Form
 import play.api.libs.json.{JsString, Json}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import repository.MockCache
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.mucr_options
 

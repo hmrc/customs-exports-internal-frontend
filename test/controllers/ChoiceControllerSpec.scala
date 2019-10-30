@@ -16,6 +16,7 @@
 
 package controllers
 
+import base.MockCache
 import controllers.actions.AuthenticatedAction
 import controllers.consolidations.{routes => consolidationRoutes}
 import forms.Choice
@@ -29,7 +30,6 @@ import play.api.mvc.{AnyContentAsFormUrlEncoded, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import repository.MockCache
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.choice_page
 
