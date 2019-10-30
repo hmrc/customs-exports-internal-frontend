@@ -54,11 +54,10 @@ class DisassociateDucrController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
         answers =>
-          for {
-            _ <- submissionService.submit(request.pid, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))
-          } yield
+          submissionService.submit(request.pid, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers))).map { _ =>
             Redirect(controllers.consolidations.routes.DisassociateDucrConfirmationController.display())
               .flashing(FlashKeys.UCR -> answers)
+        }
       )
   }
 

@@ -22,7 +22,7 @@ import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
 
 case class ArrivalAnswers(
-  override val eori: Option[String] = None,
+  override val eori: Option[String] = Answers.fakeEORI,
   consignmentReferences: Option[ConsignmentReferences] = None,
   arrivalReference: Option[ArrivalReference] = None,
   arrivalDetails: Option[ArrivalDetails] = None,
@@ -36,7 +36,7 @@ object DepartureAnswers {
 }
 
 case class DepartureAnswers(
-  override val eori: Option[String] = None,
+  override val eori: Option[String] = Answers.fakeEORI,
   consignmentReferences: Option[ConsignmentReferences] = None,
   arrivalReference: Option[ArrivalReference] = None,
   departureDetails: Option[DepartureDetails] = None,
@@ -51,7 +51,7 @@ object ArrivalAnswers {
 }
 
 case class AssociateUcrAnswers(
-  override val eori: Option[String] = None,
+  override val eori: Option[String] = Answers.fakeEORI,
   mucrOptions: Option[MucrOptions] = None,
   associateUcr: Option[AssociateUcr] = None
 ) extends Answers {

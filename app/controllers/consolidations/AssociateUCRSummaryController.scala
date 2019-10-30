@@ -23,7 +23,7 @@ import models.ReturnToStartException
 import models.cache.AssociateUcrAnswers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.MovementRepository
+import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.associate_ucr_summary
 
@@ -33,7 +33,7 @@ class AssociateUCRSummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  movementRepository: MovementRepository,
+  submissionService: SubmissionService,
   associateUcrSummaryPage: associate_ucr_summary
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -49,13 +49,13 @@ class AssociateUCRSummaryController @Inject()(
     }
   }
 
-  def submit(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
+  def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
     val answers = request.answersAs[AssociateUcrAnswers]
-    //MUCR options necessary for submit
-    val mucrOptions = answers.mucrOptions.getOrElse(throw ReturnToStartException)
     val associateUcr = answers.associateUcr.getOrElse(throw ReturnToStartException)
 
-    Redirect(routes.AssociateUCRConfirmationController.displayPage())
-      .flashing(FlashKeys.UCR -> associateUcr.ucr, FlashKeys.CONSOLIDATION_KIND -> associateUcr.kind.formValue)
+    submissionService.submit(request.pid, answers).map { _ =>
+      Redirect(routes.AssociateUCRConfirmationController.displayPage())
+        .flashing(FlashKeys.UCR -> associateUcr.ucr, FlashKeys.CONSOLIDATION_KIND -> associateUcr.kind.formValue)
+    }
   }
 }

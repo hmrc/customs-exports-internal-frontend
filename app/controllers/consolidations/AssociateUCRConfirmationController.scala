@@ -20,17 +20,22 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.MovementRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.associate_ucr_confirmation
+
+import scala.concurrent.ExecutionContext
 
 class AssociateUCRConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
+  movementRepository: MovementRepository,
   associateUCRConfirmPage: associate_ucr_confirmation
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
-    Ok(associateUCRConfirmPage())
+  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
+    movementRepository.removeByPid(request.pid).map(_ => Ok(associateUCRConfirmPage()))
   }
 }
