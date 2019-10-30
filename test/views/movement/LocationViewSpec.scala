@@ -40,7 +40,7 @@ class LocationViewSpec extends ViewSpec {
       val backButton = page(Location.form).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.routes.MovementDetailsController.displayPage())
+      backButton.get must haveHref(controllers.movements.routes.MovementDetailsController.displayPage())
     }
 
     "render error summary" when {

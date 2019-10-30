@@ -46,7 +46,7 @@ class ArrivalDetailsViewSpec extends ViewSpec {
       val backButton = page(MovementDetails.arrivalForm()).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.routes.ArrivalReferenceController.displayPage())
+      backButton.get must haveHref(controllers.movements.routes.ArrivalReferenceController.displayPage())
     }
 
     "render error summary" when {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.JourneyRequest
@@ -74,7 +74,7 @@ class MovementDetailsController @Inject()(
         (formWithErrors: Form[ArrivalDetails]) => Future.successful(Left(arrivalDetailsPage(formWithErrors))),
         validForm =>
           movementRepository.upsert(Cache(request.pid, arrivalAnswers.copy(arrivalDetails = Some(validForm)))).map { _ =>
-            Right(controllers.routes.LocationController.displayPage())
+            Right(controllers.movements.routes.LocationController.displayPage())
         }
       )
 
@@ -85,7 +85,7 @@ class MovementDetailsController @Inject()(
         (formWithErrors: Form[DepartureDetails]) => Future.successful(Left(departureDetailsPage(formWithErrors))),
         validForm =>
           movementRepository.upsert(Cache(request.pid, departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
-            Right(controllers.routes.LocationController.displayPage())
+            Right(controllers.movements.routes.LocationController.displayPage())
         }
       )
 }

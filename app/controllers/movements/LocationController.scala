@@ -14,45 +14,55 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import forms.ArrivalReference
-import forms.ArrivalReference.form
+import forms.Location
+import forms.Location.form
 import javax.inject.{Inject, Singleton}
-import models.cache.{ArrivalAnswers, Cache, JourneyType}
+import models.cache._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.MovementRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.arrival_reference
+import views.html.location
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ArrivalReferenceController @Inject()(
+class LocationController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   movementRepository: MovementRepository,
   mcc: MessagesControllerComponents,
-  arrivalReferencePage: arrival_reference
+  locationPage: location
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
-    Ok(arrivalReferencePage(request.answersAs[ArrivalAnswers].arrivalReference.fold(form)(form.fill(_))))
+    val location = request.answers match {
+      case arrivalAnswers: ArrivalAnswers     => arrivalAnswers.location
+      case departureAnswers: DepartureAnswers => departureAnswers.location
+    }
+    Ok(locationPage(location.fold(form)(form.fill(_))))
   }
 
-  def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async { implicit request =>
+  def saveLocation(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[ArrivalReference]) => Future.successful(BadRequest(arrivalReferencePage(formWithErrors))),
+        (formWithErrors: Form[Location]) => Future.successful(BadRequest(locationPage(formWithErrors))),
         validForm => {
-          val movementAnswers = request.answersAs[ArrivalAnswers].copy(arrivalReference = Some(validForm))
-          movementRepository.upsert(Cache(request.pid, movementAnswers)).map { _ =>
-            Redirect(controllers.routes.MovementDetailsController.displayPage())
+          request.answers match {
+            case arrivalAnswers: ArrivalAnswers =>
+              movementRepository.upsert(Cache(request.pid, arrivalAnswers.copy(location = Some(validForm)))).map { _ =>
+                Redirect(controllers.movements.routes.SummaryController.displayPage())
+              }
+            case departureAnswers: DepartureAnswers =>
+              movementRepository.upsert(Cache(request.pid, departureAnswers.copy(location = Some(validForm)))).map { _ =>
+                Redirect(controllers.movements.routes.TransportController.displayPage())
+              }
           }
         }
       )

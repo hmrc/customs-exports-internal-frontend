@@ -29,25 +29,25 @@ POST        /disassociate-ducr                     controllers.consolidations.Di
 GET         /disassociate-ducr-confirmation        controllers.consolidations.DisassociateDucrConfirmationController.display()
 
 # Enter DUCR page
-GET         /consignment-references                controllers.ConsignmentReferencesController.displayPage()
-POST        /consignment-references                controllers.ConsignmentReferencesController.saveConsignmentReferences()
+GET         /consignment-references                controllers.movements.ConsignmentReferencesController.displayPage()
+POST        /consignment-references                controllers.movements.ConsignmentReferencesController.saveConsignmentReferences()
 
 # Arrival Reference page
-GET         /arrival-reference                     controllers.ArrivalReferenceController.displayPage()
-POST        /arrival-reference                     controllers.ArrivalReferenceController.submit()
+GET         /arrival-reference                     controllers.movements.ArrivalReferenceController.displayPage()
+POST        /arrival-reference                     controllers.movements.ArrivalReferenceController.submit()
 
 # Movement details page
-GET         /movement-details                      controllers.MovementDetailsController.displayPage()
-POST        /movement-details                      controllers.MovementDetailsController.saveMovementDetails()
+GET         /movement-details                      controllers.movements.MovementDetailsController.displayPage()
+POST        /movement-details                      controllers.movements.MovementDetailsController.saveMovementDetails()
 
 # Goods location page
-GET         /location                              controllers.LocationController.displayPage()
-POST        /location                              controllers.LocationController.saveLocation()
+GET         /location                              controllers.movements.LocationController.displayPage()
+POST        /location                              controllers.movements.LocationController.saveLocation()
 
 # Transport page
-GET         /transport                             controllers.TransportController.displayPage()
-POST        /transport                             controllers.TransportController.saveTransport()
+GET         /transport                             controllers.movements.TransportController.displayPage()
+POST        /transport                             controllers.movements.TransportController.saveTransport()
 
 # Summary
-GET         /summary                               controllers.SummaryController.displayPage()
-POST        /summary                               controllers.SummaryController.submitMovementRequest()
+GET         /summary                               controllers.movements.SummaryController.displayPage()
+POST        /summary                               controllers.movements.SummaryController.submitMovementRequest()
