@@ -92,7 +92,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
     "return 303 (SEE_OTHER) and redirect to the correct controller" when {
 
-      "user choose arrival" in {
+      "user chooses arrival" in {
 
         val result = controller().startSpecificJourney(Choice.Arrival.value)(getRequest)
 
@@ -100,7 +100,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
       }
 
-      "user choose departure" in {
+      "user chooses departure" in {
 
         val result = controller().startSpecificJourney(Choice.Departure.value)(getRequest)
 
@@ -108,7 +108,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
       }
 
-      "user choose associate ucr" in {
+      "user chooses associate ucr" in {
 
         val result = controller().startSpecificJourney(Choice.AssociateUCR.value)(getRequest)
 
@@ -116,7 +116,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
       }
 
-      "user choose dissociate ucr" in {
+      "user chooses dissociate ucr" in {
 
         val result = controller().startSpecificJourney(Choice.DisassociateUCR.value)(getRequest)
 
@@ -124,7 +124,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateDucrController.display().url)
       }
 
-      "user choose shut mucr" in {
+      "user chooses shut mucr" in {
 
         val result = controller().startSpecificJourney(Choice.ShutMUCR.value)(getRequest)
 
@@ -132,7 +132,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
       }
 
-      "user choose view submissions" in {
+      "user chooses view submissions" in {
 
         val result = controller().startSpecificJourney(Choice.ViewSubmissions.value)(getRequest)
 
@@ -159,7 +159,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
     "return 303 (SEE_OTHER) when authenticated" when {
 
-      "user choose arrival" in {
+      "user chooses arrival" in {
 
         val result = controller().submit(postWithChoice(Choice.Arrival))
 
@@ -168,7 +168,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         theCacheUpserted mustBe Cache(pid, ArrivalAnswers(Answers.fakeEORI))
       }
 
-      "user choose departure" in {
+      "user chooses departure" in {
 
         val result = controller().submit(postWithChoice(Choice.Departure))
 
@@ -177,7 +177,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         theCacheUpserted mustBe Cache(pid, DepartureAnswers(Answers.fakeEORI))
       }
 
-      "user choose associate UCR" in {
+      "user chooses associate UCR" in {
 
         val result = controller().submit(postWithChoice(Choice.AssociateUCR))
 
@@ -186,7 +186,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         theCacheUpserted mustBe Cache(pid, AssociateUcrAnswers())
       }
 
-      "user choose disassociate UCR" in {
+      "user chooses disassociate UCR" in {
 
         val result = controller().submit(postWithChoice(Choice.DisassociateUCR))
 
@@ -195,7 +195,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         theCacheUpserted mustBe Cache(pid, DisassociateUcrAnswers())
       }
 
-      "user choose shut MUCR" in {
+      "user chooses shut MUCR" in {
 
         val result = controller().submit(postWithChoice(Choice.ShutMUCR))
 
@@ -204,13 +204,12 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         theCacheUpserted mustBe Cache(pid, ShutMucrAnswers())
       }
 
-      "user choose view submissions" in {
+      "user chooses view submissions" in {
 
         val result = controller(SuccessfulAuth()).submit(postWithChoice(Choice.ViewSubmissions))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
-        theCacheUpserted mustBe Cache(pid, ViewSubmissionsAnswers())
       }
     }
 

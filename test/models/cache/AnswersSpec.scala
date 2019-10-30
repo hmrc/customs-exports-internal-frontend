@@ -72,15 +72,5 @@ class AnswersSpec extends UnitSpec {
 
       Answers.format.reads(shutMucrAnswersJson) mustBe JsSuccess(expectedResult)
     }
-
-    "correctly read View Submissions Answers" in {
-
-      val viewSubmissionsAnswersJson: JsValue =
-        JsObject(Map("type" -> JsString(JourneyType.VIEW_SUBMISSIONS.toString)))
-
-      val expectedResult = ViewSubmissionsAnswers()
-
-      Answers.format.reads(viewSubmissionsAnswersJson) mustBe JsSuccess(expectedResult)
-    }
   }
 }

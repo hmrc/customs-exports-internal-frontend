@@ -36,12 +36,11 @@ object Choice {
     allChoices.find(_.value == input).getOrElse(throw new IllegalArgumentException("Incorrect choice"))
 
   def apply(`type`: JourneyType): Choice = `type` match {
-    case ARRIVE           => Arrival
-    case DEPART           => Departure
-    case ASSOCIATE_UCR    => AssociateUCR
-    case DISSOCIATE_UCR   => DisassociateUCR
-    case SHUT_MUCR        => ShutMUCR
-    case VIEW_SUBMISSIONS => ViewSubmissions
+    case ARRIVE         => Arrival
+    case DEPART         => Departure
+    case ASSOCIATE_UCR  => AssociateUCR
+    case DISSOCIATE_UCR => DisassociateUCR
+    case SHUT_MUCR      => ShutMUCR
   }
 
   implicit object ChoiceValueFormat extends Format[Choice] {
@@ -61,13 +60,13 @@ object Choice {
   case object ShutMUCR extends Choice("shutMUCR")
   case object ViewSubmissions extends Choice("viewSubmissions")
 
-  val allChoices: Seq[Choice] = Seq(Arrival, Departure, AssociateUCR, DisassociateUCR, ShutMUCR, ViewSubmissions)
+  val allChoices = Seq(Arrival, Departure, AssociateUCR, DisassociateUCR, ShutMUCR, ViewSubmissions)
 
-  val choiceValueKey = "choice"
+  val choiceId = "choice"
 
   val choiceMapping: Mapping[Choice] =
     Forms.mapping(
-      choiceValueKey -> requiredRadio("choicePage.input.error.empty")
+      choiceId -> requiredRadio("choicePage.input.error.empty")
         .verifying("choicePage.input.error.incorrectValue", isContainedIn(allChoices.map(_.value)))
     )(Choice.apply)(Choice.unapply)
 
