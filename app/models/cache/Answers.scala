@@ -70,8 +70,8 @@ object DisassociateUcrAnswers {
   implicit val format: Format[DisassociateUcrAnswers] = Json.format[DisassociateUcrAnswers]
 }
 
-case class ShutMucrAnswers(override val eori: Option[String] = None) extends Answers {
-  override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
+case class ShutMucrAnswers(override val eori: Option[String] = Answers.fakeEORI, shutMucr: Option[ShutMucr] = None) extends Answers {
+  override val `type`: JourneyType.Value = JourneyType.SHUT_MUCR
 }
 
 object ShutMucrAnswers {
