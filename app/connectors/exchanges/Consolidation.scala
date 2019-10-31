@@ -43,7 +43,7 @@ object DisassociateDUCRRequest {
 }
 
 case class ShutMUCRRequest(override val providerId: String, override val eori: String, mucr: String) extends Consolidation {
-  override val consolidationType: exchanges.ConsolidationType.Value = ConsolidationType.SHUT_MUCR
+  override val consolidationType: ConsolidationType.Value = ConsolidationType.SHUT_MUCR
 }
 object ShutMUCRRequest {
   implicit val format: OFormat[ShutMUCRRequest] = Json.format[ShutMUCRRequest]
