@@ -79,7 +79,7 @@ class ChoiceController @Inject()(
           case forms.Choice.DisassociateUCR =>
             proceedJourney(DisassociateUcrAnswers(), controllers.consolidations.routes.DisassociateUcrController.display())
           case forms.Choice.ShutMUCR =>
-            proceedJourney(ShutMucrAnswers(None), routes.ChoiceController.displayPage())
+            proceedJourney(ShutMucrAnswers(), controllers.consolidations.routes.ShutMucrController.displayPage())
           case forms.Choice.ViewSubmissions =>
             Future.successful(Redirect(routes.ChoiceController.displayPage()))
         }

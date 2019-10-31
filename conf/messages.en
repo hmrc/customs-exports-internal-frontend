@@ -6,6 +6,7 @@ site.save_and_continue = Save and continue
 site.change = Change
 site.confirmAndSubmit = Confirm and submit
 site.backToStart = Back to start
+site.edit = Change
 
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
@@ -187,6 +188,18 @@ disassociate.ucr.mucr.empty = Enter a Master Consignment Reference
 disassociation.confirmation.associateOrShut = {0} a consignment, or {1}.
 disassociation.confirmation.associateOrShut.associate = Associate
 disassociation.confirmation.associateOrShut.shut = shut a master consignment
+
+shutMucr.title = Which MUCR do you want to shut?
+
+shutMucr.summary.title = Is the information provided for this shut request correct?
+shutMucr.summary.header = Shut master consignment
+shutMucr.summary.type = MUCR
+
+#shutMucr.confirmation.tab.heading = Shut MUCR request submitted
+shutMucr.confirmation.heading = Request to shut MUCR {0} has been submitted
+shutMucr.confirmation.nextSteps = {0} another master consignment. {1}.
+shutMucr.confirmation.nextSteps.shutMucr = Shut
+shutMucr.confirmation.nextSteps.depart = Depart a consignment
 
 
 view.unauthorized.title=You are not authorized

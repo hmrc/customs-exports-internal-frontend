@@ -17,12 +17,12 @@
 package services
 
 import connectors.CustomsDeclareExportsMovementsConnector
-import connectors.exchanges.{AssociateUCRRequest, DisassociateDUCRRequest}
+import connectors.exchanges.{AssociateUCRRequest, DisassociateDUCRRequest, ShutMUCRRequest}
 import forms._
 import javax.inject.{Inject, Singleton}
 import metrics.MovementsMetrics
 import models.ReturnToStartException
-import models.cache.{Answers, AssociateUcrAnswers, Cache, DisassociateUcrAnswers, JourneyType}
+import models.cache._
 import play.api.http.Status
 import repositories.MovementRepository
 import services.audit.{AuditService, AuditTypes}
@@ -69,6 +69,22 @@ class SubmissionService @Inject()(
           }
         case Failure(_) =>
           auditService.auditAssociate(eori, mucr, ucr, "Failed")
+      }
+  }
+
+  def submit(pid: String, answers: ShutMucrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
+    val eori = answers.eori.getOrElse(throw ReturnToStartException)
+    val mucr = answers.shutMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
+
+    connector
+      .submit(ShutMUCRRequest(pid, eori, mucr))
+      .andThen {
+        case Success(_) =>
+          movementRepository.removeByPid(pid).flatMap { _ =>
+            auditService.auditShutMucr(eori, mucr, "Success")
+          }
+        case Failure(_) =>
+          auditService.auditShutMucr(eori, mucr, "Failed")
       }
   }
 
