@@ -18,10 +18,11 @@ package services
 
 import base.UnitSpec
 import connectors.CustomsDeclareExportsMovementsConnector
-import connectors.exchanges.{Consolidation, DisassociateDUCRRequest}
+import connectors.exchanges.{AssociateUCRRequest, Consolidation, DisassociateDUCRRequest}
+import forms.{AssociateKind, AssociateUcr, MucrOptions}
 import metrics.MovementsMetrics
 import models.ReturnToStartException
-import models.cache.DisassociateUcrAnswers
+import models.cache.{AssociateUcrAnswers, DisassociateUcrAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
@@ -47,6 +48,65 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
   override def afterEach(): Unit = {
     reset(audit, connector, metrics, repository)
     super.afterEach()
+  }
+
+  "Submit Associate" should {
+
+    val eori = "eori"
+    val mucr = "123"
+    val ucr = "321"
+
+    "delegate to connector" in {
+
+      given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
+      given(repository.removeByPid(anyString())).willReturn(Future.successful((): Unit))
+
+      val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
+      await(service.submit("pid", answers))
+
+      theAssociationSubmitted mustBe AssociateUCRRequest("pid", "eori", mucr, ucr)
+      verify(repository).removeByPid("pid")
+      verify(audit).auditAssociate("eori", mucr, ucr, "Success")
+    }
+
+    "audit when failed" in {
+      given(connector.submit(any[Consolidation]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
+
+      val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
+      intercept[RuntimeException] {
+        await(service.submit("pid", answers))
+      }
+
+      theAssociationSubmitted mustBe AssociateUCRRequest("pid", "eori", mucr, ucr)
+      verify(repository, never()).removeByPid("pid")
+      verify(audit).auditAssociate("eori", mucr, ucr, "Failed")
+    }
+
+    "handle missing eori" in {
+      val answers = AssociateUcrAnswers(None, Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
+      intercept[Throwable] {
+        await(service.submit("pid", answers))
+      } mustBe ReturnToStartException
+
+      verifyZeroInteractions(repository)
+      verifyZeroInteractions(audit)
+    }
+
+    "handle missing ucr" in {
+      val answers = AssociateUcrAnswers(Some(eori), None, None)
+      intercept[Throwable] {
+        await(service.submit("pid", answers))
+      } mustBe ReturnToStartException
+
+      verifyZeroInteractions(repository)
+      verifyZeroInteractions(audit)
+    }
+
+    def theAssociationSubmitted: AssociateUCRRequest = {
+      val captor: ArgumentCaptor[AssociateUCRRequest] = ArgumentCaptor.forClass(classOf[AssociateUCRRequest])
+      verify(connector).submit(captor.capture())(any())
+      captor.getValue
+    }
   }
 
   "Submit Disassociate" should {
