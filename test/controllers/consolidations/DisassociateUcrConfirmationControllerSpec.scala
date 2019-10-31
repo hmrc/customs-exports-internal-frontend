@@ -18,7 +18,6 @@ package controllers.consolidations
 
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
-import models.cache.{Answers, DisassociateUcrAnswers}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -31,21 +30,21 @@ class DisassociateUcrConfirmationControllerSpec extends ControllerLayerSpec {
 
   private val page = new disassociate_ucr_confirmation(main_template)
 
-  private def controller(auth: AuthenticatedAction, existingAnswers: Answers) =
-    new DisassociateUcrConfirmationController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), page)
+  private def controller(auth: AuthenticatedAction) =
+    new DisassociateUcrConfirmationController(auth, stubMessagesControllerComponents(), page)
 
   "GET" should {
     implicit val get = FakeRequest("GET", "/")
 
     "return 200 when authenticated" in {
-      val result = controller(SuccessfulAuth(), DisassociateUcrAnswers()).display(get)
+      val result = controller(SuccessfulAuth()).display(get)
 
       status(result) mustBe Status.OK
       contentAsHtml(result) mustBe page()
     }
 
     "return 403 when unauthenticated" in {
-      val result = controller(UnsuccessfulAuth, DisassociateUcrAnswers()).display(get)
+      val result = controller(UnsuccessfulAuth).display(get)
 
       status(result) mustBe Status.FORBIDDEN
     }

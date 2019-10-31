@@ -18,7 +18,6 @@ package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.storage.FlashKeys
-import forms.DisassociateUcr
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
 import models.cache.{DisassociateUcrAnswers, JourneyType}
@@ -29,7 +28,7 @@ import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.disassociate_ucr_summary
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class DisassociateUcrSummaryController @Inject()(
@@ -53,8 +52,10 @@ class DisassociateUcrSummaryController @Inject()(
     val answers = request.answersAs[DisassociateUcrAnswers]
 
     submissionService.submit(request.pid, answers).map { _ =>
+      val ucr = answers.ucr.map(_.ucr).getOrElse(throw ReturnToStartException)
+      val kind = answers.ucr.map(_.kind).getOrElse(throw ReturnToStartException)
       Redirect(controllers.consolidations.routes.DisassociateUcrConfirmationController.display())
-        .flashing(FlashKeys.UCR -> answers.ucr.map(_.ucr).getOrElse(throw ReturnToStartException))
+        .flashing(FlashKeys.UCR -> ucr, FlashKeys.CONSOLIDATION_KIND -> kind.toString)
     }
   }
 

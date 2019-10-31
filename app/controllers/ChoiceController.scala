@@ -56,7 +56,7 @@ class ChoiceController @Inject()(
       case forms.Choice.AssociateUCR =>
         proceedJourney(AssociateUcrAnswers(), consolidations.routes.MucrOptionsController.displayPage())
       case forms.Choice.DisassociateUCR =>
-        proceedJourney(DisassociateUcrAnswers(), controllers.consolidations.routes.DisassociateUcrController.display())
+        proceedJourney(DisassociateUcrAnswers(), consolidations.routes.DisassociateUcrController.display())
       case forms.Choice.ShutMUCR =>
         proceedJourney(AssociateUcrAnswers(), routes.ChoiceController.displayPage())
       case forms.Choice.ViewSubmissions =>
@@ -75,11 +75,11 @@ class ChoiceController @Inject()(
           case forms.Choice.Departure =>
             proceedJourney(DepartureAnswers(), movements.routes.ConsignmentReferencesController.displayPage())
           case forms.Choice.AssociateUCR =>
-            proceedJourney(AssociateUcrAnswers(), controllers.consolidations.routes.MucrOptionsController.displayPage())
+            proceedJourney(AssociateUcrAnswers(), consolidations.routes.MucrOptionsController.displayPage())
           case forms.Choice.DisassociateUCR =>
-            proceedJourney(DisassociateUcrAnswers(), controllers.consolidations.routes.DisassociateUcrController.display())
+            proceedJourney(DisassociateUcrAnswers(), consolidations.routes.DisassociateUcrController.display())
           case forms.Choice.ShutMUCR =>
-            proceedJourney(ShutMucrAnswers(), controllers.consolidations.routes.ShutMucrController.displayPage())
+            proceedJourney(ShutMucrAnswers(), consolidations.routes.ShutMucrController.displayPage())
           case forms.Choice.ViewSubmissions =>
             Future.successful(Redirect(routes.ChoiceController.displayPage()))
         }

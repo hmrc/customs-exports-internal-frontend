@@ -83,6 +83,7 @@ class DisassociateUcrSummaryControllerSpec extends ControllerLayerSpec with Mock
       status(result) mustBe Status.SEE_OTHER
       redirectLocation(result) mustBe Some(routes.DisassociateUcrConfirmationController.display().url)
       flash(result).get(FlashKeys.UCR) mustBe Some(ucr)
+      flash(result).get(FlashKeys.CONSOLIDATION_KIND) mustBe Some(DisassociateKind.Ducr.toString)
       theSubmission mustBe answers
     }
 

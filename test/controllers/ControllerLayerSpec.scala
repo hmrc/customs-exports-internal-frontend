@@ -25,7 +25,7 @@ import models.cache.Answers
 import models.cache.JourneyType.JourneyType
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
-import play.api.libs.json.{JsValue, Writes}
+import play.api.libs.json.Writes
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -38,7 +38,6 @@ import views.html.unauthorized
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import play.api.libs.json.{JsValue, Writes}
 
 abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with BeforeAndAfterEach with CSRFSupport {
 
