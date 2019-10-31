@@ -19,7 +19,9 @@ package connectors
 import config.AppConfig
 import connectors.exchanges.Consolidation
 import javax.inject.{Inject, Singleton}
+import models.notifications.NotificationFrontendModel
 import models.requests.MovementRequest
+import models.submissions.SubmissionFrontendModel
 import play.api.Logger
 import play.api.http.{ContentTypes, HeaderNames}
 import play.api.libs.json.{Format, Json}
@@ -35,7 +37,7 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
   private val logger = Logger(this.getClass)
   private val JsonHeaders = Seq(HeaderNames.CONTENT_TYPE -> ContentTypes.JSON, HeaderNames.ACCEPT -> ContentTypes.JSON)
 
-  def submit(request: MovementRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
+  def submit(request: MovementRequest)(implicit hc: HeaderCarrier): Future[Unit] =
     httpClient
       .POST[MovementRequest, HttpResponse](appConfig.customsDeclareExportsMovements + "/movements", request, JsonHeaders)
       .andThen {
@@ -62,4 +64,13 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
 
   private def logFailedExchange(`type`: String, exception: Throwable): Unit =
     logger.warn(`type` + " failed", exception)
+
+  def fetchNotifications(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[Seq[NotificationFrontendModel]] =
+    Future.successful(Seq.empty)
+
+  def fetchAllSubmissions(providerId: String)(implicit hc: HeaderCarrier): Future[Seq[SubmissionFrontendModel]] = Future.successful(Seq.empty)
+
+  def fetchSingleSubmission(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[Option[SubmissionFrontendModel]] =
+    Future.successful(None)
+
 }
