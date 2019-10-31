@@ -15,10 +15,9 @@
  *@
 
 @import config.AppConfig
-@import controllers.routes
-@import uk.gov.hmrc.play.views.html.layouts.{Footer, FooterLinks, Head, HeaderNav, MainContent, MainContentHeader, ServiceInfo}
-@import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 @import play.twirl.api.HtmlFormat
+@import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
+@import uk.gov.hmrc.play.views.html.layouts._
 @import views.html.layouts.GovUkTemplate
 
 @this(
@@ -88,7 +87,7 @@
     }
 }
 
-@getHelpForm = @{report_a_problem_link_di(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}
+@getHelpForm = @{HtmlFormat.empty}
 
 @content = {
     @main_content_di(
