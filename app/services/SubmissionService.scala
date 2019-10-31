@@ -41,7 +41,7 @@ class SubmissionService @Inject()(
 
   def submit(pid: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
-    val ucr = answers.ucr.getOrElse(throw ReturnToStartException)
+    val ucr = answers.ucr.getOrElse(throw ReturnToStartException).ucr
 
     connector
       .submit(DisassociateDUCRRequest(pid, eori, ucr))

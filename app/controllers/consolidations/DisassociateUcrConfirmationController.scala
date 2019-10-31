@@ -16,26 +16,24 @@
 
 package controllers.consolidations
 
-import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.actions.AuthenticatedAction
 import javax.inject.{Inject, Singleton}
-import models.cache.JourneyType
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.disassociate_ducr_confirmation
+import views.html.disassociate_ucr_confirmation
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DisassociateDucrConfirmationController @Inject()(
+class DisassociateUcrConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  page: disassociate_ducr_confirmation
+  page: disassociate_ucr_confirmation
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def display: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)) { implicit request =>
+  def display: Action[AnyContent] = authenticate { implicit request =>
     Ok(page())
   }
 

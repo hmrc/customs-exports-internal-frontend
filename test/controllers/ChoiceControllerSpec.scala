@@ -121,7 +121,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().startSpecificJourney(Choice.DisassociateUCR.value)(getRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateDucrController.display().url)
+        redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateUcrController.display().url)
       }
 
       "user chooses shut mucr" in {
@@ -190,7 +190,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(DisassociateUCR))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateDucrController.display().url)
+        redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateUcrController.display().url)
         theCacheUpserted mustBe Cache(pid, DisassociateUcrAnswers())
       }
 

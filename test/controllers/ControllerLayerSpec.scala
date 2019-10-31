@@ -25,7 +25,7 @@ import models.cache.Answers
 import models.cache.JourneyType.JourneyType
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
-import play.api.libs.json.JsValue
+import play.api.libs.json.Writes
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -46,7 +46,8 @@ abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with Befo
 
   protected val getRequest: Request[AnyContent] = FakeRequest(GET, "/").withCSRFToken
   protected def postRequest: Request[AnyContent] = FakeRequest(POST, "/").withCSRFToken
-  protected def postRequest(body: JsValue): Request[AnyContentAsJson] = FakeRequest(POST, "/").withJsonBody(body).withCSRFToken
+  protected def postRequest[T](body: T)(implicit wts: Writes[T]): Request[AnyContentAsJson] =
+    FakeRequest("POST", "/").withJsonBody(wts.writes(body)).withCSRFToken
 
   protected implicit def messages(implicit request: Request[_]): Messages = stubMessagesControllerComponents().messagesApi.preferred(request)
   protected implicit val flashApi: Flash = Flash()

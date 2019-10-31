@@ -16,36 +16,42 @@
 
 package views.disassociate_ucr
 
-import forms.DisassociateDucr
+import forms.DisassociateUcr
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import views.ViewSpec
-import views.html.disassociate_ducr
+import views.html.disassociate_ucr
 
-class DisassociateDucrViewSpec extends ViewSpec {
+class DisassociateUcrViewSpec extends ViewSpec {
 
   private implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
-  private val page = new disassociate_ducr(main_template)
+  private val page = new disassociate_ucr(main_template)
 
   "View" should {
     "render title" in {
-      page(DisassociateDucr.form).getTitle must containMessage("disassociateDucr.title")
+      page(DisassociateUcr.form).getTitle must containMessage("disassociate.ucr.title")
     }
 
     "render back button" in {
-      val backButton = page(DisassociateDucr.form).getBackButton
+      val backButton = page(DisassociateUcr.form).getBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
     }
 
+    "render form" in {
+      val form = page(DisassociateUcr.form).getForm
+      form mustBe defined
+      form.get must haveAttribute("action", controllers.consolidations.routes.DisassociateUcrController.submit().url)
+    }
+
     "render error summary" when {
       "no errors" in {
-        page(DisassociateDucr.form).getErrorSummary mustBe empty
+        page(DisassociateUcr.form).getErrorSummary mustBe empty
       }
 
       "some errors" in {
-        page(DisassociateDucr.form.withError("error", "error.required")).getErrorSummary mustBe defined
+        page(DisassociateUcr.form.withError("error", "error.required")).getErrorSummary mustBe defined
       }
     }
   }
