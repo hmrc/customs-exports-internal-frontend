@@ -77,6 +77,8 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
     def getSubmitButton: Option[Element] = Option(document.getElementById("submit"))
 
     def getErrorSummary: Option[Element] = Option(document.getElementById("error-summary"))
+
+    def getForm: Option[Element] = Option(document.getElementsByTag("form")).filter(!_.isEmpty).map(_.first())
   }
 
 }

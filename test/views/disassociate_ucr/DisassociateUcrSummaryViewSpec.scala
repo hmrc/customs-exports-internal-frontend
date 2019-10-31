@@ -36,6 +36,12 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec {
       page(answersMUCR).getTitle must containMessage("disassociate.ucr.summary.title")
     }
 
+    "render form" in {
+      val form = page(answersDUCR).getForm
+      form mustBe defined
+      form.get must haveAttribute("action", controllers.consolidations.routes.DisassociateUcrSummaryController.submit().url)
+    }
+
     "render back button" when {
       "ducr" in {
         val backButton = page(answersDUCR).getBackButton

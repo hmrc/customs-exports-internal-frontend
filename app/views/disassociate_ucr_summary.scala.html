@@ -22,9 +22,8 @@
 
 @(disassociateUcr: DisassociateUcr)(implicit request: Request[_], messages: Messages)
 
-
 @main_template(title = Title(messages("disassociate.ucr.summary.title")), fullWidth = true) {
-    @helper.form(consolidations.routes.DisassociateUcrController.submit(), 'autoComplete -> "off") {
+    @helper.form(consolidations.routes.DisassociateUcrSummaryController.submit(), 'autoComplete -> "off") {
       @helper.CSRF.formField
 
       @components.back_link(consolidations.routes.DisassociateUcrController.display())

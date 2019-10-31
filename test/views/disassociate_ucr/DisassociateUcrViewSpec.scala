@@ -39,6 +39,12 @@ class DisassociateUcrViewSpec extends ViewSpec {
       backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
     }
 
+    "render form" in {
+      val form = page(DisassociateUcr.form).getForm
+      form mustBe defined
+      form.get must haveAttribute("action", controllers.consolidations.routes.DisassociateUcrController.submit().url)
+    }
+
     "render error summary" when {
       "no errors" in {
         page(DisassociateUcr.form).getErrorSummary mustBe empty
