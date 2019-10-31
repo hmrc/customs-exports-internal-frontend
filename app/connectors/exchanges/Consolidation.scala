@@ -34,6 +34,13 @@ object DisassociateDUCRRequest {
   implicit val format: OFormat[DisassociateDUCRRequest] = Json.format[DisassociateDUCRRequest]
 }
 
+case class ShutMUCRRequest(override val providerId: String, override val eori: String, mucr: String) extends Consolidation {
+  override val consolidationType: exchanges.ConsolidationType.Value = ConsolidationType.SHUT_MUCR
+}
+object ShutMUCRRequest {
+  implicit val format: OFormat[ShutMUCRRequest] = Json.format[ShutMUCRRequest]
+}
+
 trait Consolidation {
   val consolidationType: ConsolidationType
   val eori: String
@@ -44,5 +51,6 @@ object Consolidation {
   implicit val format: Format[Consolidation] = Union
     .from[Consolidation](typeField = "consolidationType")
     .and[DisassociateDUCRRequest](typeTag = ConsolidationType.DISASSOCIATE_DUCR.toString)
+    .and[ShutMUCRRequest](typeTag = ConsolidationType.SHUT_MUCR.toString)
     .format
 }
