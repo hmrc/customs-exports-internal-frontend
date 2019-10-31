@@ -22,16 +22,16 @@ import models.cache.JourneyType
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.disassociate_ducr_confirmation
+import views.html.disassociate_ucr_confirmation
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DisassociateDucrConfirmationController @Inject()(
+class DisassociateUcrConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  page: disassociate_ducr_confirmation
+  page: disassociate_ucr_confirmation
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

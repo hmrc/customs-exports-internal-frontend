@@ -23,16 +23,16 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import views.html.disassociate_ducr_confirmation
+import views.html.disassociate_ucr_confirmation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class DisassociateDucrConfirmationControllerSpec extends ControllerLayerSpec {
+class DisassociateUcrConfirmationControllerSpec extends ControllerLayerSpec {
 
-  private val page = new disassociate_ducr_confirmation(main_template)
+  private val page = new disassociate_ucr_confirmation(main_template)
 
   private def controller(auth: AuthenticatedAction, existingAnswers: Answers) =
-    new DisassociateDucrConfirmationController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), page)
+    new DisassociateUcrConfirmationController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), page)
 
   "GET" should {
     implicit val get = FakeRequest("GET", "/")

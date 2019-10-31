@@ -19,30 +19,25 @@ package controllers.consolidations
 import base.MockCache
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
-import controllers.storage.FlashKeys
-import forms.DisassociateDucr
+import forms.{DisassociateKind, DisassociateUcr}
 import models.cache.{Answers, DisassociateUcrAnswers}
-import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.{ArgumentCaptor, Mockito}
 import play.api.http.Status
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import views.html.disassociate_ducr
+import views.html.disassociate_ucr
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
-class DisassociateDucrControllerSpec extends ControllerLayerSpec with MockCache {
+class DisassociateUcrControllerSpec extends ControllerLayerSpec with MockCache {
 
   private val ucr = "9AB123456"
-  private val submissionService = mock[SubmissionService]
-  private val page = new disassociate_ducr(main_template)
+  private val disassociation = DisassociateUcr(DisassociateKind.Ducr, Some(ucr), None)
+  private val page = new disassociate_ucr(main_template)
 
   private def controller(auth: AuthenticatedAction, existingAnswers: Answers) =
-    new DisassociateDucrController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), submissionService, cache, page)
+    new DisassociateUcrController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), cache, page)
 
   "GET" should {
     implicit val get = FakeRequest("GET", "/").withCSRFToken
@@ -52,14 +47,14 @@ class DisassociateDucrControllerSpec extends ControllerLayerSpec with MockCache 
         val result = controller(SuccessfulAuth(), DisassociateUcrAnswers(ucr = None)).display(get)
 
         status(result) mustBe Status.OK
-        contentAsHtml(result) mustBe page(DisassociateDucr.form)
+        contentAsHtml(result) mustBe page(DisassociateUcr.form)
       }
 
       "existing page answers" in {
-        val result = controller(SuccessfulAuth(), DisassociateUcrAnswers(ucr = Some(ucr))).display(get)
+        val result = controller(SuccessfulAuth(), DisassociateUcrAnswers(ucr = Some(disassociation))).display(get)
 
         status(result) mustBe Status.OK
-        contentAsHtml(result) mustBe page(DisassociateDucr.form.fill(ucr))
+        contentAsHtml(result) mustBe page(DisassociateUcr.form.fill(disassociation))
       }
     }
 
@@ -72,21 +67,12 @@ class DisassociateDucrControllerSpec extends ControllerLayerSpec with MockCache 
 
   "POST" should {
     "return 200 when authenticated" in {
-      given(submissionService.submit(anyString(), any[DisassociateUcrAnswers])(any())).willReturn(Future.successful((): Unit))
-
-      val post = FakeRequest("POST", "/").withFormUrlEncodedBody("ducr" -> ucr).withCSRFToken
+      val post = FakeRequest("POST", "/").withJsonBody(Json.toJson(disassociation)).withCSRFToken
       val result = controller(SuccessfulAuth(), DisassociateUcrAnswers()).submit(post)
 
       status(result) mustBe Status.SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.DisassociateDucrConfirmationController.display().url)
-      theSubmission mustBe DisassociateUcrAnswers(ucr = Some(ucr))
-      flash(result).get(FlashKeys.UCR) mustBe Some(ucr)
-    }
-
-    def theSubmission: DisassociateUcrAnswers = {
-      val captor = ArgumentCaptor.forClass(classOf[DisassociateUcrAnswers])
-      Mockito.verify(submissionService).submit(anyString(), captor.capture())(any())
-      captor.getValue
+      redirectLocation(result) mustBe Some(routes.DisassociateUcrSummaryController.display().url)
+      theCacheUpserted.answers mustBe DisassociateUcrAnswers(ucr = Some(disassociation))
     }
 
     "return 400 when invalid" in {
@@ -95,7 +81,7 @@ class DisassociateDucrControllerSpec extends ControllerLayerSpec with MockCache 
       val result = controller(SuccessfulAuth(), DisassociateUcrAnswers()).submit(post)
 
       status(result) mustBe Status.BAD_REQUEST
-      contentAsHtml(result) mustBe page(DisassociateDucr.form.bind(Map[String, String]()))
+      contentAsHtml(result) mustBe page(DisassociateUcr.form.bind(Map[String, String]()))
     }
 
     "return 403 when unauthenticated" in {

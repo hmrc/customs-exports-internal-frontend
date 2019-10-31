@@ -18,12 +18,16 @@ POST        /associate-ucr                         controllers.consolidations.As
 GET         /associate-ucr-summary                 controllers.consolidations.AssociateUCRSummaryController.displayPage()
 POST        /associate-ucr-summary                 controllers.consolidations.AssociateUCRSummaryController.submit()
 
-# Disassociate DUCR page
-GET         /disassociate-ducr                     controllers.consolidations.DisassociateDucrController.display()
-POST        /disassociate-ducr                     controllers.consolidations.DisassociateDucrController.submit()
+# Disassociate UCR page
+GET         /disassociate-ucr                     controllers.consolidations.DisassociateUcrController.display()
+POST        /disassociate-ucr                     controllers.consolidations.DisassociateUcrController.submit()
 
-# Disassociate DUCR confirmation page
-GET         /disassociate-ducr-confirmation        controllers.consolidations.DisassociateDucrConfirmationController.display()
+# Disassociate UCR summary page
+GET         /disassociate-ucr-summary             controllers.consolidations.DisassociateUcrSummaryController.display()
+POST        /disassociate-ucr-summary             controllers.consolidations.DisassociateUcrSummaryController.submit()
+
+# Disassociate UCR confirmation page
+GET         /disassociate-ucr-confirmation        controllers.consolidations.DisassociateUcrConfirmationController.display()
 
 # Enter DUCR page
 GET         /consignment-references                controllers.movements.ConsignmentReferencesController.displayPage()

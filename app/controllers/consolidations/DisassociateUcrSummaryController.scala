@@ -18,47 +18,44 @@ package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.storage.FlashKeys
-import forms.DisassociateDucr
+import forms.DisassociateUcr
 import javax.inject.{Inject, Singleton}
+import models.ReturnToStartException
 import models.cache.{DisassociateUcrAnswers, JourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.MovementRepository
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.disassociate_ducr
+import views.html.disassociate_ucr_summary
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DisassociateDucrController @Inject()(
+class DisassociateUcrSummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
   submissionService: SubmissionService,
   movementRepository: MovementRepository,
-  page: disassociate_ducr
+  page: disassociate_ucr_summary
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def display: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)) { implicit request =>
     request.answersAs[DisassociateUcrAnswers].ucr match {
-      case Some(ucr) => Ok(page(DisassociateDucr.form.fill(ucr)))
-      case _         => Ok(page(DisassociateDucr.form))
+      case Some(ucr) => Ok(page(ucr))
+      case _         => throw ReturnToStartException
     }
   }
 
   def submit: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)).async { implicit request =>
-    DisassociateDucr.form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
-        answers =>
-          submissionService.submit(request.pid, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers))).map { _ =>
-            Redirect(controllers.consolidations.routes.DisassociateDucrConfirmationController.display())
-              .flashing(FlashKeys.UCR -> answers)
-        }
-      )
+    val answers = request.answersAs[DisassociateUcrAnswers]
+
+    submissionService.submit(request.pid, answers).map { _ =>
+      Redirect(controllers.consolidations.routes.DisassociateUcrConfirmationController.display())
+        .flashing(FlashKeys.UCR -> answers.ucr.map(_.ucr).getOrElse(throw ReturnToStartException))
+    }
   }
 
 }
