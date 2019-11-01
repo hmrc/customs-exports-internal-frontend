@@ -19,9 +19,9 @@ package controllers.consolidations
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.storage.FlashKeys
 import javax.inject.Inject
+import models.ReturnToStartException
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.associate_ucr_confirmation
 
@@ -29,17 +29,15 @@ import scala.concurrent.ExecutionContext
 
 class AssociateUcrConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
   associateUCRConfirmPage: associate_ucr_confirmation
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def display: Action[AnyContent] = authenticate { implicit request =>
-    (request2flash.get(FlashKeys.CONSOLIDATION_KIND), request2flash.get(FlashKeys.UCR)) match {
-      case (Some(kind), Some(ucr)) => Ok(associateUCRConfirmPage(kind, ucr))
-      case _                       => Redirect(controllers.routes.ChoiceController.displayPage)
-    }
-
+  def display: Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
+    val summary = request.answers.summary.getOrElse(throw ReturnToStartException)
+    Ok(associateUCRConfirmPage(summary.get(FlashKeys.CONSOLIDATION_KIND), summary.get(FlashKeys.UCR)))
   }
 
 }

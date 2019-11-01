@@ -19,6 +19,7 @@ package controllers.consolidations
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
+import models.cache.{Answers, AssociateUcrAnswers, Summary}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -31,21 +32,24 @@ class AssociateUcrConfirmationControllerSpec extends ControllerLayerSpec {
 
   private val page = new associate_ucr_confirmation(main_template)
 
-  private def controller(auth: AuthenticatedAction) =
-    new AssociateUcrConfirmationController(auth, stubMessagesControllerComponents(), page)
+  private def controller(auth: AuthenticatedAction, existingAnswers: Answers) =
+    new AssociateUcrConfirmationController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), page)
 
   "GET" should {
-    implicit val get = FakeRequest("GET", "/").withFlash((FlashKeys.CONSOLIDATION_KIND, "kind"), (FlashKeys.UCR, "ucr"))
+    implicit val get = FakeRequest("GET", "/")
 
     "return 200 when authenticated" in {
-      val result = controller(SuccessfulAuth()).display(get)
+      val result = controller(
+        SuccessfulAuth(),
+        AssociateUcrAnswers(summary = Some(Summary(Map(FlashKeys.CONSOLIDATION_KIND -> "kind", FlashKeys.UCR -> "ucr"))))
+      ).display(get)
 
       status(result) mustBe Status.OK
       contentAsHtml(result) mustBe page("kind", "ucr")
     }
 
     "return 403 when unauthenticated" in {
-      val result = controller(UnsuccessfulAuth).display(get)
+      val result = controller(UnsuccessfulAuth, AssociateUcrAnswers()).display(get)
 
       status(result) mustBe Status.FORBIDDEN
     }

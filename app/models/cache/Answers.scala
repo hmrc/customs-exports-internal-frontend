@@ -17,6 +17,7 @@
 package models.cache
 
 import forms.{AssociateUcr, MucrOptions, _}
+import models.ReturnToStartException
 import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
@@ -26,7 +27,8 @@ case class ArrivalAnswers(
   consignmentReferences: Option[ConsignmentReferences] = None,
   arrivalReference: Option[ArrivalReference] = None,
   arrivalDetails: Option[ArrivalDetails] = None,
-  location: Option[Location] = None
+  location: Option[Location] = None,
+  summary: Option[Summary] = None
 ) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ARRIVE
 }
@@ -41,7 +43,8 @@ case class DepartureAnswers(
   arrivalReference: Option[ArrivalReference] = None,
   departureDetails: Option[DepartureDetails] = None,
   location: Option[Location] = None,
-  transport: Option[Transport] = None
+  transport: Option[Transport] = None,
+  summary: Option[Summary] = None
 ) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DEPART
 }
@@ -53,7 +56,8 @@ object ArrivalAnswers {
 case class AssociateUcrAnswers(
   override val eori: Option[String] = Answers.fakeEORI,
   mucrOptions: Option[MucrOptions] = None,
-  associateUcr: Option[AssociateUcr] = None
+  associateUcr: Option[AssociateUcr] = None,
+  summary: Option[Summary] = None
 ) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ASSOCIATE_UCR
 }
@@ -62,7 +66,11 @@ object AssociateUcrAnswers {
   implicit val format: Format[AssociateUcrAnswers] = Json.format[AssociateUcrAnswers]
 }
 
-case class DisassociateUcrAnswers(override val eori: Option[String] = Answers.fakeEORI, ucr: Option[DisassociateUcr] = None) extends Answers {
+case class DisassociateUcrAnswers(
+  override val eori: Option[String] = Answers.fakeEORI,
+  ucr: Option[DisassociateUcr] = None,
+  summary: Option[Summary] = None
+) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DISSOCIATE_UCR
 }
 
@@ -70,7 +78,8 @@ object DisassociateUcrAnswers {
   implicit val format: Format[DisassociateUcrAnswers] = Json.format[DisassociateUcrAnswers]
 }
 
-case class ShutMucrAnswers(override val eori: Option[String] = Answers.fakeEORI, shutMucr: Option[ShutMucr] = None) extends Answers {
+case class ShutMucrAnswers(override val eori: Option[String] = Answers.fakeEORI, shutMucr: Option[ShutMucr] = None, summary: Option[Summary] = None)
+    extends Answers {
   override val `type`: JourneyType.Value = JourneyType.SHUT_MUCR
 }
 
@@ -78,9 +87,20 @@ object ShutMucrAnswers {
   implicit val format: Format[ShutMucrAnswers] = Json.format[ShutMucrAnswers]
 }
 
+case class Summary(map: Map[String, String]) {
+  def get(key: String) = map.getOrElse(key, throw ReturnToStartException)
+}
+
+object Summary {
+  implicit val format: Format[Summary] = Json.format[Summary]
+
+  def apply(v: (String, String)*): Summary = Summary(v toMap)
+}
+
 trait Answers {
   val `type`: JourneyType
   val eori: Option[String]
+  val summary: Option[Summary]
 }
 
 object Answers {

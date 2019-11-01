@@ -64,7 +64,8 @@ class SubmissionService @Inject()(
       .submit(AssociateUCRRequest(pid, eori, mucr, ucr))
       .andThen {
         case Success(_) =>
-          movementRepository.removeByPid(pid).flatMap { _ =>
+          // clears the cache of everything except the summary details
+          movementRepository.upsert(Cache(pid, AssociateUcrAnswers(summary = answers.summary))).flatMap { _ =>
             auditService.auditAssociate(eori, mucr, ucr, "Success")
           }
         case Failure(_) =>

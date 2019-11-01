@@ -16,37 +16,35 @@
 
 package services
 
-import base.UnitSpec
+import base.{MockCache, UnitSpec}
 import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.{AssociateUCRRequest, Consolidation, DisassociateDUCRRequest, ShutMUCRRequest}
 import forms._
 import metrics.MovementsMetrics
 import models.ReturnToStartException
-import models.cache.{AssociateUcrAnswers, DisassociateUcrAnswers, ShutMucrAnswers}
+import models.cache._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
-import repositories.MovementRepository
 import services.audit.AuditService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
+class SubmissionServiceSpec extends UnitSpec with MockCache with BeforeAndAfterEach {
 
   private implicit val hc: HeaderCarrier = mock[HeaderCarrier]
   private val metrics = mock[MovementsMetrics]
   private val audit = mock[AuditService]
-  private val repository = mock[MovementRepository]
   private val connector = mock[CustomsDeclareExportsMovementsConnector]
-  private val service = new SubmissionService(repository, connector, audit, metrics)
+  private val service = new SubmissionService(cache, connector, audit, metrics)
 
   override def afterEach(): Unit = {
-    reset(audit, connector, metrics, repository)
+    reset(audit, connector, metrics, cache)
     super.afterEach()
   }
 
@@ -59,13 +57,14 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
     "delegate to connector" in {
 
       given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
-      given(repository.removeByPid(anyString())).willReturn(Future.successful((): Unit))
 
-      val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
+      val answers =
+        AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)), Some(Summary("key" -> "value")))
       await(service.submit("pid", answers))
 
       theAssociationSubmitted mustBe AssociateUCRRequest("pid", "eori", mucr, ucr)
-      verify(repository).removeByPid("pid")
+      theCacheUpserted mustBe Cache("pid", AssociateUcrAnswers(summary = Some(Summary(Map("key" -> "value")))))
+
       verify(audit).auditAssociate("eori", mucr, ucr, "Success")
     }
 
@@ -78,7 +77,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
       }
 
       theAssociationSubmitted mustBe AssociateUCRRequest("pid", "eori", mucr, ucr)
-      verify(repository, never()).removeByPid("pid")
+      verify(cache, never()).upsert(any[Cache])
       verify(audit).auditAssociate("eori", mucr, ucr, "Failed")
     }
 
@@ -88,7 +87,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         await(service.submit("pid", answers))
       } mustBe ReturnToStartException
 
-      verifyZeroInteractions(repository)
+      verifyZeroInteractions(cache)
       verifyZeroInteractions(audit)
     }
 
@@ -98,7 +97,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         await(service.submit("pid", answers))
       } mustBe ReturnToStartException
 
-      verifyZeroInteractions(repository)
+      verifyZeroInteractions(cache)
       verifyZeroInteractions(audit)
     }
 
@@ -113,25 +112,23 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
     "delegate to connector" when {
       "Disassociate MUCR" in {
         given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
-        given(repository.removeByPid(anyString())).willReturn(Future.successful((): Unit))
 
         val answers = DisassociateUcrAnswers(Some("eori"), Some(DisassociateUcr(DisassociateKind.Mucr, None, Some("ucr"))))
         await(service.submit("pid", answers))
 
         theDisassociationSubmitted mustBe DisassociateDUCRRequest("pid", "eori", "ucr")
-        verify(repository).removeByPid("pid")
+        verify(cache).removeByPid("pid")
         verify(audit).auditDisassociate("eori", "ucr", "Success")
       }
 
       "Disassociate DUCR" in {
         given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
-        given(repository.removeByPid(anyString())).willReturn(Future.successful((): Unit))
 
         val answers = DisassociateUcrAnswers(Some("eori"), Some(DisassociateUcr(DisassociateKind.Ducr, Some("ucr"), None)))
         await(service.submit("pid", answers))
 
         theDisassociationSubmitted mustBe DisassociateDUCRRequest("pid", "eori", "ucr")
-        verify(repository).removeByPid("pid")
+        verify(cache).removeByPid("pid")
         verify(audit).auditDisassociate("eori", "ucr", "Success")
       }
     }
@@ -145,7 +142,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
       }
 
       theDisassociationSubmitted mustBe DisassociateDUCRRequest("pid", "eori", "ucr")
-      verify(repository, never()).removeByPid("pid")
+      verify(cache, never()).removeByPid("pid")
       verify(audit).auditDisassociate("eori", "ucr", "Failed")
     }
 
@@ -155,7 +152,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         await(service.submit("pid", answers))
       } mustBe ReturnToStartException
 
-      verifyZeroInteractions(repository)
+      verifyZeroInteractions(cache)
       verifyZeroInteractions(audit)
     }
 
@@ -166,7 +163,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
           await(service.submit("pid", answers))
         } mustBe ReturnToStartException
 
-        verifyZeroInteractions(repository)
+        verifyZeroInteractions(cache)
         verifyZeroInteractions(audit)
       }
 
@@ -177,7 +174,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
             await(service.submit("pid", answers))
           } mustBe ReturnToStartException
 
-          verifyZeroInteractions(repository)
+          verifyZeroInteractions(cache)
           verifyZeroInteractions(audit)
         }
 
@@ -187,7 +184,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
             await(service.submit("pid", answers))
           } mustBe ReturnToStartException
 
-          verifyZeroInteractions(repository)
+          verifyZeroInteractions(cache)
           verifyZeroInteractions(audit)
         }
       }
@@ -203,13 +200,12 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
   "Submit ShutMUCR" should {
     "delegate to connector" in {
       given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
-      given(repository.removeByPid(anyString())).willReturn(Future.successful((): Unit))
 
       val answers = ShutMucrAnswers(Some("eori"), Some(ShutMucr("mucr")))
       await(service.submit("pid", answers))
 
       theShutMucrSubmitted mustBe ShutMUCRRequest("pid", "eori", "mucr")
-      verify(repository).removeByPid("pid")
+      verify(cache).removeByPid("pid")
       verify(audit).auditShutMucr("eori", "mucr", "Success")
     }
 
@@ -222,7 +218,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
       }
 
       theShutMucrSubmitted mustBe ShutMUCRRequest("pid", "eori", "mucr")
-      verify(repository, never()).removeByPid("pid")
+      verify(cache, never()).removeByPid("pid")
       verify(audit).auditShutMucr("eori", "mucr", "Failed")
     }
 
@@ -232,7 +228,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         await(service.submit("pid", answers))
       } mustBe ReturnToStartException
 
-      verifyZeroInteractions(repository)
+      verifyZeroInteractions(cache)
       verifyZeroInteractions(audit)
     }
 
@@ -242,7 +238,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         await(service.submit("pid", answers))
       } mustBe ReturnToStartException
 
-      verifyZeroInteractions(repository)
+      verifyZeroInteractions(cache)
       verifyZeroInteractions(audit)
     }
 

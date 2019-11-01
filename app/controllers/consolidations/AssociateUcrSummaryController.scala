@@ -20,12 +20,12 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.storage.FlashKeys
 import javax.inject.Inject
 import models.ReturnToStartException
-import models.cache.AssociateUcrAnswers
+import models.cache.{AssociateUcrAnswers, Summary}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.{associate_ucr_confirmation, associate_ucr_summary}
+import views.html.associate_ucr_summary
 
 import scala.concurrent.ExecutionContext
 
@@ -52,10 +52,10 @@ class AssociateUcrSummaryController @Inject()(
   def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
     val answers = request.answersAs[AssociateUcrAnswers]
     val associateUcr = answers.associateUcr.getOrElse(throw ReturnToStartException)
+    val summary = Summary(FlashKeys.UCR -> associateUcr.ucr, FlashKeys.CONSOLIDATION_KIND -> associateUcr.kind.formValue)
 
-    submissionService.submit(request.pid, answers).map { _ =>
+    submissionService.submit(request.pid, answers.copy(summary = Some(summary))).map { _ =>
       Redirect(controllers.consolidations.routes.AssociateUcrConfirmationController.display())
-        .flashing(FlashKeys.UCR -> associateUcr.ucr, FlashKeys.CONSOLIDATION_KIND -> associateUcr.kind.formValue)
     }
   }
 }

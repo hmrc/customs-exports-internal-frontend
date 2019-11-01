@@ -18,7 +18,7 @@ package models.cache
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Cache(pid: String, answers: Answers)
+case class Cache(pid: String, answers: Answers, summary: Option[Summary] = None)
 
 object Cache {
   implicit val format: OFormat[Cache] = Json.format[Cache]
