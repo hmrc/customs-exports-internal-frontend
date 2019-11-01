@@ -86,10 +86,7 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
 
   def fetchNotifications(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[Seq[NotificationFrontendModel]] =
     httpClient
-      .GET[Seq[NotificationFrontendModel]](
-        s"$CustomsDeclareExportsMovementsUrl$FetchNotifications/$conversationId",
-        providerIdQueryParam(providerId)
-      )
+      .GET[Seq[NotificationFrontendModel]](s"$CustomsDeclareExportsMovementsUrl$FetchNotifications/$conversationId", providerIdQueryParam(providerId))
       .andThen {
         case Success(response)  => logger.debug(s"Notifications fetch response. $response")
         case Failure(exception) => logger.warn(s"Notifications fetch failure. $exception")

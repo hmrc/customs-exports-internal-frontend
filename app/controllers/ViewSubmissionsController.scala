@@ -31,13 +31,13 @@ import views.html.submissions
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmissionsController @Inject()(
+class ViewSubmissionsController @Inject()(
   authenticate: AuthenticatedAction,
   connector: CustomsDeclareExportsMovementsConnector,
   mcc: MessagesControllerComponents,
   submissionsPage: submissions
 )(implicit ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage: Action[AnyContent] = authenticate.async { implicit request =>
     val providerId = request.pid

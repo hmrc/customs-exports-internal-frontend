@@ -62,4 +62,4 @@ GET         /shut-mucr-summary                     controllers.consolidations.Sh
 POST        /shut-mucr-summary                     controllers.consolidations.ShutMucrSummaryController.submit()
 
 # Submissions page
-GET         /movements                             controllers.SubmissionsController.displayPage()
+GET         /movements                             controllers.ViewSubmissionsController.displayPage()

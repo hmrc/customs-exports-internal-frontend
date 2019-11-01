@@ -35,10 +35,11 @@ import views.html.submissions
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SubmissionsControllerSpec extends ControllerLayerSpec with MockExportsMovementsConnector with ScalaFutures {
+class ViewSubmissionsControllerSpec extends ControllerLayerSpec with MockExportsMovementsConnector with ScalaFutures {
 
   private val submissionsPage = mock[submissions]
-  private val controller = new SubmissionsController(SuccessfulAuth(), customsExportsMovementConnector, stubMessagesControllerComponents(), submissionsPage)
+  private val controller =
+    new ViewSubmissionsController(SuccessfulAuth(), customsExportsMovementConnector, stubMessagesControllerComponents(), submissionsPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

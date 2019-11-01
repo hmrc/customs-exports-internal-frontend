@@ -137,7 +137,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().startSpecificJourney(Choice.ViewSubmissions.value)(getRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.SubmissionsController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.ViewSubmissionsController.displayPage().url)
       }
     }
 
@@ -208,7 +208,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller(SuccessfulAuth()).submit(postWithChoice(ViewSubmissions))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.SubmissionsController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.ViewSubmissionsController.displayPage().url)
       }
     }
 

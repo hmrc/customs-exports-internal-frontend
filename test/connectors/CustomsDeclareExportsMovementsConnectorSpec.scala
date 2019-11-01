@@ -91,8 +91,9 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Sca
 
       val submissionJson = Json.toJson(Seq(exampleSubmissionFrontendModel()))
 
-      stubFor(get(s"$FetchAllSubmissionsEndpoint?providerId=$providerId")
-        .willReturn(aResponse().withStatus(OK).withBody(submissionJson.toString))
+      stubFor(
+        get(s"$FetchAllSubmissionsEndpoint?providerId=$providerId")
+          .willReturn(aResponse().withStatus(OK).withBody(submissionJson.toString))
       )
 
       connector.fetchAllSubmissions(providerId).futureValue
