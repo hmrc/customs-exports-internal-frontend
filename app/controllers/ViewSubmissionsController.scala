@@ -26,7 +26,7 @@ import models.submissions.SubmissionFrontendModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.submissions
+import views.html.view_submissions
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,7 +35,7 @@ class ViewSubmissionsController @Inject()(
   authenticate: AuthenticatedAction,
   connector: CustomsDeclareExportsMovementsConnector,
   mcc: MessagesControllerComponents,
-  submissionsPage: submissions
+  viewSubmissionsPage: view_submissions
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -48,7 +48,7 @@ class ViewSubmissionsController @Inject()(
       sortedNotifications = notifications.map(_.sorted.reverse)
       submissionsWithNotifications = submissions zip sortedNotifications
 
-    } yield Ok(submissionsPage(sortWithOldestLast(submissionsWithNotifications)))
+    } yield Ok(viewSubmissionsPage(sortWithOldestLast(submissionsWithNotifications)))
   }
 
   private def sortWithOldestLast(submissionsWithNotifications: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])]) =

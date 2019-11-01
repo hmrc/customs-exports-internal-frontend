@@ -28,14 +28,14 @@ import play.twirl.api.Html
 import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmissionFrontendModel
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import views.html.submissions
+import views.html.view_submissions
 
 class SubmissionsViewSpec extends ViewSpec {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
   private def createView(submissions: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] = Seq.empty): Html =
-    new submissions(main_template)(submissions)
+    new view_submissions(main_template)(submissions)
 
   "Submissions page" should {
 

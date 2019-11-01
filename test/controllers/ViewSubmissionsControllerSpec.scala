@@ -31,13 +31,13 @@ import testdata.CommonTestData.conversationId
 import testdata.MovementsTestData
 import testdata.MovementsTestData.exampleSubmissionFrontendModel
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import views.html.submissions
+import views.html.view_submissions
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ViewSubmissionsControllerSpec extends ControllerLayerSpec with MockExportsMovementsConnector with ScalaFutures {
 
-  private val submissionsPage = mock[submissions]
+  private val submissionsPage = mock[view_submissions]
   private val controller =
     new ViewSubmissionsController(SuccessfulAuth(), customsExportsMovementConnector, stubMessagesControllerComponents(), submissionsPage)
 
