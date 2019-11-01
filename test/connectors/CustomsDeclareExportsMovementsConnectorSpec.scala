@@ -18,24 +18,31 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.AppConfig
+import connectors.CustomsDeclareExportsMovementsConnector._
 import connectors.exchanges.DisassociateDUCRRequest
 import forms.ConsignmentReferences
 import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
 import org.mockito.BDDMockito._
+import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
+import play.api.libs.json.Json
 import play.api.test.Helpers._
+import testdata.CommonTestData.{conversationId, providerId}
+import testdata.MovementsTestData.exampleSubmissionFrontendModel
+import testdata.NotificationTestData.exampleNotificationFrontendModel
 
-class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
+class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with ScalaFutures {
 
   private val config = mock[AppConfig]
+  given(config.customsDeclareExportsMovements).willReturn(downstreamURL)
+
   private val connector = new CustomsDeclareExportsMovementsConnector(config, httpClient)
 
   "Submit Movement" should {
-    given(config.customsDeclareExportsMovements).willReturn(downstreamURL)
 
     "POST to the Back End" in {
       stubFor(
-        post("/movements")
+        post(MovementsSubmissionEndpoint)
           .willReturn(
             aResponse()
               .withStatus(Status.ACCEPTED)
@@ -44,13 +51,13 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
       val request =
         MovementRequest("eori", "provider-id", MovementType.Arrival, ConsignmentReferences("ref", "value"), MovementDetailsRequest("datetime"))
-      await(connector.submit(request))
+      connector.submit(request).futureValue
 
       verify(
-        postRequestedFor(urlEqualTo("/movements"))
+        postRequestedFor(urlEqualTo(MovementsSubmissionEndpoint))
           .withRequestBody(
             equalTo(
-              "{\"eori\":\"eori\",\"providerId\":\"provider-id\",\"choice\":\"EAL\",\"consignmentReference\":{\"reference\":\"ref\",\"referenceValue\":\"value\"},\"movementDetails\":{\"dateTime\":\"datetime\"}}"
+              """{"eori":"eori","providerId":"provider-id","choice":"EAL","consignmentReference":{"reference":"ref","referenceValue":"value"},"movementDetails":{"dateTime":"datetime"}}"""
             )
           )
       )
@@ -58,11 +65,10 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
   }
 
   "Submit Consolidation" should {
-    given(config.customsDeclareExportsMovements).willReturn(downstreamURL)
 
     "POST to the Back End" in {
       stubFor(
-        post("/consolidation")
+        post(ConsolidationsSubmissionEndpoint)
           .willReturn(
             aResponse()
               .withStatus(Status.ACCEPTED)
@@ -70,13 +76,65 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
       )
 
       val request = DisassociateDUCRRequest("pid", "eori", "ucr")
-      await(connector.submit(request))
+      connector.submit(request).futureValue
 
       verify(
-        postRequestedFor(urlEqualTo("/consolidation"))
-          .withRequestBody(equalTo("{\"providerId\":\"pid\",\"eori\":\"eori\",\"ucr\":\"ucr\",\"consolidationType\":\"DISASSOCIATE_DUCR\"}"))
+        postRequestedFor(urlEqualTo(ConsolidationsSubmissionEndpoint))
+          .withRequestBody(equalTo("""{"providerId":"pid","eori":"eori","ucr":"ucr","consolidationType":"DISASSOCIATE_DUCR"}"""))
       )
     }
   }
 
+  "fetch all Submissions" should {
+
+    "send GET request to the backend" in {
+
+      val submissionJson = Json.toJson(Seq(exampleSubmissionFrontendModel()))
+
+      stubFor(get(s"$FetchAllSubmissionsEndpoint?providerId=$providerId")
+        .willReturn(aResponse().withStatus(OK).withBody(submissionJson.toString))
+      )
+
+      connector.fetchAllSubmissions(providerId).futureValue
+
+      val expectedUrl = s"$FetchAllSubmissionsEndpoint?providerId=$providerId"
+      verify(getRequestedFor(urlEqualTo(expectedUrl)))
+    }
+  }
+
+  "fetch single Submission" should {
+
+    "send GET request to the backend" in {
+
+      val submissionJson = Json.toJson(exampleSubmissionFrontendModel())
+
+      stubFor(
+        get(s"$FetchSingleSubmissionEndpoint/$conversationId?providerId=$providerId")
+          .willReturn(aResponse().withStatus(OK).withBody(submissionJson.toString))
+      )
+
+      connector.fetchSingleSubmission(conversationId, providerId).futureValue
+
+      val expectedUrl = s"$FetchSingleSubmissionEndpoint/$conversationId?providerId=$providerId"
+      verify(getRequestedFor(urlEqualTo(expectedUrl)))
+    }
+  }
+
+  "fetch Notifications" should {
+
+    "send GET request to the backend" in {
+
+      val notificationJson = Json.toJson(Seq(exampleNotificationFrontendModel()))
+
+      stubFor(
+        get(s"$FetchNotifications/$conversationId?providerId=$providerId")
+          .willReturn(aResponse().withStatus(OK).withBody(notificationJson.toString))
+      )
+
+      connector.fetchNotifications(conversationId, providerId).futureValue
+
+      val expectedUrl = s"$FetchNotifications/$conversationId?providerId=$providerId"
+      verify(getRequestedFor(urlEqualTo(expectedUrl)))
+    }
+  }
 }
