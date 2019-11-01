@@ -129,7 +129,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().startSpecificJourney(Choice.ShutMUCR.value)(getRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
+        redirectLocation(result) mustBe Some(consolidationRoutes.ShutMucrController.displayPage().url)
       }
 
       "user chooses view submissions" in {
