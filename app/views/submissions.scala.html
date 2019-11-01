@@ -16,9 +16,52 @@
 
 @import models.notifications.NotificationFrontendModel
 @import models.submissions.SubmissionFrontendModel
+@import views.Title
+@import views.components.fields.FieldContentFormatter
 
 @this(main_template: views.html.templates.main_template)
 
 @(submissions: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])])(implicit request: Request[_], messages: Messages)
 
 
+@main_template(title = Title(messages("submissions.title")), fullWidth = true) {
+
+  @components.back_link(routes.ChoiceController.displayPage())
+
+  @components.page_title(Some("submissions.title"))
+
+  <div class="govuk-grid-column-two-thirds">
+    <p>@messages("submissions.summary") </p>
+    <table>
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header" id="ucr">@messages("submissions.ucr")</th>
+          <th scope="col" class="govuk-table__header" id="ucrType">@messages("submissions.submissionType")</th>
+          <th scope="col" class="govuk-table__header" id="dateOfRequest">@messages("submissions.dateOfRequest")</th>
+          <th scope="col" class="govuk-table__header" id="submissionAction">@messages("submissions.submissionAction")</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+      @for( (submission, notifications) <- submissions ){
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell" id="ucr-@submission.conversationId">
+          @if(notifications.isEmpty){
+            @components.elements_in_separate_lines(submission.ucrBlocks.map(_.ucr))
+          } else {
+@*            <a href="@routes.NotificationsController.listOfNotifications(submission.conversationId)">*@
+                @components.elements_in_separate_lines(submission.ucrBlocks.map(_.ucr))
+@*            </a>*@
+          }
+
+          </td>
+          <td class="govuk-table__cell" id="ucrType-@submission.conversationId">@{components.elements_in_separate_lines(submission.ucrBlocks.map(_.ucrType + "UCR"))}</td>
+          <td class="govuk-table__cell" id="dateOfRequest-@submission.conversationId">
+              @FieldContentFormatter.dateTime(submission.requestTimestamp)
+          </td>
+          <td class="govuk-table__cell" id="submissionAction-@submission.conversationId">@messages(s"submissions.${submission.actionType.toString.toLowerCase}")</td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  </div>
+}
