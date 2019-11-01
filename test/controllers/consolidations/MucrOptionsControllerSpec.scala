@@ -107,7 +107,7 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUCRController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUcrController.displayPage().url)
       }
     }
   }

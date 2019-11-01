@@ -17,6 +17,7 @@
 package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.storage.FlashKeys
 import javax.inject.Inject
 import models.ReturnToStartException
 import models.cache.AssociateUcrAnswers
@@ -28,13 +29,12 @@ import views.html.{associate_ucr_confirmation, associate_ucr_summary}
 
 import scala.concurrent.ExecutionContext
 
-class AssociateUCRSummaryController @Inject()(
+class AssociateUcrSummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
   submissionService: SubmissionService,
-  associateUcrSummaryPage: associate_ucr_summary,
-  associateUCRConfirmPage: associate_ucr_confirmation
+  associateUcrSummaryPage: associate_ucr_summary
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -54,7 +54,8 @@ class AssociateUCRSummaryController @Inject()(
     val associateUcr = answers.associateUcr.getOrElse(throw ReturnToStartException)
 
     submissionService.submit(request.pid, answers).map { _ =>
-      Ok(associateUCRConfirmPage(associateUcr.kind.formValue, associateUcr.ucr))
+      Redirect(controllers.consolidations.routes.AssociateUcrConfirmationController.display())
+        .flashing(FlashKeys.UCR -> associateUcr.ucr, FlashKeys.CONSOLIDATION_KIND -> associateUcr.kind.formValue)
     }
   }
 }

@@ -23,7 +23,7 @@ import play.api.test.FakeRequest
 import play.twirl.api.Html
 import views.ViewSpec
 
-class AssociateUCRSummaryViewSpec extends ViewSpec {
+class AssociateUcrSummaryViewSpec extends ViewSpec {
 
   implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
   private val page = new views.html.associate_ucr_summary(main_template)
@@ -41,7 +41,7 @@ class AssociateUCRSummaryViewSpec extends ViewSpec {
 
     "display 'Change' link on page for associate ucr" in {
       view.getElementById("associate_ducr-change") must containText(messages("site.change"))
-      view.getElementById("associate_ducr-change") must haveHref(controllers.consolidations.routes.AssociateUCRController.displayPage())
+      view.getElementById("associate_ducr-change") must haveHref(controllers.consolidations.routes.AssociateUcrController.displayPage())
     }
 
     "display 'Change' link on the page for mucr" in {

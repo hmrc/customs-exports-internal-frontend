@@ -1,22 +1,25 @@
 # microservice specific routes
-GET         /assets/*file                          controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                         controllers.Assets.versioned(path="/public", file: Asset)
 
 # Declaration choice page
-GET         /choice                                controllers.ChoiceController.displayPage()
-GET         /choice/:journey                       controllers.ChoiceController.startSpecificJourney(journey)
-POST        /choice                                controllers.ChoiceController.submit()
+GET         /choice                               controllers.ChoiceController.displayPage()
+GET         /choice/:journey                      controllers.ChoiceController.startSpecificJourney(journey)
+POST        /choice                               controllers.ChoiceController.submit()
 
 # MUCR options page
-GET         /mucr-options                          controllers.consolidations.MucrOptionsController.displayPage()
-POST        /mucr-options                          controllers.consolidations.MucrOptionsController.submit()
+GET         /mucr-options                         controllers.consolidations.MucrOptionsController.displayPage()
+POST        /mucr-options                         controllers.consolidations.MucrOptionsController.submit()
 
 # Associate UCR page
-GET         /associate-ucr                         controllers.consolidations.AssociateUCRController.displayPage()
-POST        /associate-ucr                         controllers.consolidations.AssociateUCRController.submit()
+GET         /associate-ucr                        controllers.consolidations.AssociateUcrController.displayPage()
+POST        /associate-ucr                        controllers.consolidations.AssociateUcrController.submit()
 
 # Associate UCR summary page
-GET         /associate-ucr-summary                 controllers.consolidations.AssociateUCRSummaryController.displayPage()
-POST        /associate-ucr-summary                 controllers.consolidations.AssociateUCRSummaryController.submit()
+GET         /associate-ucr-summary                controllers.consolidations.AssociateUcrSummaryController.displayPage()
+POST        /associate-ucr-summary                controllers.consolidations.AssociateUcrSummaryController.submit()
+
+# Associate UCR confirmation page
+GET         /associate-ucr-confirmation           controllers.consolidations.AssociateUcrConfirmationController.display()
 
 # Disassociate UCR page
 GET         /disassociate-ucr                     controllers.consolidations.DisassociateUcrController.display()
@@ -30,33 +33,33 @@ POST        /disassociate-ucr-summary             controllers.consolidations.Dis
 GET         /disassociate-ucr-confirmation        controllers.consolidations.DisassociateUcrConfirmationController.display()
 
 # Enter DUCR page
-GET         /consignment-references                controllers.movements.ConsignmentReferencesController.displayPage()
-POST        /consignment-references                controllers.movements.ConsignmentReferencesController.saveConsignmentReferences()
+GET         /consignment-references               controllers.movements.ConsignmentReferencesController.displayPage()
+POST        /consignment-references               controllers.movements.ConsignmentReferencesController.saveConsignmentReferences()
 
 # Arrival Reference page
-GET         /arrival-reference                     controllers.movements.ArrivalReferenceController.displayPage()
-POST        /arrival-reference                     controllers.movements.ArrivalReferenceController.submit()
+GET         /arrival-reference                    controllers.movements.ArrivalReferenceController.displayPage()
+POST        /arrival-reference                    controllers.movements.ArrivalReferenceController.submit()
 
 # Movement details page
-GET         /movement-details                      controllers.movements.MovementDetailsController.displayPage()
-POST        /movement-details                      controllers.movements.MovementDetailsController.saveMovementDetails()
+GET         /movement-details                     controllers.movements.MovementDetailsController.displayPage()
+POST        /movement-details                     controllers.movements.MovementDetailsController.saveMovementDetails()
 
 # Goods location page
-GET         /location                              controllers.movements.LocationController.displayPage()
-POST        /location                              controllers.movements.LocationController.saveLocation()
+GET         /location                             controllers.movements.LocationController.displayPage()
+POST        /location                             controllers.movements.LocationController.saveLocation()
 
 # Transport page
-GET         /transport                             controllers.movements.TransportController.displayPage()
-POST        /transport                             controllers.movements.TransportController.saveTransport()
+GET         /transport                            controllers.movements.TransportController.displayPage()
+POST        /transport                            controllers.movements.TransportController.saveTransport()
 
 # Summary
-GET         /summary                               controllers.movements.SummaryController.displayPage()
-POST        /summary                               controllers.movements.SummaryController.submitMovementRequest()
+GET         /summary                              controllers.movements.SummaryController.displayPage()
+POST        /summary                              controllers.movements.SummaryController.submitMovementRequest()
 
 # Shut a MUCR
-GET         /shut-mucr                             controllers.consolidations.ShutMucrController.displayPage()
-POST        /shut-mucr                             controllers.consolidations.ShutMucrController.submit()
+GET         /shut-mucr                            controllers.consolidations.ShutMucrController.displayPage()
+POST        /shut-mucr                            controllers.consolidations.ShutMucrController.submit()
 
 # Shut a MUCR summary page
-GET         /shut-mucr-summary                     controllers.consolidations.ShutMucrSummaryController.displayPage()
-POST        /shut-mucr-summary                     controllers.consolidations.ShutMucrSummaryController.submit()
+GET         /shut-mucr-summary                    controllers.consolidations.ShutMucrSummaryController.displayPage()
+POST        /shut-mucr-summary                    controllers.consolidations.ShutMucrSummaryController.submit()

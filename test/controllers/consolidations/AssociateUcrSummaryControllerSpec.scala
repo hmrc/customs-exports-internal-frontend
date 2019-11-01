@@ -26,36 +26,33 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import views.html.{associate_ucr_confirmation, associate_ucr_summary}
+import views.html.associate_ucr_summary
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
-class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec {
+class AssociateUcrSummaryControllerSpec extends ControllerLayerSpec {
 
   private val summaryPage = mock[associate_ucr_summary]
-  private val confirmPage = mock[associate_ucr_confirmation]
   private val submissionService = mock[SubmissionService]
 
   private def controller(associateUcrAnswers: AssociateUcrAnswers) =
-    new AssociateUCRSummaryController(
+    new AssociateUcrSummaryController(
       SuccessfulAuth(),
       ValidJourney(associateUcrAnswers),
       stubMessagesControllerComponents(),
       submissionService,
-      summaryPage,
-      confirmPage
+      summaryPage
     )(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
     when(summaryPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
-    when(confirmPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
-    reset(summaryPage, confirmPage)
+    reset(summaryPage)
 
     super.afterEach()
   }
@@ -73,6 +70,9 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec {
         status(result) mustBe OK
         verify(summaryPage).apply(any(), any())(any(), any())
       }
+    }
+
+    "return 303 (SEE_OTHER)" when {
 
       "submission finished with success" in {
 
@@ -83,8 +83,7 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec {
 
         val result = controller(cachedData).submit()(postRequest)
 
-        status(result) mustBe OK
-        verify(confirmPage).apply(any(), any())(any(), any())
+        status(result) mustBe SEE_OTHER
       }
     }
 

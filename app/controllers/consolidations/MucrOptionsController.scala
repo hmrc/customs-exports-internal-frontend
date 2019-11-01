@@ -52,7 +52,7 @@ class MucrOptionsController @Inject()(
         validForm => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(mucrOptions = Some(validForm))
           movementRepository.upsert(Cache(request.pid, updatedCache)).map { _ =>
-            Redirect(consolidationsRoutes.AssociateUCRController.displayPage())
+            Redirect(consolidationsRoutes.AssociateUcrController.displayPage())
           }
         }
       )
