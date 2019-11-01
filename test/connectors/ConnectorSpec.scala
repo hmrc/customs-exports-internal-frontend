@@ -16,28 +16,19 @@
 
 package connectors
 
-import com.codahale.metrics.SharedMetricRegistries
+import base.Injector
 import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.ExecutionContext
 
-class ConnectorSpec extends WordSpec with GuiceOneAppPerSuite with WiremockTestServer with MustMatchers with MockitoSugar with BeforeAndAfterEach {
+class ConnectorSpec extends WordSpec with WiremockTestServer with Injector with MustMatchers with MockitoSugar with BeforeAndAfterEach {
 
-  def overrideConfig: Map[String, Any] =
-    Map()
-
-  override def fakeApplication(): Application = {
-    SharedMetricRegistries.clear()
-    new GuiceApplicationBuilder().configure(overrideConfig).build()
-  }
+  def overrideConfig: Map[String, Any] = Map()
 
   protected implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   protected implicit val hc: HeaderCarrier = HeaderCarrier()
-  protected val httpClient: DefaultHttpClient = app.injector.instanceOf[DefaultHttpClient]
+  protected val httpClient: DefaultHttpClient = instanceOf[DefaultHttpClient]
 }
