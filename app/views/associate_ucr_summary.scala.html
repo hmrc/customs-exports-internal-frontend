@@ -22,7 +22,7 @@
 
 @(associateUcr: AssociateUcr, mucr: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title(messages("associate.ucr.summary.title", mucr)), fullWidth = true) {
+@main_template(title = Title(messages("associate.ucr.summary.title", mucr))) {
 
     @helper.form(consolidations.routes.AssociateUCRSummaryController.submit(), 'autoComplete -> "off") {
         @helper.CSRF.formField
@@ -38,9 +38,9 @@
         <table>
             <tbody>
                 <tr>
-                    <td id="associate_ucr-type">@messages(s"associate.ucr.summary.kind.${associateUcr.kind.formValue}")</td>
+                    <td class="associate_ucr__from" id="associate_ucr-type">@messages(s"associate.ucr.summary.kind.${associateUcr.kind.formValue}")</td>
                     <td id="associate_ucr-reference">@associateUcr.ucr</td>
-                    <td class="text-right">
+                    <td class="text-right associate_ucr__change">
                         <a id="associate_ducr-change" href="@consolidations.routes.AssociateUCRController.displayPage()">@messages("site.change")</a>
                     </td>
                 </tr>
@@ -52,9 +52,9 @@
         <table>
             <tbody>
                 <tr>
-                    <td id="mucr-type">@messages("associate.ucr.summary.kind.mucr")</td>
+                    <td class="associate_ucr__to" id="mucr-type">@messages("associate.ucr.summary.kind.mucr")</td>
                     <td id="mucr-reference">@mucr</td>
-                    <td class="text-right">
+                    <td class="text-right associate_ucr__change">
                         <a id="mucr-change" href="@consolidations.routes.MucrOptionsController.displayPage()">@messages("site.change")</a>
                     </td>
                 </tr>
