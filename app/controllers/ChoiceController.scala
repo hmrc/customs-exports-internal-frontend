@@ -39,7 +39,7 @@ class ChoiceController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage: Action[AnyContent] = authenticate.async { implicit request =>
-    movementRepository.findByPid(request.pid).map {
+    movementRepository.findByProviderId(request.providerId).map {
       case Some(cache) => Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
       case None        => Ok(choicePage(Choice.form()))
     }
@@ -60,7 +60,7 @@ class ChoiceController @Inject()(
       case forms.Choice.ShutMUCR =>
         proceedJourney(AssociateUcrAnswers(), consolidations.routes.ShutMucrController.displayPage())
       case forms.Choice.ViewSubmissions =>
-        Future.successful(Redirect(routes.ChoiceController.displayPage()))
+        Future.successful(Redirect(routes.ViewSubmissionsController.displayPage()))
     }
   }
 
@@ -81,11 +81,11 @@ class ChoiceController @Inject()(
           case forms.Choice.ShutMUCR =>
             proceedJourney(ShutMucrAnswers(), consolidations.routes.ShutMucrController.displayPage())
           case forms.Choice.ViewSubmissions =>
-            Future.successful(Redirect(routes.ChoiceController.displayPage()))
+            Future.successful(Redirect(routes.ViewSubmissionsController.displayPage()))
         }
       )
   }
 
   private def proceedJourney(journey: Answers, call: Call)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
-    movementRepository.upsert(Cache(request.pid, journey)).map(_ => Redirect(call))
+    movementRepository.upsert(Cache(request.providerId, journey)).map(_ => Redirect(call))
 }

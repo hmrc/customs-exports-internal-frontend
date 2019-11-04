@@ -31,6 +31,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
 import repositories.MovementRepository
 import services.audit.AuditService
+import testdata.CommonTestData._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -52,21 +53,21 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
   "Submit Associate" should {
 
-    val eori = "eori"
-    val mucr = "123"
-    val ucr = "321"
+    val eori = validEori
+    val mucr = correctUcr_2
+    val ucr = correctUcr
 
     "delegate to connector" in {
 
       given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
-      given(repository.removeByPid(anyString())).willReturn(Future.successful((): Unit))
+      given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
       val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
-      await(service.submit("pid", answers))
+      await(service.submit(providerId, answers))
 
-      theAssociationSubmitted mustBe AssociateUCRRequest("pid", "eori", mucr, ucr)
-      verify(repository).removeByPid("pid")
-      verify(audit).auditAssociate("eori", mucr, ucr, "Success")
+      theAssociationSubmitted mustBe AssociateUCRRequest(providerId, validEori, mucr, ucr)
+      verify(repository).removeByProviderId(providerId)
+      verify(audit).auditAssociate(validEori, mucr, ucr, "Success")
     }
 
     "audit when failed" in {
@@ -74,18 +75,18 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
       val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
       intercept[RuntimeException] {
-        await(service.submit("pid", answers))
+        await(service.submit(providerId, answers))
       }
 
-      theAssociationSubmitted mustBe AssociateUCRRequest("pid", "eori", mucr, ucr)
-      verify(repository, never()).removeByPid("pid")
-      verify(audit).auditAssociate("eori", mucr, ucr, "Failed")
+      theAssociationSubmitted mustBe AssociateUCRRequest(providerId, validEori, mucr, ucr)
+      verify(repository, never()).removeByProviderId(providerId)
+      verify(audit).auditAssociate(validEori, mucr, ucr, "Failed")
     }
 
     "handle missing eori" in {
       val answers = AssociateUcrAnswers(None, Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
       intercept[Throwable] {
-        await(service.submit("pid", answers))
+        await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
       verifyZeroInteractions(repository)
@@ -95,7 +96,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
     "handle missing ucr" in {
       val answers = AssociateUcrAnswers(Some(eori), None, None)
       intercept[Throwable] {
-        await(service.submit("pid", answers))
+        await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
       verifyZeroInteractions(repository)
@@ -113,46 +114,46 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
     "delegate to connector" when {
       "Disassociate MUCR" in {
         given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
-        given(repository.removeByPid(anyString())).willReturn(Future.successful((): Unit))
+        given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
-        val answers = DisassociateUcrAnswers(Some("eori"), Some(DisassociateUcr(DisassociateKind.Mucr, None, Some("ucr"))))
-        await(service.submit("pid", answers))
+        val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Mucr, None, Some("ucr"))))
+        await(service.submit(providerId, answers))
 
-        theDisassociationSubmitted mustBe DisassociateDUCRRequest("pid", "eori", "ucr")
-        verify(repository).removeByPid("pid")
-        verify(audit).auditDisassociate("eori", "ucr", "Success")
+        theDisassociationSubmitted mustBe DisassociateDUCRRequest(providerId, validEori, "ucr")
+        verify(repository).removeByProviderId(providerId)
+        verify(audit).auditDisassociate(validEori, "ucr", "Success")
       }
 
       "Disassociate DUCR" in {
         given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
-        given(repository.removeByPid(anyString())).willReturn(Future.successful((): Unit))
+        given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
-        val answers = DisassociateUcrAnswers(Some("eori"), Some(DisassociateUcr(DisassociateKind.Ducr, Some("ucr"), None)))
-        await(service.submit("pid", answers))
+        val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Ducr, Some("ucr"), None)))
+        await(service.submit(providerId, answers))
 
-        theDisassociationSubmitted mustBe DisassociateDUCRRequest("pid", "eori", "ucr")
-        verify(repository).removeByPid("pid")
-        verify(audit).auditDisassociate("eori", "ucr", "Success")
+        theDisassociationSubmitted mustBe DisassociateDUCRRequest(providerId, validEori, "ucr")
+        verify(repository).removeByProviderId(providerId)
+        verify(audit).auditDisassociate(validEori, "ucr", "Success")
       }
     }
 
     "audit when failed" in {
       given(connector.submit(any[Consolidation]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
 
-      val answers = DisassociateUcrAnswers(Some("eori"), Some(DisassociateUcr(DisassociateKind.Mucr, None, Some("ucr"))))
+      val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Mucr, None, Some("ucr"))))
       intercept[RuntimeException] {
-        await(service.submit("pid", answers))
+        await(service.submit(providerId, answers))
       }
 
-      theDisassociationSubmitted mustBe DisassociateDUCRRequest("pid", "eori", "ucr")
-      verify(repository, never()).removeByPid("pid")
-      verify(audit).auditDisassociate("eori", "ucr", "Failed")
+      theDisassociationSubmitted mustBe DisassociateDUCRRequest(providerId, validEori, "ucr")
+      verify(repository, never()).removeByProviderId(providerId)
+      verify(audit).auditDisassociate(validEori, "ucr", "Failed")
     }
 
     "handle missing eori" in {
       val answers = DisassociateUcrAnswers(None, Some(DisassociateUcr(DisassociateKind.Mucr, None, Some("ucr"))))
       intercept[Throwable] {
-        await(service.submit("pid", answers))
+        await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
       verifyZeroInteractions(repository)
@@ -161,9 +162,9 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
     "handle missing ucr" when {
       "block is empty" in {
-        val answers = DisassociateUcrAnswers(Some("eori"), None)
+        val answers = DisassociateUcrAnswers(Some(validEori), None)
         intercept[Throwable] {
-          await(service.submit("pid", answers))
+          await(service.submit(providerId, answers))
         } mustBe ReturnToStartException
 
         verifyZeroInteractions(repository)
@@ -172,9 +173,9 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
       "missing fields" when {
         "Disassociate MUCR" in {
-          val answers = DisassociateUcrAnswers(Some("eori"), Some(DisassociateUcr(DisassociateKind.Mucr, None, None)))
+          val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Mucr, None, None)))
           intercept[Throwable] {
-            await(service.submit("pid", answers))
+            await(service.submit(providerId, answers))
           } mustBe ReturnToStartException
 
           verifyZeroInteractions(repository)
@@ -182,9 +183,9 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         }
 
         "Disassociate DUCR" in {
-          val answers = DisassociateUcrAnswers(Some("eori"), Some(DisassociateUcr(DisassociateKind.Ducr, None, None)))
+          val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Ducr, None, None)))
           intercept[Throwable] {
-            await(service.submit("pid", answers))
+            await(service.submit(providerId, answers))
           } mustBe ReturnToStartException
 
           verifyZeroInteractions(repository)
@@ -203,33 +204,33 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
   "Submit ShutMUCR" should {
     "delegate to connector" in {
       given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
-      given(repository.removeByPid(anyString())).willReturn(Future.successful((): Unit))
+      given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
-      val answers = ShutMucrAnswers(Some("eori"), Some(ShutMucr("mucr")))
-      await(service.submit("pid", answers))
+      val answers = ShutMucrAnswers(Some(validEori), Some(ShutMucr("mucr")))
+      await(service.submit(providerId, answers))
 
-      theShutMucrSubmitted mustBe ShutMUCRRequest("pid", "eori", "mucr")
-      verify(repository).removeByPid("pid")
-      verify(audit).auditShutMucr("eori", "mucr", "Success")
+      theShutMucrSubmitted mustBe ShutMUCRRequest(providerId, validEori, "mucr")
+      verify(repository).removeByProviderId(providerId)
+      verify(audit).auditShutMucr(validEori, "mucr", "Success")
     }
 
     "audit when failed" in {
       given(connector.submit(any[Consolidation]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
 
-      val answers = ShutMucrAnswers(Some("eori"), Some(ShutMucr("mucr")))
+      val answers = ShutMucrAnswers(Some(validEori), Some(ShutMucr("mucr")))
       intercept[RuntimeException] {
-        await(service.submit("pid", answers))
+        await(service.submit(providerId, answers))
       }
 
-      theShutMucrSubmitted mustBe ShutMUCRRequest("pid", "eori", "mucr")
-      verify(repository, never()).removeByPid("pid")
-      verify(audit).auditShutMucr("eori", "mucr", "Failed")
+      theShutMucrSubmitted mustBe ShutMUCRRequest(providerId, validEori, "mucr")
+      verify(repository, never()).removeByProviderId(providerId)
+      verify(audit).auditShutMucr(validEori, "mucr", "Failed")
     }
 
     "handle missing eori" in {
       val answers = ShutMucrAnswers(None, Some(ShutMucr("mucr")))
       intercept[Throwable] {
-        await(service.submit("pid", answers))
+        await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
       verifyZeroInteractions(repository)
@@ -237,9 +238,9 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "handle missing mucr" in {
-      val answers = ShutMucrAnswers(Some("eori"), None)
+      val answers = ShutMucrAnswers(Some(validEori), None)
       intercept[Throwable] {
-        await(service.submit("pid", answers))
+        await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
       verifyZeroInteractions(repository)

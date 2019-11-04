@@ -51,9 +51,9 @@ class SummaryController @Inject()(
   def submitMovementRequest(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
     implicit request =>
       submissionService
-        .submitMovementRequest(request.pid, request.answers)
+        .submitMovementRequest(request.providerId, request.answers)
         .flatMap { consignmentReferences =>
-          movementRepository.removeByPid(request.pid).map { _ =>
+          movementRepository.removeByProviderId(request.providerId).map { _ =>
             Ok(movementConfirmationPage(consignmentReferences))
           }
         }

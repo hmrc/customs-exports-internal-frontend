@@ -39,15 +39,15 @@ class SubmissionService @Inject()(
   metrics: MovementsMetrics
 )(implicit ec: ExecutionContext) {
 
-  def submit(pid: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
+  def submit(providerId: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
     val ucr = answers.ucr.getOrElse(throw ReturnToStartException).ucr
 
     connector
-      .submit(DisassociateDUCRRequest(pid, eori, ucr))
+      .submit(DisassociateDUCRRequest(providerId, eori, ucr))
       .andThen {
         case Success(_) =>
-          movementRepository.removeByPid(pid).flatMap { _ =>
+          movementRepository.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditDisassociate(eori, ucr, "Success")
           }
         case Failure(_) =>
@@ -55,16 +55,16 @@ class SubmissionService @Inject()(
       }
   }
 
-  def submit(pid: String, answers: AssociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
+  def submit(providerId: String, answers: AssociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
     val mucr = answers.mucrOptions.map(_.mucr).getOrElse(throw ReturnToStartException)
     val ucr = answers.associateUcr.map(_.ucr).getOrElse(throw ReturnToStartException)
 
     connector
-      .submit(AssociateUCRRequest(pid, eori, mucr, ucr))
+      .submit(AssociateUCRRequest(providerId, eori, mucr, ucr))
       .andThen {
         case Success(_) =>
-          movementRepository.removeByPid(pid).flatMap { _ =>
+          movementRepository.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditAssociate(eori, mucr, ucr, "Success")
           }
         case Failure(_) =>
@@ -72,15 +72,15 @@ class SubmissionService @Inject()(
       }
   }
 
-  def submit(pid: String, answers: ShutMucrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
+  def submit(providerId: String, answers: ShutMucrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
     val mucr = answers.shutMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
 
     connector
-      .submit(ShutMUCRRequest(pid, eori, mucr))
+      .submit(ShutMUCRRequest(providerId, eori, mucr))
       .andThen {
         case Success(_) =>
-          movementRepository.removeByPid(pid).flatMap { _ =>
+          movementRepository.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditShutMucr(eori, mucr, "Success")
           }
         case Failure(_) =>
@@ -88,10 +88,10 @@ class SubmissionService @Inject()(
       }
   }
 
-  def submitMovementRequest(pid: String, answers: Answers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
-    val cache = Cache(pid, answers)
+  def submitMovementRequest(providerId: String, answers: Answers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
+    val cache = Cache(providerId, answers)
 
-    val data = Movement.createMovementRequest(pid, answers)
+    val data = Movement.createMovementRequest(providerId, answers)
     val timer = metrics.startTimer(cache.answers.`type`)
 
     auditService.auditAllPagesUserInput(answers)

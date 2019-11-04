@@ -30,14 +30,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class MovementRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: ExecutionContext)
     extends ReactiveRepository[Cache, BSONObjectID]("movementCache", mc.mongoConnector.db, Cache.format, objectIdFormats) {
 
-  override def indexes: Seq[Index] = Seq(Index(Seq("pid" -> IndexType.Ascending), name = Some("pidIdx")))
+  override def indexes: Seq[Index] = Seq(Index(Seq("providerId" -> IndexType.Ascending), name = Some("providerIdIdx")))
 
-  def findByPid(pid: String): Future[Option[Cache]] = find("pid" -> pid).map(_.headOption)
+  def findByProviderId(providerId: String): Future[Option[Cache]] = find("providerId" -> providerId).map(_.headOption)
 
-  def removeByPid(pid: String): Future[Unit] = remove("pid" -> pid).filter(_.ok).map(_ => (): Unit)
+  def removeByProviderId(providerId: String): Future[Unit] = remove("providerId" -> providerId).filter(_.ok).map(_ => (): Unit)
 
-  def findOrCreate(pid: String, onMissing: Cache): Future[Cache] =
-    findByPid(pid).flatMap {
+  def findOrCreate(providerId: String, onMissing: Cache): Future[Cache] =
+    findByProviderId(providerId).flatMap {
       case Some(movementCache) => Future.successful(movementCache)
       case None                => save(onMissing)
     }
@@ -48,7 +48,7 @@ class MovementRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: Exec
   }
 
   def upsert(movementCache: Cache): Future[Cache] =
-    findAndUpdate(Json.obj("pid" -> movementCache.pid), Json.toJson(movementCache).as[JsObject])
+    findAndUpdate(Json.obj("providerId" -> movementCache.providerId), Json.toJson(movementCache).as[JsObject])
       .map(_.value.map(_.as[Cache]))
       .flatMap {
         case Some(cache) => Future.successful(cache)

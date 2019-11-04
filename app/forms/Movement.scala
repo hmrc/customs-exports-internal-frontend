@@ -27,15 +27,15 @@ object Movement {
 
   private val departureDateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
-  def createMovementRequest(pid: String, answers: Answers): MovementRequest = answers match {
-    case arrivalAnswers: ArrivalAnswers     => createMovementArrivalRequest(pid, arrivalAnswers)
-    case departureAnswers: DepartureAnswers => createMovementDepartureRequest(pid, departureAnswers)
+  def createMovementRequest(providerId: String, answers: Answers): MovementRequest = answers match {
+    case arrivalAnswers: ArrivalAnswers     => createMovementArrivalRequest(providerId, arrivalAnswers)
+    case departureAnswers: DepartureAnswers => createMovementDepartureRequest(providerId, departureAnswers)
   }
 
-  private def createMovementArrivalRequest(pid: String, answers: ArrivalAnswers) =
+  private def createMovementArrivalRequest(providerId: String, answers: ArrivalAnswers) =
     MovementRequest(
       eori = answers.eori.getOrElse(throw ReturnToStartException),
-      providerId = pid,
+      providerId = providerId,
       choice = MovementType.Arrival,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
       movementDetails = movementDetails(answers),
@@ -43,10 +43,10 @@ object Movement {
       arrivalReference = answers.arrivalReference
     )
 
-  private def createMovementDepartureRequest(pid: String, answers: DepartureAnswers) =
+  private def createMovementDepartureRequest(providerId: String, answers: DepartureAnswers) =
     MovementRequest(
       eori = answers.eori.getOrElse(throw ReturnToStartException),
-      providerId = pid,
+      providerId = providerId,
       choice = MovementType.Departure,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
       movementDetails = movementDetails(answers),

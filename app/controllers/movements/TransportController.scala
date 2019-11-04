@@ -51,7 +51,7 @@ class TransportController @Inject()(
         (formWithErrors: Form[Transport]) => Future.successful(BadRequest(transportPage(formWithErrors))),
         validForm => {
           val movementAnswers = request.answersAs[DepartureAnswers].copy(transport = Some(validForm))
-          movementRepository.upsert(Cache(request.pid, movementAnswers)).map { _ =>
+          movementRepository.upsert(Cache(request.providerId, movementAnswers)).map { _ =>
             Redirect(controllers.movements.routes.SummaryController.displayPage())
           }
         }

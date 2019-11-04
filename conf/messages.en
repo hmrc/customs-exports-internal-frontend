@@ -203,3 +203,21 @@ shutMucr.confirmation.nextSteps.depart = Depart a consignment
 
 
 view.unauthorized.title=You are not authorized
+
+submissions.title = All requests
+submissions.summary = This page displays all submitted requests and any notifications related to them.
+submissions.submissionType = Type
+submissions.submissionAction = Type of request
+submissions.eori = Eori
+submissions.conversationId = ConversationId
+submissions.ucr = UCR
+submissions.dateOfRequest = Date of request
+submissions.status = Status
+
+submissions.shutmucr = Shut
+submissions.arrival = Arrive
+submissions.departure = Depart
+submissions.ducrassociation = Associate DUCR
+submissions.mucrassociation = Associate MUCR
+submissions.ducrdisassociation = Disassociate DUCR
+submissions.mucrdisassociation = Disassociate MUCR

@@ -28,6 +28,7 @@ import play.api.mvc.{Result, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.MovementRepository
+import testdata.CommonTestData.providerId
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,10 +37,10 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
 
   private val movementRepository = mock[MovementRepository]
   private val block = mock[JourneyRequest[_] => Future[Result]]
-  private val operator = Operator("pid")
+  private val operator = Operator(providerId)
   private val request = AuthenticatedRequest(operator, FakeRequest())
   private val answers = ArrivalAnswers()
-  private val cache = Cache("pid", answers)
+  private val cache = Cache(providerId, answers)
 
   private val refiner = new JourneyRefiner(movementRepository)
 
@@ -53,7 +54,7 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
       "answers found" when {
         "on unshared journey" in {
           given(block.apply(any())).willReturn(Future.successful(Results.Ok))
-          given(movementRepository.findByPid("pid")).willReturn(Future.successful(Some(cache)))
+          given(movementRepository.findByProviderId(providerId)).willReturn(Future.successful(Some(cache)))
 
           await(refiner(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Ok
 
@@ -62,7 +63,7 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
 
         "on shared journey" in {
           given(block.apply(any())).willReturn(Future.successful(Results.Ok))
-          given(movementRepository.findByPid("pid")).willReturn(Future.successful(Some(cache)))
+          given(movementRepository.findByProviderId(providerId)).willReturn(Future.successful(Some(cache)))
 
           await(refiner(JourneyType.DEPART, JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Ok
 
@@ -79,13 +80,13 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
 
     "block request" when {
       "answers not found" in {
-        given(movementRepository.findByPid("pid")).willReturn(Future.successful(None))
+        given(movementRepository.findByProviderId(providerId)).willReturn(Future.successful(None))
 
         await(refiner(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Redirect(controllers.routes.ChoiceController.displayPage())
       }
 
       "answers found of a different type" in {
-        given(movementRepository.findByPid("pid")).willReturn(Future.successful(None))
+        given(movementRepository.findByProviderId(providerId)).willReturn(Future.successful(None))
 
         await(refiner(JourneyType.DEPART).invokeBlock(request, block)) mustBe Results.Redirect(controllers.routes.ChoiceController.displayPage())
       }

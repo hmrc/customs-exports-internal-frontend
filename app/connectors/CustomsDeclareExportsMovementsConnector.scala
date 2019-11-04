@@ -18,8 +18,11 @@ package connectors
 
 import config.AppConfig
 import connectors.exchanges.Consolidation
+import connectors.formats.Implicit.optionFormat
 import javax.inject.{Inject, Singleton}
+import models.notifications.NotificationFrontendModel
 import models.requests.MovementRequest
+import models.submissions.SubmissionFrontendModel
 import play.api.Logger
 import play.api.http.{ContentTypes, HeaderNames}
 import play.api.libs.json.{Format, Json}
@@ -32,34 +35,77 @@ import scala.util.{Failure, Success}
 @Singleton
 class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, httpClient: HttpClient)(implicit ec: ExecutionContext) {
 
+  import CustomsDeclareExportsMovementsConnector._
+
   private val logger = Logger(this.getClass)
+
   private val JsonHeaders = Seq(HeaderNames.CONTENT_TYPE -> ContentTypes.JSON, HeaderNames.ACCEPT -> ContentTypes.JSON)
 
-  def submit(request: MovementRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
+  def submit(request: MovementRequest)(implicit hc: HeaderCarrier): Future[Unit] =
     httpClient
-      .POST[MovementRequest, HttpResponse](appConfig.customsDeclareExportsMovements + "/movements", request, JsonHeaders)
+      .POST[MovementRequest, HttpResponse](appConfig.customsDeclareExportsMovementsUrl + MovementsSubmissionEndpoint, request, JsonHeaders)
       .andThen {
-        case Success(response) =>
-          logExchange("Submit Movement", response.body)
-        case Failure(exception) =>
-          logFailedExchange("Submit Movement", exception)
+        case Success(response)  => logSuccessfulExchange("Submit Movement", response.body)
+        case Failure(exception) => logFailedExchange("Submit Movement", exception)
       }
       .map(_ => (): Unit)
 
   def submit[T <: Consolidation](request: T)(implicit hc: HeaderCarrier): Future[Unit] =
     httpClient
-      .POST[T, HttpResponse](appConfig.customsDeclareExportsMovements + "/consolidation", request, JsonHeaders)
+      .POST[T, HttpResponse](appConfig.customsDeclareExportsMovementsUrl + ConsolidationsSubmissionEndpoint, request, JsonHeaders)
       .andThen {
-        case Success(response) =>
-          logExchange("Submit Consolidation", response.body)
-        case Failure(exception) =>
-          logFailedExchange("Submit Consolidation", exception)
+        case Success(response)  => logSuccessfulExchange("Submit Consolidation", response.body)
+        case Failure(exception) => logFailedExchange("Submit Consolidation", exception)
       }
       .map(_ => (): Unit)
 
-  private def logExchange[T](`type`: String, payload: T)(implicit fmt: Format[T]): Unit =
+  private def logSuccessfulExchange[T](`type`: String, payload: T)(implicit fmt: Format[T]): Unit =
     logger.debug(`type` + "\n" + Json.toJson(payload))
 
   private def logFailedExchange(`type`: String, exception: Throwable): Unit =
     logger.warn(`type` + " failed", exception)
+
+  def fetchAllSubmissions(providerId: String)(implicit hc: HeaderCarrier): Future[Seq[SubmissionFrontendModel]] =
+    httpClient
+      .GET[Seq[SubmissionFrontendModel]](
+        s"${appConfig.customsDeclareExportsMovementsUrl}$FetchAllSubmissionsEndpoint",
+        providerIdQueryParam(providerId)
+      )
+      .andThen {
+        case Success(response)  => logSuccessfulExchange("All Submission fetch", response)
+        case Failure(exception) => logFailedExchange("All Submission fetch", exception)
+      }
+
+  def fetchSingleSubmission(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[Option[SubmissionFrontendModel]] =
+    httpClient
+      .GET[Option[SubmissionFrontendModel]](
+        s"${appConfig.customsDeclareExportsMovementsUrl}$FetchSingleSubmissionEndpoint/$conversationId",
+        providerIdQueryParam(providerId)
+      )
+      .andThen {
+        case Success(response)  => logSuccessfulExchange("Single Submission fetch", response)
+        case Failure(exception) => logFailedExchange("Single Submission fetch", exception)
+      }
+
+  def fetchNotifications(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[Seq[NotificationFrontendModel]] =
+    httpClient
+      .GET[Seq[NotificationFrontendModel]](
+        s"${appConfig.customsDeclareExportsMovementsUrl}$FetchNotifications/$conversationId",
+        providerIdQueryParam(providerId)
+      )
+      .andThen {
+        case Success(response)  => logSuccessfulExchange("All Notifications fetch", response)
+        case Failure(exception) => logFailedExchange("All Notifications fetch", exception)
+      }
+
+  private def providerIdQueryParam(providerId: String): Seq[(String, String)] = Seq("providerId" -> providerId)
+}
+
+object CustomsDeclareExportsMovementsConnector {
+
+  val MovementsSubmissionEndpoint = "/movements"
+  val ConsolidationsSubmissionEndpoint = "/consolidation"
+  val FetchAllSubmissionsEndpoint = "/submissions"
+  val FetchSingleSubmissionEndpoint = "/submissions"
+  val FetchNotifications = "/notifications"
 }

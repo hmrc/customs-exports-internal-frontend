@@ -23,7 +23,6 @@ import models.cache.{Cache, DisassociateUcrAnswers, JourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.MovementRepository
-import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.disassociate_ucr
 
@@ -52,7 +51,7 @@ class DisassociateUcrController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
         answers =>
-          movementRepository.upsert(Cache(request.pid, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
+          movementRepository.upsert(Cache(request.providerId, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
             Redirect(controllers.consolidations.routes.DisassociateUcrSummaryController.display())
         }
       )

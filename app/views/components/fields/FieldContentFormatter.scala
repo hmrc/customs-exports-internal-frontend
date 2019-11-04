@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package views.components.fields
 
-import models.ReturnToStartException
-import models.cache.Answers
-import play.api.mvc.WrappedRequest
+import java.time.format.DateTimeFormatter
+import java.time.{Instant, ZoneId}
 
-case class JourneyRequest[T](answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
+object FieldContentFormatter {
 
-  val operator: Operator = request.operator
-  val providerId: String = request.operator.providerId
+  private val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy 'at' HH:mm").withZone(ZoneId.systemDefault())
 
-  def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
+  def dateTime(dateTime: Instant): String = dateTimeFormatter.format(dateTime)
 
-  def answersAs[J <: Answers]: J = answers match {
-    case ans: J => ans
-    case _      => throw ReturnToStartException
-  }
 }

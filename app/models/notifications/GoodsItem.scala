@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package models.notifications
 
-import models.ReturnToStartException
-import models.cache.Answers
-import play.api.mvc.WrappedRequest
+import play.api.libs.json.Json
 
-case class JourneyRequest[T](answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
+case class GoodsItem(commodityCode: Option[Int] = None, totalPackages: Option[Int] = None, totalNetMass: Option[BigDecimal] = None)
 
-  val operator: Operator = request.operator
-  val providerId: String = request.operator.providerId
-
-  def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
-
-  def answersAs[J <: Answers]: J = answers match {
-    case ans: J => ans
-    case _      => throw ReturnToStartException
-  }
+object GoodsItem {
+  implicit val format = Json.format[GoodsItem]
 }

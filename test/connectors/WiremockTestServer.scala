@@ -19,9 +19,9 @@ package connectors
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import org.scalatest.{BeforeAndAfterAll, WordSpec}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, WordSpec}
 
-trait WiremockTestServer extends WordSpec with BeforeAndAfterAll {
+trait WiremockTestServer extends WordSpec with BeforeAndAfterAll with BeforeAndAfterEach {
 
   val wireHost = "localhost"
   val wirePort = 20001
@@ -41,4 +41,10 @@ trait WiremockTestServer extends WordSpec with BeforeAndAfterAll {
     wireMockServer.stop()
     super.afterAll()
   }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    wireMockServer.resetAll()
+  }
+
 }

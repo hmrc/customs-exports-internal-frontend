@@ -19,6 +19,7 @@ package controllers.actions
 import config.AppConfig
 import connectors.StrideAuthConnector
 import controllers.ControllerLayerSpec
+import controllers.exchanges.AuthenticatedRequest
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import play.api.mvc.Result
@@ -27,9 +28,8 @@ import play.api.test.Helpers._
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval}
 import uk.gov.hmrc.auth.core.{AuthorisationException, NoActiveSession}
-import controllers.exchanges.AuthenticatedRequest
-import views.html.unauthorized
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.unauthorized
 
 import scala.concurrent.Future
 
@@ -53,7 +53,7 @@ class AuthenticatedActionSpec extends ControllerLayerSpec {
       "auth successful" in {
         given(block.apply(any())).willReturn(Future.successful(controllerResponse))
         given(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any()))
-          .willReturn(Future.successful(Some(Credentials("pid", "type"))))
+          .willReturn(Future.successful(Some(Credentials(providerId, "type"))))
 
         val result = await(action.invokeBlock(request, block))
 

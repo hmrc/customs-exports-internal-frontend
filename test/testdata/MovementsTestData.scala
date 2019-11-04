@@ -23,14 +23,14 @@ import models.UcrBlock
 import models.cache.{ArrivalAnswers, DepartureAnswers}
 import models.requests.MovementRequest
 import models.submissions.{ActionType, SubmissionFrontendModel}
-import testdata.CommonTestData.{conversationId, correctUcr, validEori}
+import testdata.CommonTestData.{conversationId, correctUcr, providerId, validEori}
 
 object MovementsTestData {
 
   def validMovementRequest(movementType: Choice): MovementRequest =
     movementType match {
-      case Choice.Arrival   => Movement.createMovementRequest("pid", validArrivalAnswers)
-      case Choice.Departure => Movement.createMovementRequest("pid", validDepartureAnswers)
+      case Choice.Arrival   => Movement.createMovementRequest(providerId, validArrivalAnswers)
+      case Choice.Departure => Movement.createMovementRequest(providerId, validDepartureAnswers)
     }
 
   def validArrivalAnswers =
@@ -42,15 +42,14 @@ object MovementsTestData {
   def exampleSubmissionFrontendModel(
     eori: String = validEori,
     conversationId: String = conversationId,
-    ucr: String = correctUcr,
-    ucrType: String = "D",
+    ucrBlocks: Seq[UcrBlock] = Seq(UcrBlock(ucr = correctUcr, ucrType = "D")),
     actionType: ActionType = ActionType.Arrival,
     requestTimestamp: Instant = Instant.now()
   ): SubmissionFrontendModel =
     SubmissionFrontendModel(
       eori = eori,
       conversationId = conversationId,
-      ucrBlocks = Seq(UcrBlock(ucr = ucr, ucrType = ucrType)),
+      ucrBlocks = ucrBlocks,
       actionType = actionType,
       requestTimestamp = requestTimestamp
     )

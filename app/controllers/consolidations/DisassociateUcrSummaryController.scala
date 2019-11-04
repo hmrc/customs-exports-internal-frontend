@@ -53,7 +53,7 @@ class DisassociateUcrSummaryController @Inject()(
     val ucr = answers.ucr.map(_.ucr).getOrElse(throw ReturnToStartException)
     val kind = answers.ucr.map(_.kind).getOrElse(throw ReturnToStartException)
 
-    submissionService.submit(request.pid, answers).map { _ =>
+    submissionService.submit(request.providerId, answers).map { _ =>
       Redirect(controllers.consolidations.routes.DisassociateUcrConfirmationController.display())
         .flashing(FlashKeys.UCR -> ucr, FlashKeys.CONSOLIDATION_KIND -> kind.toString)
     }

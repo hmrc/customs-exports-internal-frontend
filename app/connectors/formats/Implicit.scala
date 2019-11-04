@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.exchanges
+package connectors.formats
 
-import models.ReturnToStartException
-import models.cache.Answers
-import play.api.mvc.WrappedRequest
+import play.api.libs.json._
 
-case class JourneyRequest[T](answers: Answers, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
+object Implicit {
 
-  val operator: Operator = request.operator
-  val providerId: String = request.operator.providerId
+  implicit def optionFormat[T: Format]: Format[Option[T]] = new Format[Option[T]] {
+    override def reads(json: JsValue): JsResult[Option[T]] = json.validateOpt[T]
 
-  def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
-
-  def answersAs[J <: Answers]: J = answers match {
-    case ans: J => ans
-    case _      => throw ReturnToStartException
+    override def writes(o: Option[T]): JsValue = o match {
+      case Some(t) => implicitly[Writes[T]].writes(t)
+      case None    => JsNull
+    }
   }
+
 }

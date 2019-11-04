@@ -20,18 +20,23 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import config.AppConfig
 import connectors.exchanges.DisassociateDUCRRequest
 import forms.ConsignmentReferences
+import models.notifications.ResponseType.ControlResponse
 import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
 import org.mockito.BDDMockito._
 import play.api.http.Status
 import play.api.test.Helpers._
+import testdata.CommonTestData._
+import testdata.MovementsTestData.exampleSubmissionFrontendModel
+import testdata.NotificationTestData.exampleNotificationFrontendModel
 
 class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
   private val config = mock[AppConfig]
+  given(config.customsDeclareExportsMovementsUrl).willReturn(downstreamURL)
+
   private val connector = new CustomsDeclareExportsMovementsConnector(config, httpClient)
 
   "Submit Movement" should {
-    given(config.customsDeclareExportsMovements).willReturn(downstreamURL)
 
     "POST to the Back End" in {
       stubFor(
@@ -44,13 +49,13 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
       val request =
         MovementRequest("eori", "provider-id", MovementType.Arrival, ConsignmentReferences("ref", "value"), MovementDetailsRequest("datetime"))
-      await(connector.submit(request))
+      connector.submit(request).futureValue
 
       verify(
         postRequestedFor(urlEqualTo("/movements"))
           .withRequestBody(
             equalTo(
-              "{\"eori\":\"eori\",\"providerId\":\"provider-id\",\"choice\":\"EAL\",\"consignmentReference\":{\"reference\":\"ref\",\"referenceValue\":\"value\"},\"movementDetails\":{\"dateTime\":\"datetime\"}}"
+              """{"eori":"eori","providerId":"provider-id","choice":"EAL","consignmentReference":{"reference":"ref","referenceValue":"value"},"movementDetails":{"dateTime":"datetime"}}"""
             )
           )
       )
@@ -58,7 +63,6 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
   }
 
   "Submit Consolidation" should {
-    given(config.customsDeclareExportsMovements).willReturn(downstreamURL)
 
     "POST to the Back End" in {
       stubFor(
@@ -69,14 +73,124 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
           )
       )
 
-      val request = DisassociateDUCRRequest("pid", "eori", "ucr")
-      await(connector.submit(request))
+      val request = DisassociateDUCRRequest("provider-id", "eori", "ucr")
+      connector.submit(request).futureValue
 
       verify(
         postRequestedFor(urlEqualTo("/consolidation"))
-          .withRequestBody(equalTo("{\"providerId\":\"pid\",\"eori\":\"eori\",\"ucr\":\"ucr\",\"consolidationType\":\"DISASSOCIATE_DUCR\"}"))
+          .withRequestBody(equalTo("""{"providerId":"provider-id","eori":"eori","ucr":"ucr","consolidationType":"DISASSOCIATE_DUCR"}"""))
       )
     }
   }
 
+  "fetch all Submissions" should {
+
+    "send GET request to the backend" in {
+
+      val expectedSubmission = exampleSubmissionFrontendModel()
+      val submissionsJson =
+        s"""[
+           |  {
+           |    "uuid":"${expectedSubmission.uuid}",
+           |    "eori":"$validEori",
+           |    "conversationId":"$conversationId",
+           |    "ucrBlocks":[
+           |      {
+           |        "ucr":"$correctUcr",
+           |        "ucrType":"D"
+           |      }
+           |    ],
+           |    "actionType":"Arrival",
+           |    "requestTimestamp":"${expectedSubmission.requestTimestamp}"
+           |  }
+           |]""".stripMargin
+
+      stubFor(
+        get(s"/submissions?providerId=$providerId")
+          .willReturn(aResponse().withStatus(OK).withBody(submissionsJson))
+      )
+
+      val response = connector.fetchAllSubmissions(providerId).futureValue
+
+      val expectedUrl = s"/submissions?providerId=$providerId"
+      verify(getRequestedFor(urlEqualTo(expectedUrl)))
+
+      response mustBe Seq(expectedSubmission)
+    }
+  }
+
+  "fetch single Submission" should {
+
+    "send GET request to the backend" in {
+
+      val expectedSubmission = exampleSubmissionFrontendModel()
+      val submissionJson =
+        s"""
+           |  {
+           |    "uuid":"${expectedSubmission.uuid}",
+           |    "eori":"$validEori",
+           |    "conversationId":"$conversationId",
+           |    "ucrBlocks":[
+           |      {
+           |        "ucr":"$correctUcr",
+           |        "ucrType":"D"
+           |      }
+           |    ],
+           |    "actionType":"Arrival",
+           |    "requestTimestamp":"${expectedSubmission.requestTimestamp}"
+           |  }
+           |""".stripMargin
+
+      stubFor(
+        get(s"/submissions/$conversationId?providerId=$providerId")
+          .willReturn(aResponse().withStatus(OK).withBody(submissionJson))
+      )
+
+      val response = connector.fetchSingleSubmission(conversationId, providerId).futureValue
+
+      val expectedUrl = s"/submissions/$conversationId?providerId=$providerId"
+      verify(getRequestedFor(urlEqualTo(expectedUrl)))
+
+      response mustBe Some(expectedSubmission)
+    }
+  }
+
+  "fetch Notifications" should {
+
+    "send GET request to the backend" in {
+
+      val expectedNotification = exampleNotificationFrontendModel()
+      val notificationsJson =
+        s"""[
+          |   {
+          |     "timestampReceived":"${expectedNotification.timestampReceived}",
+          |     "conversationId":"$conversationId",
+          |     "responseType":"${ControlResponse.value}",
+          |     "entries":[
+          |       {
+          |         "ucrBlock":{
+          |           "ucr":"$correctUcr",
+          |           "ucrType":"D"
+          |         },
+          |         "goodsItem":[]
+          |       }
+          |     ],
+          |     "errorCodes":[],
+          |     "messageCode":""
+          |   }
+          |]""".stripMargin
+
+      stubFor(
+        get(s"/notifications/$conversationId?providerId=$providerId")
+          .willReturn(aResponse().withStatus(OK).withBody(notificationsJson))
+      )
+
+      val response = connector.fetchNotifications(conversationId, providerId).futureValue
+
+      val expectedUrl = s"/notifications/$conversationId?providerId=$providerId"
+      verify(getRequestedFor(urlEqualTo(expectedUrl)))
+
+      response mustBe Seq(expectedNotification)
+    }
+  }
 }

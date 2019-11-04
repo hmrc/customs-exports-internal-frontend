@@ -37,7 +37,7 @@ trait MockCache extends MockitoSugar with BeforeAndAfterEach {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     given(cache.upsert(any())).willAnswer(withTheCacheUpserted)
-    given(cache.removeByPid(any())).willReturn(Future.successful((): Unit))
+    given(cache.removeByProviderId(any())).willReturn(Future.successful((): Unit))
   }
 
   override protected def afterEach(): Unit = {
@@ -46,10 +46,10 @@ trait MockCache extends MockitoSugar with BeforeAndAfterEach {
   }
 
   protected def givenTheCacheContains(content: Cache): Unit =
-    given(cache.findByPid(any())).willReturn(Future.successful(Some(content)))
+    given(cache.findByProviderId(any())).willReturn(Future.successful(Some(content)))
 
   protected def givenTheCacheIsEmpty(): Unit =
-    given(cache.findByPid(any())).willReturn(Future.successful(None))
+    given(cache.findByProviderId(any())).willReturn(Future.successful(None))
 
   protected def theCacheUpserted: Cache = {
     val captor: ArgumentCaptor[Cache] = ArgumentCaptor.forClass(classOf[Cache])
@@ -58,7 +58,7 @@ trait MockCache extends MockitoSugar with BeforeAndAfterEach {
   }
 
   protected def successfulRemoving(): Unit =
-    given(cache.removeByPid(any())).willReturn(Future.successful((): Unit))
+    given(cache.removeByProviderId(any())).willReturn(Future.successful((): Unit))
 
   protected def withTheCacheUpserted: Answer[Future[Cache]] = new Answer[Future[Cache]] {
     override def answer(invocation: InvocationOnMock): Future[Cache] = Future.successful(invocation.getArgument(0))

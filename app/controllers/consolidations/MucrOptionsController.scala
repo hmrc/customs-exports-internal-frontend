@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.consolidations.{routes => consolidationsRoutes}
 import forms.MucrOptions.form
 import javax.inject.Inject
-import models.cache.{AssociateUcrAnswers, Cache, JourneyType}
+import models.cache.{AssociateUcrAnswers, Cache}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.MovementRepository
@@ -51,7 +51,7 @@ class MucrOptionsController @Inject()(
         formWithErrors => Future.successful(BadRequest(mucrOptionsPage(formWithErrors))),
         validForm => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(mucrOptions = Some(validForm))
-          movementRepository.upsert(Cache(request.pid, updatedCache)).map { _ =>
+          movementRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(consolidationsRoutes.AssociateUCRController.displayPage())
           }
         }

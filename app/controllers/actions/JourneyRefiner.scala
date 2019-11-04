@@ -32,7 +32,7 @@ class JourneyRefiner @Inject()(movementRepository: MovementRepository)(implicit 
   override protected def executionContext: ExecutionContext = exc
 
   private def refiner[A](request: AuthenticatedRequest[A], types: JourneyType*): Future[Either[Result, JourneyRequest[A]]] =
-    movementRepository.findByPid(request.operator.pid).map(_.map(_.answers)).map {
+    movementRepository.findByProviderId(request.operator.providerId).map(_.map(_.answers)).map {
       case Some(answers: Answers) if types.isEmpty || types.contains(answers.`type`) =>
         Right(JourneyRequest(answers, request))
       case _ =>

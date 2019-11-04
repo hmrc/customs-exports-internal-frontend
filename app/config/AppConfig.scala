@@ -27,9 +27,6 @@ class AppConfig @Inject()(
   environment: Environment,
   @Named("appName") serviceIdentifier: String
 ) {
-  private val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
-
-  private val assetsUrl = runModeConfiguration.get[String]("assets.url")
 
   val runningAsDev: Boolean = {
     runModeConfiguration
@@ -37,11 +34,8 @@ class AppConfig @Inject()(
       .map(_.equals(Mode.Dev.toString))
       .getOrElse(Mode.Dev.equals(environment.mode))
   }
-  val assetsPrefix: String = assetsUrl + runModeConfiguration.get[String]("assets.version")
   val analyticsToken: String = runModeConfiguration.get[String](s"google-analytics.token")
   val analyticsHost: String = runModeConfiguration.get[String](s"google-analytics.host")
-  val reportAProblemPartialUrl: String = s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifier"
-  val reportAProblemNonJSUrl: String = s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
 
   // from external UI
@@ -50,8 +44,8 @@ class AppConfig @Inject()(
       .getOptional[String](key)
       .getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  lazy val customsDeclarationsGoodsTakenOutOfEuUrl = loadConfig("urls.customsDeclarationsGoodsTakenOutOfEu")
-  lazy val serviceAvailabilityUrl = loadConfig("urls.serviceAvailability")
+  lazy val customsDeclareExportsMovementsUrl: String = servicesConfig.baseUrl("customs-declare-exports-movements")
 
-  lazy val customsDeclareExportsMovements = servicesConfig.baseUrl("customs-declare-exports-movements")
+  lazy val customsDeclarationsGoodsTakenOutOfEuUrl: String = loadConfig("urls.customsDeclarationsGoodsTakenOutOfEu")
+  lazy val serviceAvailabilityUrl: String = loadConfig("urls.serviceAvailability")
 }
