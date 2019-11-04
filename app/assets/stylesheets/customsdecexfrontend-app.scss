@@ -21,3 +21,19 @@
 .text-right {
   text-align: right;
 }
+
+.associate_ucr {
+
+  &__from {
+    width: 20%
+  }
+
+  &__to {
+    width: 20%
+  }
+
+  &__change {
+    text-align: right;
+    width: 20%;
+  }
+}
