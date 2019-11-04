@@ -20,12 +20,12 @@ import play.api.libs.json._
 
 object Implicit {
 
-  implicit def optionFormat[T: Format]: Format[Option[T]] = new Format[Option[T]]{
+  implicit def optionFormat[T: Format]: Format[Option[T]] = new Format[Option[T]] {
     override def reads(json: JsValue): JsResult[Option[T]] = json.validateOpt[T]
 
     override def writes(o: Option[T]): JsValue = o match {
       case Some(t) => implicitly[Writes[T]].writes(t)
-      case None => JsNull
+      case None    => JsNull
     }
   }
 

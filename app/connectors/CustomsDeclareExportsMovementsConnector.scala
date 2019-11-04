@@ -67,7 +67,10 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
 
   def fetchAllSubmissions(providerId: String)(implicit hc: HeaderCarrier): Future[Seq[SubmissionFrontendModel]] =
     httpClient
-      .GET[Seq[SubmissionFrontendModel]](s"${appConfig.customsDeclareExportsMovementsUrl}$FetchAllSubmissionsEndpoint", providerIdQueryParam(providerId))
+      .GET[Seq[SubmissionFrontendModel]](
+        s"${appConfig.customsDeclareExportsMovementsUrl}$FetchAllSubmissionsEndpoint",
+        providerIdQueryParam(providerId)
+      )
       .andThen {
         case Success(response)  => logSuccessfulExchange("All Submission fetch", response)
         case Failure(exception) => logFailedExchange("All Submission fetch", exception)
@@ -86,7 +89,10 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
 
   def fetchNotifications(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[Seq[NotificationFrontendModel]] =
     httpClient
-      .GET[Seq[NotificationFrontendModel]](s"${appConfig.customsDeclareExportsMovementsUrl}$FetchNotifications/$conversationId", providerIdQueryParam(providerId))
+      .GET[Seq[NotificationFrontendModel]](
+        s"${appConfig.customsDeclareExportsMovementsUrl}$FetchNotifications/$conversationId",
+        providerIdQueryParam(providerId)
+      )
       .andThen {
         case Success(response)  => logSuccessfulExchange("All Notifications fetch", response)
         case Failure(exception) => logFailedExchange("All Notifications fetch", exception)
