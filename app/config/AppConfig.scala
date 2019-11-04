@@ -44,7 +44,7 @@ class AppConfig @Inject()(
       .getOptional[String](key)
       .getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  lazy val customsDeclareExportsMovements: String = servicesConfig.baseUrl("customs-declare-exports-movements")
+  lazy val customsDeclareExportsMovementsUrl: String = servicesConfig.baseUrl("customs-declare-exports-movements")
 
   lazy val customsDeclarationsGoodsTakenOutOfEuUrl: String = loadConfig("urls.customsDeclarationsGoodsTakenOutOfEu")
   lazy val serviceAvailabilityUrl: String = loadConfig("urls.serviceAvailability")

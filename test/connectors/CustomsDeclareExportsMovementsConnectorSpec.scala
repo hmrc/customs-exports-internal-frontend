@@ -33,7 +33,7 @@ import testdata.NotificationTestData.exampleNotificationFrontendModel
 class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
   private val config = mock[AppConfig]
-  given(config.customsDeclareExportsMovements).willReturn(downstreamURL)
+  given(config.customsDeclareExportsMovementsUrl).willReturn(downstreamURL)
 
   private val connector = new CustomsDeclareExportsMovementsConnector(config, httpClient)
 

@@ -80,7 +80,7 @@ class AppConfigSpec extends UnitSpec {
       }
 
       "asked for movements backend URL" in {
-        validAppConfig.customsDeclareExportsMovements mustBe "http://movementsBackendHost:1234"
+        validAppConfig.customsDeclareExportsMovementsUrl mustBe "http://movementsBackendHost:1234"
       }
 
       "asked for customsDeclarationsGoodsTakenOutOfEu URL" in {
@@ -96,7 +96,7 @@ class AppConfigSpec extends UnitSpec {
     "throw an exception" when {
 
       "movements backend URL is missing" in {
-        intercept[Exception](emptyAppConfig.customsDeclareExportsMovements).getMessage mustBe
+        intercept[Exception](emptyAppConfig.customsDeclareExportsMovementsUrl).getMessage mustBe
           "Could not find config customs-declare-exports-movements.host"
       }
 
