@@ -18,7 +18,7 @@ package controllers
 
 import java.time.Instant
 
-import base.MockExportsMovementsConnector
+import connectors.CustomsDeclareExportsMovementsConnector
 import models.notifications.NotificationFrontendModel
 import models.submissions.SubmissionFrontendModel
 import org.mockito.ArgumentCaptor
@@ -34,16 +34,19 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.view_submissions
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-class ViewSubmissionsControllerSpec extends ControllerLayerSpec with MockExportsMovementsConnector with ScalaFutures {
+class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFutures {
 
   private val submissionsPage = mock[view_submissions]
+  private val customsExportsMovementConnector: CustomsDeclareExportsMovementsConnector = mock[CustomsDeclareExportsMovementsConnector]
   private val controller =
     new ViewSubmissionsController(SuccessfulAuth(), customsExportsMovementConnector, stubMessagesControllerComponents(), submissionsPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
+    reset(customsExportsMovementConnector)
     when(submissionsPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
@@ -57,8 +60,8 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with MockExports
 
     "return 200 (OK)" in {
 
-      withConnectorFetchingAllSubmissions(Seq.empty)
-      withConnectorFetchingNotifications(Seq.empty)
+      when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq.empty))
+      when(customsExportsMovementConnector.fetchNotifications(any[String], any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
       val result = controller.displayPage(getRequest)
 
@@ -67,8 +70,8 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with MockExports
 
     "call connector for all Submissions" in {
 
-      withConnectorFetchingAllSubmissions(Seq.empty)
-      withConnectorFetchingNotifications(Seq.empty)
+      when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq.empty))
+      when(customsExportsMovementConnector.fetchNotifications(any[String], any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
       controller.displayPage(getRequest).futureValue
 
@@ -79,8 +82,8 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with MockExports
     "call connector for all Notifications" in {
 
       val submission = MovementsTestData.exampleSubmissionFrontendModel()
-      withConnectorFetchingAllSubmissions(Seq(submission))
-      withConnectorFetchingNotifications(Seq.empty)
+      when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq(submission)))
+      when(customsExportsMovementConnector.fetchNotifications(any[String], any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
       controller.displayPage(getRequest).futureValue
 
@@ -94,8 +97,9 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with MockExports
       val submission2 = exampleSubmissionFrontendModel(requestTimestamp = Instant.now().minusSeconds(30))
       val submission3 = exampleSubmissionFrontendModel(requestTimestamp = Instant.now())
 
-      withConnectorFetchingAllSubmissions(Seq(submission1, submission2, submission3))
-      withConnectorFetchingNotifications(Seq.empty)
+      when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any()))
+        .thenReturn(Future.successful(Seq(submission1, submission2, submission3)))
+      when(customsExportsMovementConnector.fetchNotifications(any[String], any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
       controller.displayPage(getRequest).futureValue
 
