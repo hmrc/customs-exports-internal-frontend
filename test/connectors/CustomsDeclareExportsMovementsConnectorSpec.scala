@@ -18,13 +18,12 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.AppConfig
-import connectors.CustomsDeclareExportsMovementsConnector._
 import connectors.exchanges.DisassociateDUCRRequest
 import forms.ConsignmentReferences
+import models.notifications.ResponseType.ControlResponse
 import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
 import org.mockito.BDDMockito._
 import play.api.http.Status
-import play.api.libs.json.Json
 import play.api.test.Helpers._
 import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmissionFrontendModel
@@ -41,7 +40,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
     "POST to the Back End" in {
       stubFor(
-        post(MovementsSubmissionEndpoint)
+        post("/movements")
           .willReturn(
             aResponse()
               .withStatus(Status.ACCEPTED)
@@ -53,7 +52,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
       connector.submit(request).futureValue
 
       verify(
-        postRequestedFor(urlEqualTo(MovementsSubmissionEndpoint))
+        postRequestedFor(urlEqualTo("/movements"))
           .withRequestBody(
             equalTo(
               """{"eori":"eori","providerId":"provider-id","choice":"EAL","consignmentReference":{"reference":"ref","referenceValue":"value"},"movementDetails":{"dateTime":"datetime"}}"""
@@ -67,7 +66,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
     "POST to the Back End" in {
       stubFor(
-        post(ConsolidationsSubmissionEndpoint)
+        post("/consolidation")
           .willReturn(
             aResponse()
               .withStatus(Status.ACCEPTED)
@@ -78,7 +77,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
       connector.submit(request).futureValue
 
       verify(
-        postRequestedFor(urlEqualTo(ConsolidationsSubmissionEndpoint))
+        postRequestedFor(urlEqualTo("/consolidation"))
           .withRequestBody(equalTo("""{"providerId":"provider-id","eori":"eori","ucr":"ucr","consolidationType":"DISASSOCIATE_DUCR"}"""))
       )
     }
@@ -88,17 +87,35 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
     "send GET request to the backend" in {
 
-      val submissionJson = Json.toJson(Seq(exampleSubmissionFrontendModel()))
+      val expectedSubmission = exampleSubmissionFrontendModel()
+      val submissionsJson =
+        s"""[
+           |  {
+           |    "uuid":"${expectedSubmission.uuid}",
+           |    "eori":"$validEori",
+           |    "conversationId":"$conversationId",
+           |    "ucrBlocks":[
+           |      {
+           |        "ucr":"$correctUcr",
+           |        "ucrType":"D"
+           |      }
+           |    ],
+           |    "actionType":"Arrival",
+           |    "requestTimestamp":"${expectedSubmission.requestTimestamp}"
+           |  }
+           |]""".stripMargin
 
       stubFor(
-        get(s"$FetchAllSubmissionsEndpoint?providerId=$providerId")
-          .willReturn(aResponse().withStatus(OK).withBody(submissionJson.toString))
+        get(s"/submissions?providerId=$providerId")
+          .willReturn(aResponse().withStatus(OK).withBody(submissionsJson))
       )
 
-      connector.fetchAllSubmissions(providerId).futureValue
+      val response = connector.fetchAllSubmissions(providerId).futureValue
 
-      val expectedUrl = s"$FetchAllSubmissionsEndpoint?providerId=$providerId"
+      val expectedUrl = s"/submissions?providerId=$providerId"
       verify(getRequestedFor(urlEqualTo(expectedUrl)))
+
+      response mustBe Seq(expectedSubmission)
     }
   }
 
@@ -106,17 +123,35 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
     "send GET request to the backend" in {
 
-      val submissionJson = Json.toJson(exampleSubmissionFrontendModel())
+      val expectedSubmission = exampleSubmissionFrontendModel()
+      val submissionJson =
+        s"""
+           |  {
+           |    "uuid":"${expectedSubmission.uuid}",
+           |    "eori":"$validEori",
+           |    "conversationId":"$conversationId",
+           |    "ucrBlocks":[
+           |      {
+           |        "ucr":"$correctUcr",
+           |        "ucrType":"D"
+           |      }
+           |    ],
+           |    "actionType":"Arrival",
+           |    "requestTimestamp":"${expectedSubmission.requestTimestamp}"
+           |  }
+           |""".stripMargin
 
       stubFor(
-        get(s"$FetchSingleSubmissionEndpoint/$conversationId?providerId=$providerId")
-          .willReturn(aResponse().withStatus(OK).withBody(submissionJson.toString))
+        get(s"/submissions/$conversationId?providerId=$providerId")
+          .willReturn(aResponse().withStatus(OK).withBody(submissionJson))
       )
 
-      connector.fetchSingleSubmission(conversationId, providerId).futureValue
+      val response = connector.fetchSingleSubmission(conversationId, providerId).futureValue
 
-      val expectedUrl = s"$FetchSingleSubmissionEndpoint/$conversationId?providerId=$providerId"
+      val expectedUrl = s"/submissions/$conversationId?providerId=$providerId"
       verify(getRequestedFor(urlEqualTo(expectedUrl)))
+
+      response mustBe Some(expectedSubmission)
     }
   }
 
@@ -124,17 +159,38 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
     "send GET request to the backend" in {
 
-      val notificationJson = Json.toJson(Seq(exampleNotificationFrontendModel()))
+      val expectedNotification = exampleNotificationFrontendModel()
+      val notificationsJson =
+        s"""[
+          |   {
+          |     "timestampReceived":"${expectedNotification.timestampReceived}",
+          |     "conversationId":"$conversationId",
+          |     "responseType":"${ControlResponse.value}",
+          |     "entries":[
+          |       {
+          |         "ucrBlock":{
+          |           "ucr":"$correctUcr",
+          |           "ucrType":"D"
+          |         },
+          |         "goodsItem":[]
+          |       }
+          |     ],
+          |     "errorCodes":[],
+          |     "messageCode":""
+          |   }
+          |]""".stripMargin
 
       stubFor(
-        get(s"$FetchNotifications/$conversationId?providerId=$providerId")
-          .willReturn(aResponse().withStatus(OK).withBody(notificationJson.toString))
+        get(s"/notifications/$conversationId?providerId=$providerId")
+          .willReturn(aResponse().withStatus(OK).withBody(notificationsJson))
       )
 
-      connector.fetchNotifications(conversationId, providerId).futureValue
+      val response = connector.fetchNotifications(conversationId, providerId).futureValue
 
-      val expectedUrl = s"$FetchNotifications/$conversationId?providerId=$providerId"
+      val expectedUrl = s"/notifications/$conversationId?providerId=$providerId"
       verify(getRequestedFor(urlEqualTo(expectedUrl)))
+
+      response mustBe Seq(expectedNotification)
     }
   }
 }
