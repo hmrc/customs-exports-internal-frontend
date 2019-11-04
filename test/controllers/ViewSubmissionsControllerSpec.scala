@@ -75,7 +75,7 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
       controller.displayPage(getRequest).futureValue
 
-      val expectedProviderId = SuccessfulAuth().operator.providerId
+      val expectedProviderId = providerId
       verify(customsExportsMovementConnector).fetchAllSubmissions(meq(expectedProviderId))(any())
     }
 
@@ -87,7 +87,7 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
       controller.displayPage(getRequest).futureValue
 
-      val expectedProviderId = SuccessfulAuth().operator.providerId
+      val expectedProviderId = providerId
       verify(customsExportsMovementConnector).fetchNotifications(meq(conversationId), meq(expectedProviderId))(any())
     }
 
@@ -103,13 +103,18 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
       controller.displayPage(getRequest).futureValue
 
-      val captor: ArgumentCaptor[Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])]] =
-        ArgumentCaptor.forClass(classOf[Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])]])
-      verify(submissionsPage).apply(captor.capture())(any(), any())
+      val viewArguments = captureViewArguments()
 
-      val submissions: Seq[SubmissionFrontendModel] = captor.getValue.map(_._1)
+      val submissions: Seq[SubmissionFrontendModel] = viewArguments.map(_._1)
       submissions mustBe Seq(submission3, submission2, submission1)
     }
+  }
+
+  private def captureViewArguments(): Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] = {
+    val captor: ArgumentCaptor[Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])]] =
+      ArgumentCaptor.forClass(classOf[Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])]])
+    verify(submissionsPage).apply(captor.capture())(any(), any())
+    captor.getValue
   }
 
 }
