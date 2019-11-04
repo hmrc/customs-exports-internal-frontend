@@ -16,8 +16,7 @@
 
 package views
 
-import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDate, ZoneId, ZonedDateTime}
+import java.time.{Instant, LocalDate, ZoneOffset}
 
 import models.UcrBlock
 import models.notifications.NotificationFrontendModel
@@ -56,9 +55,7 @@ class SubmissionsViewSpec extends ViewSpec {
 
     "contain correct submission data" in {
 
-      val dateTime: Instant = ZonedDateTime
-        .of(LocalDate.parse("2019-10-31", DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(), ZoneId.systemDefault())
-        .toInstant
+      val dateTime: Instant = LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
       val submission = exampleSubmissionFrontendModel(requestTimestamp = dateTime)
       val notifications = Seq(exampleNotificationFrontendModel(timestampReceived = dateTime.plusSeconds(3)))
 
@@ -72,11 +69,11 @@ class SubmissionsViewSpec extends ViewSpec {
 
     "contain MUCR and DUCR if Submission contains both" in {
 
-      val dateTime: Instant = ZonedDateTime
-        .of(LocalDate.parse("2019-10-31", DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(), ZoneId.systemDefault())
-        .toInstant
-      val submission = exampleSubmissionFrontendModel(requestTimestamp = dateTime)
-        .copy(ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "M"), UcrBlock(ucr = correctUcr_2, ucrType = "D")))
+      val dateTime: Instant = LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
+      val submission = exampleSubmissionFrontendModel(
+        requestTimestamp = dateTime,
+        ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "M"), UcrBlock(ucr = correctUcr_2, ucrType = "D"))
+      )
       val notifications = Seq(exampleNotificationFrontendModel(timestampReceived = dateTime.plusSeconds(3)))
 
       val page = createView(Seq((submission, notifications)))

@@ -42,15 +42,14 @@ object MovementsTestData {
   def exampleSubmissionFrontendModel(
     eori: String = validEori,
     conversationId: String = conversationId,
-    ucr: String = correctUcr,
-    ucrType: String = "D",
+    ucrBlocks: Seq[UcrBlock] = Seq(UcrBlock(ucr = correctUcr, ucrType = "D")),
     actionType: ActionType = ActionType.Arrival,
     requestTimestamp: Instant = Instant.now()
   ): SubmissionFrontendModel =
     SubmissionFrontendModel(
       eori = eori,
       conversationId = conversationId,
-      ucrBlocks = Seq(UcrBlock(ucr = ucr, ucrType = ucrType)),
+      ucrBlocks = ucrBlocks,
       actionType = actionType,
       requestTimestamp = requestTimestamp
     )
