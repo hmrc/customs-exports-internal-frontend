@@ -17,6 +17,8 @@
 package connectors
 
 import base.Injector
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
@@ -24,9 +26,13 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.ExecutionContext
 
-class ConnectorSpec extends WordSpec with WiremockTestServer with Injector with MustMatchers with MockitoSugar with BeforeAndAfterEach {
+class ConnectorSpec
+    extends WordSpec with WiremockTestServer with Injector with MustMatchers with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
 
   def overrideConfig: Map[String, Any] = Map()
+
+  implicit val defaultPatience: PatienceConfig =
+    PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
 
   protected implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   protected implicit val hc: HeaderCarrier = HeaderCarrier()

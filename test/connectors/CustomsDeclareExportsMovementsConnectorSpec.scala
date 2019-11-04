@@ -23,7 +23,6 @@ import connectors.exchanges.DisassociateDUCRRequest
 import forms.ConsignmentReferences
 import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
 import org.mockito.BDDMockito._
-import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -31,7 +30,7 @@ import testdata.CommonTestData.{conversationId, providerId}
 import testdata.MovementsTestData.exampleSubmissionFrontendModel
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 
-class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with ScalaFutures {
+class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
   private val config = mock[AppConfig]
   given(config.customsDeclareExportsMovements).willReturn(downstreamURL)
