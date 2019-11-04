@@ -18,14 +18,12 @@ package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.consolidations.{routes => consolidationRoutes}
-import controllers.exchanges.JourneyRequest
 import forms.AssociateUcr.form
-import forms.MucrOptions
 import javax.inject.Inject
 import models.ReturnToStartException
 import models.cache.{AssociateUcrAnswers, Cache}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.MovementRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.associate_ucr
@@ -61,7 +59,7 @@ class AssociateUCRController @Inject()(
         formWithErrors => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions))),
         formData => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(associateUcr = Some(formData))
-          movementRepository.upsert(Cache(request.pid, updatedCache)).map { _ =>
+          movementRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(consolidationRoutes.AssociateUCRSummaryController.displayPage())
           }
         }

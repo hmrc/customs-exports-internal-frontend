@@ -72,7 +72,7 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with MockExports
 
       controller.displayPage(getRequest).futureValue
 
-      val expectedProviderId = SuccessfulAuth().operator.pid
+      val expectedProviderId = SuccessfulAuth().operator.providerId
       verify(customsExportsMovementConnector).fetchAllSubmissions(meq(expectedProviderId))(any())
     }
 
@@ -84,7 +84,7 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with MockExports
 
       controller.displayPage(getRequest).futureValue
 
-      val expectedProviderId = SuccessfulAuth().operator.pid
+      val expectedProviderId = SuccessfulAuth().operator.providerId
       verify(customsExportsMovementConnector).fetchNotifications(meq(conversationId), meq(expectedProviderId))(any())
     }
 

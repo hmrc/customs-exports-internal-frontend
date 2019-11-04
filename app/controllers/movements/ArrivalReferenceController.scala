@@ -51,7 +51,7 @@ class ArrivalReferenceController @Inject()(
         (formWithErrors: Form[ArrivalReference]) => Future.successful(BadRequest(arrivalReferencePage(formWithErrors))),
         validForm => {
           val movementAnswers = request.answersAs[ArrivalAnswers].copy(arrivalReference = Some(validForm))
-          movementRepository.upsert(Cache(request.pid, movementAnswers)).map { _ =>
+          movementRepository.upsert(Cache(request.providerId, movementAnswers)).map { _ =>
             Redirect(controllers.movements.routes.MovementDetailsController.displayPage())
           }
         }

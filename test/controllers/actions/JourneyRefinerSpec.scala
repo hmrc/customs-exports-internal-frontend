@@ -26,8 +26,9 @@ import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{Result, Results}
 import play.api.test.FakeRequest
-import repositories.MovementRepository
 import play.api.test.Helpers._
+import repositories.MovementRepository
+import testdata.CommonTestData.providerId
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,10 +37,10 @@ class JourneyRefinerSpec extends WordSpec with MustMatchers with MockitoSugar wi
 
   private val movementRepository = mock[MovementRepository]
   private val block = mock[JourneyRequest[_] => Future[Result]]
-  private val operator = Operator("pid")
+  private val operator = Operator(providerId)
   private val request = AuthenticatedRequest(operator, FakeRequest())
   private val answers = AssociateUcrAnswers()
-  private val cache = Cache("pid", answers)
+  private val cache = Cache(providerId, answers)
 
   private val refiner = new JourneyRefiner(movementRepository)
 
@@ -52,7 +53,7 @@ class JourneyRefinerSpec extends WordSpec with MustMatchers with MockitoSugar wi
     "permit request" when {
       "answers found" in {
         given(block.apply(any())).willReturn(Future.successful(Results.Ok))
-        given(movementRepository.findByPid("pid")).willReturn(Future.successful(Some(cache)))
+        given(movementRepository.findByProviderId(providerId)).willReturn(Future.successful(Some(cache)))
 
         await(refiner.invokeBlock(request, block)) mustBe Results.Ok
 
@@ -68,7 +69,7 @@ class JourneyRefinerSpec extends WordSpec with MustMatchers with MockitoSugar wi
 
     "block request" when {
       "answers not found" in {
-        given(movementRepository.findByPid("pid")).willReturn(Future.successful(None))
+        given(movementRepository.findByProviderId(providerId)).willReturn(Future.successful(None))
 
         await(refiner.invokeBlock(request, block)) mustBe Results.Redirect(controllers.routes.ChoiceController.displayPage())
       }

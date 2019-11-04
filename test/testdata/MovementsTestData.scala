@@ -23,14 +23,14 @@ import models.UcrBlock
 import models.cache.{ArrivalAnswers, DepartureAnswers}
 import models.requests.MovementRequest
 import models.submissions.{ActionType, SubmissionFrontendModel}
-import testdata.CommonTestData.{conversationId, correctUcr, validEori}
+import testdata.CommonTestData.{conversationId, correctUcr, providerId, validEori}
 
 object MovementsTestData {
 
   def validMovementRequest(movementType: Choice): MovementRequest =
     movementType match {
-      case Choice.Arrival   => Movement.createMovementRequest("pid", validArrivalAnswers)
-      case Choice.Departure => Movement.createMovementRequest("pid", validDepartureAnswers)
+      case Choice.Arrival   => Movement.createMovementRequest(providerId, validArrivalAnswers)
+      case Choice.Departure => Movement.createMovementRequest(providerId, validDepartureAnswers)
     }
 
   def validArrivalAnswers =

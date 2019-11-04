@@ -51,7 +51,7 @@ class ShutMucrController @Inject()(
         formWithErrors => Future.successful(BadRequest(shutMucrPage(formWithErrors))),
         validForm => {
           val updatedCache = request.answersAs[ShutMucrAnswers].copy(shutMucr = Some(validForm))
-          movementRepository.upsert(Cache(request.pid, updatedCache)).map { _ =>
+          movementRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(consolidationsRoutes.ShutMucrSummaryController.displayPage())
           }
         }

@@ -56,11 +56,11 @@ class LocationController @Inject()(
         validForm => {
           request.answers match {
             case arrivalAnswers: ArrivalAnswers =>
-              movementRepository.upsert(Cache(request.pid, arrivalAnswers.copy(location = Some(validForm)))).map { _ =>
+              movementRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(location = Some(validForm)))).map { _ =>
                 Redirect(controllers.movements.routes.SummaryController.displayPage())
               }
             case departureAnswers: DepartureAnswers =>
-              movementRepository.upsert(Cache(request.pid, departureAnswers.copy(location = Some(validForm)))).map { _ =>
+              movementRepository.upsert(Cache(request.providerId, departureAnswers.copy(location = Some(validForm)))).map { _ =>
                 Redirect(controllers.movements.routes.TransportController.displayPage())
               }
           }

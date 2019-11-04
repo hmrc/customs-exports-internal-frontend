@@ -72,7 +72,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "existing answers" in {
-        givenTheCacheContains(Cache("pid", ArrivalAnswers()))
+        givenTheCacheContains(Cache(providerId, ArrivalAnswers()))
 
         val result = controller().displayPage(getRequest)
 
@@ -164,7 +164,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
-        theCacheUpserted mustBe Cache(pid, ArrivalAnswers(Answers.fakeEORI))
+        theCacheUpserted mustBe Cache(providerId, ArrivalAnswers(Answers.fakeEORI))
       }
 
       "user chooses departure" in {
@@ -173,7 +173,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
-        theCacheUpserted mustBe Cache(pid, DepartureAnswers(Answers.fakeEORI))
+        theCacheUpserted mustBe Cache(providerId, DepartureAnswers(Answers.fakeEORI))
       }
 
       "user chooses associate UCR" in {
@@ -182,7 +182,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
-        theCacheUpserted mustBe Cache(pid, AssociateUcrAnswers())
+        theCacheUpserted mustBe Cache(providerId, AssociateUcrAnswers())
       }
 
       "user chooses disassociate UCR" in {
@@ -191,7 +191,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateUcrController.display().url)
-        theCacheUpserted mustBe Cache(pid, DisassociateUcrAnswers())
+        theCacheUpserted mustBe Cache(providerId, DisassociateUcrAnswers())
       }
 
       "user chooses shut MUCR" in {
@@ -200,7 +200,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(consolidationRoutes.ShutMucrController.displayPage().url)
-        theCacheUpserted mustBe Cache(pid, ShutMucrAnswers())
+        theCacheUpserted mustBe Cache(providerId, ShutMucrAnswers())
       }
 
       "user chooses view submissions" in {

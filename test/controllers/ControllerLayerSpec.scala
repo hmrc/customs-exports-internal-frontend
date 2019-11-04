@@ -41,8 +41,8 @@ import scala.concurrent.Future
 
 abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with BeforeAndAfterEach with CSRFSupport {
 
-  protected val pid = "0"
-  protected val operator = Operator(pid)
+  protected val providerId = "0"
+  protected val operator = Operator(providerId)
 
   protected val getRequest: Request[AnyContent] = FakeRequest(GET, "/").withCSRFToken
   protected def postRequest: Request[AnyContent] = FakeRequest(POST, "/").withCSRFToken

@@ -47,7 +47,7 @@ class ShutMucrSummaryController @Inject()(
   def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)).async { implicit request =>
     val answers = request.answersAs[ShutMucrAnswers]
     val mucr = answers.shutMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
-    submissionService.submit(request.pid, answers).map { _ =>
+    submissionService.submit(request.providerId, answers).map { _ =>
       Ok(confirmationPage(mucr))
     }
   }

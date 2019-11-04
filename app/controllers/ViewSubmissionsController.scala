@@ -40,7 +40,7 @@ class ViewSubmissionsController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage: Action[AnyContent] = authenticate.async { implicit request =>
-    val providerId = request.pid
+    val providerId = request.providerId
 
     for {
       submissions <- connector.fetchAllSubmissions(providerId)

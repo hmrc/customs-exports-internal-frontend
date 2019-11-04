@@ -18,9 +18,9 @@ package controllers.exchanges
 
 import play.api.mvc.{Request, WrappedRequest}
 
-case class Operator(pid: String)
+case class Operator(providerId: String)
 
 case class AuthenticatedRequest[T](operator: Operator, request: Request[T]) extends WrappedRequest[T](request) {
 
-  val pid = operator.pid
+  val providerId = operator.providerId
 }

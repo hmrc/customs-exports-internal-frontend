@@ -26,7 +26,7 @@ import org.mockito.BDDMockito._
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import testdata.CommonTestData.{conversationId, providerId}
+import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmissionFrontendModel
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 
@@ -74,12 +74,12 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
           )
       )
 
-      val request = DisassociateDUCRRequest("pid", "eori", "ucr")
+      val request = DisassociateDUCRRequest("provider-id", "eori", "ucr")
       connector.submit(request).futureValue
 
       verify(
         postRequestedFor(urlEqualTo(ConsolidationsSubmissionEndpoint))
-          .withRequestBody(equalTo("""{"providerId":"pid","eori":"eori","ucr":"ucr","consolidationType":"DISASSOCIATE_DUCR"}"""))
+          .withRequestBody(equalTo("""{"providerId":"provider-id","eori":"eori","ucr":"ucr","consolidationType":"DISASSOCIATE_DUCR"}"""))
       )
     }
   }

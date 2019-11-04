@@ -53,7 +53,7 @@ class AssociateUCRSummaryController @Inject()(
     val answers = request.answersAs[AssociateUcrAnswers]
     val associateUcr = answers.associateUcr.getOrElse(throw ReturnToStartException)
 
-    submissionService.submit(request.pid, answers).map { _ =>
+    submissionService.submit(request.providerId, answers).map { _ =>
       Ok(associateUCRConfirmPage(associateUcr.kind.formValue, associateUcr.ucr))
     }
   }
