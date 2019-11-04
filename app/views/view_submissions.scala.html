@@ -45,16 +45,16 @@
       @for( (submission, notifications) <- submissions ){
         <tr class="govuk-table__row">
           <td class="govuk-table__cell" id="ucr-@submission.conversationId">
-          @if(notifications.isEmpty){
-            @components.elements_in_separate_lines(submission.ucrBlocks.map(_.ucr))
+          @if(notifications.isEmpty) {
+            @for(ucr <- submission.ucrBlocks.map(_.ucr)) { @ucr<br/> }
           } else {
 @*            <a href="@routes.NotificationsController.listOfNotifications(submission.conversationId)">*@
-                @components.elements_in_separate_lines(submission.ucrBlocks.map(_.ucr))
+              @for(ucr <- submission.ucrBlocks.map(_.ucr)) { @ucr<br/> }
 @*            </a>*@
           }
 
           </td>
-          <td class="govuk-table__cell" id="ucrType-@submission.conversationId">@{components.elements_in_separate_lines(submission.ucrBlocks.map(_.ucrType + "UCR"))}</td>
+          <td class="govuk-table__cell" id="ucrType-@submission.conversationId">@for(ucr <- submission.ucrBlocks.map(_.ucrType + "UCR")) { @ucr<br/> }</td>
           <td class="govuk-table__cell" id="dateOfRequest-@submission.conversationId">
               @FieldContentFormatter.dateTime(submission.requestTimestamp)
           </td>
