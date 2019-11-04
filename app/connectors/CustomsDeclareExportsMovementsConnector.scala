@@ -18,6 +18,7 @@ package connectors
 
 import config.AppConfig
 import connectors.exchanges.Consolidation
+import connectors.formats.Implicit.optionFormat
 import javax.inject.{Inject, Singleton}
 import models.notifications.NotificationFrontendModel
 import models.requests.MovementRequest
@@ -45,7 +46,7 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
     httpClient
       .POST[MovementRequest, HttpResponse](CustomsDeclareExportsMovementsUrl + MovementsSubmissionEndpoint, request, JsonHeaders)
       .andThen {
-        case Success(response)  => logExchange("Submit Movement", response.body)
+        case Success(response)  => logSuccessfulExchange("Submit Movement", response.body)
         case Failure(exception) => logFailedExchange("Submit Movement", exception)
       }
       .map(_ => (): Unit)
@@ -54,12 +55,12 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
     httpClient
       .POST[T, HttpResponse](CustomsDeclareExportsMovementsUrl + ConsolidationsSubmissionEndpoint, request, JsonHeaders)
       .andThen {
-        case Success(response)  => logExchange("Submit Consolidation", response.body)
+        case Success(response)  => logSuccessfulExchange("Submit Consolidation", response.body)
         case Failure(exception) => logFailedExchange("Submit Consolidation", exception)
       }
       .map(_ => (): Unit)
 
-  private def logExchange[T](`type`: String, payload: T)(implicit fmt: Format[T]): Unit =
+  private def logSuccessfulExchange[T](`type`: String, payload: T)(implicit fmt: Format[T]): Unit =
     logger.debug(`type` + "\n" + Json.toJson(payload))
 
   private def logFailedExchange(`type`: String, exception: Throwable): Unit =
@@ -69,8 +70,8 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
     httpClient
       .GET[Seq[SubmissionFrontendModel]](s"$CustomsDeclareExportsMovementsUrl$FetchAllSubmissionsEndpoint", providerIdQueryParam(providerId))
       .andThen {
-        case Success(response)  => logger.debug(s"Submissions fetch response. $response")
-        case Failure(exception) => logger.warn(s"Submissions fetch failure. $exception")
+        case Success(response)  => logSuccessfulExchange("All Submission fetch", response)
+        case Failure(exception) => logFailedExchange("All Submission fetch", exception)
       }
 
   def fetchSingleSubmission(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[Option[SubmissionFrontendModel]] =
@@ -80,16 +81,16 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
         providerIdQueryParam(providerId)
       )
       .andThen {
-        case Success(response)  => logger.debug(s"Single submission fetch response. $response")
-        case Failure(exception) => logger.warn(s"Single submission fetch failure. $exception")
+        case Success(response)  => logSuccessfulExchange("Single Submission fetch", response)
+        case Failure(exception) => logFailedExchange("Single Submission fetch", exception)
       }
 
   def fetchNotifications(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[Seq[NotificationFrontendModel]] =
     httpClient
       .GET[Seq[NotificationFrontendModel]](s"$CustomsDeclareExportsMovementsUrl$FetchNotifications/$conversationId", providerIdQueryParam(providerId))
       .andThen {
-        case Success(response)  => logger.debug(s"Notifications fetch response. $response")
-        case Failure(exception) => logger.warn(s"Notifications fetch failure. $exception")
+        case Success(response)  => logSuccessfulExchange("All Notifications fetch", response)
+        case Failure(exception) => logFailedExchange("All Notifications fetch", exception)
       }
 
   private def providerIdQueryParam(providerId: String): Seq[(String, String)] = Seq("providerId" -> providerId)
