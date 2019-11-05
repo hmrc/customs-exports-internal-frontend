@@ -98,6 +98,14 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
         case Failure(exception) => logFailedExchange("All Notifications fetch", exception)
       }
 
+  def fetchAllNotificationsForUser(providerId: String)(implicit hc: HeaderCarrier): Future[Seq[NotificationFrontendModel]] =
+    httpClient
+      .GET[Seq[NotificationFrontendModel]](s"${appConfig.customsDeclareExportsMovementsUrl}$FetchNotifications", providerIdQueryParam(providerId))
+      .andThen {
+        case Success(response)  => logSuccessfulExchange("All Notifications fetch", response)
+        case Failure(exception) => logFailedExchange("All Notifications fetch", exception)
+      }
+
   private def providerIdQueryParam(providerId: String): Seq[(String, String)] = Seq("providerId" -> providerId)
 }
 
