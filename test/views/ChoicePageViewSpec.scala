@@ -39,8 +39,6 @@ class ChoicePageViewSpec extends ViewSpec {
       }
 
       "some errors" in {
-
-        Choice.choiceMapping.constraints.head
         page(Choice.form.withError("error", "error.required")).getErrorSummary mustBe defined
       }
     }
