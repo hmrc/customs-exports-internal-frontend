@@ -27,7 +27,6 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testdata.CommonTestData.conversationId
 import testdata.MovementsTestData
 import testdata.MovementsTestData.exampleSubmissionFrontendModel
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -61,7 +60,7 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
     "return 200 (OK)" in {
 
       when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq.empty))
-      when(customsExportsMovementConnector.fetchNotifications(any[String], any[String])(any())).thenReturn(Future.successful(Seq.empty))
+      when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
       val result = controller.displayPage(getRequest)
 
@@ -71,7 +70,7 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
     "call connector for all Submissions" in {
 
       when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq.empty))
-      when(customsExportsMovementConnector.fetchNotifications(any[String], any[String])(any())).thenReturn(Future.successful(Seq.empty))
+      when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
       controller.displayPage(getRequest).futureValue
 
@@ -83,12 +82,12 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
       val submission = MovementsTestData.exampleSubmissionFrontendModel()
       when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq(submission)))
-      when(customsExportsMovementConnector.fetchNotifications(any[String], any[String])(any())).thenReturn(Future.successful(Seq.empty))
+      when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
       controller.displayPage(getRequest).futureValue
 
       val expectedProviderId = providerId
-      verify(customsExportsMovementConnector).fetchNotifications(meq(conversationId), meq(expectedProviderId))(any())
+      verify(customsExportsMovementConnector).fetchAllNotificationsForUser(meq(expectedProviderId))(any())
     }
 
     "call submissions view, passing Submissions in descending order" in {
@@ -99,7 +98,7 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
       when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any()))
         .thenReturn(Future.successful(Seq(submission1, submission2, submission3)))
-      when(customsExportsMovementConnector.fetchNotifications(any[String], any[String])(any())).thenReturn(Future.successful(Seq.empty))
+      when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
       controller.displayPage(getRequest).futureValue
 

@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.view_submissions
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ViewSubmissionsController @Inject()(
@@ -44,14 +44,24 @@ class ViewSubmissionsController @Inject()(
 
     for {
       submissions <- connector.fetchAllSubmissions(providerId)
-      notifications <- Future.sequence(submissions.map(submission => connector.fetchNotifications(submission.conversationId, providerId)))
-      sortedNotifications = notifications.map(_.sorted.reverse)
-      submissionsWithNotifications = submissions zip sortedNotifications
-
+      notifications <- connector.fetchAllNotificationsForUser(providerId)
+      sortedNotifications = notifications.sorted.reverse
+      submissionsWithNotifications = matchNotificationsAgainstSubmissions(submissions, sortedNotifications)
     } yield Ok(viewSubmissionsPage(sortWithOldestLast(submissionsWithNotifications)))
   }
 
-  private def sortWithOldestLast(submissionsWithNotifications: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])]) =
+  private def matchNotificationsAgainstSubmissions(
+    submissions: Seq[SubmissionFrontendModel],
+    notifications: Seq[NotificationFrontendModel]
+  ): Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] =
+    submissions.map { submission =>
+      val matchingNotifications = notifications.filter(_.conversationId == submission.conversationId)
+      (submission, matchingNotifications)
+    }
+
+  private def sortWithOldestLast(
+    submissionsWithNotifications: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])]
+  ): Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] =
     submissionsWithNotifications.sortBy(_._1.requestTimestamp)(Ordering[Instant].reverse)
 
 }
