@@ -25,6 +25,9 @@ movement.choice.disassociateDucr.label = Disassociate a consignment
 movement.choice.shutMucr.label = Shut a master consignment
 movement.choice.submissions.label = View requests
 
+choicePage.input.error.empty = Please, choose what do you want to do
+choicePage.input.error.incorrectValue = Please, choose valid option
+
 consignmentReferences.title = Consignment references
 consignmentReferences.ARRIVE.heading = Arrive consignment
 consignmentReferences.DEPART.heading = Depart consignment
