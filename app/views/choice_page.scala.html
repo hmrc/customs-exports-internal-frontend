@@ -38,12 +38,12 @@
             field = form(choiceId),
             legend = "",
             inputs = Seq(
-                RadioOption("arrival", Arrival.value, messages(s"movement.choice.arrival.label")),
-                RadioOption("associate", AssociateUCR.value, messages(s"movement.choice.associate.label")),
-                RadioOption("disassociate", DisassociateUCR.value, messages(s"movement.choice.disassociateDucr.label")),
-                RadioOption("shut_mucr", ShutMUCR.value, messages("movement.choice.shutMucr.label")),
-                RadioOption("departure", Departure.value, messages(s"movement.choice.departure.label")),
-                RadioOption("submissions", ViewSubmissions.value, messages("movement.choice.submissions.label"))
+                RadioOption("arrival", Arrival.value, "movement.choice.arrival.label"),
+                RadioOption("associate", AssociateUCR.value, "movement.choice.associate.label"),
+                RadioOption("disassociate", DisassociateUCR.value, "movement.choice.disassociateDucr.label"),
+                RadioOption("shut_mucr", ShutMUCR.value, "movement.choice.shutMucr.label"),
+                RadioOption("departure", Departure.value, "movement.choice.departure.label"),
+                RadioOption("submissions", ViewSubmissions.value, "movement.choice.submissions.label")
             )
         )
 
