@@ -32,6 +32,7 @@ import play.api.test.Helpers._
 import repositories.MovementRepository
 import services.audit.AuditService
 import testdata.CommonTestData._
+import testdata.MovementsTestData
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -44,7 +45,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
   private val audit = mock[AuditService]
   private val repository = mock[MovementRepository]
   private val connector = mock[CustomsDeclareExportsMovementsConnector]
-  private val service = new SubmissionService(repository, connector, audit, metrics)
+  private val service = new SubmissionService(repository, connector, audit, metrics, MovementsTestData.movementBuilder)
 
   override def afterEach(): Unit = {
     reset(audit, connector, metrics, repository)

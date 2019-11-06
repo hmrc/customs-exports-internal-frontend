@@ -18,8 +18,7 @@ package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.JourneyRequest
-import forms.MovementDetails._
-import forms.{ArrivalDetails, DepartureDetails}
+import forms.{ArrivalDetails, DepartureDetails, MovementDetails}
 import javax.inject.{Inject, Singleton}
 import models.cache._
 import play.api.data.Form
@@ -38,6 +37,7 @@ class MovementDetailsController @Inject()(
   getJourney: JourneyRefiner,
   movementRepository: MovementRepository,
   mcc: MessagesControllerComponents,
+  details: MovementDetails,
   arrivalDetailsPage: arrival_details,
   departureDetailsPage: departure_details
 )(implicit ec: ExecutionContext)
@@ -51,10 +51,10 @@ class MovementDetailsController @Inject()(
   }
 
   private def arrivalPage(arrivalDetails: Option[ArrivalDetails])(implicit request: JourneyRequest[AnyContent]): Html =
-    arrivalDetailsPage(arrivalDetails.fold(arrivalForm)(arrivalForm.fill(_)))
+    arrivalDetailsPage(arrivalDetails.fold(details.arrivalForm)(details.arrivalForm.fill(_)))
 
   private def departurePage(departureDetails: Option[DepartureDetails])(implicit request: JourneyRequest[AnyContent]): Html =
-    departureDetailsPage(departureDetails.fold(departureForm)(departureForm.fill(_)))
+    departureDetailsPage(departureDetails.fold(details.departureForm)(details.departureForm.fill(_)))
 
   def saveMovementDetails(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
     implicit request =>
@@ -68,7 +68,7 @@ class MovementDetailsController @Inject()(
   }
 
   private def handleSavingArrival(arrivalAnswers: ArrivalAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
-    arrivalForm
+    details.arrivalForm
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[ArrivalDetails]) => Future.successful(Left(arrivalDetailsPage(formWithErrors))),
@@ -79,7 +79,7 @@ class MovementDetailsController @Inject()(
       )
 
   private def handleSavingDeparture(departureAnswers: DepartureAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
-    departureForm
+    details.departureForm
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[DepartureDetails]) => Future.successful(Left(departureDetailsPage(formWithErrors))),

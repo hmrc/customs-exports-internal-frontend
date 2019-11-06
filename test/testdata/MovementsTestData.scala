@@ -16,9 +16,9 @@
 
 package testdata
 
-import java.time.Instant
+import java.time.{Instant, ZoneId}
 
-import forms.{Choice, ConsignmentReferences, Movement}
+import forms.{Choice, ConsignmentReferences, MovementBuilder, MovementDetails}
 import models.UcrBlock
 import models.cache.{ArrivalAnswers, DepartureAnswers}
 import models.requests.MovementRequest
@@ -27,10 +27,16 @@ import testdata.CommonTestData.{conversationId, correctUcr, providerId, validEor
 
 object MovementsTestData {
 
+  private val zoneId: ZoneId = ZoneId.of("Europe/London")
+
+  val movementDetails = new MovementDetails(zoneId)
+
+  val movementBuilder = new MovementBuilder(zoneId)
+
   def validMovementRequest(movementType: Choice): MovementRequest =
     movementType match {
-      case Choice.Arrival   => Movement.createMovementRequest(providerId, validArrivalAnswers)
-      case Choice.Departure => Movement.createMovementRequest(providerId, validDepartureAnswers)
+      case Choice.Arrival   => movementBuilder.createMovementRequest(providerId, validArrivalAnswers)
+      case Choice.Departure => movementBuilder.createMovementRequest(providerId, validDepartureAnswers)
     }
 
   def validArrivalAnswers =

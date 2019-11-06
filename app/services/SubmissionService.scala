@@ -36,7 +36,8 @@ class SubmissionService @Inject()(
   movementRepository: MovementRepository,
   connector: CustomsDeclareExportsMovementsConnector,
   auditService: AuditService,
-  metrics: MovementsMetrics
+  metrics: MovementsMetrics,
+  movementBuilder: MovementBuilder
 )(implicit ec: ExecutionContext) {
 
   def submit(providerId: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
@@ -91,7 +92,7 @@ class SubmissionService @Inject()(
   def submitMovementRequest(providerId: String, answers: Answers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
     val cache = Cache(providerId, answers)
 
-    val data = Movement.createMovementRequest(providerId, answers)
+    val data = movementBuilder.createMovementRequest(providerId, answers)
     val timer = metrics.startTimer(cache.answers.`type`)
 
     auditService.auditAllPagesUserInput(answers)
