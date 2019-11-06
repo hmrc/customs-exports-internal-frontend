@@ -1,6 +1,4 @@
 import play.core.PlayVersion.current
-import play.sbt.PlayImport._
-import sbt.Keys.libraryDependencies
 import sbt._
 
 object AppDependencies {
@@ -11,7 +9,8 @@ object AppDependencies {
     "uk.gov.hmrc" %% "play-json-union-formatter"     % "1.5.0",
     "uk.gov.hmrc" %% "play-ui"                       % "8.2.0-play-26",
     "uk.gov.hmrc" %% "bootstrap-play-26"             % "1.1.0",
-    "uk.gov.hmrc" %% "play-conditional-form-mapping" % "1.1.0-play-26"
+    "uk.gov.hmrc" %% "play-conditional-form-mapping" % "1.1.0-play-26",
+    "com.github.tototoshi" %% "scala-csv" % "1.3.6"
   ).map(_.withSources())
 
   val test = Seq(
