@@ -33,7 +33,7 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
 
   implicit protected def htmlBodyOf(html: Html): Document = Jsoup.parse(html.toString())
 
-  private val messagesApi: MessagesApi = instanceOf[MessagesApi]
+  private val messagesApi: MessagesApi = ViewSpec.realMessagesApi
 
   protected implicit def messages(implicit request: Request[_]): Messages =
     new AllMessageKeysAreMandatoryMessages(messagesApi.preferred(request))
@@ -82,4 +82,8 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
     def getForm: Option[Element] = Option(document.getElementsByTag("form")).filter(!_.isEmpty).map(_.first())
   }
 
+}
+
+object ViewSpec extends Injector {
+  val realMessagesApi = instanceOf[MessagesApi]
 }
