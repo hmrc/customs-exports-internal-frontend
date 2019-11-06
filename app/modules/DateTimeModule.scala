@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package forms
+package modules
 
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
-import javax.inject.Inject
-import play.api.data.Form
+import com.google.inject.AbstractModule
+import javax.inject.{Inject, Provider, Singleton}
 
-class MovementDetails @Inject()(zoneId: ZoneId) {
+class DateTimeModule extends AbstractModule {
+  def timezone = ZoneId.of("Europe/London")
 
-  def arrivalForm(): Form[ArrivalDetails] = Form(ArrivalDetails.mapping(zoneId))
-
-  def departureForm(): Form[DepartureDetails] = Form(DepartureDetails.mapping(zoneId))
+  override def configure(): Unit = {
+    bind(classOf[ZoneId]).toInstance(timezone)
+    bind(classOf[DateTimeFormatter]).toProvider(classOf[DateTimeFormatterProvider])
+  }
 }
 
-object MovementDetails {
-  val formId = "MovementDetails"
+@Singleton
+class DateTimeFormatterProvider @Inject()(zoneId: ZoneId) extends Provider[DateTimeFormatter] {
+  override def get(): DateTimeFormatter =
+    DateTimeFormatter.ofPattern("dd MMM yyyy 'at' HH:mm").withZone(zoneId)
 }

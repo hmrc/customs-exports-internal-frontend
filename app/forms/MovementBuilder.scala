@@ -19,13 +19,14 @@ package forms
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+import javax.inject.Inject
 import models.ReturnToStartException
 import models.cache.{Answers, ArrivalAnswers, DepartureAnswers}
 import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
 
-object Movement {
+class MovementBuilder @Inject()(zoneId: ZoneId) {
 
-  private val departureDateTimeFormatter = DateTimeFormatter.ISO_INSTANT
+  private val movementDateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
   def createMovementRequest(providerId: String, answers: Answers): MovementRequest = answers match {
     case arrivalAnswers: ArrivalAnswers     => createMovementArrivalRequest(providerId, arrivalAnswers)
@@ -58,14 +59,14 @@ object Movement {
   private def movementDetails(answers: ArrivalAnswers) =
     MovementDetailsRequest(
       answers.arrivalDetails
-        .map(arrivalDetails => s"${arrivalDetails.dateOfArrival.toString}T${arrivalDetails.timeOfArrival.toString}:00")
+        .map(arrival => movementDateTimeFormatter.format(arrival.goodsArrivalMoment(zoneId)))
         .getOrElse("")
     )
 
   private def movementDetails(answers: DepartureAnswers) =
     MovementDetailsRequest(
       answers.departureDetails
-        .map(departureDetails => departureDateTimeFormatter.format(departureDetails.goodsDepartureMoment.atZone(ZoneId.systemDefault())))
+        .map(departure => movementDateTimeFormatter.format(departure.goodsDepartureMoment(zoneId)))
         .getOrElse("")
     )
 }

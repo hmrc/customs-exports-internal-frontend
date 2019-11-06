@@ -30,6 +30,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsNumber, JsObject, Json}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import testdata.MovementsTestData
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.{arrival_details, departure_details}
 
@@ -40,9 +41,15 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
   private val page = mock[arrival_details]
 
   private def controller(answers: Answers = ArrivalAnswers()) =
-    new MovementDetailsController(SuccessfulAuth(), ValidJourney(answers), cache, stubMessagesControllerComponents(), page, mock[departure_details])(
-      global
-    )
+    new MovementDetailsController(
+      SuccessfulAuth(),
+      ValidJourney(answers),
+      cache,
+      stubMessagesControllerComponents(),
+      MovementsTestData.movementDetails,
+      page,
+      mock[departure_details]
+    )(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

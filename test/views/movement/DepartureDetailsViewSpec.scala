@@ -18,6 +18,7 @@ package views.movement
 
 import forms.MovementDetails
 import models.cache.ArrivalAnswers
+import testdata.MovementsTestData
 import views.ViewSpec
 import views.html.departure_details
 
@@ -25,25 +26,27 @@ class DepartureDetailsViewSpec extends ViewSpec {
 
   private implicit val request = journeyRequest(ArrivalAnswers())
 
+  private val movementDetails = MovementsTestData.movementDetails
+
   private val page = new departure_details(main_template)
 
   "Departure View" should {
     "render title" in {
-      page(MovementDetails.departureForm()).getTitle must containMessage("departureDetails.header")
+      page(movementDetails.departureForm()).getTitle must containMessage("departureDetails.header")
     }
 
     "render heading input with hint for date" in {
-      page(MovementDetails.departureForm()).getElementById("dateOfDeparture-label") must containMessage("departureDetails.date.question")
-      page(MovementDetails.departureForm()).getElementById("dateOfDeparture-hint") must containMessage("departureDetails.date.hint")
+      page(movementDetails.departureForm()).getElementById("dateOfDeparture-label") must containMessage("departureDetails.date.question")
+      page(movementDetails.departureForm()).getElementById("dateOfDeparture-hint") must containMessage("departureDetails.date.hint")
     }
 
     "render heading input with hint for time" in {
-      page(MovementDetails.departureForm()).getElementById("timeOfDeparture-label") must containMessage("departureDetails.time.question")
-      page(MovementDetails.departureForm()).getElementById("timeOfDeparture-hint") must containMessage("departureDetails.time.hint")
+      page(movementDetails.departureForm()).getElementById("timeOfDeparture-label") must containMessage("departureDetails.time.question")
+      page(movementDetails.departureForm()).getElementById("timeOfDeparture-hint") must containMessage("departureDetails.time.hint")
     }
 
     "render back button" in {
-      val backButton = page(MovementDetails.departureForm()).getBackButton
+      val backButton = page(movementDetails.departureForm()).getBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.movements.routes.ConsignmentReferencesController.displayPage())
@@ -51,11 +54,11 @@ class DepartureDetailsViewSpec extends ViewSpec {
 
     "render error summary" when {
       "no errors" in {
-        page(MovementDetails.departureForm()).getErrorSummary mustBe empty
+        page(movementDetails.departureForm()).getErrorSummary mustBe empty
       }
 
       "some errors" in {
-        page(MovementDetails.departureForm().withError("error", "error.required")).getErrorSummary mustBe defined
+        page(movementDetails.departureForm().withError("error", "error.required")).getErrorSummary mustBe defined
       }
     }
   }
