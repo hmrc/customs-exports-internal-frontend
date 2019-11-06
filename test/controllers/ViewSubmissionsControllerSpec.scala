@@ -27,8 +27,10 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import testdata.CommonTestData.{conversationId, conversationId_2, conversationId_3}
 import testdata.MovementsTestData
 import testdata.MovementsTestData.exampleSubmissionFrontendModel
+import testdata.NotificationTestData.exampleNotificationFrontendModel
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.view_submissions
 
@@ -90,22 +92,55 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
       verify(customsExportsMovementConnector).fetchAllNotificationsForUser(meq(expectedProviderId))(any())
     }
 
-    "call submissions view, passing Submissions in descending order" in {
+    "call submissions view, passing Submissions in descending order" when {
 
-      val submission1 = exampleSubmissionFrontendModel(requestTimestamp = Instant.now().minusSeconds(60))
-      val submission2 = exampleSubmissionFrontendModel(requestTimestamp = Instant.now().minusSeconds(30))
-      val submission3 = exampleSubmissionFrontendModel(requestTimestamp = Instant.now())
+      "there are no Notifications for the Submissions" in {
 
-      when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any()))
-        .thenReturn(Future.successful(Seq(submission1, submission2, submission3)))
-      when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
+        val submission1 = exampleSubmissionFrontendModel(requestTimestamp = Instant.now().minusSeconds(60))
+        val submission2 = exampleSubmissionFrontendModel(requestTimestamp = Instant.now().minusSeconds(30))
+        val submission3 = exampleSubmissionFrontendModel(requestTimestamp = Instant.now())
 
-      controller.displayPage(getRequest).futureValue
+        when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any()))
+          .thenReturn(Future.successful(Seq(submission1, submission2, submission3)))
+        when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
-      val viewArguments = captureViewArguments()
+        controller.displayPage(getRequest).futureValue
 
-      val submissions: Seq[SubmissionFrontendModel] = viewArguments.map(_._1)
-      submissions mustBe Seq(submission3, submission2, submission1)
+        val viewArguments: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] = captureViewArguments()
+
+        val submissions: Seq[SubmissionFrontendModel] = viewArguments.map(_._1)
+        submissions mustBe Seq(submission3, submission2, submission1)
+      }
+
+      "there are Notifications for the Submissions" in {
+
+        val submission1 = exampleSubmissionFrontendModel(conversationId = conversationId, requestTimestamp = Instant.now().minusSeconds(60))
+        val submission2 = exampleSubmissionFrontendModel(conversationId = conversationId_2, requestTimestamp = Instant.now().minusSeconds(30))
+        val submission3 = exampleSubmissionFrontendModel(conversationId = conversationId_3, requestTimestamp = Instant.now())
+
+        val notification1 = exampleNotificationFrontendModel(conversationId = conversationId)
+        val notification2 = exampleNotificationFrontendModel(conversationId = conversationId_2)
+        val notification3 = exampleNotificationFrontendModel(conversationId = conversationId_3)
+        val notification4 = exampleNotificationFrontendModel(conversationId = conversationId_3)
+
+        when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any()))
+          .thenReturn(Future.successful(Seq(submission1, submission2, submission3)))
+        when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any()))
+          .thenReturn(Future.successful(Seq(notification1, notification2, notification3, notification4)))
+
+        controller.displayPage(getRequest).futureValue
+
+        val viewArguments: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] = captureViewArguments()
+
+        val submissions: Seq[SubmissionFrontendModel] = viewArguments.map(_._1)
+        val notifications: Seq[Seq[NotificationFrontendModel]] = viewArguments.map(_._2)
+        submissions mustBe Seq(submission3, submission2, submission1)
+        notifications mustBe Seq(
+          Seq(notification4, notification3),
+          Seq(notification2),
+          Seq(notification1)
+        )
+      }
     }
   }
 
