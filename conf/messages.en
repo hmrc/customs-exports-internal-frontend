@@ -1,4 +1,6 @@
-service.name=Internal Exports Movements 
+service.name=Internal Exports Movements Service
+header.homepage.alt=Go to the HMRC homepage
+header.homepage.text=HM Revenue & Customs
 
 site.continue = Continue
 site.back = Back

@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
 import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 import uk.gov.hmrc.play.views.html.layouts._
 import views.html.layouts.GovUkTemplate
-import views.html.templates.{govuk_wrapper, main_template}
+import views.html.templates.{govuk_internal_template, govuk_wrapper, main_template}
 
 trait ViewTemplates {
 
@@ -67,8 +67,8 @@ trait ViewTemplates {
     new MainContentHeader(),
     new MainContent(),
     new FooterLinks(),
-    new GovUkTemplate(),
     new ReportAProblemLink(),
+    new govuk_internal_template(),
     minimalAppConfig
   )
 
