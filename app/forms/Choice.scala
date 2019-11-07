@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.Mapping.requiredRadio
+import forms.EnhancedMapping.requiredRadio
 import models.cache.JourneyType.{JourneyType, _}
 import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.json._
