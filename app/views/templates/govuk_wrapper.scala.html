@@ -57,7 +57,7 @@
 @insideHeader = {
     @header_nav_di(
       navTitle = Some(messages("service.name")),
-      navTitleLink = None,
+      navTitleLink = Some(controllers.routes.ChoiceController.displayPage()),
       showBetaLink = false,
       navLinks = Some(headerNavLinks))
 }

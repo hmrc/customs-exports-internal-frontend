@@ -15,7 +15,7 @@
 @import 'colours/_colours-applied';
 
 @import 'partials/_step-by-step-navigation';
-@import 'partials/_lists.scss';
+@import 'partials/_lists.scss';x
 @import 'partials/_layout.scss';
 
 #global-header {
@@ -23,7 +23,7 @@
   border-bottom: 10px solid govuk-colour("turquoise");
 }
 
-.header__menu__proposition-name, .organisation-logo {
+.header__menu__proposition-name, a.header__menu__proposition-name:visited, .organisation-logo {
   color: #000;
 }
 
