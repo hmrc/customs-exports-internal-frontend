@@ -48,9 +48,9 @@
           @if(notifications.isEmpty) {
             @for(ucr <- submission.ucrBlocks.map(_.ucr)) { @ucr<br/> }
           } else {
-@*            <a href="@routes.NotificationsController.listOfNotifications(submission.conversationId)">*@
+            <a href="@routes.ViewNotificationsController.listOfNotifications(submission.conversationId)">
               @for(ucr <- submission.ucrBlocks.map(_.ucr)) { @ucr<br/> }
-@*            </a>*@
+            </a>
           }
 
           </td>
