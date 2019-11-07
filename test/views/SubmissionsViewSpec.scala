@@ -18,6 +18,7 @@ package views
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
+import controllers.routes
 import models.UcrBlock
 import models.notifications.NotificationFrontendModel
 import models.submissions.SubmissionFrontendModel
@@ -29,6 +30,7 @@ import views.html.view_submissions
 
 class SubmissionsViewSpec extends ViewSpec {
 
+  private val dateTime: Instant = LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
   private def createView(submissions: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] = Seq.empty): Html =
     new view_submissions(main_template)(submissions)
 
@@ -51,7 +53,6 @@ class SubmissionsViewSpec extends ViewSpec {
 
     "contain correct submission data" in {
 
-      val dateTime: Instant = LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
       val submission = exampleSubmissionFrontendModel(requestTimestamp = dateTime)
       val notifications = Seq(exampleNotificationFrontendModel(timestampReceived = dateTime.plusSeconds(3)))
 
@@ -63,9 +64,20 @@ class SubmissionsViewSpec extends ViewSpec {
       page.getElementById(s"submissionAction-$conversationId").text() mustBe messages(s"submissions.arrival")
     }
 
+    "contain link to ViewNotifications page" when {
+      "there are Notifications for the Submission" in {
+
+        val submission = exampleSubmissionFrontendModel(requestTimestamp = dateTime)
+        val notifications = Seq(exampleNotificationFrontendModel(timestampReceived = dateTime.plusSeconds(3)))
+
+        val page = createView(Seq((submission, notifications)))
+
+        page.getElementById(s"ucr-$conversationId").child(0) must haveHref(routes.ViewNotificationsController.listOfNotifications(conversationId))
+      }
+    }
+
     "contain MUCR and DUCR if Submission contains both" in {
 
-      val dateTime: Instant = LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
       val submission = exampleSubmissionFrontendModel(
         requestTimestamp = dateTime,
         ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "M"), UcrBlock(ucr = correctUcr_2, ucrType = "D"))
