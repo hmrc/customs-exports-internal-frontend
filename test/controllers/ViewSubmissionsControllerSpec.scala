@@ -27,7 +27,7 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testdata.CommonTestData.{conversationId, conversationId_2, conversationId_3}
+import testdata.CommonTestData.{conversationId, conversationId_2, conversationId_3, providerId}
 import testdata.MovementsTestData
 import testdata.MovementsTestData.exampleSubmissionFrontendModel
 import testdata.NotificationTestData.exampleNotificationFrontendModel
@@ -135,11 +135,7 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
         val submissions: Seq[SubmissionFrontendModel] = viewArguments.map(_._1)
         val notifications: Seq[Seq[NotificationFrontendModel]] = viewArguments.map(_._2)
         submissions mustBe Seq(submission3, submission2, submission1)
-        notifications mustBe Seq(
-          Seq(notification4, notification3),
-          Seq(notification2),
-          Seq(notification1)
-        )
+        notifications mustBe Seq(Seq(notification4, notification3), Seq(notification2), Seq(notification1))
       }
     }
   }

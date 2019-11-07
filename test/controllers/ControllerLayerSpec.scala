@@ -32,6 +32,7 @@ import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import repositories.MovementRepository
+import testdata.CommonTestData.providerId
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.ViewTemplates
 import views.html.unauthorized
@@ -41,7 +42,6 @@ import scala.concurrent.Future
 
 abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with BeforeAndAfterEach with CSRFSupport {
 
-  protected val providerId = "0"
   protected val operator = Operator(providerId)
 
   protected val getRequest: Request[AnyContent] = FakeRequest(GET, "/").withCSRFToken

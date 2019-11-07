@@ -63,3 +63,6 @@ POST        /shut-mucr-summary                     controllers.consolidations.Sh
 
 # Submissions page
 GET         /submissions                           controllers.ViewSubmissionsController.displayPage()
+
+# Notifications page
+GET         /notifications/:conversationId         controllers.ViewNotificationsController.listOfNotifications(conversationId)
