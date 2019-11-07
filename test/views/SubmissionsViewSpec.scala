@@ -21,8 +21,6 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 import models.UcrBlock
 import models.notifications.NotificationFrontendModel
 import models.submissions.SubmissionFrontendModel
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmissionFrontendModel
@@ -30,8 +28,6 @@ import testdata.NotificationTestData.exampleNotificationFrontendModel
 import views.html.view_submissions
 
 class SubmissionsViewSpec extends ViewSpec {
-
-  private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
   private def createView(submissions: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] = Seq.empty): Html =
     new view_submissions(main_template)(submissions)

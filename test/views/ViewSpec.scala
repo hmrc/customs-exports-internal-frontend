@@ -24,7 +24,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.i18n.{Lang, Messages, MessagesApi}
-import play.api.mvc.Request
+import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData.providerId
@@ -38,9 +38,11 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
   protected implicit def messages(implicit request: Request[_]): Messages =
     new AllMessageKeysAreMandatoryMessages(messagesApi.preferred(request))
 
-  protected implicit def messages(key: String)(implicit request: Request[_]): String = messages(request)(key)
+  protected def messages(key: String, args: Any*)(implicit request: Request[_]): String = messages(request)(key, args: _*)
 
-  protected def journeyRequest(answers: Answers) = JourneyRequest(answers, AuthenticatedRequest(Operator(providerId), FakeRequest().withCSRFToken))
+  protected implicit val fakeRequest: Request[AnyContent] = FakeRequest().withCSRFToken
+
+  protected def journeyRequest(answers: Answers) = JourneyRequest(answers, AuthenticatedRequest(Operator(providerId), fakeRequest))
 
   /*
     Fails the test if a view is configured with a message key that doesnt exist in the messages file
