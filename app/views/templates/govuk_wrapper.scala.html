@@ -18,7 +18,7 @@
 @import play.twirl.api.HtmlFormat
 @import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 @import uk.gov.hmrc.play.views.html.layouts._
-@import views.html.layouts.GovUkTemplate
+@import views.html.templates.govuk_internal_template
 
 @this(
     head_di: Head,
@@ -28,10 +28,11 @@
     main_content_header_di: MainContentHeader,
     main_content_di: MainContent,
     footer_links_di: FooterLinks,
-    hmrc_gov_uk_template: GovUkTemplate,
     report_a_problem_link_di: ReportAProblemLink,
+    internal_template: govuk_internal_template,
     appConfig: AppConfig
 )
+
 
 @(title: String,
   mainClass: Option[String] = None,
@@ -79,7 +80,9 @@
     @service_info_di(
       betaBanner = HtmlFormat.empty,
       includeGridWrapper = false,
-      serviceInfoContent = Some(serviceInfoContent))
+      includeHMRCBranding = false,
+      serviceInfoContent = Some(serviceInfoContent)
+    )
 }
 
 @mainContentHeader = {
@@ -101,4 +104,4 @@
       sidebar = sidebar)
 }
 
-@hmrc_gov_uk_template(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footer_links_di()), true)(content)
+@internal_template(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footer_links_di()), true)(content)
