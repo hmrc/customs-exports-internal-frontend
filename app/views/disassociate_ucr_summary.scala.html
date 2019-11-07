@@ -14,9 +14,9 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.main_template
 @import forms.DisassociateUcr
 @import views.Title
+@import views.html.templates.main_template
 
 @this(main_template: main_template)
 
@@ -28,7 +28,7 @@
 
       @components.back_link(consolidations.routes.DisassociateUcrController.display())
 
-      @components.page_title(title = Some("disassociate.ucr.summary.title"))
+      @components.page_title(title = Some(messages("disassociate.ucr.summary.title")))
 
       <table>
           <caption class="heading-medium">@messages("disassociate.ucr.summary.table.caption")</caption>
