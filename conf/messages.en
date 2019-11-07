@@ -17,6 +17,9 @@ error.required = Please enter a value
 error.summary.title = There’s been a problem
 error.summary.text = Check the following
 
+error.mucr.empty = MUCR number cannot be empty
+error.mucr.format = MUCR number is in incorrect format
+
 movement.choice.title = What do you want to do?
 movement.choice.arrival.label = Arrive a consignment
 movement.choice.departure.label = Depart a consignment
