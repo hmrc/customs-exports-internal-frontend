@@ -20,40 +20,38 @@ import base.UnitSpec
 import models.notifications.ResponseType._
 import models.viewmodels.decoder.ActionCode
 import models.viewmodels.notificationspage.MovementTotalsResponseType.{EMR, ERS}
+import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 
-class ResponseConverterProviderSpec extends UnitSpec {
+class ResponseConverterProviderSpec extends UnitSpec with BeforeAndAfterEach {
 
-  private trait Test {
-    implicit val messages: Messages = stubMessages()
+  implicit val messages: Messages = stubMessages()
 
-    val controlResponseAcknowledgedConverter: ControlResponseAcknowledgedConverter =
-      mock[ControlResponseAcknowledgedConverter]
-    val controlResponseBlockedConverter: ControlResponseBlockedConverter = mock[ControlResponseBlockedConverter]
-    val controlResponseRejectedConverter: ControlResponseRejectedConverter = mock[ControlResponseRejectedConverter]
-    val ersResponseConverter: ERSResponseConverter = mock[ERSResponseConverter]
-    val emrResponseConverter: EMRResponseConverter = mock[EMRResponseConverter]
-    val movementResponseConverter: MovementResponseConverter = mock[MovementResponseConverter]
-    val unknownResponseConverter: UnknownResponseConverter = mock[UnknownResponseConverter]
+  private val controlResponseAcknowledgedConverter: ControlResponseAcknowledgedConverter = mock[ControlResponseAcknowledgedConverter]
+  private val controlResponseBlockedConverter: ControlResponseBlockedConverter = mock[ControlResponseBlockedConverter]
+  private val controlResponseRejectedConverter: ControlResponseRejectedConverter = mock[ControlResponseRejectedConverter]
+  private val ersResponseConverter: ERSResponseConverter = mock[ERSResponseConverter]
+  private val emrResponseConverter: EMRResponseConverter = mock[EMRResponseConverter]
+  private val movementResponseConverter: MovementResponseConverter = mock[MovementResponseConverter]
+  private val unknownResponseConverter: UnknownResponseConverter = mock[UnknownResponseConverter]
 
-    val provider = new ResponseConverterProvider(
-      controlResponseAcknowledgedConverter,
-      controlResponseBlockedConverter,
-      controlResponseRejectedConverter,
-      ersResponseConverter,
-      emrResponseConverter,
-      movementResponseConverter,
-      unknownResponseConverter
-    )
-  }
+  private val provider = new ResponseConverterProvider(
+    controlResponseAcknowledgedConverter,
+    controlResponseBlockedConverter,
+    controlResponseRejectedConverter,
+    ersResponseConverter,
+    emrResponseConverter,
+    movementResponseConverter,
+    unknownResponseConverter
+  )
 
   "ResponseConverterProvider" should {
 
     "return correct Response Converter" when {
 
-      "provided with MovementResponse" in new Test {
+      "provided with MovementResponse" in {
 
         val input = exampleNotificationFrontendModel(responseType = MovementResponse)
 
@@ -62,7 +60,7 @@ class ResponseConverterProviderSpec extends UnitSpec {
         converter mustBe movementResponseConverter
       }
 
-      "provided with ERS MovementTotalsResponse" in new Test {
+      "provided with ERS MovementTotalsResponse" in {
 
         val input =
           exampleNotificationFrontendModel(responseType = MovementTotalsResponse, messageCode = ERS.code)
@@ -72,7 +70,7 @@ class ResponseConverterProviderSpec extends UnitSpec {
         converter mustBe ersResponseConverter
       }
 
-      "provided with EMR MovementTotalsResponse" in new Test {
+      "provided with EMR MovementTotalsResponse" in {
 
         val input =
           exampleNotificationFrontendModel(responseType = MovementTotalsResponse, messageCode = EMR.code)
@@ -84,7 +82,7 @@ class ResponseConverterProviderSpec extends UnitSpec {
 
       "provided with ControlResponse" which {
 
-        "is Acknowledged" in new Test {
+        "is Acknowledged" in {
 
           val input = exampleNotificationFrontendModel(responseType = ControlResponse, actionCode = Some(ActionCode.AcknowledgedAndProcessed.code))
 
@@ -93,7 +91,7 @@ class ResponseConverterProviderSpec extends UnitSpec {
           converter mustBe controlResponseAcknowledgedConverter
         }
 
-        "is Blocked" in new Test {
+        "is Blocked" in {
 
           val input =
             exampleNotificationFrontendModel(responseType = ControlResponse, actionCode = Some(ActionCode.PartiallyAcknowledgedAndProcessed.code))
@@ -103,7 +101,7 @@ class ResponseConverterProviderSpec extends UnitSpec {
           converter mustBe controlResponseBlockedConverter
         }
 
-        "is Rejected" in new Test {
+        "is Rejected" in {
 
           val input = exampleNotificationFrontendModel(responseType = ControlResponse, actionCode = Some(ActionCode.Rejected.code))
 
@@ -116,7 +114,7 @@ class ResponseConverterProviderSpec extends UnitSpec {
 
     "return Unknown Response Converter" when {
 
-      "provided with unknown response" in new Test {
+      "provided with unknown response" in {
 
         val input = exampleNotificationFrontendModel(responseType = MovementTotalsResponse, messageCode = "UNKNOWN")
 
@@ -125,7 +123,7 @@ class ResponseConverterProviderSpec extends UnitSpec {
         converter mustBe unknownResponseConverter
       }
 
-      "provided with ControlResponse with unknown ActionCode" in new Test {
+      "provided with ControlResponse with unknown ActionCode" in {
 
         val input = exampleNotificationFrontendModel(responseType = ControlResponse, actionCode = Some("UNKNOWN"))
 

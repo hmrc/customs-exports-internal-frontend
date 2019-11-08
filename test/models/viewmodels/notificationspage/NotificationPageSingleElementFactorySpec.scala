@@ -27,7 +27,8 @@ import models.submissions.{ActionType, SubmissionFrontendModel}
 import models.viewmodels.notificationspage.converters._
 import modules.DateTimeModule
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{reset, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.twirl.api.Html
@@ -35,30 +36,33 @@ import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmissionFrontendModel
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 
-class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStub {
+class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStub with BeforeAndAfterEach {
 
   private val testTimestampString = "2019-10-23T12:34+00:00"
   private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneId.systemDefault())
   private val testTimestamp = ZonedDateTime.parse(testTimestampString, formatter).toInstant
 
+  private implicit val fakeRequest = FakeRequest()
+
+  private val responseConverterProvider = mock[ResponseConverterProvider]
+  private val factory = new NotificationPageSingleElementFactory(responseConverterProvider)
+
   private val injector = Guice.createInjector(new DateTimeModule())
+  private val unknownResponseConverter = injector.getInstance(classOf[UnknownResponseConverter])
 
-  private trait Test {
-    implicit val fakeRequest = FakeRequest()
-    val unknownResponseConverter = injector.getInstance(classOf[UnknownResponseConverter])
+  override def beforeEach(): Unit = {
+    super.beforeEach()
 
-    val responseConverterProvider = mock[ResponseConverterProvider]
+    reset(responseConverterProvider)
     when(responseConverterProvider.provideResponseConverter(any[NotificationFrontendModel]))
       .thenReturn(unknownResponseConverter)
-
-    val factory = new NotificationPageSingleElementFactory(responseConverterProvider)
   }
 
   "NotificationPageSingleElementFactory" should {
 
     "return NotificationsPageSingleElement with values returned by Messages" when {
 
-      "provided with Arrival SubmissionFrontendModel" in new Test {
+      "provided with Arrival SubmissionFrontendModel" in {
 
         val input: SubmissionFrontendModel =
           exampleSubmissionFrontendModel(actionType = ActionType.Arrival, requestTimestamp = testTimestamp)
@@ -76,7 +80,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertEquality(result, expectedResult)
       }
 
-      "provided with Departure SubmissionFrontendModel" in new Test {
+      "provided with Departure SubmissionFrontendModel" in {
 
         val input: SubmissionFrontendModel =
           exampleSubmissionFrontendModel(actionType = ActionType.Departure, requestTimestamp = testTimestamp)
@@ -94,7 +98,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertEquality(result, expectedResult)
       }
 
-      "provided with DucrAssociation SubmissionFrontendModel" in new Test {
+      "provided with DucrAssociation SubmissionFrontendModel" in {
 
         val input: SubmissionFrontendModel = SubmissionFrontendModel(
           eori = validEori,
@@ -120,7 +124,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertEquality(result, expectedResult)
       }
 
-      "provided with MucrAssociation SubmissionFrontendModel" in new Test {
+      "provided with MucrAssociation SubmissionFrontendModel" in {
 
         val input: SubmissionFrontendModel = SubmissionFrontendModel(
           eori = validEori,
@@ -143,7 +147,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertEquality(result, expectedResult)
       }
 
-      "provided with DucrDisassociation SubmissionFrontendModel" in new Test {
+      "provided with DucrDisassociation SubmissionFrontendModel" in {
 
         val input: SubmissionFrontendModel = exampleSubmissionFrontendModel(
           actionType = ActionType.DucrDisassociation,
@@ -164,7 +168,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertEquality(result, expectedResult)
       }
 
-      "provided with MucrDisassociation SubmissionFrontendModel" in new Test {
+      "provided with MucrDisassociation SubmissionFrontendModel" in {
 
         val input: SubmissionFrontendModel = exampleSubmissionFrontendModel(
           actionType = ActionType.MucrDisassociation,
@@ -185,7 +189,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertEquality(result, expectedResult)
       }
 
-      "provided with ShutMucr SubmissionFrontendModel" in new Test {
+      "provided with ShutMucr SubmissionFrontendModel" in {
 
         val input: SubmissionFrontendModel =
           exampleSubmissionFrontendModel(
@@ -213,7 +217,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
 
     "provided with NotificationFrontendModel" should {
 
-      "call ResponseConverterProvider" in new Test {
+      "call ResponseConverterProvider" in {
 
         val input = exampleNotificationFrontendModel()
 
@@ -222,7 +226,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         verify(responseConverterProvider).provideResponseConverter(meq(input))
       }
 
-      "call converter returned by ResponseConverterProvider" in new Test {
+      "call converter returned by ResponseConverterProvider" in {
 
         val exampleNotificationPageElement =
           NotificationsPageSingleElement(title = "TITLE", timestampInfo = "TIMESTAMP", content = Html("<test>HTML</test>"))
@@ -240,7 +244,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         verify(responseConverter).convert(meq(input))(any[Messages])
       }
 
-      "return NotificationsPageSingleElement returned by converter" in new Test {
+      "return NotificationsPageSingleElement returned by converter" in {
 
         val exampleNotificationPageElement =
           NotificationsPageSingleElement(title = "TITLE", timestampInfo = "TIMESTAMP", content = Html("<test>HTML</test>"))

@@ -16,30 +16,27 @@
 
 package models.viewmodels.notificationspage.converters
 
-import base.UnitSpec
+import base.{MessagesStub, UnitSpec}
 import com.google.inject.Guice
 import models.notifications.ResponseType
 import models.viewmodels.decoder.ActionCode
-import play.api.i18n.Messages
-import play.api.test.Helpers.stubMessages
+import play.api.test.FakeRequest
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import utils.DateTimeTestModule
 
-class ControlResponseAcknowledgedConverterSpec extends UnitSpec {
+class ControlResponseAcknowledgedConverterSpec extends UnitSpec with MessagesStub {
 
   import ControlResponseAcknowledgedConverterSpec._
 
-  private val injector = Guice.createInjector(new DateTimeTestModule())
+  private implicit val fakeRequest = FakeRequest()
 
-  private trait Test {
-    implicit val messages: Messages = stubMessages()
-    val converter = injector.getInstance(classOf[ControlResponseAcknowledgedConverter])
-  }
+  private val injector = Guice.createInjector(new DateTimeTestModule())
+  private val converter = injector.getInstance(classOf[ControlResponseAcknowledgedConverter])
 
   "ControlResponseAcknowledgedConverter on convert" should {
 
-    "return NotificationsPageSingleElement with correct title" in new Test {
+    "return NotificationsPageSingleElement with correct title" in {
 
       val input = AcknowledgedControlResponse
       val expectedTitle = messages("notifications.elem.title.inventoryLinkingControlResponse.AcknowledgedAndProcessed")
@@ -49,7 +46,7 @@ class ControlResponseAcknowledgedConverterSpec extends UnitSpec {
       result.title mustBe expectedTitle
     }
 
-    "return NotificationsPageSingleElement with correct timestampInfo" in new Test {
+    "return NotificationsPageSingleElement with correct timestampInfo" in {
 
       val input = AcknowledgedControlResponse
       val expectedTimestampInfo = "23 Oct 2019 at 12:34"
@@ -59,7 +56,7 @@ class ControlResponseAcknowledgedConverterSpec extends UnitSpec {
       result.timestampInfo mustBe expectedTimestampInfo
     }
 
-    "return NotificationsPageSingleElement with correct content" in new Test {
+    "return NotificationsPageSingleElement with correct content" in {
 
       val input = AcknowledgedControlResponse
       val expectedContent =

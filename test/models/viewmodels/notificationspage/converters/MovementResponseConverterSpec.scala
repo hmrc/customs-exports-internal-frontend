@@ -24,38 +24,43 @@ import models.notifications.ResponseType
 import models.viewmodels.decoder.{CRCCode, Decoder}
 import models.viewmodels.notificationspage.NotificationsPageSingleElement
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 import play.twirl.api.Html
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import utils.DateTimeTestModule
 
-class MovementResponseConverterSpec extends UnitSpec {
+class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
   private val testTimestampString = "2019-10-23T12:34+00:00"
   private val testTimestamp = ZonedDateTime.parse(testTimestampString).toInstant
 
   private val crcCodeKeyFromDecoder = CRCCode.Success
 
-  private trait Test {
-    implicit val messages: Messages = stubMessages()
+  private implicit val messages: Messages = stubMessages()
 
-    val decoder: Decoder = mock[Decoder]
+  private val decoder: Decoder = mock[Decoder]
+
+  private val injector = Guice.createInjector(new DateTimeTestModule(), new AbstractModule {
+    override def configure(): Unit = bind(classOf[Decoder]).toInstance(decoder)
+  })
+
+  private val converter = injector.getInstance(classOf[MovementResponseConverter])
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+
+    reset(decoder)
     when(decoder.crc(any[String])).thenReturn(Some(crcCodeKeyFromDecoder))
-
-    private val injector = Guice.createInjector(new DateTimeTestModule(), new AbstractModule {
-      override def configure(): Unit = bind(classOf[Decoder]).toInstance(decoder)
-    })
-
-    val converter = injector.getInstance(classOf[MovementResponseConverter])
   }
 
   "MovementResponseConverter on build" when {
 
     "provided with MovementResponse NotificationFrontendModel" should {
 
-      "call Decoder" in new Test {
+      "call Decoder" in {
 
         val input = exampleNotificationFrontendModel(responseType = ResponseType.MovementResponse, crcCode = Some(crcCodeKeyFromDecoder.code))
 
@@ -64,7 +69,7 @@ class MovementResponseConverterSpec extends UnitSpec {
         verify(decoder).crc(meq(crcCodeKeyFromDecoder.code))
       }
 
-      "return NotificationsPageSingleElement with values returned by Messages" in new Test {
+      "return NotificationsPageSingleElement with values returned by Messages" in {
 
         val input = exampleNotificationFrontendModel(
           responseType = ResponseType.MovementResponse,
@@ -83,7 +88,7 @@ class MovementResponseConverterSpec extends UnitSpec {
 
     "provided with MovementResponse with missing codes" should {
 
-      "not call Decoder" in new Test {
+      "not call Decoder" in {
 
         val input = exampleNotificationFrontendModel(responseType = ResponseType.MovementResponse)
 
@@ -92,7 +97,7 @@ class MovementResponseConverterSpec extends UnitSpec {
         verify(decoder, times(0)).crc(any[String])
       }
 
-      "return NotificationsPageSingleElement without content for missing codes" in new Test {
+      "return NotificationsPageSingleElement without content for missing codes" in {
 
         val input = exampleNotificationFrontendModel(responseType = ResponseType.MovementResponse, timestampReceived = testTimestamp)
         val expectedResult = NotificationsPageSingleElement(
@@ -107,7 +112,7 @@ class MovementResponseConverterSpec extends UnitSpec {
 
     "provided with MovementResponse with unknown codes" should {
 
-      "call Decoder" in new Test {
+      "call Decoder" in {
 
         val crcCode = "123456"
         val input =
@@ -118,7 +123,7 @@ class MovementResponseConverterSpec extends UnitSpec {
         verify(decoder).crc(meq(crcCode))
       }
 
-      "return NotificationsPageSingleElement without content for unknown codes" in new Test {
+      "return NotificationsPageSingleElement without content for unknown codes" in {
 
         val crcCode = "123456"
         when(decoder.crc(meq(crcCode))).thenReturn(None)
