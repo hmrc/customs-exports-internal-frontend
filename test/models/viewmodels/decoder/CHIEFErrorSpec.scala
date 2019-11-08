@@ -16,10 +16,10 @@
 
 package models.viewmodels.decoder
 
-import base.UnitSpec
+import base.{MessagesStub, UnitSpec}
 import controllers.CSRFSupport
 import play.api.test.FakeRequest
-import views.{ViewMatchers, ViewSpec}
+import views.ViewMatchers
 
 class CHIEFErrorSpec extends UnitSpec with ViewMatchers with CSRFSupport {
 
@@ -42,7 +42,7 @@ class CHIEFErrorSpec extends UnitSpec with ViewMatchers with CSRFSupport {
     }
 
     "have translations for all errors" in {
-      val messages = ViewSpec.realMessagesApi.preferred(FakeRequest().withCSRFToken)
+      val messages = MessagesStub.realMessagesApi.preferred(FakeRequest().withCSRFToken)
 
       val chiefErrorsNames = Seq(
         "MucrAlreadyShut",

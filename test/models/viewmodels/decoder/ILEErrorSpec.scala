@@ -16,11 +16,11 @@
 
 package models.viewmodels.decoder
 
-import base.UnitSpec
+import base.{MessagesStub, UnitSpec}
 import controllers.CSRFSupport
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import views.{ViewMatchers, ViewSpec}
+import views.ViewMatchers
 
 class ILEErrorSpec extends UnitSpec with ViewMatchers with CSRFSupport {
 
@@ -41,7 +41,7 @@ class ILEErrorSpec extends UnitSpec with ViewMatchers with CSRFSupport {
     }
 
     "have translations for all errors" in {
-      val messages: Messages = ViewSpec.realMessagesApi.preferred(FakeRequest().withCSRFToken)
+      val messages: Messages = MessagesStub.realMessagesApi.preferred(FakeRequest().withCSRFToken)
 
       val ileErrorsNames = Seq(
         "InvalidUcrFormat",
