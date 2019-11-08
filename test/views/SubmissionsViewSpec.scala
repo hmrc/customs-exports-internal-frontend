@@ -16,7 +16,8 @@
 
 package views
 
-import java.time.{Instant, LocalDate, ZoneOffset}
+import java.time.format.DateTimeFormatter
+import java.time.{Instant, LocalDate, ZoneId, ZoneOffset}
 
 import controllers.routes
 import models.UcrBlock
@@ -33,10 +34,11 @@ class SubmissionsViewSpec extends ViewSpec {
 
   private implicit val implicitFakeRequest = FakeRequest().withCSRFToken
 
+  private val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy 'at' HH:mm").withZone(ZoneId.of("Europe/London"))
   private val dateTime: Instant = LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
 
   private def createView(submissions: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] = Seq.empty): Html =
-    new view_submissions(main_template)(submissions)
+    new view_submissions(main_template, dateTimeFormatter)(submissions)
 
   "Submissions page" should {
 
