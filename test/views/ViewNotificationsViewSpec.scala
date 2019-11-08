@@ -41,8 +41,7 @@ class ViewNotificationsViewSpec extends ViewSpec {
         page(submissionUcr = "TEST UCR", NotificationsPageSingleElement("title", "timestamp", Html("content")))
           .getElementById("title")
 
-      val expectedTitle = messages("notifications.title", "TEST UCR")
-      title must containText(expectedTitle)
+      title must containMessage("notifications.title", "TEST UCR")
     }
 
     "contain only request element if no notifications are present" in {
