@@ -15,7 +15,6 @@
  *@
 
 @import consolidations.routes
-@import forms.ShutMucr
 @import views.Title
 @import views.html.templates.main_template
 
@@ -31,7 +30,7 @@
         @components.back_link(routes.ShutMucrController.displayPage())
 
         @components.page_title(
-            title = Some("shutMucr.summary.title")
+            title = Some(messages("shutMucr.summary.title"))
         )
 
         <h2 id="shutMucr-header">@messages("shutMucr.summary.header")</h2>

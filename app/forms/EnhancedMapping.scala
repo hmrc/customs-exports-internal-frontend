@@ -16,14 +16,13 @@
 
 package forms
 
-import play.api.data.Forms.of
 import play.api.data.format.Formatter
-import play.api.data.{FieldMapping, FormError}
+import play.api.data.{FieldMapping, FormError, Forms}
 
-object Mapping {
+object EnhancedMapping {
 
   def requiredRadio(requiredKey: String = "error.required"): FieldMapping[String] =
-    of(radioFormatter(requiredKey))
+    Forms.of(radioFormatter(requiredKey))
 
   private def radioFormatter(requiredKey: String): Formatter[String] = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =

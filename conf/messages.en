@@ -232,3 +232,42 @@ submissions.ducrassociation = Associate DUCR
 submissions.mucrassociation = Associate MUCR
 submissions.ducrdisassociation = Disassociate DUCR
 submissions.mucrdisassociation = Disassociate MUCR
+
+# This part uses ActionType instances' values to differentiate between messages
+
+notifications.title = Notifications relating to {0}
+
+notifications.elem.title.Arrival = Request to arrive has been received
+notifications.elem.title.Departure = Request to depart has been received
+notifications.elem.title.DucrAssociation = Request to associate this DUCR has been received
+notifications.elem.title.MucrAssociation = Request to associate this MUCR has been received
+notifications.elem.title.DucrDisassociation = Request to dissociate this DUCR has been received
+notifications.elem.title.MucrDisassociation = Request to dissociate this MUCR has been received
+notifications.elem.title.ShutMucr = Shut MUCR request has been received
+
+notifications.elem.title.inventoryLinkingControlResponse.AcknowledgedAndProcessed = Request received
+notifications.elem.title.inventoryLinkingControlResponse.PartiallyAcknowledgedAndProcessed = Request blocked
+notifications.elem.title.inventoryLinkingControlResponse.Rejected = Request rejected
+notifications.elem.title.inventoryLinkingMovementResponse = Update message
+notifications.elem.title.inventoryLinkingMovementTotalsResponse = Update message
+notifications.elem.title.unknown = Update message
+
+notifications.elem.content.Arrival = Your request to arrive this {0} has been received.
+notifications.elem.content.Departure = Your request to depart this {0} has been received.
+notifications.elem.content.DucrAssociation = Your request to consolidate these DUCRs into this MUCR has been received:
+notifications.elem.content.MucrAssociation = Your request to consolidate MUCR into this MUCR has been received.
+notifications.elem.content.DucrDisassociation = Your request to disassociate this DUCR has been received.
+notifications.elem.content.MucrDisassociation = Your request to disassociate this MUCR has been received.
+notifications.elem.content.ShutMucr = Your request to shut this MUCR has been received.
+notifications.elem.content.footer = We will notify you when it has been successful.
+
+notifications.elem.content.inventoryLinkingControlResponse.AcknowledgedAndProcessed = Your request has been acknowledged and processed.
+notifications.elem.content.inventoryLinkingControlResponse.PartiallyAcknowledgedAndProcessed.singleError = The following error is blocking your request:
+notifications.elem.content.inventoryLinkingControlResponse.PartiallyAcknowledgedAndProcessed.multiError = The following errors are blocking your request:
+notifications.elem.content.inventoryLinkingControlResponse.Rejected.singleError = Your request has been rejected because of the following error:
+notifications.elem.content.inventoryLinkingControlResponse.Rejected.multiError = Your request has been rejected because of the following errors:
+
+notifications.elem.content.inventoryLinkingMovementResponse.crc = CRC:
+
+notifications.elem.content.inventoryLinkingMovementTotalsResponse.roe = Route of entry is:
+notifications.elem.content.inventoryLinkingMovementTotalsResponse.soe = Status of entry is:

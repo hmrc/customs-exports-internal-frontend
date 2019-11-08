@@ -16,13 +16,16 @@
 
 package testdata
 
-import java.time.Instant
+import java.time.{Instant, ZonedDateTime}
 
 import models.UcrBlock
 import models.notifications.{Entry, NotificationFrontendModel, ResponseType}
 import testdata.CommonTestData.{conversationId, correctUcr}
 
 object NotificationTestData {
+
+  private val testTimestampString = "2019-10-23T12:34:18Z"
+  val testTimestamp = ZonedDateTime.parse(testTimestampString).toInstant
 
   def exampleNotificationFrontendModel(
     conversationId: String = conversationId,

@@ -31,7 +31,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.page_title(Some("arrivalDetails.header"))
+        @components.page_title(Some(messages("arrivalDetails.header")))
 
         @components.input_date(
             field = form("dateOfArrival"),

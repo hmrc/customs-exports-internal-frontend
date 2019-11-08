@@ -14,12 +14,13 @@
  * limitations under the License.
  *@
 
+@import java.time.format.DateTimeFormatter
+
 @import models.notifications.NotificationFrontendModel
 @import models.submissions.SubmissionFrontendModel
 @import views.Title
-@import views.components.fields.FieldContentFormatter
 
-@this(main_template: views.html.templates.main_template)
+@this(main_template: views.html.templates.main_template, formatter: DateTimeFormatter)
 
 @(submissions: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])])(implicit request: Request[_], messages: Messages)
 
@@ -28,7 +29,7 @@
 
   @components.back_link(routes.ChoiceController.displayPage())
 
-  @components.page_title(Some("submissions.title"))
+  @components.page_title(Some(messages("submissions.title")))
 
   <div>
     <p>@messages("submissions.summary") </p>
@@ -48,15 +49,15 @@
           @if(notifications.isEmpty) {
             @for(ucr <- submission.ucrBlocks.map(_.ucr)) { @ucr<br/> }
           } else {
-@*            <a href="@routes.NotificationsController.listOfNotifications(submission.conversationId)">*@
+            <a href="@routes.ViewNotificationsController.listOfNotifications(submission.conversationId)">
               @for(ucr <- submission.ucrBlocks.map(_.ucr)) { @ucr<br/> }
-@*            </a>*@
+            </a>
           }
 
           </td>
           <td id="ucrType-@submission.conversationId">@for(ucr <- submission.ucrBlocks.map(_.ucrType + "UCR")) { @ucr<br/> }</td>
           <td id="dateOfRequest-@submission.conversationId">
-              @FieldContentFormatter.dateTime(submission.requestTimestamp)
+              @formatter.format(submission.requestTimestamp)
           </td>
           <td id="submissionAction-@submission.conversationId">@messages(s"submissions.${submission.actionType.toString.toLowerCase}")</td>
         </tr>

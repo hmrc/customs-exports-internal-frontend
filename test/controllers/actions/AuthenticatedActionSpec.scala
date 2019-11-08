@@ -26,6 +26,7 @@ import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment, Mode}
+import testdata.CommonTestData.providerId
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval}
 import uk.gov.hmrc.auth.core.{AuthorisationException, NoActiveSession}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents

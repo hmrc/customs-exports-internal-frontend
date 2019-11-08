@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-package views.components.fields
+package models.viewmodels.notificationspage
 
-import java.time.format.DateTimeFormatter
-import java.time.{Instant, ZoneId}
+import play.twirl.api.Html
 
-object FieldContentFormatter {
-
-  private val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy 'at' HH:mm").withZone(ZoneId.systemDefault())
-
-  def dateTime(dateTime: Instant): String = dateTimeFormatter.format(dateTime)
-
-}
+case class NotificationsPageSingleElement(title: String, timestampInfo: String, content: Html)

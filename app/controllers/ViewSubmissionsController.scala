@@ -45,19 +45,20 @@ class ViewSubmissionsController @Inject()(
     for {
       submissions <- connector.fetchAllSubmissions(providerId)
       notifications <- connector.fetchAllNotificationsForUser(providerId)
-      sortedNotifications = notifications.sorted.reverse
-      submissionsWithNotifications = matchNotificationsAgainstSubmissions(submissions, sortedNotifications)
+      submissionsWithNotifications = matchNotificationsAgainstSubmissions(submissions, notifications)
     } yield Ok(viewSubmissionsPage(sortWithOldestLast(submissionsWithNotifications)))
   }
 
   private def matchNotificationsAgainstSubmissions(
     submissions: Seq[SubmissionFrontendModel],
     notifications: Seq[NotificationFrontendModel]
-  ): Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] =
+  ): Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] = {
+    val groupedNotifications: Map[String, Seq[NotificationFrontendModel]] = notifications.groupBy(_.conversationId).withDefaultValue(Seq.empty)
+
     submissions.map { submission =>
-      val matchingNotifications = notifications.filter(_.conversationId == submission.conversationId)
-      (submission, matchingNotifications)
+      (submission, groupedNotifications(submission.conversationId))
     }
+  }
 
   private def sortWithOldestLast(
     submissionsWithNotifications: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])]
