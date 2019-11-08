@@ -23,7 +23,6 @@ import models.cache.Answers
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.{MustMatchers, WordSpec}
-import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData.providerId
@@ -32,9 +31,7 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
 
   implicit protected def htmlBodyOf(html: Html): Document = Jsoup.parse(html.toString())
 
-  protected implicit val fakeRequest: Request[AnyContent] = FakeRequest().withCSRFToken
-
-  protected def journeyRequest(answers: Answers) = JourneyRequest(answers, AuthenticatedRequest(Operator(providerId), fakeRequest))
+  protected def journeyRequest(answers: Answers) = JourneyRequest(answers, AuthenticatedRequest(Operator(providerId), FakeRequest().withCSRFToken))
 
   /*
     Implicit Utility class for retrieving common elements which are on the vast majority of pages

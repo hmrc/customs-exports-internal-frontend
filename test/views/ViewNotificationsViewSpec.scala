@@ -25,6 +25,8 @@ import views.html.view_notifications
 
 class ViewNotificationsViewSpec extends ViewSpec {
 
+  private implicit val implicitFakeRequest = FakeRequest().withCSRFToken
+
   private def page(
     submissionUcr: String = "",
     submissionElement: NotificationsPageSingleElement,

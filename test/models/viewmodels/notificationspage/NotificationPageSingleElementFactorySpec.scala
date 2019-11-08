@@ -19,7 +19,7 @@ package models.viewmodels.notificationspage
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneId, ZonedDateTime}
 
-import base.UnitSpec
+import base.{MessagesStub, UnitSpec}
 import com.google.inject.Guice
 import models.UcrBlock
 import models.notifications.NotificationFrontendModel
@@ -28,15 +28,14 @@ import models.viewmodels.notificationspage.converters._
 import modules.DateTimeModule
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{verify, when}
-import org.scalatest.MustMatchers
 import play.api.i18n.Messages
-import play.api.test.Helpers.stubMessages
+import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmissionFrontendModel
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 
-class NotificationPageSingleElementFactorySpec extends UnitSpec with MustMatchers {
+class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStub {
 
   private val testTimestampString = "2019-10-23T12:34+00:00"
   private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneId.systemDefault())
@@ -45,8 +44,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MustMatcher
   private val injector = Guice.createInjector(new DateTimeModule())
 
   private trait Test {
-    implicit val messages: Messages = stubMessages()
-
+    implicit val fakeRequest = FakeRequest()
     val unknownResponseConverter = injector.getInstance(classOf[UnknownResponseConverter])
 
     val responseConverterProvider = mock[ResponseConverterProvider]
@@ -68,7 +66,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MustMatcher
           title = messages("notifications.elem.title.Arrival"),
           timestampInfo = "23 Oct 2019 at 12:34",
           content = Html(
-            s"<p>${messages("notifications.elem.content.Arrival")}</p>" +
+            s"<p>${messages("notifications.elem.content.Arrival", "DUCR")}</p>" +
               s"<p>${messages("notifications.elem.content.footer")}</p>"
           )
         )
@@ -86,7 +84,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MustMatcher
           title = messages("notifications.elem.title.Departure"),
           timestampInfo = "23 Oct 2019 at 12:34",
           content = Html(
-            s"<p>${messages("notifications.elem.content.Departure")}</p>" +
+            s"<p>${messages("notifications.elem.content.Departure", "DUCR")}</p>" +
               s"<p>${messages("notifications.elem.content.footer")}</p>"
           )
         )
