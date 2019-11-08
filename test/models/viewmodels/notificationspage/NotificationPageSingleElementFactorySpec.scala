@@ -17,7 +17,7 @@
 package models.viewmodels.notificationspage
 
 import java.time.format.DateTimeFormatter
-import java.time.{ZoneId, ZonedDateTime}
+import java.time.{Instant, LocalDate, ZoneId, ZoneOffset}
 
 import base.{MessagesStub, UnitSpec}
 import com.google.inject.Guice
@@ -38,14 +38,13 @@ import testdata.NotificationTestData.exampleNotificationFrontendModel
 
 class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStub with BeforeAndAfterEach {
 
-  private val testTimestampString = "2019-10-23T12:34+00:00"
-  private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneId.systemDefault())
-  private val testTimestamp = ZonedDateTime.parse(testTimestampString, formatter).toInstant
+  private val testTimestamp: Instant = LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
 
   private implicit val fakeRequest = FakeRequest()
 
   private val responseConverterProvider = mock[ResponseConverterProvider]
-  private val factory = new NotificationPageSingleElementFactory(responseConverterProvider)
+  private val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy 'at' HH:mm").withZone(ZoneId.of("Europe/London"))
+  private val factory = new NotificationPageSingleElementFactory(responseConverterProvider, formatter)
 
   private val injector = Guice.createInjector(new DateTimeModule())
   private val unknownResponseConverter = injector.getInstance(classOf[UnknownResponseConverter])
@@ -68,7 +67,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
           exampleSubmissionFrontendModel(actionType = ActionType.Arrival, requestTimestamp = testTimestamp)
         val expectedResult = NotificationsPageSingleElement(
           title = messages("notifications.elem.title.Arrival"),
-          timestampInfo = "23 Oct 2019 at 12:34",
+          timestampInfo = "31 Oct 2019 at 00:00",
           content = Html(
             s"<p>${messages("notifications.elem.content.Arrival", "DUCR")}</p>" +
               s"<p>${messages("notifications.elem.content.footer")}</p>"
@@ -86,7 +85,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
           exampleSubmissionFrontendModel(actionType = ActionType.Departure, requestTimestamp = testTimestamp)
         val expectedResult = NotificationsPageSingleElement(
           title = messages("notifications.elem.title.Departure"),
-          timestampInfo = "23 Oct 2019 at 12:34",
+          timestampInfo = "31 Oct 2019 at 00:00",
           content = Html(
             s"<p>${messages("notifications.elem.content.Departure", "DUCR")}</p>" +
               s"<p>${messages("notifications.elem.content.footer")}</p>"
@@ -110,7 +109,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         )
         val expectedResult = NotificationsPageSingleElement(
           title = messages("notifications.elem.title.DucrAssociation"),
-          timestampInfo = "23 Oct 2019 at 12:34",
+          timestampInfo = "31 Oct 2019 at 00:00",
           content = Html(
             s"<p>${messages("notifications.elem.content.DucrAssociation")}</p>" +
               s"<p>$correctUcr_2</p>" +
@@ -135,7 +134,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         )
         val expectedResult = NotificationsPageSingleElement(
           title = messages("notifications.elem.title.MucrAssociation"),
-          timestampInfo = "23 Oct 2019 at 12:34",
+          timestampInfo = "31 Oct 2019 at 00:00",
           content = Html(
             s"<p>${messages("notifications.elem.content.MucrAssociation")}</p>" +
               s"<p>${messages("notifications.elem.content.footer")}</p>"
@@ -156,7 +155,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         )
         val expectedResult = NotificationsPageSingleElement(
           title = messages("notifications.elem.title.DucrDisassociation"),
-          timestampInfo = "23 Oct 2019 at 12:34",
+          timestampInfo = "31 Oct 2019 at 00:00",
           content = Html(
             s"<p>${messages("notifications.elem.content.DucrDisassociation")}</p>" +
               s"<p>${messages("notifications.elem.content.footer")}</p>"
@@ -177,7 +176,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         )
         val expectedResult = NotificationsPageSingleElement(
           title = messages("notifications.elem.title.MucrDisassociation"),
-          timestampInfo = "23 Oct 2019 at 12:34",
+          timestampInfo = "31 Oct 2019 at 00:00",
           content = Html(
             s"<p>${messages("notifications.elem.content.MucrDisassociation")}</p>" +
               s"<p>${messages("notifications.elem.content.footer")}</p>"
@@ -199,7 +198,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
           )
         val expectedResult = NotificationsPageSingleElement(
           title = messages("notifications.elem.title.ShutMucr"),
-          timestampInfo = "23 Oct 2019 at 12:34",
+          timestampInfo = "31 Oct 2019 at 00:00",
           content = Html(
             s"<p>${messages("notifications.elem.content.ShutMucr")}</p>" +
               s"<p>${messages("notifications.elem.content.footer")}</p>"
