@@ -16,7 +16,7 @@
 
 package models.viewmodels.notificationspage.converters
 
-import java.time.ZonedDateTime
+import java.time.{Instant, LocalDate, ZoneOffset}
 
 import base.UnitSpec
 import com.google.inject.{AbstractModule, Guice}
@@ -79,7 +79,7 @@ class EMRResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
         val input = emrResponseAllCodes
         val expectedTitle = messages("notifications.elem.title.inventoryLinkingMovementTotalsResponse")
-        val expectedTimestampInfo = "23 Oct 2019 at 12:34"
+        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
         val expectedContentElements = Seq(
           messages(crcKeyFromDecoder.messageKey),
           messages("notifications.elem.content.inventoryLinkingMovementTotalsResponse.roe"),
@@ -117,7 +117,7 @@ class EMRResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
         val input = emrResponseMissingCodes
         val expectedTitle = messages("notifications.elem.title.inventoryLinkingMovementTotalsResponse")
-        val expectedTimestampInfo = "23 Oct 2019 at 12:34"
+        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
         val expectedContentElements =
           Seq(messages("notifications.elem.content.inventoryLinkingMovementTotalsResponse.roe"), messages(roeKeyFromDecoder.messageKey))
 
@@ -155,7 +155,7 @@ class EMRResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
         val input = emrResponseUnknownCodes
         val expectedResult = NotificationsPageSingleElement(
           title = messages("notifications.elem.title.inventoryLinkingMovementTotalsResponse"),
-          timestampInfo = "23 Oct 2019 at 12:34",
+          timestampInfo = "31 Oct 2019 at 00:00",
           content = Html("")
         )
 
@@ -168,8 +168,7 @@ class EMRResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
 object EMRResponseConverterSpec {
 
-  private val testTimestampString = "2019-10-23T12:34+00:00"
-  val testTimestamp = ZonedDateTime.parse(testTimestampString).toInstant
+  val testTimestamp: Instant = LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
 
   val crcKeyFromDecoder = CRCCode.Success
   val roeKeyFromDecoder = ROECode.DocumentaryControl

@@ -16,7 +16,7 @@
 
 package models.viewmodels.notificationspage.converters
 
-import java.time.ZonedDateTime
+import java.time.{Instant, LocalDate, ZoneOffset}
 
 import base.UnitSpec
 import com.google.inject.{AbstractModule, Guice}
@@ -28,14 +28,13 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
-import play.twirl.api.Html
+import play.twirl.api.HtmlFormat
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import utils.DateTimeTestModule
 
 class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
-  private val testTimestampString = "2019-10-23T12:34+00:00"
-  private val testTimestamp = ZonedDateTime.parse(testTimestampString).toInstant
+  private val testTimestamp: Instant = LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
 
   private val crcCodeKeyFromDecoder = CRCCode.Success
 
@@ -76,13 +75,15 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
           timestampReceived = testTimestamp,
           crcCode = Some(crcCodeKeyFromDecoder.code)
         )
-        val expectedResult = NotificationsPageSingleElement(
-          title = messages("notifications.elem.title.inventoryLinkingMovementResponse"),
-          timestampInfo = "23 Oct 2019 at 12:34",
-          content = Html(s"<p>${messages("notifications.elem.content.inventoryLinkingMovementResponse.crc")} ${crcCodeKeyFromDecoder.messageKey}</p>")
-        )
+        val expectedTitle = messages("notifications.elem.title.inventoryLinkingMovementResponse")
+        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
+        val expectedContent = s"${messages("notifications.elem.content.inventoryLinkingMovementResponse.crc")} ${crcCodeKeyFromDecoder.messageKey}"
 
-        converter.convert(input) mustBe expectedResult
+        val result = converter.convert(input)
+
+        result.title mustBe expectedTitle
+        result.timestampInfo mustBe expectedTimestampInfo
+        result.content.toString must include(expectedContent)
       }
     }
 
@@ -102,8 +103,8 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
         val input = exampleNotificationFrontendModel(responseType = ResponseType.MovementResponse, timestampReceived = testTimestamp)
         val expectedResult = NotificationsPageSingleElement(
           title = messages("notifications.elem.title.inventoryLinkingMovementResponse"),
-          timestampInfo = "23 Oct 2019 at 12:34",
-          content = Html("")
+          timestampInfo = "31 Oct 2019 at 00:00",
+          content = HtmlFormat.empty
         )
 
         converter.convert(input) mustBe expectedResult
@@ -132,8 +133,8 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
           exampleNotificationFrontendModel(responseType = ResponseType.MovementResponse, timestampReceived = testTimestamp, crcCode = Some(crcCode))
         val expectedResult = NotificationsPageSingleElement(
           title = messages("notifications.elem.title.inventoryLinkingMovementResponse"),
-          timestampInfo = "23 Oct 2019 at 12:34",
-          content = Html("")
+          timestampInfo = "31 Oct 2019 at 00:00",
+          content = HtmlFormat.empty
         )
 
         converter.convert(input) mustBe expectedResult

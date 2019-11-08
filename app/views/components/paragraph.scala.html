@@ -15,4 +15,4 @@
  *@
 
 @(text: String, id: Option[String] = None)
-<p @if(id.isDefined) {id=@id.get}>@text</p>
+<p@for(i <- id){ id = i }>@text</p>
