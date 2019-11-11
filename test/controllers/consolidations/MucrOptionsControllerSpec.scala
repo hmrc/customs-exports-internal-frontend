@@ -19,6 +19,7 @@ package controllers.consolidations
 import base.MockCache
 import controllers.ControllerLayerSpec
 import forms.MucrOptions
+import forms.MucrOptions.CreateOrAddValues.{Add, Create}
 import models.cache.{AssociateUcrAnswers, Cache}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -54,7 +55,7 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache {
   private def theResponseForm: Form[MucrOptions] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[MucrOptions]])
     verify(page).apply(captor.capture())(any(), any())
-    captor.getValue()
+    captor.getValue
   }
 
   "Mucr Options controller" should {
@@ -91,6 +92,24 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache {
         givenTheCacheIsEmpty()
 
         val result = controller().submit()(postRequest(JsString("")))
+
+        status(result) mustBe BAD_REQUEST
+      }
+
+      "POST submit is invoked with form missing newMucr" in {
+
+        givenTheCacheIsEmpty()
+
+        val result = controller().submit()(postRequest(Json.obj("createOrAdd" -> Create)))
+
+        status(result) mustBe BAD_REQUEST
+      }
+
+      "POST submit is invoked with form missing existingMucr" in {
+
+        givenTheCacheIsEmpty()
+
+        val result = controller().submit()(postRequest(Json.obj("createOrAdd" -> Add)))
 
         status(result) mustBe BAD_REQUEST
       }
