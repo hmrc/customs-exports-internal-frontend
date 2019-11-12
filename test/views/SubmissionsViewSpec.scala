@@ -22,11 +22,11 @@ import java.time.{Instant, LocalDate, ZoneId, ZoneOffset}
 import controllers.routes
 import models.UcrBlock
 import models.notifications.NotificationFrontendModel
-import models.submissions.SubmissionFrontendModel
+import models.submissions.Submission
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData._
-import testdata.MovementsTestData.exampleSubmissionFrontendModel
+import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import views.html.view_submissions
 
@@ -37,7 +37,7 @@ class SubmissionsViewSpec extends ViewSpec {
   private val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy 'at' HH:mm").withZone(ZoneId.of("Europe/London"))
   private val dateTime: Instant = LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
 
-  private def createView(submissions: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] = Seq.empty): Html =
+  private def createView(submissions: Seq[(Submission, Seq[NotificationFrontendModel])] = Seq.empty): Html =
     new view_submissions(main_template, dateTimeFormatter)(submissions)
 
   "Submissions page" should {
@@ -59,7 +59,7 @@ class SubmissionsViewSpec extends ViewSpec {
 
     "contain correct submission data" in {
 
-      val submission = exampleSubmissionFrontendModel(requestTimestamp = dateTime)
+      val submission = exampleSubmission(requestTimestamp = dateTime)
       val notifications = Seq(exampleNotificationFrontendModel(timestampReceived = dateTime.plusSeconds(3)))
 
       val page = createView(Seq((submission, notifications)))
@@ -73,7 +73,7 @@ class SubmissionsViewSpec extends ViewSpec {
     "contain link to ViewNotifications page" when {
       "there are Notifications for the Submission" in {
 
-        val submission = exampleSubmissionFrontendModel(requestTimestamp = dateTime)
+        val submission = exampleSubmission(requestTimestamp = dateTime)
         val notifications = Seq(exampleNotificationFrontendModel(timestampReceived = dateTime.plusSeconds(3)))
 
         val page = createView(Seq((submission, notifications)))
@@ -84,7 +84,7 @@ class SubmissionsViewSpec extends ViewSpec {
 
     "contain MUCR and DUCR if Submission contains both" in {
 
-      val submission = exampleSubmissionFrontendModel(
+      val submission = exampleSubmission(
         requestTimestamp = dateTime,
         ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "M"), UcrBlock(ucr = correctUcr_2, ucrType = "D"))
       )

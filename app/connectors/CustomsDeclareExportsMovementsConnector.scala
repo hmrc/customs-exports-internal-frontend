@@ -22,7 +22,7 @@ import connectors.formats.Implicit.optionFormat
 import javax.inject.{Inject, Singleton}
 import models.notifications.NotificationFrontendModel
 import models.requests.MovementRequest
-import models.submissions.SubmissionFrontendModel
+import models.submissions.Submission
 import play.api.Logger
 import play.api.http.{ContentTypes, HeaderNames}
 import play.api.libs.json.{Format, Json}
@@ -65,20 +65,17 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
   private def logFailedExchange(`type`: String, exception: Throwable): Unit =
     logger.warn(`type` + " failed", exception)
 
-  def fetchAllSubmissions(providerId: String)(implicit hc: HeaderCarrier): Future[Seq[SubmissionFrontendModel]] =
+  def fetchAllSubmissions(providerId: String)(implicit hc: HeaderCarrier): Future[Seq[Submission]] =
     httpClient
-      .GET[Seq[SubmissionFrontendModel]](s"${appConfig.customsDeclareExportsMovementsUrl}$Submissions", providerIdQueryParam(providerId))
+      .GET[Seq[Submission]](s"${appConfig.customsDeclareExportsMovementsUrl}$Submissions", providerIdQueryParam(providerId))
       .andThen {
         case Success(response)  => logSuccessfulExchange("All Submission fetch", response)
         case Failure(exception) => logFailedExchange("All Submission fetch", exception)
       }
 
-  def fetchSingleSubmission(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[Option[SubmissionFrontendModel]] =
+  def fetchSingleSubmission(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[Option[Submission]] =
     httpClient
-      .GET[Option[SubmissionFrontendModel]](
-        s"${appConfig.customsDeclareExportsMovementsUrl}$Submissions/$conversationId",
-        providerIdQueryParam(providerId)
-      )
+      .GET[Option[Submission]](s"${appConfig.customsDeclareExportsMovementsUrl}$Submissions/$conversationId", providerIdQueryParam(providerId))
       .andThen {
         case Success(response)  => logSuccessfulExchange("Single Submission fetch", response)
         case Failure(exception) => logFailedExchange("Single Submission fetch", exception)

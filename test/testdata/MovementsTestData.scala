@@ -22,7 +22,7 @@ import forms.{Choice, ConsignmentReferences, MovementBuilder, MovementDetails}
 import models.UcrBlock
 import models.cache.{ArrivalAnswers, DepartureAnswers}
 import models.requests.MovementRequest
-import models.submissions.{ActionType, SubmissionFrontendModel}
+import models.submissions.{ActionType, Submission}
 import testdata.CommonTestData.{conversationId, correctUcr, providerId, validEori}
 
 object MovementsTestData {
@@ -45,18 +45,12 @@ object MovementsTestData {
   def validDepartureAnswers =
     DepartureAnswers(Some("eori"), consignmentReferences = Some(ConsignmentReferences("ref", "value")))
 
-  def exampleSubmissionFrontendModel(
+  def exampleSubmission(
     eori: String = validEori,
     conversationId: String = conversationId,
     ucrBlocks: Seq[UcrBlock] = Seq(UcrBlock(ucr = correctUcr, ucrType = "D")),
     actionType: ActionType = ActionType.Arrival,
     requestTimestamp: Instant = Instant.now()
-  ): SubmissionFrontendModel =
-    SubmissionFrontendModel(
-      eori = eori,
-      conversationId = conversationId,
-      ucrBlocks = ucrBlocks,
-      actionType = actionType,
-      requestTimestamp = requestTimestamp
-    )
+  ): Submission =
+    Submission(eori = eori, conversationId = conversationId, ucrBlocks = ucrBlocks, actionType = actionType, requestTimestamp = requestTimestamp)
 }

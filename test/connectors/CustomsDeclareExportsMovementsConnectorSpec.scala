@@ -26,7 +26,7 @@ import org.mockito.BDDMockito._
 import play.api.http.Status
 import play.api.test.Helpers._
 import testdata.CommonTestData._
-import testdata.MovementsTestData.exampleSubmissionFrontendModel
+import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 
 class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
@@ -87,7 +87,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
     "send GET request to the backend" in {
 
-      val expectedSubmission = exampleSubmissionFrontendModel()
+      val expectedSubmission = exampleSubmission()
       val submissionsJson =
         s"""[
            |  {
@@ -123,7 +123,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
 
     "send GET request to the backend" in {
 
-      val expectedSubmission = exampleSubmissionFrontendModel()
+      val expectedSubmission = exampleSubmission()
       val submissionJson =
         s"""
            |  {

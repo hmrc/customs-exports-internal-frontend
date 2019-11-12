@@ -18,7 +18,7 @@ package controllers
 
 import connectors.CustomsDeclareExportsMovementsConnector
 import models.notifications.{NotificationFrontendModel, ResponseType}
-import models.submissions.{ActionType, SubmissionFrontendModel}
+import models.submissions.{ActionType, Submission}
 import models.viewmodels.notificationspage.{NotificationPageSingleElementFactory, NotificationsPageSingleElement}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testdata.CommonTestData.{conversationId, providerId, validEori}
-import testdata.MovementsTestData.exampleSubmissionFrontendModel
+import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.view_notifications
@@ -42,7 +42,7 @@ class ViewNotificationsControllerSpec extends ControllerLayerSpec with ScalaFutu
   private val notificationPageSingleElementFactoryMock: NotificationPageSingleElementFactory = mock[NotificationPageSingleElementFactory]
   private val notificationsPageMock: view_notifications = mock[view_notifications]
 
-  private val expectedSubmission = exampleSubmissionFrontendModel()
+  private val expectedSubmission = exampleSubmission()
   private val expectedNotifications =
     Seq(exampleNotificationFrontendModel(), exampleNotificationFrontendModel(responseType = ResponseType.MovementTotalsResponse))
   private val singleElementForSubmission = NotificationsPageSingleElement("REQUEST", "", HtmlFormat.empty)
@@ -61,7 +61,7 @@ class ViewNotificationsControllerSpec extends ControllerLayerSpec with ScalaFutu
 
     when(customsExportsMovementsConnectorMock.fetchSingleSubmission(any(), any())(any())).thenReturn(Future.successful(Some(expectedSubmission)))
     when(customsExportsMovementsConnectorMock.fetchNotifications(any(), any())(any())).thenReturn(Future.successful(expectedNotifications))
-    when(notificationPageSingleElementFactoryMock.build(any[SubmissionFrontendModel])(any())).thenReturn(singleElementForSubmission)
+    when(notificationPageSingleElementFactoryMock.build(any[Submission])(any())).thenReturn(singleElementForSubmission)
     when(notificationPageSingleElementFactoryMock.build(any[NotificationFrontendModel])(any())).thenReturn(singleElementForNotification)
     when(notificationsPageMock.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
@@ -134,9 +134,8 @@ class ViewNotificationsControllerSpec extends ControllerLayerSpec with ScalaFutu
 
         when(customsExportsMovementsConnectorMock.fetchSingleSubmission(any(), any())(any()))
           .thenReturn(
-            Future.successful(
-              Some(SubmissionFrontendModel(eori = validEori, conversationId = conversationId, ucrBlocks = Seq.empty, actionType = ActionType.Arrival))
-            )
+            Future
+              .successful(Some(Submission(eori = validEori, conversationId = conversationId, ucrBlocks = Seq.empty, actionType = ActionType.Arrival)))
           )
 
         val result = controller.listOfNotifications(conversationId)(FakeRequest())

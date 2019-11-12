@@ -22,7 +22,7 @@ import javax.inject.{Inject, Singleton}
 import models.UcrBlock
 import models.notifications.NotificationFrontendModel
 import models.submissions.ActionType._
-import models.submissions.SubmissionFrontendModel
+import models.submissions.Submission
 import models.viewmodels.notificationspage.converters._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -31,13 +31,13 @@ import views.html.components.paragraph
 @Singleton
 class NotificationPageSingleElementFactory @Inject()(responseConverterProvider: ResponseConverterProvider, dateTimeFormatter: DateTimeFormatter) {
 
-  def build(submission: SubmissionFrontendModel)(implicit messages: Messages): NotificationsPageSingleElement =
+  def build(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement =
     submission.actionType match {
       case Arrival | Departure | DucrDisassociation | MucrAssociation | MucrDisassociation | ShutMucr => buildForRequest(submission)
       case DucrAssociation                                                                            => buildForDucrAssociation(submission)
     }
 
-  private def buildForRequest(submission: SubmissionFrontendModel)(implicit messages: Messages): NotificationsPageSingleElement = {
+  private def buildForRequest(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement = {
 
     val ucrMessage = if (submission.hasMucr) "MUCR" else "DUCR"
 
@@ -55,7 +55,7 @@ class NotificationPageSingleElementFactory @Inject()(responseConverterProvider: 
     )
   }
 
-  private def buildForDucrAssociation(submission: SubmissionFrontendModel)(implicit messages: Messages): NotificationsPageSingleElement = {
+  private def buildForDucrAssociation(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement = {
     val ducrs: List[UcrBlock] = submission.ucrBlocks.filter(_.ucrType == "D").toList
     val content = HtmlFormat.fill(
       paragraph(messages(s"notifications.elem.content.${submission.actionType.value}")) +:

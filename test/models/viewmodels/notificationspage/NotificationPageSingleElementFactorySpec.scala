@@ -23,7 +23,7 @@ import base.{MessagesStub, UnitSpec}
 import com.google.inject.Guice
 import models.UcrBlock
 import models.notifications.NotificationFrontendModel
-import models.submissions.{ActionType, SubmissionFrontendModel}
+import models.submissions.{ActionType, Submission}
 import models.viewmodels.notificationspage.converters._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
@@ -32,7 +32,7 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData._
-import testdata.MovementsTestData.exampleSubmissionFrontendModel
+import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import utils.DateTimeTestModule
 
@@ -61,10 +61,10 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
 
     "return NotificationsPageSingleElement with values returned by Messages" when {
 
-      "provided with Arrival SubmissionFrontendModel" in {
+      "provided with Arrival Submission" in {
 
-        val input: SubmissionFrontendModel =
-          exampleSubmissionFrontendModel(actionType = ActionType.Arrival, requestTimestamp = testTimestamp)
+        val input: Submission =
+          exampleSubmission(actionType = ActionType.Arrival, requestTimestamp = testTimestamp)
 
         val expectedTitle = messages("notifications.elem.title.Arrival")
         val expectedTimestampInfo = "31 Oct 2019 at 00:00"
@@ -75,10 +75,10 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertResult(result, expectedTitle, expectedTimestampInfo, expectedContent)
       }
 
-      "provided with Departure SubmissionFrontendModel" in {
+      "provided with Departure Submission" in {
 
-        val input: SubmissionFrontendModel =
-          exampleSubmissionFrontendModel(actionType = ActionType.Departure, requestTimestamp = testTimestamp)
+        val input: Submission =
+          exampleSubmission(actionType = ActionType.Departure, requestTimestamp = testTimestamp)
 
         val expectedTitle = messages("notifications.elem.title.Departure")
         val expectedTimestampInfo = "31 Oct 2019 at 00:00"
@@ -89,9 +89,9 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertResult(result, expectedTitle, expectedTimestampInfo, expectedContent)
       }
 
-      "provided with DucrAssociation SubmissionFrontendModel" in {
+      "provided with DucrAssociation Submission" in {
 
-        val input: SubmissionFrontendModel = SubmissionFrontendModel(
+        val input: Submission = Submission(
           eori = validEori,
           conversationId = conversationId,
           actionType = ActionType.DucrAssociation,
@@ -109,9 +109,9 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertResult(result, expectedTitle, expectedTimestampInfo, expectedContent)
       }
 
-      "provided with MucrAssociation SubmissionFrontendModel" in {
+      "provided with MucrAssociation Submission" in {
 
-        val input: SubmissionFrontendModel = SubmissionFrontendModel(
+        val input: Submission = Submission(
           eori = validEori,
           conversationId = conversationId,
           actionType = ActionType.MucrAssociation,
@@ -128,9 +128,9 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertResult(result, expectedTitle, expectedTimestampInfo, expectedContent)
       }
 
-      "provided with DucrDisassociation SubmissionFrontendModel" in {
+      "provided with DucrDisassociation Submission" in {
 
-        val input: SubmissionFrontendModel = exampleSubmissionFrontendModel(
+        val input: Submission = exampleSubmission(
           actionType = ActionType.DucrDisassociation,
           requestTimestamp = testTimestamp,
           ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "D"))
@@ -145,9 +145,9 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertResult(result, expectedTitle, expectedTimestampInfo, expectedContent)
       }
 
-      "provided with MucrDisassociation SubmissionFrontendModel" in {
+      "provided with MucrDisassociation Submission" in {
 
-        val input: SubmissionFrontendModel = exampleSubmissionFrontendModel(
+        val input: Submission = exampleSubmission(
           actionType = ActionType.MucrDisassociation,
           requestTimestamp = testTimestamp,
           ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "M"))
@@ -162,10 +162,10 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertResult(result, expectedTitle, expectedTimestampInfo, expectedContent)
       }
 
-      "provided with ShutMucr SubmissionFrontendModel" in {
+      "provided with ShutMucr Submission" in {
 
-        val input: SubmissionFrontendModel =
-          exampleSubmissionFrontendModel(
+        val input: Submission =
+          exampleSubmission(
             actionType = ActionType.ShutMucr,
             requestTimestamp = testTimestamp,
             ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "M"))

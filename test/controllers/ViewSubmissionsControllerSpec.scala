@@ -20,7 +20,7 @@ import java.time.Instant
 
 import connectors.CustomsDeclareExportsMovementsConnector
 import models.notifications.NotificationFrontendModel
-import models.submissions.SubmissionFrontendModel
+import models.submissions.Submission
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testdata.CommonTestData.{conversationId, conversationId_2, conversationId_3, providerId}
 import testdata.MovementsTestData
-import testdata.MovementsTestData.exampleSubmissionFrontendModel
+import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.view_submissions
@@ -82,7 +82,7 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
     "call connector for all Notifications" in {
 
-      val submission = MovementsTestData.exampleSubmissionFrontendModel()
+      val submission = MovementsTestData.exampleSubmission()
       when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq(submission)))
       when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
@@ -96,9 +96,9 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
       "there are no Notifications for the Submissions" in {
 
-        val submission1 = exampleSubmissionFrontendModel(requestTimestamp = Instant.now().minusSeconds(60))
-        val submission2 = exampleSubmissionFrontendModel(requestTimestamp = Instant.now().minusSeconds(30))
-        val submission3 = exampleSubmissionFrontendModel(requestTimestamp = Instant.now())
+        val submission1 = exampleSubmission(requestTimestamp = Instant.now().minusSeconds(60))
+        val submission2 = exampleSubmission(requestTimestamp = Instant.now().minusSeconds(30))
+        val submission3 = exampleSubmission(requestTimestamp = Instant.now())
 
         when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any()))
           .thenReturn(Future.successful(Seq(submission1, submission2, submission3)))
@@ -106,17 +106,17 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
         controller.displayPage(getRequest).futureValue
 
-        val viewArguments: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] = captureViewArguments()
+        val viewArguments: Seq[(Submission, Seq[NotificationFrontendModel])] = captureViewArguments()
 
-        val submissions: Seq[SubmissionFrontendModel] = viewArguments.map(_._1)
+        val submissions: Seq[Submission] = viewArguments.map(_._1)
         submissions mustBe Seq(submission3, submission2, submission1)
       }
 
       "there are Notifications for the Submissions" in {
 
-        val submission1 = exampleSubmissionFrontendModel(conversationId = conversationId, requestTimestamp = Instant.now().minusSeconds(60))
-        val submission2 = exampleSubmissionFrontendModel(conversationId = conversationId_2, requestTimestamp = Instant.now().minusSeconds(30))
-        val submission3 = exampleSubmissionFrontendModel(conversationId = conversationId_3, requestTimestamp = Instant.now())
+        val submission1 = exampleSubmission(conversationId = conversationId, requestTimestamp = Instant.now().minusSeconds(60))
+        val submission2 = exampleSubmission(conversationId = conversationId_2, requestTimestamp = Instant.now().minusSeconds(30))
+        val submission3 = exampleSubmission(conversationId = conversationId_3, requestTimestamp = Instant.now())
 
         val notification1 = exampleNotificationFrontendModel(conversationId = conversationId)
         val notification2 = exampleNotificationFrontendModel(conversationId = conversationId_2)
@@ -130,9 +130,9 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
         controller.displayPage(getRequest).futureValue
 
-        val viewArguments: Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] = captureViewArguments()
+        val viewArguments: Seq[(Submission, Seq[NotificationFrontendModel])] = captureViewArguments()
 
-        val submissions: Seq[SubmissionFrontendModel] = viewArguments.map(_._1)
+        val submissions: Seq[Submission] = viewArguments.map(_._1)
         val notifications: Seq[Seq[NotificationFrontendModel]] = viewArguments.map(_._2)
         submissions mustBe Seq(submission3, submission2, submission1)
         notifications mustBe Seq(Seq(notification4, notification3), Seq(notification2), Seq(notification1))
@@ -140,9 +140,9 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
     }
   }
 
-  private def captureViewArguments(): Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])] = {
-    val captor: ArgumentCaptor[Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])]] =
-      ArgumentCaptor.forClass(classOf[Seq[(SubmissionFrontendModel, Seq[NotificationFrontendModel])]])
+  private def captureViewArguments(): Seq[(Submission, Seq[NotificationFrontendModel])] = {
+    val captor: ArgumentCaptor[Seq[(Submission, Seq[NotificationFrontendModel])]] =
+      ArgumentCaptor.forClass(classOf[Seq[(Submission, Seq[NotificationFrontendModel])]])
     verify(submissionsPage).apply(captor.capture())(any(), any())
     captor.getValue
   }
