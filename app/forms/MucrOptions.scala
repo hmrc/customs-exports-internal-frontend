@@ -16,15 +16,17 @@
 
 package forms
 
+import forms.EnhancedMapping.{mucrOptionsFormatter, requiredRadio}
+import forms.MucrOptions.CreateOrAddValues
+import forms.MucrOptions.CreateOrAddValues.{Add, Create}
 import play.api.data.Forms._
 import play.api.data.{Form, Forms}
-import play.api.libs.json.Json
-import utils.FieldValidator._
+import play.api.libs.json._
 
-case class MucrOptions(newMucr: String = "", existingMucr: String = "", createOrAdd: String = MucrOptions.Create) {
+case class MucrOptions(newMucr: String = "", existingMucr: String = "", createOrAdd: CreateOrAddValues = Create) {
   def mucr: String = createOrAdd match {
-    case MucrOptions.Create => newMucr
-    case MucrOptions.Add    => existingMucr
+    case Create => newMucr
+    case Add    => existingMucr
   }
 }
 
@@ -32,38 +34,44 @@ object MucrOptions {
 
   val formId = "MucrOptions"
 
-  implicit val format = Json.format[MucrOptions]
-
-  val Create = "create"
-  val Add = "add"
-
   def form2Model: (String, String, String) => MucrOptions = {
     case (createOrAdd, newMucr, existingMucr) =>
       createOrAdd match {
-        case Create => MucrOptions(newMucr, "", Create)
-        case Add    => MucrOptions("", existingMucr, Add)
+        case Create.`value` => MucrOptions(newMucr, "", Create)
+        case Add.`value`    => MucrOptions("", existingMucr, Add)
       }
   }
 
   def model2Form: MucrOptions => Option[(String, String, String)] =
-    m => Some((m.createOrAdd, m.newMucr, m.existingMucr))
+    m => Some((m.createOrAdd.value, m.newMucr, m.existingMucr))
 
-  val mapping =
-    Forms
-      .mapping("createOrAdd" -> text().verifying("mucrOptions.createAdd.value.empty", nonEmpty), "newMucr" -> text(), "existingMucr" -> text())(
-        form2Model
-      )(model2Form)
+  val mapping = Forms.mapping(
+    "createOrAdd" -> requiredRadio("mucrOptions.createAdd.value.empty"),
+    "newMucr" -> of(mucrOptionsFormatter(Create)),
+    "existingMucr" -> of(mucrOptionsFormatter(Add))
+  )(form2Model)(model2Form)
 
-  val form: Form[MucrOptions] = Form(mapping)
+  def form: Form[MucrOptions] = Form(mapping)
 
-  def validateForm(form: Form[MucrOptions]): Form[MucrOptions] =
-    if (form.value.exists(op => validMucr(op.mucr))) {
-      form
-    } else {
-      val errorField = form.value.map(_.createOrAdd) match {
-        case Some(Create) => "newMucr"
-        case _            => "existingMucr"
+  sealed abstract class CreateOrAddValues(val value: String)
+  object CreateOrAddValues {
+    case object Create extends CreateOrAddValues(value = "create")
+    case object Add extends CreateOrAddValues(value = "add")
+
+    implicit object CreateOrAddValuesFormat extends Format[CreateOrAddValues] {
+      override def reads(json: JsValue): JsResult[CreateOrAddValues] = json match {
+        case JsString(createOrAddValue) =>
+          createOrAddValue match {
+            case "create" => JsSuccess(Create)
+            case "add"    => JsSuccess(Add)
+          }
+
+        case _ => JsError("Incorrect CreateOrAddValues")
       }
-      form.withError(errorField, "mucrOptions.reference.value.error")
+
+      override def writes(o: CreateOrAddValues): JsValue = JsString(o.value)
     }
+  }
+
+  implicit val format = Json.format[MucrOptions]
 }

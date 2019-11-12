@@ -23,7 +23,7 @@ class ShutMucrSpec extends UnitSpec {
 
   "ShutMucr model" should {
 
-    "has correct formId value" in {
+    "have correct formId value" in {
 
       ShutMucr.formId must be("ShutMucr")
     }
@@ -31,7 +31,7 @@ class ShutMucrSpec extends UnitSpec {
 
   "ShutMucr mapping" should {
 
-    "contains error" when {
+    "contain error" when {
 
       "mucr is empty" in {
 
@@ -50,7 +50,7 @@ class ShutMucrSpec extends UnitSpec {
       }
     }
 
-    "not contains any errors" when {
+    "not contain any errors" when {
 
       "data is correct" in {
 

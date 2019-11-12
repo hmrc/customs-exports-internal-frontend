@@ -15,7 +15,7 @@
  *@
 
 @import forms.MucrOptions
-@import MucrOptions._
+@import forms.MucrOptions.CreateOrAddValues.{Create, Add}
 @import views.components.fields.RadioOption
 @import views.Title
 @import views.html.templates.main_template
@@ -41,12 +41,12 @@
             inputs = Seq(
                 RadioOption(
                     keyPrefix = "mucrOptions",
-                    option = Create,
+                    option = Create.value,
                     revealComponent = components.input_text(form("newMucr"), messages("mucrOptions.create.reference"))
                 ),
                 RadioOption(
                     keyPrefix = "mucrOptions",
-                    option = Add,
+                    option = Add.value,
                     revealComponent = components.input_text(form("existingMucr"), messages("mucrOptions.add.reference"), labelClass=Some("visuallyhidden"))
                 )
             )
