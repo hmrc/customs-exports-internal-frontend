@@ -121,7 +121,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller(DepartureAnswers()).saveLocation()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.movements.routes.TransportController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.movements.routes.GoodsDepartedController.displayPage().url)
       }
     }
   }
