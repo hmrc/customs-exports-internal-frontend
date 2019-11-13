@@ -20,6 +20,7 @@ import forms.EnhancedMapping.requiredRadio
 import models.cache.JourneyType.{JourneyType, _}
 import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.json._
+import play.api.mvc.PathBindable
 import utils.FieldValidator.isContainedIn
 
 sealed abstract class Choice(val value: String) {
@@ -51,6 +52,12 @@ object Choice {
     }
 
     def writes(choice: Choice): JsValue = JsString(choice.value)
+  }
+
+  implicit val bindable: PathBindable[Choice] = new PathBindable[Choice] {
+    override def bind(key: String, choice: String): Either[String, Choice] = allChoices.find(_.value == choice).toRight[String]("Invalid Choice")
+
+    override def unbind(key: String, choice: Choice): String = choice.value
   }
 
   case object Arrival extends Choice("arrival")

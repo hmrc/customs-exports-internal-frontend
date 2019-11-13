@@ -45,10 +45,8 @@ class ChoiceController @Inject()(
     }
   }
 
-  def startSpecificJourney(choice: String): Action[AnyContent] = authenticate.async { implicit request =>
-    val correctChoice = Choice(choice)
-
-    correctChoice match {
+  def startSpecificJourney(choice: Choice): Action[AnyContent] = authenticate.async { implicit request =>
+    choice match {
       case forms.Choice.Arrival =>
         proceedJourney(ArrivalAnswers(eori = Answers.fakeEORI), movements.routes.ConsignmentReferencesController.displayPage())
       case forms.Choice.Departure =>

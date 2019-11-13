@@ -23,8 +23,8 @@
 
 @(mucr: String)(implicit request: Request[_], messages: Messages)
 
-@shutMucrLink = {<a href="@routes.ChoiceController.startSpecificJourney("shutMUCR")">@messages("shutMucr.confirmation.nextSteps.shutMucr")</a>}
-@departureLink = {<a href="@routes.ChoiceController.startSpecificJourney("departure")">@messages("shutMucr.confirmation.nextSteps.depart")</a>}
+@shutMucrLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.ShutMUCR)">@messages("shutMucr.confirmation.nextSteps.shutMucr")</a>}
+@departureLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.Departure)">@messages("shutMucr.confirmation.nextSteps.depart")</a>}
 
 @main_template(title = Title("shutMucr.confirmation.tab.heading")) {
 
