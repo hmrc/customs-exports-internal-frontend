@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Customs Exports Internal AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  Customs Exports Internal AutoComplete
 // @author       You
-// @match        http*://*/customs-exports-internal*
+// @match        http*://*/*customs-exports-internal*
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/hmrc/customs-exports-internal-frontend/master/docs/Customs%20Exports%20Internal%20AutoComplete.js
 // ==/UserScript==
@@ -57,6 +57,11 @@ function currentPageIs(path) {
 }
 
 function completePage() {
+    if(currentPageIs('stride-idp-stub')){
+        document.getElementById('pid').value = '123';
+        document.getElementById('roles').value = 'write:customs-inventory-linking-exports';
+        document.getElementById('continue-button').click();
+    }
     if (currentPageIs('/customs-exports-internal/start')) {
         document.getElementsByClassName('button')[0].click()
     }
@@ -130,7 +135,7 @@ function completePage() {
         document.getElementById("ducr").value = `5GB123456789000-${now.valueOf()}IIIII`
         document.getElementsByClassName('button')[0].click()
     }
-    if(currentPageIs("customs-exports-internal/shut-mucr")){
+    if(currentPageIs("/customs-exports-internal/shut-mucr")){
         const now = new Date()
         document.getElementById("mucr").value = `GB/ABCDE1234-${now.valueOf()}IIIII`
         document.getElementsByClassName('button')[0].click()
