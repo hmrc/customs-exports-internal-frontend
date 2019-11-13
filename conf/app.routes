@@ -48,6 +48,10 @@ POST        /movement-details                      controllers.movements.Movemen
 GET         /location                              controllers.movements.LocationController.displayPage()
 POST        /location                              controllers.movements.LocationController.saveLocation()
 
+# Goods Departed page
+GET         /goods-departed                        controllers.movements.GoodsDepartedController.displayPage()
+POST        /goods-departed                        controllers.movements.GoodsDepartedController.saveGoodsDeparted()
+
 # Transport page
 GET         /transport                             controllers.movements.TransportController.displayPage()
 POST        /transport                             controllers.movements.TransportController.saveTransport()
