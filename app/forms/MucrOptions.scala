@@ -37,8 +37,8 @@ object MucrOptions {
   def form2Model: (String, String, String) => MucrOptions = {
     case (createOrAdd, newMucr, existingMucr) =>
       createOrAdd match {
-        case Create.`value` => MucrOptions(newMucr, "", Create)
-        case Add.`value`    => MucrOptions("", existingMucr, Add)
+        case Create.value => MucrOptions(newMucr, "", Create)
+        case Add.value    => MucrOptions("", existingMucr, Add)
       }
   }
 
@@ -58,15 +58,15 @@ object MucrOptions {
     case object Create extends CreateOrAddValues(value = "create")
     case object Add extends CreateOrAddValues(value = "add")
 
+    def apply(input: String): CreateOrAddValues = input match {
+      case Create.value => Create
+      case Add.value    => Add
+    }
+
     implicit object CreateOrAddValuesFormat extends Format[CreateOrAddValues] {
       override def reads(json: JsValue): JsResult[CreateOrAddValues] = json match {
-        case JsString(createOrAddValue) =>
-          createOrAddValue match {
-            case "create" => JsSuccess(Create)
-            case "add"    => JsSuccess(Add)
-          }
-
-        case _ => JsError("Incorrect CreateOrAddValues")
+        case JsString(createOrAddValue) => JsSuccess(CreateOrAddValues(createOrAddValue))
+        case _                          => JsError("Incorrect CreateOrAddValues")
       }
 
       override def writes(o: CreateOrAddValues): JsValue = JsString(o.value)

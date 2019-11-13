@@ -92,6 +92,9 @@ location.hint = The is an alphanumeric code. For example, GBAUEMAEMAEMA
 location.code.empty = Goods location code cannot be empty
 location.code.error = Goods location code is incorrect
 
+goodsDeparted.departureLocation.error.empty = Please select where your goods being departed to
+goodsDeparted.departureLocation.error.incorrect = Please select a valid option
+
 transport.title = Transport
 transport.modeOfTransport.question = What transport type took the goods across the border?
 transport.modeOfTransport.empty = You need to choose mode of transport
