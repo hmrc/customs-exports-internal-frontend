@@ -48,6 +48,17 @@ class ShutMucrConfirmationViewSpec extends ViewSpec {
       backButton must haveHref(routes.ChoiceController.displayPage())
     }
 
+    "have 'view requests' link" in {
+      val statusInfo = page(mucr).getElementById("status-info")
+      statusInfo.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ViewSubmissions))
+    }
+
+    "have 'next steps' link" in {
+      val nextSteps = page(mucr).getElementById("next-steps")
+      nextSteps.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ShutMUCR))
+      nextSteps.getElementsByTag("a").get(1) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.Departure))
+    }
+
   }
 
 }

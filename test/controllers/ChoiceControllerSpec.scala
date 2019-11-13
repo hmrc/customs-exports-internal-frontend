@@ -95,7 +95,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "user chooses arrival" in {
 
-        val result = controller().startSpecificJourney(Choice.Arrival.value)(getRequest)
+        val result = controller().startSpecificJourney(Choice.Arrival)(getRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
@@ -103,7 +103,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "user chooses departure" in {
 
-        val result = controller().startSpecificJourney(Choice.Departure.value)(getRequest)
+        val result = controller().startSpecificJourney(Choice.Departure)(getRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
@@ -111,7 +111,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "user chooses associate ucr" in {
 
-        val result = controller().startSpecificJourney(Choice.AssociateUCR.value)(getRequest)
+        val result = controller().startSpecificJourney(Choice.AssociateUCR)(getRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
@@ -119,7 +119,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "user chooses dissociate ucr" in {
 
-        val result = controller().startSpecificJourney(Choice.DisassociateUCR.value)(getRequest)
+        val result = controller().startSpecificJourney(Choice.DisassociateUCR)(getRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateUcrController.display().url)
@@ -127,7 +127,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "user chooses shut mucr" in {
 
-        val result = controller().startSpecificJourney(Choice.ShutMUCR.value)(getRequest)
+        val result = controller().startSpecificJourney(Choice.ShutMUCR)(getRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(consolidationRoutes.ShutMucrController.displayPage().url)
@@ -135,20 +135,10 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "user chooses view submissions" in {
 
-        val result = controller().startSpecificJourney(Choice.ViewSubmissions.value)(getRequest)
+        val result = controller().startSpecificJourney(Choice.ViewSubmissions)(getRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ViewSubmissionsController.displayPage().url)
-      }
-    }
-
-    "throw an exception" when {
-
-      "choice is incorrect" in {
-
-        intercept[IllegalArgumentException] {
-          await(controller().startSpecificJourney("Incorrect")(getRequest))
-        }
       }
     }
   }

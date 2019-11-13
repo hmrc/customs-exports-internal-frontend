@@ -48,6 +48,17 @@ class MovementConfirmationArrivalViewSpec extends ViewSpec {
       backButton must containMessage("site.backToStart")
       backButton must haveHref(controllers.routes.ChoiceController.displayPage())
     }
+
+    "have 'view requests' link" in {
+      val statusInfo = page(consignmentReferences).getElementById("status-info")
+      statusInfo.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ViewSubmissions))
+    }
+
+    "have 'next steps' link" in {
+      val nextSteps = page(consignmentReferences).getElementById("next-steps")
+      nextSteps.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.AssociateUCR))
+      nextSteps.getElementsByTag("a").get(1) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.Departure))
+    }
   }
 
 }

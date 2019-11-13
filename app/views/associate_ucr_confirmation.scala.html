@@ -25,8 +25,8 @@
 @(associateUcrKind: String, ucr: String)(implicit request: Request[_], messages: Messages)
 
 @prefix = @{ s"associate.$associateUcrKind.confirmation" }
-@associateLink = {<a href="@routes.ChoiceController.startSpecificJourney("associateDUCR")">@messages("association.confirmation.associateOrDepart.associate")</a>}
-@shutMucrLink = {<a href="@routes.ChoiceController.startSpecificJourney("departure")">@messages("association.confirmation.associateOrDepart.depart")</a>}
+@associateLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.AssociateUCR)">@messages("association.confirmation.associateOrDepart.associate")</a>}
+@shutMucrLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.Departure)">@messages("association.confirmation.associateOrDepart.depart")</a>}
 
 @main_template(title = Title(messages(s"$prefix.tab.heading"))) {
 

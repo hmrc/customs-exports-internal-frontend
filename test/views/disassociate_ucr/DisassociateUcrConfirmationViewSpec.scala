@@ -39,9 +39,21 @@ class DisassociateUcrConfirmationViewSpec extends ViewSpec {
       view.getElementById("highlight-box-heading") must containMessage("disassociate.ucr.confirmation.heading", "mucr", "ucr")
     }
 
-    "render next steps" in {
-      view.getElementById("next-steps") must containMessage("disassociation.confirmation.associateOrShut.associate")
-      view.getElementById("next-steps") must containMessage("disassociation.confirmation.associateOrShut.shut")
+    "have 'view requests' link" in {
+      val statusInfo = page().getElementById("status-info")
+      statusInfo.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ViewSubmissions))
+    }
+
+    "have 'next steps' link" in {
+      val nextSteps = page().getElementById("next-steps")
+
+      val associate = nextSteps.getElementsByTag("a").get(0)
+      associate must containMessage("disassociation.confirmation.associateOrShut.associate")
+      associate must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.AssociateUCR))
+
+      val shut = nextSteps.getElementsByTag("a").get(1)
+      shut must containMessage("disassociation.confirmation.associateOrShut.shut")
+      shut must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ShutMUCR))
     }
   }
 
