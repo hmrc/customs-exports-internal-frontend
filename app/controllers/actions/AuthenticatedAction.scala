@@ -25,7 +25,7 @@ import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.{AuthProviders, AuthorisationException, AuthorisedFunctions, NoActiveSession}
+import uk.gov.hmrc.auth.core.{AuthProviders, AuthorisationException, AuthorisedFunctions, Enrolment, NoActiveSession}
 import views.html.unauthorized
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -53,7 +53,7 @@ class AuthenticatedAction @Inject()(
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     lazy val forbidden = Forbidden(unauthorizedPage()(request, mcc.messagesApi.preferred(request)))
 
-    authorised(AuthProviders(PrivilegedApplication)).retrieve(Retrievals.credentials) {
+    authorised(AuthProviders(PrivilegedApplication) and Enrolment("write:customs-inventory-linking-exports")).retrieve(Retrievals.credentials) {
       _.map { c =>
         block(AuthenticatedRequest(Operator(c.providerId), request))
       } getOrElse {

@@ -83,14 +83,14 @@ function completePage() {
         let title = document.title.toLowerCase();
         const validDate = new Date();
         validDate.setDate(validDate.getDate() - 1); // One day before
-        if (title.indexOf('departure') != -1) {
+        if (title.indexOf('departure') !== -1) {
             document.getElementById('dateOfDeparture_day').value = validDate.getDate();
             document.getElementById('dateOfDeparture_month').value = validDate.getMonth();
             document.getElementById('dateOfDeparture_year').value = validDate.getFullYear();
             document.getElementById('timeOfDeparture_hour').value = '10';
             document.getElementById('timeOfDeparture_minute').value = '00';
         }
-        if (title.indexOf('arrival') != -1) {
+        if (title.indexOf('arrival') !== -1) {
             document.getElementById('dateOfArrival_day').value = validDate.getDate();
             document.getElementById('dateOfArrival_month').value = validDate.getMonth();
             document.getElementById('dateOfArrival_year').value = validDate.getFullYear();
@@ -114,13 +114,13 @@ function completePage() {
     }
     if(currentPageIs("/customs-exports-internal/mucr-options")){
         document.getElementById("mucrOptions.create").checked = true;
-        document.getElementById("newMucr").value = "GB/1234-123ABC456DEFIIIII"
+        document.getElementById("newMucr").value = "GB/1234-123ABC456DEFIIIII";
         document.getElementsByClassName('button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/associate-ucr")){
         selectRadioOption(document.getElementById("kind"), 0);
-        const now = new Date()
-        document.getElementById("ducr").value = `5GB123456789000-${now.valueOf()}IIIII`
+        const now = new Date();
+        document.getElementById("ducr").value = `5GB123456789000-${now.valueOf()}IIIII`;
         document.getElementsByClassName('button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/associate-ucr-summary")){
@@ -131,13 +131,13 @@ function completePage() {
     }
     if(currentPageIs("/customs-exports-internal/dissociate-ucr")){
         selectRadioOption(document.getElementById("kind"), 0);
-        const now = new Date()
-        document.getElementById("ducr").value = `5GB123456789000-${now.valueOf()}IIIII`
+        const now = new Date();
+        document.getElementById("ducr").value = `5GB123456789000-${now.valueOf()}IIIII`;
         document.getElementsByClassName('button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/shut-mucr")){
-        const now = new Date()
-        document.getElementById("mucr").value = `GB/ABCDE1234-${now.valueOf()}IIIII`
+        const now = new Date();
+        document.getElementById("mucr").value = `GB/ABCDE1234-${now.valueOf()}IIIII`;
         document.getElementsByClassName('button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/shut-mucr-summary")){
