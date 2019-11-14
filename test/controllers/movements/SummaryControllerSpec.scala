@@ -18,6 +18,7 @@ package controllers.movements
 
 import base.MockCache
 import controllers.ControllerLayerSpec
+import controllers.storage.FlashKeys
 import forms.ConsignmentReferences
 import models.cache._
 import org.mockito.ArgumentMatchers.{any, anyString}
@@ -50,8 +51,7 @@ class SummaryControllerSpec extends ControllerLayerSpec with MockCache {
       submissionService,
       stubMessagesControllerComponents(),
       mockArrivalSummaryPage,
-      mockDepartureSummaryPage,
-      mockMovementConfirmationPage
+      mockDepartureSummaryPage
     )(global)
 
   override protected def beforeEach(): Unit = {
@@ -59,7 +59,6 @@ class SummaryControllerSpec extends ControllerLayerSpec with MockCache {
 
     when(mockArrivalSummaryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(mockDepartureSummaryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
-    when(mockMovementConfirmationPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -68,11 +67,9 @@ class SummaryControllerSpec extends ControllerLayerSpec with MockCache {
     super.afterEach()
   }
 
-  "Summary Controller" should {
-
+  "GET" should {
     "return 200 (OK)" when {
-
-      "GET displayPage is invoked without data in cache" in {
+      "no answers" in {
 
         givenTheCacheIsEmpty()
 
@@ -82,7 +79,7 @@ class SummaryControllerSpec extends ControllerLayerSpec with MockCache {
         verify(mockDepartureSummaryPage).apply(any())(any(), any())
       }
 
-      "GET displayPage is invoked with data in cache" in {
+      "some answers" in {
 
         givenTheCacheContains(Cache("12345", ArrivalAnswers()))
 
@@ -92,24 +89,10 @@ class SummaryControllerSpec extends ControllerLayerSpec with MockCache {
         verify(mockArrivalSummaryPage).apply(any())(any(), any())
       }
 
-      "submission service return status ACCEPTED" in {
-
-        givenTheCacheIsEmpty()
-        given(submissionService.submitMovementRequest(anyString(), any[Answers])(any()))
-          .willReturn(Future.successful(ConsignmentReferences("D", "9GB23456543")))
-
-        val result = controller(DepartureAnswers()).submitMovementRequest()(postRequest(JsString("")))
-
-        status(result) mustBe OK
-        verify(mockMovementConfirmationPage).apply(any())(any(), any())
-      }
-
     }
 
     "return 403 (FORBIDDEN)" when {
-
       "user is on the wrong journey " in {
-
         givenTheCacheIsEmpty()
 
         val result = controller(AssociateUcrAnswers()).displayPage()(getRequest)
@@ -118,5 +101,20 @@ class SummaryControllerSpec extends ControllerLayerSpec with MockCache {
       }
     }
 
+    "POST" should {
+      "redirect to confirmation" in {
+        givenTheCacheIsEmpty()
+        given(submissionService.submitMovementRequest(anyString(), any[Answers])(any()))
+          .willReturn(Future.successful(ConsignmentReferences("D", "9GB23456543")))
+
+        val result = controller(DepartureAnswers()).submitMovementRequest()(postRequest(JsString("")))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.movements.routes.MovementConfirmationController.display().url)
+        flash(result).get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.DEPART.toString)
+        flash(result).get(FlashKeys.UCR_KIND) mustBe Some("D")
+        flash(result).get(FlashKeys.UCR) mustBe Some("9GB23456543")
+      }
+    }
   }
 }

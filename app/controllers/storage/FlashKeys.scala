@@ -17,7 +17,9 @@
 package controllers.storage
 
 object FlashKeys {
+  val MOVEMENT_TYPE: String = "MOVEMENT_TYPE"
   val UCR = "UCR"
+  val UCR_KIND = "UCR_KIND"
   val CONSOLIDATION_KIND = "CONSOLIDATION_KIND"
   val MUCR = "MUCR"
 }

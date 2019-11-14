@@ -56,6 +56,9 @@ POST        /transport                             controllers.movements.Transpo
 GET         /summary                               controllers.movements.SummaryController.displayPage()
 POST        /summary                               controllers.movements.SummaryController.submitMovementRequest()
 
+# Movement confirmation page
+GET         /movement-confirmation                 controllers.movements.MovementConfirmationController.display()
+
 # Shut a MUCR
 GET         /shut-mucr                             controllers.consolidations.ShutMucrController.displayPage()
 POST        /shut-mucr                             controllers.consolidations.ShutMucrController.submit()
