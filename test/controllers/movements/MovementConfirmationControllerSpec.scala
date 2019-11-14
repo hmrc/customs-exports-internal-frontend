@@ -63,7 +63,9 @@ class MovementConfirmationControllerSpec extends ControllerLayerSpec {
 
       "ucr is missing" in {
         intercept[RuntimeException] {
-          await(controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString, FlashKeys.UCR_KIND -> "kind")))
+          await(
+            controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString, FlashKeys.UCR_KIND -> "kind"))
+          )
         } mustBe ReturnToStartException
       }
     }

@@ -87,7 +87,6 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec {
         } mustBe ReturnToStartException
       }
 
-
     }
   }
 

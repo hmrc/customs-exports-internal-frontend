@@ -17,7 +17,9 @@
 package controllers.consolidations
 
 import controllers.actions.AuthenticatedAction
+import controllers.storage.FlashKeys
 import javax.inject.{Inject, Singleton}
+import models.ReturnToStartException
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -34,7 +36,9 @@ class DisassociateUCRConfirmationController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def display: Action[AnyContent] = authenticate { implicit request =>
-    Ok(page())
+    val kind = request.flash.get(FlashKeys.CONSOLIDATION_KIND).getOrElse(throw ReturnToStartException)
+    val ucr = request.flash.get(FlashKeys.UCR).getOrElse(throw ReturnToStartException)
+    Ok(page(kind, ucr))
   }
 
 }

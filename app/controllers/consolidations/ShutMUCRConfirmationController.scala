@@ -28,12 +28,9 @@ import views.html.shut_mucr_confirmation
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ShutMUCRConfirmationController @Inject()(
-  authenticate: AuthenticatedAction,
-  mcc: MessagesControllerComponents,
-  page: shut_mucr_confirmation
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+class ShutMUCRConfirmationController @Inject()(authenticate: AuthenticatedAction, mcc: MessagesControllerComponents, page: shut_mucr_confirmation)(
+  implicit ec: ExecutionContext
+) extends FrontendController(mcc) with I18nSupport {
 
   def display: Action[AnyContent] = authenticate { implicit request =>
     val ucr = request.flash.get(FlashKeys.MUCR).getOrElse(throw ReturnToStartException)

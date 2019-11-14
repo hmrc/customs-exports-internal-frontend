@@ -34,11 +34,8 @@ class MovementConfirmationArrivalViewSpec extends ViewSpec {
     }
 
     "render confirmation" in {
-      page(JourneyType.ARRIVE, consignmentReferences).getElementById("highlight-box-heading") must containMessage(
-        "movement.ARRIVE.confirmation.heading",
-        "DUCR",
-        "9GB12345678"
-      )
+      page(JourneyType.ARRIVE, consignmentReferences)
+        .getElementById("highlight-box-heading") must containMessage("movement.ARRIVE.confirmation.heading", "DUCR", "9GB12345678")
     }
 
     "have back to start button" in {

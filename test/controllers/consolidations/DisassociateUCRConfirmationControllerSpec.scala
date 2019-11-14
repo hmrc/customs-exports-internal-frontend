@@ -18,6 +18,8 @@ package controllers.consolidations
 
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
+import controllers.storage.FlashKeys
+import models.ReturnToStartException
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -37,10 +39,24 @@ class DisassociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
     implicit val get = FakeRequest("GET", "/")
 
     "return 200 when authenticated" in {
-      val result = controller(SuccessfulAuth()).display(get)
+      val result = controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.CONSOLIDATION_KIND -> "kind", FlashKeys.UCR -> "ucr"))
 
       status(result) mustBe Status.OK
-      contentAsHtml(result) mustBe page()
+      contentAsHtml(result) mustBe page("kind", "ucr")
+    }
+
+    "return to start" when {
+      "missing ucr" in {
+        intercept[RuntimeException] {
+          await(controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.UCR -> "ucr")))
+        } mustBe ReturnToStartException
+      }
+
+      "missing kind" in {
+        intercept[RuntimeException] {
+          await(controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.CONSOLIDATION_KIND -> "kind")))
+        } mustBe ReturnToStartException
+      }
     }
 
     "return 403 when unauthenticated" in {
