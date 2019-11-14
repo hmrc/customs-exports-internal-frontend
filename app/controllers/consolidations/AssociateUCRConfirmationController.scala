@@ -36,9 +36,8 @@ class AssociateUCRConfirmationController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def display: Action[AnyContent] = authenticate { implicit request =>
-    val flash = implicitly[Flash]
-    val kind = flash.get(FlashKeys.CONSOLIDATION_KIND).getOrElse(throw ReturnToStartException)
-    val ucr = flash.get(FlashKeys.UCR).getOrElse(throw ReturnToStartException)
+    val kind = request.flash.get(FlashKeys.CONSOLIDATION_KIND).getOrElse(throw ReturnToStartException)
+    val ucr = request.flash.get(FlashKeys.UCR).getOrElse(throw ReturnToStartException)
     Ok(page(kind, ucr))
   }
 

@@ -35,10 +35,9 @@ class MovementConfirmationController @Inject()(authenticate: AuthenticatedAction
 ) extends FrontendController(mcc) with I18nSupport {
 
   def display: Action[AnyContent] = authenticate { implicit request =>
-    val flash = implicitly[Flash]
-    val `type` = flash.get(FlashKeys.MOVEMENT_TYPE).map(JourneyType.withName).getOrElse(throw ReturnToStartException)
-    val kind = flash.get(FlashKeys.UCR_KIND).getOrElse(throw ReturnToStartException)
-    val reference = flash.get(FlashKeys.UCR).getOrElse(throw ReturnToStartException)
+    val `type` = request.flash.get(FlashKeys.MOVEMENT_TYPE).map(JourneyType.withName).getOrElse(throw ReturnToStartException)
+    val kind = request.flash.get(FlashKeys.UCR_KIND).getOrElse(throw ReturnToStartException)
+    val reference = request.flash.get(FlashKeys.UCR).getOrElse(throw ReturnToStartException)
     Ok(page(`type`, ConsignmentReferences(kind, reference)))
   }
 
