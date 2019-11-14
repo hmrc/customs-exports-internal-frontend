@@ -42,7 +42,7 @@ class DisassociateUcrViewSpec extends ViewSpec {
     "render form" in {
       val form = page(DisassociateUcr.form).getForm
       form mustBe defined
-      form.get must haveAttribute("action", controllers.consolidations.routes.DisassociateUcrController.submit().url)
+      form.get must haveAttribute("action", controllers.consolidations.routes.DisassociateUCRController.submit().url)
     }
 
     "render error summary" when {

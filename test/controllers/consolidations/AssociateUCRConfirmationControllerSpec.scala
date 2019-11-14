@@ -18,29 +18,37 @@ package controllers.consolidations
 
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
+import controllers.storage.FlashKeys
+import models.ReturnToStartException
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import views.html.disassociate_ucr_confirmation
+import views.html.associate_ucr_confirmation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class DisassociateUcrConfirmationControllerSpec extends ControllerLayerSpec {
+class AssociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
 
-  private val page = new disassociate_ucr_confirmation(main_template)
+  private val page = new associate_ucr_confirmation(main_template)
 
   private def controller(auth: AuthenticatedAction) =
-    new DisassociateUcrConfirmationController(auth, stubMessagesControllerComponents(), page)
+    new AssociateUCRConfirmationController(auth, stubMessagesControllerComponents(), page)
 
   "GET" should {
     implicit val get = FakeRequest("GET", "/")
 
     "return 200 when authenticated" in {
-      val result = controller(SuccessfulAuth()).display(get)
+      val result = controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.CONSOLIDATION_KIND -> "kind", FlashKeys.UCR -> "123"))
 
       status(result) mustBe Status.OK
-      contentAsHtml(result) mustBe page()
+      contentAsHtml(result) mustBe page("kind", "123")
+    }
+
+    "return to start for missing params" in {
+      intercept[RuntimeException] {
+        await(controller(SuccessfulAuth()).display(get))
+      } mustBe ReturnToStartException
     }
 
     "return 403 when unauthenticated" in {

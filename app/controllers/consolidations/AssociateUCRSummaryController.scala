@@ -25,6 +25,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.{associate_ucr_confirmation, associate_ucr_summary}
+import play.api.mvc.Results.Redirect
+import controllers.storage.FlashKeys
 
 import scala.concurrent.ExecutionContext
 
@@ -33,8 +35,7 @@ class AssociateUCRSummaryController @Inject()(
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
   submissionService: SubmissionService,
-  associateUcrSummaryPage: associate_ucr_summary,
-  associateUCRConfirmPage: associate_ucr_confirmation
+  associateUcrSummaryPage: associate_ucr_summary
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -54,7 +55,8 @@ class AssociateUCRSummaryController @Inject()(
     val associateUcr = answers.associateUcr.getOrElse(throw ReturnToStartException)
 
     submissionService.submit(request.providerId, answers).map { _ =>
-      Ok(associateUCRConfirmPage(associateUcr.kind.formValue, associateUcr.ucr))
+      Redirect(controllers.consolidations.routes.AssociateUCRConfirmationController.display())
+        .flashing(FlashKeys.CONSOLIDATION_KIND -> associateUcr.kind.formValue, FlashKeys.UCR -> associateUcr.ucr)
     }
   }
 }

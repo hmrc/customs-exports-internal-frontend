@@ -26,7 +26,7 @@ import views.html.disassociate_ucr_confirmation
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DisassociateUcrConfirmationController @Inject()(
+class DisassociateUCRConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
   page: disassociate_ucr_confirmation
