@@ -17,46 +17,44 @@
 package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashKeys
+import forms.DisassociateUcr
 import javax.inject.{Inject, Singleton}
-import models.ReturnToStartException
-import models.cache.{DisassociateUcrAnswers, JourneyType}
+import models.cache.{Cache, DisassociateUcrAnswers, JourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.MovementRepository
-import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.disassociate_ucr_summary
+import views.html.disassociate_ucr
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DisassociateUcrSummaryController @Inject()(
+class DisassociateUCRController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  submissionService: SubmissionService,
   movementRepository: MovementRepository,
-  page: disassociate_ucr_summary
+  page: disassociate_ucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def display: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)) { implicit request =>
     request.answersAs[DisassociateUcrAnswers].ucr match {
-      case Some(ucr) => Ok(page(ucr))
-      case _         => throw ReturnToStartException
+      case Some(ucr) => Ok(page(DisassociateUcr.form.fill(ucr)))
+      case _         => Ok(page(DisassociateUcr.form))
     }
   }
 
   def submit: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)).async { implicit request =>
-    val answers = request.answersAs[DisassociateUcrAnswers]
-    val ucr = answers.ucr.map(_.ucr).getOrElse(throw ReturnToStartException)
-    val kind = answers.ucr.map(_.kind).getOrElse(throw ReturnToStartException)
-
-    submissionService.submit(request.providerId, answers).map { _ =>
-      Redirect(controllers.consolidations.routes.DisassociateUcrConfirmationController.display())
-        .flashing(FlashKeys.UCR -> ucr, FlashKeys.CONSOLIDATION_KIND -> kind.toString)
-    }
+    DisassociateUcr.form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
+        answers =>
+          movementRepository.upsert(Cache(request.providerId, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
+            Redirect(controllers.consolidations.routes.DisassociateUCRSummaryController.display())
+        }
+      )
   }
 
 }

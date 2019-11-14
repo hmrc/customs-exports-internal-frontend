@@ -23,10 +23,10 @@
 @(disassociateUcr: DisassociateUcr)(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Title(messages("disassociate.ucr.summary.title")), fullWidth = true) {
-    @helper.form(consolidations.routes.DisassociateUcrSummaryController.submit(), 'autoComplete -> "off") {
+    @helper.form(consolidations.routes.DisassociateUCRSummaryController.submit(), 'autoComplete -> "off") {
       @helper.CSRF.formField
 
-      @components.back_link(consolidations.routes.DisassociateUcrController.display())
+      @components.back_link(consolidations.routes.DisassociateUCRController.display())
 
       @components.page_title(title = Some(messages("disassociate.ucr.summary.title")))
 
@@ -37,7 +37,7 @@
                   <td id="disassociate_ucr-type">@disassociateUcr.kind.toString.toUpperCase</td>
                   <td id="disassociate_ucr-reference">@disassociateUcr.ucr</td>
                   <td class="text-right">
-                      <a id="disassociate_ucr-remove" href="@consolidations.routes.DisassociateUcrController.display()">@messages("site.change")</a>
+                      <a id="disassociate_ucr-remove" href="@consolidations.routes.DisassociateUCRController.display()">@messages("site.change")</a>
                   </td>
               </tr>
           </tbody>

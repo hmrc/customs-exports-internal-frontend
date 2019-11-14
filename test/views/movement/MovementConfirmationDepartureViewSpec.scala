@@ -17,7 +17,7 @@
 package views.movement
 
 import forms.ConsignmentReferences
-import models.cache.DepartureAnswers
+import models.cache.{DepartureAnswers, JourneyType}
 import views.ViewSpec
 import views.html.movement_confirmation_page
 
@@ -25,37 +25,33 @@ class MovementConfirmationDepartureViewSpec extends ViewSpec {
 
   private implicit val request = journeyRequest(DepartureAnswers())
 
-  val consignmentReferences = ConsignmentReferences(ConsignmentReferences.AllowedReferences.Ducr, "9GB12345678")
+  private val consignmentReferences = ConsignmentReferences(ConsignmentReferences.AllowedReferences.Ducr, "9GB12345678")
   private val page = new movement_confirmation_page(main_template)
 
   "View" should {
     "render title" in {
-      page(consignmentReferences).getTitle must containMessage("movement.DEPART.confirmation.tab.heading")
+      page(JourneyType.DEPART, consignmentReferences).getTitle must containMessage("movement.DEPART.confirmation.tab.heading")
     }
 
     "render confirmation" in {
-      page(consignmentReferences).getElementById("highlight-box-heading") must containMessage(
-        "movement.DEPART.confirmation.heading",
-        "DUCR",
-        "9GB12345678"
-      )
+      page(JourneyType.DEPART, consignmentReferences)
+        .getElementById("highlight-box-heading") must containMessage("movement.DEPART.confirmation.heading", "DUCR", "9GB12345678")
     }
 
     "have back to start button" in {
-
-      val backButton = page(consignmentReferences).getElementsByClass("button").first()
+      val backButton = page(JourneyType.DEPART, consignmentReferences).getElementsByClass("button").first()
 
       backButton must containMessage("site.backToStart")
       backButton must haveHref(controllers.routes.ChoiceController.displayPage())
     }
 
     "have 'view requests' link" in {
-      val statusInfo = page(consignmentReferences).getElementById("status-info")
+      val statusInfo = page(JourneyType.DEPART, consignmentReferences).getElementById("status-info")
       statusInfo.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ViewSubmissions))
     }
 
     "have 'next steps' link" in {
-      val nextSteps = page(consignmentReferences).getElementById("next-steps")
+      val nextSteps = page(JourneyType.DEPART, consignmentReferences).getElementById("next-steps")
       nextSteps.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.Departure))
       nextSteps.getElementsByTag("a").get(1) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.Arrival))
     }

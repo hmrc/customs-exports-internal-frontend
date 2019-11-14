@@ -17,24 +17,24 @@
 package controllers.consolidations
 
 import controllers.actions.AuthenticatedAction
+import controllers.storage.FlashKeys
 import javax.inject.{Inject, Singleton}
+import models.ReturnToStartException
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.disassociate_ucr_confirmation
+import views.html.shut_mucr_confirmation
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DisassociateUcrConfirmationController @Inject()(
-  authenticate: AuthenticatedAction,
-  mcc: MessagesControllerComponents,
-  page: disassociate_ucr_confirmation
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+class ShutMUCRConfirmationController @Inject()(authenticate: AuthenticatedAction, mcc: MessagesControllerComponents, page: shut_mucr_confirmation)(
+  implicit ec: ExecutionContext
+) extends FrontendController(mcc) with I18nSupport {
 
   def display: Action[AnyContent] = authenticate { implicit request =>
-    Ok(page())
+    val ucr = request.flash.get(FlashKeys.MUCR).getOrElse(throw ReturnToStartException)
+    Ok(page(ucr))
   }
 
 }

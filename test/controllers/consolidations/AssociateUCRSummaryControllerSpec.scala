@@ -17,6 +17,7 @@
 package controllers.consolidations
 
 import controllers.ControllerLayerSpec
+import controllers.storage.FlashKeys
 import forms.{AssociateKind, AssociateUcr, MucrOptions}
 import models.ReturnToStartException
 import models.cache.AssociateUcrAnswers
@@ -26,7 +27,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import views.html.{associate_ucr_confirmation, associate_ucr_summary}
+import views.html.associate_ucr_summary
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
@@ -34,7 +35,6 @@ import scala.concurrent.Future
 class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec {
 
   private val summaryPage = mock[associate_ucr_summary]
-  private val confirmPage = mock[associate_ucr_confirmation]
   private val submissionService = mock[SubmissionService]
 
   private def controller(associateUcrAnswers: AssociateUcrAnswers) =
@@ -43,78 +43,74 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec {
       ValidJourney(associateUcrAnswers),
       stubMessagesControllerComponents(),
       submissionService,
-      summaryPage,
-      confirmPage
+      summaryPage
     )(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
     when(summaryPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
-    when(confirmPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
-    reset(summaryPage, confirmPage)
+    reset(summaryPage)
 
     super.afterEach()
   }
 
-  "Associate UCR Summary Controller" should {
+  "GET" should {
+    "return 200 (OK)" in {
 
-    "return 200 (OK)" when {
+      val answers = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")), associateUcr = Some(AssociateUcr(AssociateKind.Ducr, "123")))
 
-      "displayPage is invoked with mucr and ucr in cache" in {
+      val result = controller(answers).displayPage()(getRequest)
 
-        val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")), associateUcr = Some(AssociateUcr(AssociateKind.Ducr, "123")))
-
-        val result = controller(cachedData).displayPage()(getRequest)
-
-        status(result) mustBe OK
-        verify(summaryPage).apply(any(), any())(any(), any())
-      }
-
-      "submission finished with success" in {
-
-        when(submissionService.submit(any(), any[AssociateUcrAnswers])(any()))
-          .thenReturn(Future.successful((): Unit))
-
-        val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")), associateUcr = Some(AssociateUcr(AssociateKind.Ducr, "123")))
-
-        val result = controller(cachedData).submit()(postRequest)
-
-        status(result) mustBe OK
-        verify(confirmPage).apply(any(), any())(any(), any())
-      }
+      status(result) mustBe OK
+      verify(summaryPage).apply(any(), any())(any(), any())
     }
 
     "throw an exception" when {
 
-      "mucr is missing during displayPage" in {
+      "mucr is missing" in {
+        val answers = AssociateUcrAnswers(associateUcr = Some(AssociateUcr(AssociateKind.Ducr, "123")))
 
-        val cachedData = AssociateUcrAnswers(associateUcr = Some(AssociateUcr(AssociateKind.Ducr, "123")))
-
-        intercept[ReturnToStartException.type] {
-          await(controller(cachedData).displayPage()(getRequest))
-        }
+        intercept[RuntimeException] {
+          await(controller(answers).displayPage()(getRequest))
+        } mustBe ReturnToStartException
       }
 
-      "ucr is missing during displayPage" in {
+      "ucr is missing" in {
+        val answers = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")))
 
-        val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")))
-
-        intercept[ReturnToStartException.type] {
-          await(controller(cachedData).displayPage()(getRequest))
-        }
+        intercept[RuntimeException] {
+          await(controller(answers).displayPage()(getRequest))
+        } mustBe ReturnToStartException
       }
 
-      "associate ucr is empty during submission" in {
+    }
+  }
 
+  "POST" should {
+    "redirect to confirmation" in {
+      when(submissionService.submit(any(), any[AssociateUcrAnswers])(any())).thenReturn(Future.successful((): Unit))
+
+      val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")), associateUcr = Some(AssociateUcr(AssociateKind.Ducr, "123")))
+
+      val result = controller(cachedData).submit()(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUCRConfirmationController.display().url)
+      flash(result).get(FlashKeys.CONSOLIDATION_KIND) mustBe Some("ducr")
+      flash(result).get(FlashKeys.UCR) mustBe Some("123")
+    }
+
+    "return to start" when {
+      "ucr is missing" in {
         val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")))
 
-        intercept[ReturnToStartException.type] {
+        intercept[RuntimeException] {
           await(controller(cachedData).submit()(postRequest))
-        }
+        } mustBe ReturnToStartException
       }
     }
   }

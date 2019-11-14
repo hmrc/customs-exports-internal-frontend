@@ -17,6 +17,7 @@
 package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.storage.FlashKeys
 import javax.inject.Inject
 import models.cache.{ArrivalAnswers, DepartureAnswers, JourneyType}
 import play.api.i18n.I18nSupport
@@ -36,8 +37,7 @@ class SummaryController @Inject()(
   submissionService: SubmissionService,
   mcc: MessagesControllerComponents,
   arrivalSummaryPage: arrival_summary_page,
-  departureSummaryPage: departure_summary_page,
-  movementConfirmationPage: movement_confirmation_page
+  departureSummaryPage: departure_summary_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -54,7 +54,12 @@ class SummaryController @Inject()(
         .submitMovementRequest(request.providerId, request.answers)
         .flatMap { consignmentReferences =>
           movementRepository.removeByProviderId(request.providerId).map { _ =>
-            Ok(movementConfirmationPage(consignmentReferences))
+            Redirect(controllers.movements.routes.MovementConfirmationController.display())
+              .flashing(
+                FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString,
+                FlashKeys.UCR_KIND -> consignmentReferences.reference,
+                FlashKeys.UCR -> consignmentReferences.referenceValue
+              )
           }
         }
   }

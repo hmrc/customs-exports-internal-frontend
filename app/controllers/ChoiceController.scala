@@ -54,7 +54,7 @@ class ChoiceController @Inject()(
       case forms.Choice.AssociateUCR =>
         proceedJourney(AssociateUcrAnswers(), consolidations.routes.MucrOptionsController.displayPage())
       case forms.Choice.DisassociateUCR =>
-        proceedJourney(DisassociateUcrAnswers(), consolidations.routes.DisassociateUcrController.display())
+        proceedJourney(DisassociateUcrAnswers(), consolidations.routes.DisassociateUCRController.display())
       case forms.Choice.ShutMUCR =>
         proceedJourney(AssociateUcrAnswers(), consolidations.routes.ShutMucrController.displayPage())
       case forms.Choice.ViewSubmissions =>
@@ -75,7 +75,7 @@ class ChoiceController @Inject()(
           case forms.Choice.AssociateUCR =>
             proceedJourney(AssociateUcrAnswers(), consolidations.routes.MucrOptionsController.displayPage())
           case forms.Choice.DisassociateUCR =>
-            proceedJourney(DisassociateUcrAnswers(), consolidations.routes.DisassociateUcrController.display())
+            proceedJourney(DisassociateUcrAnswers(), consolidations.routes.DisassociateUCRController.display())
           case forms.Choice.ShutMUCR =>
             proceedJourney(ShutMucrAnswers(), consolidations.routes.ShutMucrController.displayPage())
           case forms.Choice.ViewSubmissions =>

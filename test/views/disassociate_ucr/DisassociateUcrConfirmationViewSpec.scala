@@ -16,8 +16,7 @@
 
 package views.disassociate_ucr
 
-import controllers.storage.FlashKeys
-import play.api.mvc.{AnyContentAsEmpty, Flash, Request}
+import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import views.ViewSpec
 import views.html.disassociate_ucr_confirmation
@@ -25,11 +24,10 @@ import views.html.disassociate_ucr_confirmation
 class DisassociateUcrConfirmationViewSpec extends ViewSpec {
 
   private implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
-  private val page = new disassociate_ucr_confirmation(main_template)
+  private def page = new disassociate_ucr_confirmation(main_template)
 
   "View" should {
-    implicit val flash: Flash = Flash(Map(FlashKeys.UCR -> "ucr", FlashKeys.CONSOLIDATION_KIND -> "mucr"))
-    val view = page()
+    val view = page("mucr", "ucr")
 
     "render title" in {
       view.getTitle must containMessage("disassociate.ucr.confirmation.tab.heading", "mucr", "ucr")
@@ -40,12 +38,12 @@ class DisassociateUcrConfirmationViewSpec extends ViewSpec {
     }
 
     "have 'view requests' link" in {
-      val statusInfo = page().getElementById("status-info")
+      val statusInfo = view.getElementById("status-info")
       statusInfo.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ViewSubmissions))
     }
 
     "have 'next steps' link" in {
-      val nextSteps = page().getElementById("next-steps")
+      val nextSteps = view.getElementById("next-steps")
 
       val associate = nextSteps.getElementsByTag("a").get(0)
       associate must containMessage("disassociation.confirmation.associateOrShut.associate")

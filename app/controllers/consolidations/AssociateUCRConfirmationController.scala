@@ -16,40 +16,29 @@
 
 package controllers.consolidations
 
-import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
-import models.cache.{JourneyType, ShutMucrAnswers}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.shut_mucr_summary
+import views.html.associate_ucr_confirmation
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ShutMucrSummaryController @Inject()(
+class AssociateUCRConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  submissionService: SubmissionService,
-  summaryPage: shut_mucr_summary
+  page: associate_ucr_confirmation
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)) { implicit request =>
-    val mucr = request.answersAs[ShutMucrAnswers].shutMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
-    Ok(summaryPage(mucr))
+  def display: Action[AnyContent] = authenticate { implicit request =>
+    val kind = request.flash.get(FlashKeys.CONSOLIDATION_KIND).getOrElse(throw ReturnToStartException)
+    val ucr = request.flash.get(FlashKeys.UCR).getOrElse(throw ReturnToStartException)
+    Ok(page(kind, ucr))
   }
 
-  def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)).async { implicit request =>
-    val answers = request.answersAs[ShutMucrAnswers]
-    val mucr = answers.shutMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
-    submissionService.submit(request.providerId, answers).map { _ =>
-      Redirect(controllers.consolidations.routes.ShutMUCRConfirmationController.display())
-        .flashing(FlashKeys.MUCR -> mucr)
-    }
-  }
 }

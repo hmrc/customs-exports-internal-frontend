@@ -39,7 +39,7 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec {
     "render form" in {
       val form = page(answersDUCR).getForm
       form mustBe defined
-      form.get must haveAttribute("action", controllers.consolidations.routes.DisassociateUcrSummaryController.submit().url)
+      form.get must haveAttribute("action", controllers.consolidations.routes.DisassociateUCRSummaryController.submit().url)
     }
 
     "render back button" when {
@@ -47,14 +47,14 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec {
         val backButton = page(answersDUCR).getBackButton
 
         backButton mustBe defined
-        backButton.get must haveHref(controllers.consolidations.routes.DisassociateUcrController.display())
+        backButton.get must haveHref(controllers.consolidations.routes.DisassociateUCRController.display())
       }
 
       "mucr" in {
         val backButton = page(answersMUCR).getBackButton
 
         backButton mustBe defined
-        backButton.get must haveHref(controllers.consolidations.routes.DisassociateUcrController.display())
+        backButton.get must haveHref(controllers.consolidations.routes.DisassociateUCRController.display())
       }
     }
 
@@ -82,13 +82,13 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec {
       "ducr" in {
         val anchor: Element = page(answersDUCR).getElementById("disassociate_ucr-remove")
         anchor must containMessage("site.change")
-        anchor must haveHref(controllers.consolidations.routes.DisassociateUcrController.display())
+        anchor must haveHref(controllers.consolidations.routes.DisassociateUCRController.display())
       }
 
       "mucr" in {
         val anchor = page(answersDUCR).getElementById("disassociate_ucr-remove")
         anchor must containMessage("site.change")
-        anchor must haveHref(controllers.consolidations.routes.DisassociateUcrController.display())
+        anchor must haveHref(controllers.consolidations.routes.DisassociateUCRController.display())
       }
     }
 
