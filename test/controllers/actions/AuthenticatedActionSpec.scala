@@ -20,15 +20,19 @@ import config.AppConfig
 import connectors.StrideAuthConnector
 import controllers.ControllerLayerSpec
 import controllers.exchanges.AuthenticatedRequest
+import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
+import org.mockito.Mockito.verify
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment, Mode}
 import testdata.CommonTestData.providerId
+import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval}
-import uk.gov.hmrc.auth.core.{AuthorisationException, NoActiveSession}
+import uk.gov.hmrc.auth.core.{AuthProvider, AuthProviders, AuthorisationException, Enrolment, NoActiveSession}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.unauthorized
 
@@ -59,6 +63,13 @@ class AuthenticatedActionSpec extends ControllerLayerSpec {
         val result = await(action.invokeBlock(request, block))
 
         result mustBe controllerResponse
+        theAuthCondition mustBe (AuthProviders(PrivilegedApplication) and Enrolment("write:customs-inventory-linking-exports"))
+      }
+
+      def theAuthCondition: Predicate = {
+        val captor = ArgumentCaptor.forClass(classOf[Predicate])
+        verify(strideConnector).authorise(captor.capture(), any[Retrieval[Option[Credentials]]])(any(), any())
+        captor.getValue
       }
     }
 
