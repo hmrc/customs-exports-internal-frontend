@@ -18,6 +18,7 @@ package controllers.consolidations
 
 import base.MockCache
 import controllers.ControllerLayerSpec
+import controllers.storage.FlashKeys
 import forms.ShutMucr
 import models.ReturnToStartException
 import models.cache.{Answers, Cache, ShutMucrAnswers}
@@ -27,7 +28,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import views.html.{shut_mucr_confirmation, shut_mucr_summary}
+import views.html.shut_mucr_summary
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
@@ -35,8 +36,6 @@ import scala.concurrent.Future
 class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with MockCache {
 
   private val summaryPage = mock[shut_mucr_summary]
-  private val confirmationPage = mock[shut_mucr_confirmation]
-
   private val submissionService = mock[SubmissionService]
 
   private def controller(answers: Answers = ShutMucrAnswers()) =
@@ -45,15 +44,13 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with MockCache {
       ValidJourney(answers),
       stubMessagesControllerComponents(),
       submissionService,
-      summaryPage,
-      confirmationPage
+      summaryPage
     )(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
     when(summaryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
-    when(confirmationPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -62,11 +59,9 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with MockCache {
     super.afterEach()
   }
 
-  "Shut Mucr Summary controller" should {
-
+  "GET" should {
     "return 200 (OK)" when {
-
-      "displayPage is invoked with data in cache" in {
+      "answers are present" in {
 
         val cachedForm = Some(ShutMucr("123"))
         givenTheCacheContains(Cache("12345", ShutMucrAnswers(shutMucr = cachedForm)))
@@ -76,34 +71,29 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with MockCache {
         status(result) mustBe OK
         verify(summaryPage).apply(any())(any(), any())
       }
-
-      "submission finished with success" in {
-
-        when(submissionService.submit(any(), any[ShutMucrAnswers])(any()))
-          .thenReturn(Future.successful((): Unit))
-
-        val cachedData = ShutMucrAnswers(shutMucr = Some(ShutMucr("mucr")))
-
-        val result = controller(cachedData).submit()(postRequest)
-
-        status(result) mustBe OK
-        verify(confirmationPage).apply(any())(any(), any())
-      }
-
     }
 
-    "throw an exception when" when {
-
-      "data missing when displaying page" in {
-
+    "return to start" when {
+      "no answers" in {
         val cachedData = ShutMucrAnswers()
 
-        intercept[ReturnToStartException.type] {
+        intercept[RuntimeException] {
           await(controller(cachedData).displayPage()(getRequest))
-        }
+        } mustBe ReturnToStartException
       }
-
     }
+  }
 
+  "POST" should {
+    "redirect to confirmation" in {
+      when(submissionService.submit(any(), any[ShutMucrAnswers])(any())).thenReturn(Future.successful((): Unit))
+      val cachedData = ShutMucrAnswers(shutMucr = Some(ShutMucr("mucr")))
+
+      val result = controller(cachedData).submit()(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.consolidations.routes.ShutMUCRConfirmationController.display().url)
+      flash(result).get(FlashKeys.MUCR) mustBe Some("mucr")
+    }
   }
 }

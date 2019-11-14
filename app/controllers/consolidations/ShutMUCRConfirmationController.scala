@@ -16,40 +16,28 @@
 
 package controllers.consolidations
 
-import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
-import models.cache.{JourneyType, ShutMucrAnswers}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.shut_mucr_summary
+import views.html.shut_mucr_confirmation
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ShutMucrSummaryController @Inject()(
+class ShutMUCRConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  submissionService: SubmissionService,
-  summaryPage: shut_mucr_summary
+  page: shut_mucr_confirmation
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)) { implicit request =>
-    val mucr = request.answersAs[ShutMucrAnswers].shutMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
-    Ok(summaryPage(mucr))
+  def display: Action[AnyContent] = authenticate { implicit request =>
+    val ucr = request.flash.get(FlashKeys.MUCR).getOrElse(throw ReturnToStartException)
+    Ok(page(ucr))
   }
 
-  def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)).async { implicit request =>
-    val answers = request.answersAs[ShutMucrAnswers]
-    val mucr = answers.shutMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
-    submissionService.submit(request.providerId, answers).map { _ =>
-      Redirect(controllers.consolidations.routes.ShutMUCRConfirmationController.display())
-        .flashing(FlashKeys.MUCR -> mucr)
-    }
-  }
 }
