@@ -30,11 +30,11 @@ class DisassociateUcrConfirmationViewSpec extends ViewSpec {
     val view = page("mucr", "ucr")
 
     "render title" in {
-      view.getTitle must containMessage("disassociate.ucr.confirmation.tab.heading", "mucr", "ucr")
+      view.getTitle must containMessage("disassociate.ucr.confirmation.tab.heading", "MUCR", "ucr")
     }
 
     "render confirmation dialogue" in {
-      view.getElementById("highlight-box-heading") must containMessage("disassociate.ucr.confirmation.heading", "mucr", "ucr")
+      view.getElementById("highlight-box-heading") must containMessage("disassociate.ucr.confirmation.heading", "MUCR", "ucr")
     }
 
     "have 'view requests' link" in {

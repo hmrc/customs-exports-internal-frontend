@@ -30,6 +30,10 @@ class ShutMucrConfirmationViewSpec extends ViewSpec {
 
   "View" should {
 
+    "render title" in {
+      page(mucr).getTitle must containMessage("shutMucr.confirmation.tab.heading")
+    }
+
     "display page reference" in {
 
       page(mucr).getElementById("highlight-box-heading") must containMessage("shutMucr.confirmation.heading", mucr)
