@@ -61,7 +61,7 @@ class LocationController @Inject()(
               }
             case departureAnswers: DepartureAnswers =>
               movementRepository.upsert(Cache(request.providerId, departureAnswers.copy(location = Some(validForm)))).map { _ =>
-                Redirect(controllers.movements.routes.TransportController.displayPage())
+                Redirect(controllers.movements.routes.GoodsDepartedController.displayPage())
               }
           }
         }

@@ -41,6 +41,7 @@ case class DepartureAnswers(
   arrivalReference: Option[ArrivalReference] = None,
   departureDetails: Option[DepartureDetails] = None,
   location: Option[Location] = None,
+  goodsDeparted: Option[GoodsDeparted] = None,
   transport: Option[Transport] = None
 ) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.DEPART

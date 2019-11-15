@@ -103,6 +103,10 @@ function completePage() {
         document.getElementById('code').value = 'GBAUEMAEMAEMA';
         document.getElementsByClassName('button')[0].click()
     }
+    if(currentPageIs("/customs-exports-internal/goods-departed")){
+        selectRadioOption(document.getElementById("departureLocation"), 0);
+        document.getElementsByClassName('button')[0].click()
+    }
     if(currentPageIs("/customs-exports-internal/transport")){
         selectRadioOption(document.getElementById("modeOfTransport"), 0);
         document.getElementById('nationality').value = 'GB';

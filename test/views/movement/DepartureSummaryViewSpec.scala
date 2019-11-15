@@ -17,6 +17,7 @@
 package views.movement
 
 import models.cache.{ArrivalAnswers, DepartureAnswers}
+import play.api.test.Helpers._
 import views.ViewSpec
 import views.html.summary.departure_summary_page
 
@@ -29,6 +30,7 @@ class DepartureSummaryViewSpec extends ViewSpec {
   private val answers = DepartureAnswers()
 
   "View" should {
+
     "render title" in {
       page(answers).getTitle must containMessage("summary.departure.title")
     }
@@ -42,6 +44,17 @@ class DepartureSummaryViewSpec extends ViewSpec {
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.movements.routes.TransportController.displayPage())
+    }
+
+    "render sub-headers for summary sections" in {
+
+      val summaryContent = contentAsString(page(answers))
+
+      summaryContent must include(messages("summary.consignmentDetails"))
+      summaryContent must include(messages("location.title"))
+      summaryContent must include(messages("departureDetails.title"))
+      summaryContent must include(messages("goodsDeparted.title"))
+      summaryContent must include(messages("transport.title"))
     }
   }
 
