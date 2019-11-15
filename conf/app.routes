@@ -53,8 +53,8 @@ GET         /transport                             controllers.movements.Transpo
 POST        /transport                             controllers.movements.TransportController.saveTransport()
 
 # Summary
-GET         /summary                               controllers.movements.SummaryController.displayPage()
-POST        /summary                               controllers.movements.SummaryController.submitMovementRequest()
+GET         /summary                               controllers.movements.MovementSummaryController.displayPage()
+POST        /summary                               controllers.movements.MovementSummaryController.submitMovementRequest()
 
 # Movement confirmation page
 GET         /movement-confirmation                 controllers.movements.MovementConfirmationController.display()

@@ -52,7 +52,7 @@ class TransportController @Inject()(
         validForm => {
           val movementAnswers = request.answersAs[DepartureAnswers].copy(transport = Some(validForm))
           movementRepository.upsert(Cache(request.providerId, movementAnswers)).map { _ =>
-            Redirect(controllers.movements.routes.SummaryController.displayPage())
+            Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
           }
         }
       )
