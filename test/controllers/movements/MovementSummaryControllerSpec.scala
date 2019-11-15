@@ -35,7 +35,7 @@ import views.html.summary.{arrival_summary_page, departure_summary_page}
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
-class SummaryControllerSpec extends ControllerLayerSpec with MockCache {
+class MovementSummaryControllerSpec extends ControllerLayerSpec with MockCache {
 
   private val mockArrivalSummaryPage = mock[arrival_summary_page]
   private val mockDepartureSummaryPage = mock[departure_summary_page]
@@ -44,7 +44,7 @@ class SummaryControllerSpec extends ControllerLayerSpec with MockCache {
   val submissionService: SubmissionService = mock[SubmissionService]
 
   private def controller(answers: Answers) =
-    new SummaryController(
+    new MovementSummaryController(
       SuccessfulAuth(),
       ValidJourney(answers),
       cache,

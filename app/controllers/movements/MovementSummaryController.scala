@@ -30,7 +30,7 @@ import views.html.summary.{arrival_summary_page, departure_summary_page}
 
 import scala.concurrent.ExecutionContext
 
-class SummaryController @Inject()(
+class MovementSummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   movementRepository: MovementRepository,

@@ -25,10 +25,10 @@
     @associateLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.AssociateUCR)">@messages("disassociation.confirmation.associateOrShut.associate")</a>}
     @shutMucrLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.ShutMUCR)">@messages("disassociation.confirmation.associateOrShut.shut")</a>}
 
-    @main_template(title = Title(messages("disassociate.ucr.confirmation.tab.heading", kind))) {
+    @main_template(title = Title(messages("disassociate.ucr.confirmation.tab.heading", kind.toUpperCase))) {
 
         @components.highlight_box_with_reference(
-            headingText = messages("disassociate.ucr.confirmation.heading", kind, ucr)
+            headingText = messages("disassociate.ucr.confirmation.heading", kind.toUpperCase, ucr)
         )
 
         @components.confirmation_status_info()
