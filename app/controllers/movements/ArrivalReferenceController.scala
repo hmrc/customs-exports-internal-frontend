@@ -34,14 +34,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class ArrivalReferenceController @Inject()(
                                             authenticate: AuthenticatedAction,
                                             getJourney: JourneyRefiner,
-                                            movementRepository: CacheRepository,
+                                            cache: CacheRepository,
                                             mcc: MessagesControllerComponents,
                                             arrivalReferencePage: arrival_reference
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
-    Ok(arrivalReferencePage(request.answersAs[ArrivalAnswers].arrivalReference.fold(form)(form.fill(_))))
+    Ok(arrivalReferencePage(request.answersAs[ArrivalAnswers].arrivalReference.fold(form)(form.fill)))
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async { implicit request =>
@@ -51,7 +51,7 @@ class ArrivalReferenceController @Inject()(
         (formWithErrors: Form[ArrivalReference]) => Future.successful(BadRequest(arrivalReferencePage(formWithErrors))),
         validForm => {
           val movementAnswers = request.answersAs[ArrivalAnswers].copy(arrivalReference = Some(validForm))
-          movementRepository.upsert(Cache(request.providerId, movementAnswers)).map { _ =>
+          cache.upsert(Cache(request.providerId, movementAnswers)).map { _ =>
             Redirect(controllers.movements.routes.MovementDetailsController.displayPage())
           }
         }

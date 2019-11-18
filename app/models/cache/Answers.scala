@@ -23,11 +23,11 @@ import uk.gov.hmrc.play.json.Union
 
 case class ArrivalAnswers(
   override val eori: Option[String] = Answers.fakeEORI,
-  consignmentReferences: Option[ConsignmentReferences] = None,
-  arrivalReference: Option[ArrivalReference] = None,
+  override val consignmentReferences: Option[ConsignmentReferences] = None,
+  override val arrivalReference: Option[ArrivalReference] = None,
   arrivalDetails: Option[ArrivalDetails] = None,
-  location: Option[Location] = None
-) extends Answers {
+  override val location: Option[Location] = None
+) extends MovementAnswers {
   override val `type`: JourneyType.Value = JourneyType.ARRIVE
 }
 
@@ -37,18 +37,24 @@ object DepartureAnswers {
 
 case class DepartureAnswers(
   override val eori: Option[String] = Answers.fakeEORI,
-  consignmentReferences: Option[ConsignmentReferences] = None,
-  arrivalReference: Option[ArrivalReference] = None,
+  override val consignmentReferences: Option[ConsignmentReferences] = None,
+  override val arrivalReference: Option[ArrivalReference] = None,
   departureDetails: Option[DepartureDetails] = None,
-  location: Option[Location] = None,
+  override val location: Option[Location] = None,
   goodsDeparted: Option[GoodsDeparted] = None,
   transport: Option[Transport] = None
-) extends Answers {
+) extends MovementAnswers {
   override val `type`: JourneyType.Value = JourneyType.DEPART
 }
 
 object ArrivalAnswers {
   implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
+}
+
+trait MovementAnswers extends Answers {
+  val consignmentReferences: Option[ConsignmentReferences]
+  val arrivalReference: Option[ArrivalReference]
+  val location: Option[Location]
 }
 
 case class AssociateUcrAnswers(

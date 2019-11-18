@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import forms.ConsignmentReferences
 import forms.ConsignmentReferences._
 import javax.inject.{Inject, Singleton}
-import models.cache.{ArrivalAnswers, Cache, DepartureAnswers, JourneyType}
+import models.cache.{ArrivalAnswers, Cache, DepartureAnswers, JourneyType, MovementAnswers}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,18 +34,15 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConsignmentReferencesController @Inject()(
                                                  authenticate: AuthenticatedAction,
                                                  getJourney: JourneyRefiner,
-                                                 movementRepository: CacheRepository,
+                                                 cache: CacheRepository,
                                                  mcc: MessagesControllerComponents,
                                                  consignmentReferencesPage: consignment_references
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
-    val references = request.answers match {
-      case arrivalAnswers: ArrivalAnswers     => arrivalAnswers.consignmentReferences
-      case departureAnswers: DepartureAnswers => departureAnswers.consignmentReferences
-    }
-    Ok(consignmentReferencesPage(references.fold(form)(form.fill(_))))
+    val references = request.answersAs[MovementAnswers].consignmentReferences
+    Ok(consignmentReferencesPage(references.fold(form())(form().fill(_))))
   }
 
   def saveConsignmentReferences(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
@@ -57,11 +54,11 @@ class ConsignmentReferencesController @Inject()(
           validForm => {
             request.answers match {
               case arrivalAnswers: ArrivalAnswers =>
-                movementRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
+                cache.upsert(Cache(request.providerId, arrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
                   Redirect(controllers.movements.routes.ArrivalReferenceController.displayPage())
                 }
               case departureAnswers: DepartureAnswers =>
-                movementRepository.upsert(Cache(request.providerId, departureAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
+                cache.upsert(Cache(request.providerId, departureAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
                   Redirect(controllers.movements.routes.MovementDetailsController.displayPage())
                 }
             }
