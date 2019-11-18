@@ -89,7 +89,7 @@ class SubmissionService @Inject()(
       }
   }
 
-  def submitMovementRequest(providerId: String, answers: Answers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
+  def submit(providerId: String, answers: MovementAnswers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
     val cache = Cache(providerId, answers)
 
     val data = movementBuilder.createMovementRequest(providerId, answers)

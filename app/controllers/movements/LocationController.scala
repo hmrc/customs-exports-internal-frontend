@@ -40,16 +40,13 @@ class LocationController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
-    val location = request.answers match {
-      case arrivalAnswers: ArrivalAnswers     => arrivalAnswers.location
-      case departureAnswers: DepartureAnswers => departureAnswers.location
-    }
-    Ok(locationPage(location.fold(form)(form.fill(_))))
+  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)) { implicit request =>
+    val location = request.answersAs[MovementAnswers].location
+    Ok(locationPage(location.fold(form())(form().fill(_))))
   }
 
   def saveLocation(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async { implicit request =>
-    form
+    form()
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[Location]) => Future.successful(BadRequest(locationPage(formWithErrors))),

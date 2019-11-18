@@ -104,7 +104,7 @@ class MovementSummaryControllerSpec extends ControllerLayerSpec with MockCache {
     "POST" should {
       "redirect to confirmation" in {
         givenTheCacheIsEmpty()
-        given(submissionService.submitMovementRequest(anyString(), any[Answers])(any()))
+        given(submissionService.submit(anyString(), any[MovementAnswers])(any()))
           .willReturn(Future.successful(ConsignmentReferences("D", "9GB23456543")))
 
         val result = controller(DepartureAnswers()).submitMovementRequest()(postRequest(JsString("")))

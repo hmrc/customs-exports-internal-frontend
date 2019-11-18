@@ -41,11 +41,11 @@ class ShutMucrController @Inject()(
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)) { implicit request =>
     val shutMucr = request.answersAs[ShutMucrAnswers].shutMucr
-    Ok(shutMucrPage(shutMucr.fold(form)(form.fill)))
+    Ok(shutMucrPage(shutMucr.fold(form())(form().fill)))
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)).async { implicit request =>
-    form
+    form()
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(shutMucrPage(formWithErrors))),

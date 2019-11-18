@@ -19,7 +19,7 @@ package controllers.movements
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.storage.FlashKeys
 import javax.inject.Inject
-import models.cache.{ArrivalAnswers, DepartureAnswers, JourneyType}
+import models.cache.{ArrivalAnswers, DepartureAnswers, JourneyType, MovementAnswers}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
@@ -51,7 +51,7 @@ class MovementSummaryController @Inject()(
   def submitMovementRequest(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
     implicit request =>
       submissionService
-        .submitMovementRequest(request.providerId, request.answers)
+        .submit(request.providerId, request.answersAs[MovementAnswers])
         .flatMap { consignmentReferences =>
           movementRepository.removeByProviderId(request.providerId).map { _ =>
             Redirect(controllers.movements.routes.MovementConfirmationController.display())

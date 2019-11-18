@@ -54,7 +54,7 @@ class MovementDetailsController @Inject()(
     arrivalDetailsPage(arrivalDetails.fold(details.arrivalForm)(details.arrivalForm.fill(_)))
 
   private def departurePage(departureDetails: Option[DepartureDetails])(implicit request: JourneyRequest[AnyContent]): Html =
-    departureDetailsPage(departureDetails.fold(details.departureForm)(details.departureForm.fill(_)))
+    departureDetailsPage(departureDetails.fold(details.departureForm())(details.departureForm().fill(_)))
 
   def saveMovementDetails(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
     implicit request =>
@@ -68,7 +68,7 @@ class MovementDetailsController @Inject()(
   }
 
   private def handleSavingArrival(arrivalAnswers: ArrivalAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
-    details.arrivalForm
+    details.arrivalForm()
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[ArrivalDetails]) => Future.successful(Left(arrivalDetailsPage(formWithErrors))),
@@ -79,7 +79,7 @@ class MovementDetailsController @Inject()(
       )
 
   private def handleSavingDeparture(departureAnswers: DepartureAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
-    details.departureForm
+    details.departureForm()
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[DepartureDetails]) => Future.successful(Left(departureDetailsPage(formWithErrors))),

@@ -41,13 +41,9 @@ class AssociateUCRSummaryController @Inject()(
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
     val answers = request.answersAs[AssociateUcrAnswers]
-    val mucrOpt = answers.mucrOptions
-    val associateUcrOpt = answers.associateUcr
-
-    (mucrOpt, associateUcrOpt) match {
-      case (Some(mucrOptions), Some(ucr)) => Ok(associateUcrSummaryPage(ucr, mucrOptions.mucr))
-      case _                              => throw ReturnToStartException
-    }
+    val mucrOptions = answers.mucrOptions.getOrElse(throw ReturnToStartException)
+    val ucr = answers.associateUcr.getOrElse(throw ReturnToStartException)
+    Ok(associateUcrSummaryPage(ucr, mucrOptions.mucr))
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
