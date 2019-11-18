@@ -24,18 +24,18 @@ import models.ReturnToStartException
 import models.cache.{AssociateUcrAnswers, Cache}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.associate_ucr
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class AssociateUCRController @Inject()(
-  authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
-  mcc: MessagesControllerComponents,
-  movementRepository: MovementRepository,
-  associateUcrPage: associate_ucr
+                                        authenticate: AuthenticatedAction,
+                                        getJourney: JourneyRefiner,
+                                        mcc: MessagesControllerComponents,
+                                        movementRepository: CacheRepository,
+                                        associateUcrPage: associate_ucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

@@ -25,14 +25,14 @@ import org.mockito.stubbing.Answer
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
-import repositories.MovementRepository
+import repositories.CacheRepository
 
 import scala.concurrent.Future
 
 trait MockCache extends MockitoSugar with BeforeAndAfterEach {
   this: Suite =>
 
-  protected val cache: MovementRepository = mock[MovementRepository]
+  protected val cache: CacheRepository = mock[CacheRepository]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

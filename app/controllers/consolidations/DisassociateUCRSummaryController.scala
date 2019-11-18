@@ -23,7 +23,7 @@ import models.ReturnToStartException
 import models.cache.{DisassociateUcrAnswers, JourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import repositories.MovementRepository
+import repositories.CacheRepository
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.disassociate_ucr_summary
@@ -32,12 +32,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class DisassociateUCRSummaryController @Inject()(
-  authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
-  mcc: MessagesControllerComponents,
-  submissionService: SubmissionService,
-  movementRepository: MovementRepository,
-  page: disassociate_ucr_summary
+                                                  authenticate: AuthenticatedAction,
+                                                  getJourney: JourneyRefiner,
+                                                  mcc: MessagesControllerComponents,
+                                                  submissionService: SubmissionService,
+                                                  movementRepository: CacheRepository,
+                                                  page: disassociate_ucr_summary
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

@@ -25,7 +25,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import play.twirl.api.Html
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.{arrival_details, departure_details}
 
@@ -33,13 +33,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MovementDetailsController @Inject()(
-  authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
-  movementRepository: MovementRepository,
-  mcc: MessagesControllerComponents,
-  details: MovementDetails,
-  arrivalDetailsPage: arrival_details,
-  departureDetailsPage: departure_details
+                                           authenticate: AuthenticatedAction,
+                                           getJourney: JourneyRefiner,
+                                           movementRepository: CacheRepository,
+                                           mcc: MessagesControllerComponents,
+                                           details: MovementDetails,
+                                           arrivalDetailsPage: arrival_details,
+                                           departureDetailsPage: departure_details
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

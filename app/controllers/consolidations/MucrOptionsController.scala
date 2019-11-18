@@ -23,18 +23,18 @@ import javax.inject.Inject
 import models.cache.{AssociateUcrAnswers, Cache}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.mucr_options
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class MucrOptionsController @Inject()(
-  authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
-  mcc: MessagesControllerComponents,
-  movementRepository: MovementRepository,
-  mucrOptionsPage: mucr_options
+                                       authenticate: AuthenticatedAction,
+                                       getJourney: JourneyRefiner,
+                                       mcc: MessagesControllerComponents,
+                                       movementRepository: CacheRepository,
+                                       mucrOptionsPage: mucr_options
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

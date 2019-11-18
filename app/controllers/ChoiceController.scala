@@ -23,7 +23,7 @@ import javax.inject.{Inject, Singleton}
 import models.cache._
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.choice_page
 
@@ -31,10 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ChoiceController @Inject()(
-  authenticate: AuthenticatedAction,
-  mcc: MessagesControllerComponents,
-  movementRepository: MovementRepository,
-  choicePage: choice_page
+                                  authenticate: AuthenticatedAction,
+                                  mcc: MessagesControllerComponents,
+                                  movementRepository: CacheRepository,
+                                  choicePage: choice_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -46,44 +46,25 @@ class ChoiceController @Inject()(
   }
 
   def startSpecificJourney(choice: Choice): Action[AnyContent] = authenticate.async { implicit request =>
-    choice match {
-      case forms.Choice.Arrival =>
-        proceedJourney(ArrivalAnswers(eori = Answers.fakeEORI), movements.routes.ConsignmentReferencesController.displayPage())
-      case forms.Choice.Departure =>
-        proceedJourney(DepartureAnswers(eori = Answers.fakeEORI), movements.routes.ConsignmentReferencesController.displayPage())
-      case forms.Choice.AssociateUCR =>
-        proceedJourney(AssociateUcrAnswers(), consolidations.routes.MucrOptionsController.displayPage())
-      case forms.Choice.DisassociateUCR =>
-        proceedJourney(DisassociateUcrAnswers(), consolidations.routes.DisassociateUCRController.display())
-      case forms.Choice.ShutMUCR =>
-        proceedJourney(AssociateUcrAnswers(), consolidations.routes.ShutMucrController.displayPage())
-      case forms.Choice.ViewSubmissions =>
-        Future.successful(Redirect(routes.ViewSubmissionsController.displayPage()))
-    }
+    proceed(choice)
   }
 
   def submit: Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
     Choice
       .form()
       .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), {
-          case forms.Choice.Arrival =>
-            proceedJourney(ArrivalAnswers(), movements.routes.ConsignmentReferencesController.displayPage())
-          case forms.Choice.Departure =>
-            proceedJourney(DepartureAnswers(), movements.routes.ConsignmentReferencesController.displayPage())
-          case forms.Choice.AssociateUCR =>
-            proceedJourney(AssociateUcrAnswers(), consolidations.routes.MucrOptionsController.displayPage())
-          case forms.Choice.DisassociateUCR =>
-            proceedJourney(DisassociateUcrAnswers(), consolidations.routes.DisassociateUCRController.display())
-          case forms.Choice.ShutMUCR =>
-            proceedJourney(ShutMucrAnswers(), consolidations.routes.ShutMucrController.displayPage())
-          case forms.Choice.ViewSubmissions =>
-            Future.successful(Redirect(routes.ViewSubmissionsController.displayPage()))
-        }
-      )
+      .fold(formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), proceed)
   }
 
-  private def proceedJourney(journey: Answers, call: Call)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
-    movementRepository.upsert(Cache(request.providerId, journey)).map(_ => Redirect(call))
+  private def proceed(choice: Choice)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] = choice match {
+    case forms.Choice.Arrival         => saveAndRedirect(ArrivalAnswers(), movements.routes.ConsignmentReferencesController.displayPage())
+    case forms.Choice.Departure       => saveAndRedirect(DepartureAnswers(), movements.routes.ConsignmentReferencesController.displayPage())
+    case forms.Choice.AssociateUCR    => saveAndRedirect(AssociateUcrAnswers(), consolidations.routes.MucrOptionsController.displayPage())
+    case forms.Choice.DisassociateUCR => saveAndRedirect(DisassociateUcrAnswers(), consolidations.routes.DisassociateUCRController.display())
+    case forms.Choice.ShutMUCR        => saveAndRedirect(ShutMucrAnswers(), consolidations.routes.ShutMucrController.displayPage())
+    case forms.Choice.ViewSubmissions => Future.successful(Redirect(routes.ViewSubmissionsController.displayPage()))
+  }
+
+  private def saveAndRedirect(answers: Answers, call: Call)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
+    movementRepository.upsert(Cache(request.providerId, answers)).map(_ => Redirect(call))
 }

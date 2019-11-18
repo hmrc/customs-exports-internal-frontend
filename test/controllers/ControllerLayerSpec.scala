@@ -31,7 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
-import repositories.MovementRepository
+import repositories.CacheRepository
 import testdata.CommonTestData.providerId
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.ViewTemplates
@@ -80,7 +80,7 @@ abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with Befo
       Future.successful(Results.Forbidden)
   }
 
-  case class ValidJourney(answers: Answers) extends JourneyRefiner(mock[MovementRepository]) {
+  case class ValidJourney(answers: Answers) extends JourneyRefiner(mock[CacheRepository]) {
     override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
       Future.successful(Right(JourneyRequest(answers, request)))
 
@@ -88,7 +88,7 @@ abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with Befo
       if (types.contains(answers.`type`)) ValidJourney(answers) else InValidJourney
   }
 
-  case object InValidJourney extends JourneyRefiner(mock[MovementRepository]) {
+  case object InValidJourney extends JourneyRefiner(mock[CacheRepository]) {
     override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
       Future.successful(Left(Results.Forbidden))
   }

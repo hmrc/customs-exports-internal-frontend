@@ -22,7 +22,7 @@ import javax.inject.Inject
 import models.cache.{ArrivalAnswers, DepartureAnswers, JourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.MovementRepository
+import repositories.CacheRepository
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.movement_confirmation_page
@@ -31,13 +31,13 @@ import views.html.summary.{arrival_summary_page, departure_summary_page}
 import scala.concurrent.ExecutionContext
 
 class MovementSummaryController @Inject()(
-  authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
-  movementRepository: MovementRepository,
-  submissionService: SubmissionService,
-  mcc: MessagesControllerComponents,
-  arrivalSummaryPage: arrival_summary_page,
-  departureSummaryPage: departure_summary_page
+                                           authenticate: AuthenticatedAction,
+                                           getJourney: JourneyRefiner,
+                                           movementRepository: CacheRepository,
+                                           submissionService: SubmissionService,
+                                           mcc: MessagesControllerComponents,
+                                           arrivalSummaryPage: arrival_summary_page,
+                                           departureSummaryPage: departure_summary_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

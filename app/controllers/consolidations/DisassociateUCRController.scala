@@ -22,7 +22,7 @@ import javax.inject.{Inject, Singleton}
 import models.cache.{Cache, DisassociateUcrAnswers, JourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.disassociate_ucr
 
@@ -30,11 +30,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DisassociateUCRController @Inject()(
-  authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
-  mcc: MessagesControllerComponents,
-  movementRepository: MovementRepository,
-  page: disassociate_ucr
+                                           authenticate: AuthenticatedAction,
+                                           getJourney: JourneyRefiner,
+                                           mcc: MessagesControllerComponents,
+                                           movementRepository: CacheRepository,
+                                           page: disassociate_ucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

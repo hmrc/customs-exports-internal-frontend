@@ -24,7 +24,7 @@ import models.cache.{ArrivalAnswers, Cache, JourneyType}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.arrival_reference
 
@@ -32,11 +32,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ArrivalReferenceController @Inject()(
-  authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
-  movementRepository: MovementRepository,
-  mcc: MessagesControllerComponents,
-  arrivalReferencePage: arrival_reference
+                                            authenticate: AuthenticatedAction,
+                                            getJourney: JourneyRefiner,
+                                            movementRepository: CacheRepository,
+                                            mcc: MessagesControllerComponents,
+                                            arrivalReferencePage: arrival_reference
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

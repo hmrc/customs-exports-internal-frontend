@@ -29,7 +29,7 @@ import org.mockito.BDDMockito._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
-import repositories.MovementRepository
+import repositories.CacheRepository
 import services.audit.AuditService
 import testdata.CommonTestData._
 import testdata.MovementsTestData
@@ -43,7 +43,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
   private implicit val hc: HeaderCarrier = mock[HeaderCarrier]
   private val metrics = mock[MovementsMetrics]
   private val audit = mock[AuditService]
-  private val repository = mock[MovementRepository]
+  private val repository = mock[CacheRepository]
   private val connector = mock[CustomsDeclareExportsMovementsConnector]
   private val service = new SubmissionService(repository, connector, audit, metrics, MovementsTestData.movementBuilder)
 

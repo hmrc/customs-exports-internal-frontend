@@ -27,7 +27,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{Result, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.MovementRepository
+import repositories.CacheRepository
 import testdata.CommonTestData.providerId
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSugar with BeforeAndAfterEach {
 
-  private val movementRepository = mock[MovementRepository]
+  private val movementRepository = mock[CacheRepository]
   private val block = mock[JourneyRequest[_] => Future[Result]]
   private val operator = Operator(providerId)
   private val request = AuthenticatedRequest(operator, FakeRequest())

@@ -24,7 +24,7 @@ import models.cache._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.location
 
@@ -32,11 +32,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class LocationController @Inject()(
-  authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
-  movementRepository: MovementRepository,
-  mcc: MessagesControllerComponents,
-  locationPage: location
+                                    authenticate: AuthenticatedAction,
+                                    getJourney: JourneyRefiner,
+                                    movementRepository: CacheRepository,
+                                    mcc: MessagesControllerComponents,
+                                    locationPage: location
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

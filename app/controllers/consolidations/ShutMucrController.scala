@@ -23,7 +23,7 @@ import javax.inject.{Inject, Singleton}
 import models.cache.{Cache, JourneyType, ShutMucrAnswers}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.shut_mucr
 
@@ -31,11 +31,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ShutMucrController @Inject()(
-  authenticate: AuthenticatedAction,
-  getJourney: JourneyRefiner,
-  mcc: MessagesControllerComponents,
-  movementRepository: MovementRepository,
-  shutMucrPage: shut_mucr
+                                    authenticate: AuthenticatedAction,
+                                    getJourney: JourneyRefiner,
+                                    mcc: MessagesControllerComponents,
+                                    movementRepository: CacheRepository,
+                                    shutMucrPage: shut_mucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

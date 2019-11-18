@@ -21,12 +21,12 @@ import javax.inject.Inject
 import models.cache.Answers
 import models.cache.JourneyType.JourneyType
 import play.api.mvc.{ActionRefiner, Result, Results}
-import repositories.MovementRepository
+import repositories.CacheRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyRefiner @Inject()(movementRepository: MovementRepository)(implicit val exc: ExecutionContext)
+class JourneyRefiner @Inject()(movementRepository: CacheRepository)(implicit val exc: ExecutionContext)
     extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
   override protected def executionContext: ExecutionContext = exc

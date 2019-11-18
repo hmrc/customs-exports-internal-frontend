@@ -24,7 +24,7 @@ import metrics.MovementsMetrics
 import models.ReturnToStartException
 import models.cache._
 import play.api.http.Status
-import repositories.MovementRepository
+import repositories.CacheRepository
 import services.audit.{AuditService, AuditTypes}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -33,11 +33,11 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class SubmissionService @Inject()(
-  movementRepository: MovementRepository,
-  connector: CustomsDeclareExportsMovementsConnector,
-  auditService: AuditService,
-  metrics: MovementsMetrics,
-  movementBuilder: MovementBuilder
+                                   movementRepository: CacheRepository,
+                                   connector: CustomsDeclareExportsMovementsConnector,
+                                   auditService: AuditService,
+                                   metrics: MovementsMetrics,
+                                   movementBuilder: MovementBuilder
 )(implicit ec: ExecutionContext) {
 
   def submit(providerId: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
