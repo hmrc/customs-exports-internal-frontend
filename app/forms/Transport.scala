@@ -79,8 +79,6 @@ object Transport {
     )(Transport.apply)(Transport.unapply)
     .verifying("transport.backIntoTheUk.error.allFieldsEntered", atLeastOneIsEmpty)
 
-  def form: Form[Transport] = Form(outOfTheUkMapping)
-
   def outOfTheUkForm: Form[Transport] = Form(outOfTheUkMapping)
   def backIntoTheUkForm: Form[Transport] = Form(backIntoTheUkMapping)
 }

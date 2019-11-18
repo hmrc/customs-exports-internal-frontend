@@ -17,8 +17,8 @@
 package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.exchanges.JourneyRequest
 import forms.Transport
-import forms.Transport.form
 import forms.providers.TransportFormProvider
 import javax.inject.{Inject, Singleton}
 import models.cache.{Cache, DepartureAnswers, JourneyType}
@@ -51,9 +51,6 @@ class TransportController @Inject()(
   }
 
   def saveTransport(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)).async { implicit request =>
-    val answers = request.answersAs[DepartureAnswers]
-    val form = formProvider.provideForm(answers)
-
     form
       .bindFromRequest()
       .fold(
@@ -65,6 +62,11 @@ class TransportController @Inject()(
           }
         }
       )
+  }
+
+  private def form(implicit request: JourneyRequest[_]): Form[Transport] = {
+    val answers = request.answersAs[DepartureAnswers]
+    formProvider.provideForm(answers)
   }
 
 }
