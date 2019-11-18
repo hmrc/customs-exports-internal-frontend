@@ -17,8 +17,9 @@
 package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.exchanges.JourneyRequest
 import forms.Transport
-import forms.Transport.form
+import forms.providers.TransportFormProvider
 import javax.inject.{Inject, Singleton}
 import models.cache.{Cache, DepartureAnswers, JourneyType}
 import play.api.data.Form
@@ -35,13 +36,18 @@ class TransportController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   movementRepository: MovementRepository,
+  formProvider: TransportFormProvider,
   mcc: MessagesControllerComponents,
   transportPage: transport
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)) { implicit request =>
-    Ok(transportPage(request.answersAs[DepartureAnswers].transport.fold(form)(form.fill(_))))
+    val answers = request.answersAs[DepartureAnswers]
+    answers.goodsDeparted match {
+      case Some(_) => Ok(transportPage(answers.transport.fold(form)(form.fill(_))))
+      case None    => Redirect(routes.GoodsDepartedController.displayPage())
+    }
   }
 
   def saveTransport(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)).async { implicit request =>
@@ -57,4 +63,10 @@ class TransportController @Inject()(
         }
       )
   }
+
+  private def form(implicit request: JourneyRequest[_]): Form[Transport] = {
+    val answers = request.answersAs[DepartureAnswers]
+    formProvider.provideForm(answers)
+  }
+
 }
