@@ -17,12 +17,12 @@
 package forms
 
 import forms.EnhancedMapping.requiredRadio
-import play.api.data.Forms.text
+import play.api.data.Forms.{optional, text}
 import play.api.data.{Form, Forms}
 import play.api.libs.json.Json
 import utils.FieldValidator._
 
-case class Transport(modeOfTransport: String, nationality: String, transportId: String)
+case class Transport(modeOfTransport: Option[String], nationality: Option[String], transportId: Option[String])
 
 object Transport {
   implicit val format = Json.format[Transport]
@@ -42,20 +42,45 @@ object Transport {
 
   import ModesOfTransport._
 
-  val allowedModeOfTransport =
-    Seq(Sea, Rail, Road, Air, PostalOrMail, FixedInstallations, InlandWaterway, Other)
+  private def form2Model(modeOfTransport: String, nationality: String, transportId: String): Transport =
+    Transport(modeOfTransport = Some(modeOfTransport), nationality = Some(nationality), transportId = Some(transportId))
 
-  val mapping = Forms.mapping(
-    "modeOfTransport" -> requiredRadio("transport.modeOfTransport.empty")
-      .verifying("transport.modeOfTransport.error", isContainedIn(allowedModeOfTransport)),
-    "nationality" -> text()
-      .verifying("transport.nationality.empty", nonEmpty)
-      .verifying("transport.nationality.error", isEmpty or isValidCountryCode),
-    "transportId" -> text()
-      .verifying("transport.transportId.empty", nonEmpty)
-      .verifying("transport.transportId.error", isEmpty or (noLongerThan(35) and isAlphanumericWithAllowedSpecialCharacters))
-  )(Transport.apply)(Transport.unapply)
+  private def model2Form(transport: Transport): Option[(String, String, String)] =
+    for {
+      modeOfTransport <- transport.modeOfTransport
+      nationality <- transport.nationality
+      transportId <- transport.transportId
+    } yield (modeOfTransport, nationality, transportId)
 
-  def form: Form[Transport] =
-    Form(mapping)
+  val allowedModesOfTransport: Set[String] =
+    Set(Sea, Rail, Road, Air, PostalOrMail, FixedInstallations, InlandWaterway, Other)
+
+  private val outOfTheUkMapping = Forms
+    .mapping(
+      "modeOfTransport" -> requiredRadio("transport.modeOfTransport.empty")
+        .verifying("transport.modeOfTransport.error", isContainedIn(allowedModesOfTransport)),
+      "nationality" -> text()
+        .verifying("transport.nationality.empty", nonEmpty)
+        .verifying("transport.nationality.error", isEmpty or isValidCountryCode),
+      "transportId" -> text()
+        .verifying("transport.transportId.empty", nonEmpty)
+        .verifying("transport.transportId.error", isEmpty or (noLongerThan(35) and isAlphanumericWithAllowedSpecialCharacters))
+    )(form2Model)(model2Form)
+
+  private val atLeastOneIsEmpty: Transport => Boolean = (t: Transport) => t.transportId.isEmpty || t.nationality.isEmpty || t.modeOfTransport.isEmpty
+
+  private val backIntoTheUkMapping = Forms
+    .mapping(
+      "modeOfTransport" -> optional(text().verifying("transport.modeOfTransport.error", isContainedIn(allowedModesOfTransport))),
+      "nationality" -> optional(text().verifying("transport.nationality.error", isEmpty or isValidCountryCode)),
+      "transportId" -> optional(
+        text().verifying("transport.transportId.error", isEmpty or (noLongerThan(35) and isAlphanumericWithAllowedSpecialCharacters))
+      )
+    )(Transport.apply)(Transport.unapply)
+    .verifying("transport.backIntoTheUk.error.allFieldsEntered", atLeastOneIsEmpty)
+
+  def form: Form[Transport] = Form(outOfTheUkMapping)
+
+  def outOfTheUkForm: Form[Transport] = Form(outOfTheUkMapping)
+  def backIntoTheUkForm: Form[Transport] = Form(backIntoTheUkMapping)
 }
