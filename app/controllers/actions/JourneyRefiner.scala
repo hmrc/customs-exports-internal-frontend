@@ -26,13 +26,13 @@ import repositories.CacheRepository
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyRefiner @Inject()(movementRepository: CacheRepository)(implicit val exc: ExecutionContext)
+class JourneyRefiner @Inject()(cache: CacheRepository)(implicit val exc: ExecutionContext)
     extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
   override protected def executionContext: ExecutionContext = exc
 
   private def refiner[A](request: AuthenticatedRequest[A], types: JourneyType*): Future[Either[Result, JourneyRequest[A]]] =
-    movementRepository.findByProviderId(request.operator.providerId).map(_.map(_.answers)).map {
+    cache.findByProviderId(request.operator.providerId).map(_.map(_.answers)).map {
       case Some(answers: Answers) if types.isEmpty || types.contains(answers.`type`) =>
         Right(JourneyRequest(answers, request))
       case _ =>

@@ -32,11 +32,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConsignmentReferencesController @Inject()(
-                                                 authenticate: AuthenticatedAction,
-                                                 getJourney: JourneyRefiner,
-                                                 cache: CacheRepository,
-                                                 mcc: MessagesControllerComponents,
-                                                 consignmentReferencesPage: consignment_references
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  cache: CacheRepository,
+  mcc: MessagesControllerComponents,
+  consignmentReferencesPage: consignment_references
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

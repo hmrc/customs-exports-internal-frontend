@@ -32,11 +32,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class GoodsDepartedController @Inject()(
-                                         authenticate: AuthenticatedAction,
-                                         getJourney: JourneyRefiner,
-                                         movementRepository: CacheRepository,
-                                         mcc: MessagesControllerComponents,
-                                         goodsDepartedPage: goods_departed
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  cache: CacheRepository,
+  mcc: MessagesControllerComponents,
+  goodsDepartedPage: goods_departed
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -54,7 +54,7 @@ class GoodsDepartedController @Inject()(
         validGoodsDeparted => {
           val updatedCache = request.answersAs[DepartureAnswers].copy(goodsDeparted = Some(validGoodsDeparted))
 
-          movementRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
+          cache.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(controllers.movements.routes.TransportController.displayPage())
           }
         }

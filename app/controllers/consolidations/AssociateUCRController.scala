@@ -31,11 +31,11 @@ import views.html.associate_ucr
 import scala.concurrent.{ExecutionContext, Future}
 
 class AssociateUCRController @Inject()(
-                                        authenticate: AuthenticatedAction,
-                                        getJourney: JourneyRefiner,
-                                        mcc: MessagesControllerComponents,
-                                        movementRepository: CacheRepository,
-                                        associateUcrPage: associate_ucr
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  mcc: MessagesControllerComponents,
+  cache: CacheRepository,
+  associateUcrPage: associate_ucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -56,7 +56,7 @@ class AssociateUCRController @Inject()(
         formWithErrors => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions))),
         formData => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(associateUcr = Some(formData))
-          movementRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
+          cache.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(consolidationRoutes.AssociateUCRSummaryController.displayPage())
           }
         }

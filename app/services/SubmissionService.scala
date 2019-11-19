@@ -33,11 +33,11 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class SubmissionService @Inject()(
-                                   movementRepository: CacheRepository,
-                                   connector: CustomsDeclareExportsMovementsConnector,
-                                   auditService: AuditService,
-                                   metrics: MovementsMetrics,
-                                   movementBuilder: MovementBuilder
+  cache: CacheRepository,
+  connector: CustomsDeclareExportsMovementsConnector,
+  auditService: AuditService,
+  metrics: MovementsMetrics,
+  movementBuilder: MovementBuilder
 )(implicit ec: ExecutionContext) {
 
   def submit(providerId: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
@@ -48,7 +48,7 @@ class SubmissionService @Inject()(
       .submit(DisassociateDUCRRequest(providerId, eori, ucr))
       .andThen {
         case Success(_) =>
-          movementRepository.removeByProviderId(providerId).flatMap { _ =>
+          cache.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditDisassociate(eori, ucr, "Success")
           }
         case Failure(_) =>
@@ -65,7 +65,7 @@ class SubmissionService @Inject()(
       .submit(AssociateUCRRequest(providerId, eori, mucr, ucr))
       .andThen {
         case Success(_) =>
-          movementRepository.removeByProviderId(providerId).flatMap { _ =>
+          cache.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditAssociate(eori, mucr, ucr, "Success")
           }
         case Failure(_) =>
@@ -81,7 +81,7 @@ class SubmissionService @Inject()(
       .submit(ShutMUCRRequest(providerId, eori, mucr))
       .andThen {
         case Success(_) =>
-          movementRepository.removeByProviderId(providerId).flatMap { _ =>
+          cache.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditShutMucr(eori, mucr, "Success")
           }
         case Failure(_) =>

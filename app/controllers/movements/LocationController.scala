@@ -32,11 +32,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class LocationController @Inject()(
-                                    authenticate: AuthenticatedAction,
-                                    getJourney: JourneyRefiner,
-                                    movementRepository: CacheRepository,
-                                    mcc: MessagesControllerComponents,
-                                    locationPage: location
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  cache: CacheRepository,
+  mcc: MessagesControllerComponents,
+  locationPage: location
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -53,11 +53,11 @@ class LocationController @Inject()(
         validForm => {
           request.answers match {
             case arrivalAnswers: ArrivalAnswers =>
-              movementRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(location = Some(validForm)))).map { _ =>
+              cache.upsert(Cache(request.providerId, arrivalAnswers.copy(location = Some(validForm)))).map { _ =>
                 Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
               }
             case departureAnswers: DepartureAnswers =>
-              movementRepository.upsert(Cache(request.providerId, departureAnswers.copy(location = Some(validForm)))).map { _ =>
+              cache.upsert(Cache(request.providerId, departureAnswers.copy(location = Some(validForm)))).map { _ =>
                 Redirect(controllers.movements.routes.GoodsDepartedController.displayPage())
               }
           }

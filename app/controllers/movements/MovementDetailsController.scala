@@ -33,13 +33,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MovementDetailsController @Inject()(
-                                           authenticate: AuthenticatedAction,
-                                           getJourney: JourneyRefiner,
-                                           movementRepository: CacheRepository,
-                                           mcc: MessagesControllerComponents,
-                                           details: MovementDetails,
-                                           arrivalDetailsPage: arrival_details,
-                                           departureDetailsPage: departure_details
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  cache: CacheRepository,
+  mcc: MessagesControllerComponents,
+  details: MovementDetails,
+  arrivalDetailsPage: arrival_details,
+  departureDetailsPage: departure_details
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -68,23 +68,25 @@ class MovementDetailsController @Inject()(
   }
 
   private def handleSavingArrival(arrivalAnswers: ArrivalAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
-    details.arrivalForm()
+    details
+      .arrivalForm()
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[ArrivalDetails]) => Future.successful(Left(arrivalDetailsPage(formWithErrors))),
         validForm =>
-          movementRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(arrivalDetails = Some(validForm)))).map { _ =>
+          cache.upsert(Cache(request.providerId, arrivalAnswers.copy(arrivalDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
         }
       )
 
   private def handleSavingDeparture(departureAnswers: DepartureAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
-    details.departureForm()
+    details
+      .departureForm()
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[DepartureDetails]) => Future.successful(Left(departureDetailsPage(formWithErrors))),
         validForm =>
-          movementRepository.upsert(Cache(request.providerId, departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
+          cache.upsert(Cache(request.providerId, departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
         }
       )

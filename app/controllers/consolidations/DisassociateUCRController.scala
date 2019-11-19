@@ -30,11 +30,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DisassociateUCRController @Inject()(
-                                           authenticate: AuthenticatedAction,
-                                           getJourney: JourneyRefiner,
-                                           mcc: MessagesControllerComponents,
-                                           movementRepository: CacheRepository,
-                                           page: disassociate_ucr
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  mcc: MessagesControllerComponents,
+  cache: CacheRepository,
+  page: disassociate_ucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -51,7 +51,7 @@ class DisassociateUCRController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
         answers =>
-          movementRepository.upsert(Cache(request.providerId, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
+          cache.upsert(Cache(request.providerId, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
             Redirect(controllers.consolidations.routes.DisassociateUCRSummaryController.display())
         }
       )

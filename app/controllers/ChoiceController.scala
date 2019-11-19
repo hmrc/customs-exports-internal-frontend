@@ -31,10 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ChoiceController @Inject()(
-                                  authenticate: AuthenticatedAction,
-                                  mcc: MessagesControllerComponents,
-                                  cache: CacheRepository,
-                                  choicePage: choice_page
+  authenticate: AuthenticatedAction,
+  mcc: MessagesControllerComponents,
+  cache: CacheRepository,
+  choicePage: choice_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

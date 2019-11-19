@@ -35,17 +35,17 @@ import scala.concurrent.Future
 
 class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSugar with BeforeAndAfterEach {
 
-  private val movementRepository = mock[CacheRepository]
+  private val repository = mock[CacheRepository]
   private val block = mock[JourneyRequest[_] => Future[Result]]
   private val operator = Operator(providerId)
   private val request = AuthenticatedRequest(operator, FakeRequest())
   private val answers = ArrivalAnswers()
   private val cache = Cache(providerId, answers)
 
-  private val refiner = new JourneyRefiner(movementRepository)
+  private val refiner = new JourneyRefiner(repository)
 
   override def afterEach(): Unit = {
-    reset(movementRepository, block)
+    reset(repository, block)
     super.afterEach()
   }
 
@@ -54,7 +54,7 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
       "answers found" when {
         "on unshared journey" in {
           given(block.apply(any())).willReturn(Future.successful(Results.Ok))
-          given(movementRepository.findByProviderId(providerId)).willReturn(Future.successful(Some(cache)))
+          given(repository.findByProviderId(providerId)).willReturn(Future.successful(Some(cache)))
 
           await(refiner(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Ok
 
@@ -63,7 +63,7 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
 
         "on shared journey" in {
           given(block.apply(any())).willReturn(Future.successful(Results.Ok))
-          given(movementRepository.findByProviderId(providerId)).willReturn(Future.successful(Some(cache)))
+          given(repository.findByProviderId(providerId)).willReturn(Future.successful(Some(cache)))
 
           await(refiner(JourneyType.DEPART, JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Ok
 
@@ -80,13 +80,13 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
 
     "block request" when {
       "answers not found" in {
-        given(movementRepository.findByProviderId(providerId)).willReturn(Future.successful(None))
+        given(repository.findByProviderId(providerId)).willReturn(Future.successful(None))
 
         await(refiner(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Redirect(controllers.routes.ChoiceController.displayPage())
       }
 
       "answers found of a different type" in {
-        given(movementRepository.findByProviderId(providerId)).willReturn(Future.successful(None))
+        given(repository.findByProviderId(providerId)).willReturn(Future.successful(None))
 
         await(refiner(JourneyType.DEPART).invokeBlock(request, block)) mustBe Results.Redirect(controllers.routes.ChoiceController.displayPage())
       }

@@ -31,11 +31,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ShutMucrController @Inject()(
-                                    authenticate: AuthenticatedAction,
-                                    getJourney: JourneyRefiner,
-                                    mcc: MessagesControllerComponents,
-                                    movementRepository: CacheRepository,
-                                    shutMucrPage: shut_mucr
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  mcc: MessagesControllerComponents,
+  cache: CacheRepository,
+  shutMucrPage: shut_mucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -51,7 +51,7 @@ class ShutMucrController @Inject()(
         formWithErrors => Future.successful(BadRequest(shutMucrPage(formWithErrors))),
         validForm => {
           val updatedCache = request.answersAs[ShutMucrAnswers].copy(shutMucr = Some(validForm))
-          movementRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
+          cache.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(consolidationsRoutes.ShutMucrSummaryController.displayPage())
           }
         }

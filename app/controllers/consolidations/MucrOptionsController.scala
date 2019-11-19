@@ -30,11 +30,11 @@ import views.html.mucr_options
 import scala.concurrent.{ExecutionContext, Future}
 
 class MucrOptionsController @Inject()(
-                                       authenticate: AuthenticatedAction,
-                                       getJourney: JourneyRefiner,
-                                       mcc: MessagesControllerComponents,
-                                       movementRepository: CacheRepository,
-                                       mucrOptionsPage: mucr_options
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  mcc: MessagesControllerComponents,
+  cache: CacheRepository,
+  mucrOptionsPage: mucr_options
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -51,7 +51,7 @@ class MucrOptionsController @Inject()(
         formWithErrors => Future.successful(BadRequest(mucrOptionsPage(formWithErrors))),
         validForm => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(mucrOptions = Some(validForm))
-          movementRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
+          cache.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(consolidationsRoutes.AssociateUCRController.displayPage())
           }
         }

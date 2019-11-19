@@ -31,13 +31,13 @@ import views.html.summary.{arrival_summary_page, departure_summary_page}
 import scala.concurrent.ExecutionContext
 
 class MovementSummaryController @Inject()(
-                                           authenticate: AuthenticatedAction,
-                                           getJourney: JourneyRefiner,
-                                           movementRepository: CacheRepository,
-                                           submissionService: SubmissionService,
-                                           mcc: MessagesControllerComponents,
-                                           arrivalSummaryPage: arrival_summary_page,
-                                           departureSummaryPage: departure_summary_page
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  cache: CacheRepository,
+  submissionService: SubmissionService,
+  mcc: MessagesControllerComponents,
+  arrivalSummaryPage: arrival_summary_page,
+  departureSummaryPage: departure_summary_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -53,7 +53,7 @@ class MovementSummaryController @Inject()(
       submissionService
         .submit(request.providerId, request.answersAs[MovementAnswers])
         .flatMap { consignmentReferences =>
-          movementRepository.removeByProviderId(request.providerId).map { _ =>
+          cache.removeByProviderId(request.providerId).map { _ =>
             Redirect(controllers.movements.routes.MovementConfirmationController.display())
               .flashing(
                 FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString,

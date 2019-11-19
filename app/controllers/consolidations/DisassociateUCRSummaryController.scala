@@ -32,12 +32,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class DisassociateUCRSummaryController @Inject()(
-                                                  authenticate: AuthenticatedAction,
-                                                  getJourney: JourneyRefiner,
-                                                  mcc: MessagesControllerComponents,
-                                                  submissionService: SubmissionService,
-                                                  movementRepository: CacheRepository,
-                                                  page: disassociate_ucr_summary
+  authenticate: AuthenticatedAction,
+  getJourney: JourneyRefiner,
+  mcc: MessagesControllerComponents,
+  submissionService: SubmissionService,
+  cache: CacheRepository,
+  page: disassociate_ucr_summary
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
