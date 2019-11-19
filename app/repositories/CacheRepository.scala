@@ -27,8 +27,8 @@ import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MovementRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: ExecutionContext)
-    extends ReactiveRepository[Cache, BSONObjectID]("movementCache", mc.mongoConnector.db, Cache.format, objectIdFormats) {
+class CacheRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: ExecutionContext)
+    extends ReactiveRepository[Cache, BSONObjectID]("cache", mc.mongoConnector.db, Cache.format, objectIdFormats) {
 
   override def indexes: Seq[Index] = Seq(Index(Seq("providerId" -> IndexType.Ascending), name = Some("providerIdIdx")))
 

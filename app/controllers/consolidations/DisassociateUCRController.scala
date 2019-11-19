@@ -22,7 +22,7 @@ import javax.inject.{Inject, Singleton}
 import models.cache.{Cache, DisassociateUcrAnswers, JourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.disassociate_ucr
 
@@ -33,7 +33,7 @@ class DisassociateUCRController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  movementRepository: MovementRepository,
+  cache: CacheRepository,
   page: disassociate_ucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -51,7 +51,7 @@ class DisassociateUCRController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
         answers =>
-          movementRepository.upsert(Cache(request.providerId, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
+          cache.upsert(Cache(request.providerId, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
             Redirect(controllers.consolidations.routes.DisassociateUCRSummaryController.display())
         }
       )

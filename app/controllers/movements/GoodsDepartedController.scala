@@ -24,7 +24,7 @@ import models.cache.{Cache, DepartureAnswers, JourneyType}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.goods_departed
 
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class GoodsDepartedController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  movementRepository: MovementRepository,
+  cache: CacheRepository,
   mcc: MessagesControllerComponents,
   goodsDepartedPage: goods_departed
 )(implicit ec: ExecutionContext)
@@ -54,7 +54,7 @@ class GoodsDepartedController @Inject()(
         validGoodsDeparted => {
           val updatedCache = request.answersAs[DepartureAnswers].copy(goodsDeparted = Some(validGoodsDeparted))
 
-          movementRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
+          cache.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(controllers.movements.routes.TransportController.displayPage())
           }
         }

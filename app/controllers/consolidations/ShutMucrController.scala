@@ -23,7 +23,7 @@ import javax.inject.{Inject, Singleton}
 import models.cache.{Cache, JourneyType, ShutMucrAnswers}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.shut_mucr
 
@@ -34,24 +34,24 @@ class ShutMucrController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  movementRepository: MovementRepository,
+  cache: CacheRepository,
   shutMucrPage: shut_mucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)) { implicit request =>
     val shutMucr = request.answersAs[ShutMucrAnswers].shutMucr
-    Ok(shutMucrPage(shutMucr.fold(form)(form.fill)))
+    Ok(shutMucrPage(shutMucr.fold(form())(form().fill)))
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)).async { implicit request =>
-    form
+    form()
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(shutMucrPage(formWithErrors))),
         validForm => {
           val updatedCache = request.answersAs[ShutMucrAnswers].copy(shutMucr = Some(validForm))
-          movementRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
+          cache.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(consolidationsRoutes.ShutMucrSummaryController.displayPage())
           }
         }

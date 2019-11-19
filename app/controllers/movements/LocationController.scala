@@ -24,7 +24,7 @@ import models.cache._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.location
 
@@ -34,33 +34,30 @@ import scala.concurrent.{ExecutionContext, Future}
 class LocationController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  movementRepository: MovementRepository,
+  cache: CacheRepository,
   mcc: MessagesControllerComponents,
   locationPage: location
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
-    val location = request.answers match {
-      case arrivalAnswers: ArrivalAnswers     => arrivalAnswers.location
-      case departureAnswers: DepartureAnswers => departureAnswers.location
-    }
-    Ok(locationPage(location.fold(form)(form.fill(_))))
+  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)) { implicit request =>
+    val location = request.answersAs[MovementAnswers].location
+    Ok(locationPage(location.fold(form())(form().fill(_))))
   }
 
   def saveLocation(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async { implicit request =>
-    form
+    form()
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[Location]) => Future.successful(BadRequest(locationPage(formWithErrors))),
         validForm => {
           request.answers match {
             case arrivalAnswers: ArrivalAnswers =>
-              movementRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(location = Some(validForm)))).map { _ =>
+              cache.upsert(Cache(request.providerId, arrivalAnswers.copy(location = Some(validForm)))).map { _ =>
                 Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
               }
             case departureAnswers: DepartureAnswers =>
-              movementRepository.upsert(Cache(request.providerId, departureAnswers.copy(location = Some(validForm)))).map { _ =>
+              cache.upsert(Cache(request.providerId, departureAnswers.copy(location = Some(validForm)))).map { _ =>
                 Redirect(controllers.movements.routes.GoodsDepartedController.displayPage())
               }
           }

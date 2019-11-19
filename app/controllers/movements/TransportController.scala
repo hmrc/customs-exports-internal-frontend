@@ -25,7 +25,7 @@ import models.cache.{Cache, DepartureAnswers, JourneyType}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.transport
 
@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class TransportController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  movementRepository: MovementRepository,
+  cache: CacheRepository,
   formProvider: TransportFormProvider,
   mcc: MessagesControllerComponents,
   transportPage: transport
@@ -57,7 +57,7 @@ class TransportController @Inject()(
         (formWithErrors: Form[Transport]) => Future.successful(BadRequest(transportPage(formWithErrors))),
         validForm => {
           val movementAnswers = request.answersAs[DepartureAnswers].copy(transport = Some(validForm))
-          movementRepository.upsert(Cache(request.providerId, movementAnswers)).map { _ =>
+          cache.upsert(Cache(request.providerId, movementAnswers)).map { _ =>
             Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
           }
         }

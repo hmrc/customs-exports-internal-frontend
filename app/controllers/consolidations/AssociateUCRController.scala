@@ -24,7 +24,7 @@ import models.ReturnToStartException
 import models.cache.{AssociateUcrAnswers, Cache}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.associate_ucr
 
@@ -34,20 +34,17 @@ class AssociateUCRController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  movementRepository: MovementRepository,
+  cache: CacheRepository,
   associateUcrPage: associate_ucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
     val associateUcrAnswers = request.answersAs[AssociateUcrAnswers]
-    val mucrOptions = associateUcrAnswers.mucrOptions
+    val mucrOptions = associateUcrAnswers.mucrOptions.getOrElse(throw ReturnToStartException)
     val associateUcr = associateUcrAnswers.associateUcr
 
-    mucrOptions match {
-      case Some(mucrOptions) => Ok(associateUcrPage(associateUcr.fold(form)(form.fill), mucrOptions))
-      case None              => throw ReturnToStartException
-    }
+    Ok(associateUcrPage(associateUcr.fold(form)(form.fill), mucrOptions))
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
@@ -59,7 +56,7 @@ class AssociateUCRController @Inject()(
         formWithErrors => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions))),
         formData => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(associateUcr = Some(formData))
-          movementRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
+          cache.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(consolidationRoutes.AssociateUCRSummaryController.displayPage())
           }
         }

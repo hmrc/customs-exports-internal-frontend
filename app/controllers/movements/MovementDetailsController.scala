@@ -25,7 +25,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import play.twirl.api.Html
-import repositories.MovementRepository
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.{arrival_details, departure_details}
 
@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class MovementDetailsController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  movementRepository: MovementRepository,
+  cache: CacheRepository,
   mcc: MessagesControllerComponents,
   details: MovementDetails,
   arrivalDetailsPage: arrival_details,
@@ -54,7 +54,7 @@ class MovementDetailsController @Inject()(
     arrivalDetailsPage(arrivalDetails.fold(details.arrivalForm)(details.arrivalForm.fill(_)))
 
   private def departurePage(departureDetails: Option[DepartureDetails])(implicit request: JourneyRequest[AnyContent]): Html =
-    departureDetailsPage(departureDetails.fold(details.departureForm)(details.departureForm.fill(_)))
+    departureDetailsPage(departureDetails.fold(details.departureForm())(details.departureForm().fill(_)))
 
   def saveMovementDetails(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
     implicit request =>
@@ -68,23 +68,25 @@ class MovementDetailsController @Inject()(
   }
 
   private def handleSavingArrival(arrivalAnswers: ArrivalAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
-    details.arrivalForm
+    details
+      .arrivalForm()
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[ArrivalDetails]) => Future.successful(Left(arrivalDetailsPage(formWithErrors))),
         validForm =>
-          movementRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(arrivalDetails = Some(validForm)))).map { _ =>
+          cache.upsert(Cache(request.providerId, arrivalAnswers.copy(arrivalDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
         }
       )
 
   private def handleSavingDeparture(departureAnswers: DepartureAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
-    details.departureForm
+    details
+      .departureForm()
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[DepartureDetails]) => Future.successful(Left(departureDetailsPage(formWithErrors))),
         validForm =>
-          movementRepository.upsert(Cache(request.providerId, departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
+          cache.upsert(Cache(request.providerId, departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
         }
       )

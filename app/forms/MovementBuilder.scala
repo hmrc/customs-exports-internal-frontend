@@ -21,14 +21,14 @@ import java.time.format.DateTimeFormatter
 
 import javax.inject.Inject
 import models.ReturnToStartException
-import models.cache.{Answers, ArrivalAnswers, DepartureAnswers}
+import models.cache.{ArrivalAnswers, DepartureAnswers, MovementAnswers}
 import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
 
 class MovementBuilder @Inject()(zoneId: ZoneId) {
 
   private val movementDateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
-  def createMovementRequest(providerId: String, answers: Answers): MovementRequest = answers match {
+  def createMovementRequest(providerId: String, answers: MovementAnswers): MovementRequest = answers match {
     case arrivalAnswers: ArrivalAnswers     => createMovementArrivalRequest(providerId, arrivalAnswers)
     case departureAnswers: DepartureAnswers => createMovementDepartureRequest(providerId, departureAnswers)
   }

@@ -24,7 +24,7 @@ import metrics.MovementsMetrics
 import models.ReturnToStartException
 import models.cache._
 import play.api.http.Status
-import repositories.MovementRepository
+import repositories.CacheRepository
 import services.audit.{AuditService, AuditTypes}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -33,7 +33,7 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class SubmissionService @Inject()(
-  movementRepository: MovementRepository,
+  cache: CacheRepository,
   connector: CustomsDeclareExportsMovementsConnector,
   auditService: AuditService,
   metrics: MovementsMetrics,
@@ -48,7 +48,7 @@ class SubmissionService @Inject()(
       .submit(DisassociateDUCRRequest(providerId, eori, ucr))
       .andThen {
         case Success(_) =>
-          movementRepository.removeByProviderId(providerId).flatMap { _ =>
+          cache.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditDisassociate(eori, ucr, "Success")
           }
         case Failure(_) =>
@@ -65,7 +65,7 @@ class SubmissionService @Inject()(
       .submit(AssociateUCRRequest(providerId, eori, mucr, ucr))
       .andThen {
         case Success(_) =>
-          movementRepository.removeByProviderId(providerId).flatMap { _ =>
+          cache.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditAssociate(eori, mucr, ucr, "Success")
           }
         case Failure(_) =>
@@ -81,7 +81,7 @@ class SubmissionService @Inject()(
       .submit(ShutMUCRRequest(providerId, eori, mucr))
       .andThen {
         case Success(_) =>
-          movementRepository.removeByProviderId(providerId).flatMap { _ =>
+          cache.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditShutMucr(eori, mucr, "Success")
           }
         case Failure(_) =>
@@ -89,7 +89,7 @@ class SubmissionService @Inject()(
       }
   }
 
-  def submitMovementRequest(providerId: String, answers: Answers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
+  def submit(providerId: String, answers: MovementAnswers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
     val cache = Cache(providerId, answers)
 
     val data = movementBuilder.createMovementRequest(providerId, answers)
