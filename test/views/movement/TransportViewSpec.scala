@@ -29,23 +29,23 @@ class TransportViewSpec extends ViewSpec {
 
   "View" should {
     "render title" in {
-      page(Transport.form).getTitle must containMessage("transport.title")
+      page(Transport.outOfTheUkForm).getTitle must containMessage("transport.title")
     }
 
     "render input for mode of transport" in {
-      page(Transport.form).getElementById("modeOfTransport-label") must containMessage("transport.modeOfTransport.question")
+      page(Transport.outOfTheUkForm).getElementById("modeOfTransport-label") must containMessage("transport.modeOfTransport.question")
       for (i <- 1 to 8) {
-        page(Transport.form).getElementById(s"$i-label") must containMessage(s"transport.modeOfTransport.$i")
+        page(Transport.outOfTheUkForm).getElementById(s"$i-label") must containMessage(s"transport.modeOfTransport.$i")
       }
     }
 
     "render input for nationality" in {
-      page(Transport.form).getElementById("nationality-label") must containMessage("transport.nationality.question")
-      page(Transport.form).getElementById("nationality-hint") must containMessage("transport.nationality.hint")
+      page(Transport.outOfTheUkForm).getElementById("nationality-label") must containMessage("transport.nationality.question")
+      page(Transport.outOfTheUkForm).getElementById("nationality-hint") must containMessage("transport.nationality.hint")
     }
 
     "render back button" in {
-      val backButton = page(Transport.form).getBackButton
+      val backButton = page(Transport.outOfTheUkForm).getBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.movements.routes.GoodsDepartedController.displayPage())
@@ -53,11 +53,11 @@ class TransportViewSpec extends ViewSpec {
 
     "render error summary" when {
       "no errors" in {
-        page(Transport.form).getErrorSummary mustBe empty
+        page(Transport.outOfTheUkForm).getErrorSummary mustBe empty
       }
 
       "some errors" in {
-        page(Transport.form.withError("error", "error.required")).getErrorSummary mustBe defined
+        page(Transport.outOfTheUkForm.withError("error", "error.required")).getErrorSummary mustBe defined
       }
     }
   }
