@@ -76,7 +76,7 @@
     @components.summary_list(Some(messages("transport.title"))) {
       @components.table_row_no_change_link(HtmlTableRow(
         label = messages("summary.modeOfTransport"),
-        value = data.transport.map(transport => messages(s"transport.modeOfTransport.${transport.modeOfTransport}"))
+        value = data.transport.flatMap(_.modeOfTransport).map(modeOfTransport => messages(s"transport.modeOfTransport.$modeOfTransport"))
       ))
       @components.table_row_no_change_link(HtmlTableRow(
         label = messages("summary.transportId"),
@@ -88,8 +88,8 @@
       ))
     }
 
-        @helper.form(action = routes.MovementSummaryController.submitMovementRequest()) {
-            @helper.CSRF.formField
+    @helper.form(action = routes.MovementSummaryController.submitMovementRequest()) {
+        @helper.CSRF.formField
 
       @components.submit_button("site.confirmAndSubmit")
     }
