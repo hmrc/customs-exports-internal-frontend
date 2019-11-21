@@ -52,7 +52,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
           "eori",
           "provider-id",
           ConsignmentReferences("ref", "value"),
-          MovementDetailsExchange("datetime"),
+          Some(MovementDetailsExchange("datetime")),
           Location("code"),
           ArrivalReference(Some("reference"))
         )

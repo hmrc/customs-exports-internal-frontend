@@ -57,7 +57,7 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "audit a disassociation" in {
-      val dataToAudit = Map(providerId.toString -> "providerId", ucr.toString -> "ducr", submissionResult.toString -> "200")
+      val dataToAudit = Map(providerId.toString -> "providerId", ducr.toString -> "ducr", submissionResult.toString -> "200")
       service.auditDisassociate("providerId", "ducr", "200")
       verify(service).audit(AuditTypes.AuditDisassociate, dataToAudit)
     }
@@ -75,8 +75,8 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
         ArrivalExchange(
           eori = "GB12345678",
           providerId = "122343",
-          consignmentReference = ConsignmentReferences("D", "UCR"),
-          movementDetails = MovementDetailsExchange("dateTime"),
+          consignmentReference = ConsignmentReferences("UCR", "D"),
+          movementDetails = Some(MovementDetailsExchange("dateTime")),
           location = Location("location"),
           arrivalReference = ArrivalReference(Some("ref"))
         )

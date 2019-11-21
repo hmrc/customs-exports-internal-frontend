@@ -53,17 +53,14 @@ class MovementBuilder @Inject()(zoneId: ZoneId) {
       transport = answers.transport.getOrElse(throw ReturnToStartException)
     )
 
-  private def movementDetails(answers: ArrivalAnswers) =
-    MovementDetailsExchange(
-      answers.arrivalDetails
-        .map(arrival => movementDateTimeFormatter.format(arrival.goodsArrivalMoment(zoneId)))
-        .getOrElse("")
-    )
+  private def movementDetails(answers: ArrivalAnswers): Option[MovementDetailsExchange] =
+    answers.arrivalDetails
+      .map(arrival => movementDateTimeFormatter.format(arrival.goodsArrivalMoment(zoneId)))
+      .map(MovementDetailsExchange(_))
 
-  private def movementDetails(answers: DepartureAnswers): MovementDetailsExchange =
-    MovementDetailsExchange(
-      answers.departureDetails
-        .map(departure => movementDateTimeFormatter.format(departure.goodsDepartureMoment(zoneId)))
-        .getOrElse("")
-    )
+  private def movementDetails(answers: DepartureAnswers): Option[MovementDetailsExchange] =
+    answers.departureDetails
+      .map(departure => movementDateTimeFormatter.format(departure.goodsDepartureMoment(zoneId)))
+      .map(MovementDetailsExchange(_))
+
 }
