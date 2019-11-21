@@ -17,8 +17,9 @@
 package config
 
 import javax.inject.{Inject, Singleton}
+import models.ReturnToStartException
 import play.api.i18n.MessagesApi
-import play.api.mvc.Request
+import play.api.mvc.{Request, RequestHeader, Result, Results}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.error
@@ -27,4 +28,9 @@ import views.html.error
 class ErrorHandler @Inject()(val messagesApi: MessagesApi, errorTemplate: error) extends FrontendErrorHandler {
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
     errorTemplate(pageTitle, heading, message)
+
+  override def resolveError(rh: RequestHeader, ex: Throwable): Result = ex match {
+    case ReturnToStartException => Results.Redirect(controllers.routes.ChoiceController.displayPage())
+    case _                      => super.resolveError(rh, ex)
+  }
 }
