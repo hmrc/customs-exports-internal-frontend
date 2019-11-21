@@ -8,13 +8,14 @@ import play.api.test.{CSRFTokenHelper, FakeRequest}
 import play.api.{Application, Logger}
 import reactivemongo.play.json.collection.JSONCollection
 import repositories.CacheRepository
+import repository.TestMongoDB
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class IntegrationSpec
     extends WordSpec with MustMatchers with BeforeAndAfterEach with GuiceOneServerPerSuite with AuthWiremockTestServer
-    with MovementsBackendWiremockTestServer {
+    with MovementsBackendWiremockTestServer with TestMongoDB {
 
   /*
     Intentionally NOT exposing the real CacheRepository as we shouldn't test our production code using our production classes.
@@ -25,12 +26,9 @@ class IntegrationSpec
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .disable[com.kenshoo.play.metrics.PlayModule]
-      .configure(Map(
-        "play.filters.disabled" -> "play.filters.csrf.CSRFFilter",
-        "mongodb.uri" -> "mongodb://localhost:27017/test-customs-exports-internal",
-        authConfiguration,
-        movementsBackendConfiguration
-      ))
+      .configure(authConfiguration)
+      .configure(movementsBackendConfiguration)
+      .configure(mongoConfiguration)
       .build()
 
   override def beforeEach(): Unit = {
@@ -38,12 +36,11 @@ class IntegrationSpec
     await(cache.drop(failIfNotFound = false))
   }
 
-  protected def get(call: Call): Future[Result] = {
+  protected def get(call: Call): Future[Result] =
     route(app, FakeRequest("GET", call.url)).get
-  }
 
   protected def post[T](call: Call, payload: (String, String)*): Future[Result] = {
-    val request: Request[AnyContentAsFormUrlEncoded] = CSRFTokenHelper.addCSRFToken(FakeRequest("POST", call.url).withFormUrlEncodedBody(payload:_*))
+    val request: Request[AnyContentAsFormUrlEncoded] = CSRFTokenHelper.addCSRFToken(FakeRequest("POST", call.url).withFormUrlEncodedBody(payload: _*))
     route(app, request).get
   }
 
