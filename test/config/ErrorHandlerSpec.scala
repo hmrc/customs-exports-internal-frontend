@@ -18,40 +18,65 @@ package config
 
 import base.UnitSpec
 import controllers.CSRFSupport
+import models.ReturnToStartException
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import play.api.mvc.Results
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.play.bootstrap.http.ApplicationException
 import views.html.error
+
+import scala.concurrent.Future
 
 class ErrorHandlerSpec extends UnitSpec with BeforeAndAfterEach with CSRFSupport {
 
   private val errorTemplate = mock[error]
-  private val errorHandler = new ErrorHandler(stubMessagesApi(), errorTemplate)
-
+  private val handler = new ErrorHandler(stubMessagesApi(), errorTemplate)
   private val fakeRequest = FakeRequest("", "").withCSRFToken
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-
     when(errorTemplate.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
     reset(errorTemplate)
-
     super.afterEach()
   }
 
-  "Error handler" should {
+  "error template" in {
+    handler.standardErrorTemplate("title", "heading", "message")(fakeRequest)
 
-    "return error template" in {
+    verify(errorTemplate).apply(meq("title"), meq("heading"), meq("message"))(any(), any())
+  }
 
-      errorHandler.standardErrorTemplate("title", "heading", "message")(fakeRequest)
+  "resolve error" should {
+    "handle ReturnToStartException" in {
+      val result = Future.successful(handler.resolveError(fakeRequest, ReturnToStartException))
 
-      verify(errorTemplate).apply(meq("title"), meq("heading"), meq("message"))(any(), any())
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ChoiceController.displayPage().url)
+    }
+
+    "handle ApplicationException" in {
+      val result = Future.successful(handler.resolveError(fakeRequest, ApplicationException(Results.BadRequest("bad request"), "message")))
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe "bad request"
+    }
+
+    "handle unexpected exception" in {
+      val result = Future.successful(handler.resolveError(fakeRequest, new RuntimeException("some error")))
+
+      status(result) mustBe INTERNAL_SERVER_ERROR
+      verify(errorTemplate).apply(
+        meq("global.error.InternalServerError500.title"),
+        meq("global.error.InternalServerError500.heading"),
+        meq("global.error.InternalServerError500.message")
+      )(any(), any())
     }
   }
 }

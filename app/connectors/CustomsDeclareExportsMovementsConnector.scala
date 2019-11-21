@@ -59,12 +59,6 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
       }
       .map(_ => (): Unit)
 
-  private def logSuccessfulExchange[T](`type`: String, payload: T)(implicit fmt: Format[T]): Unit =
-    logger.debug(`type` + "\n" + Json.toJson(payload))
-
-  private def logFailedExchange(`type`: String, exception: Throwable): Unit =
-    logger.warn(`type` + " failed", exception)
-
   def fetchAllSubmissions(providerId: String)(implicit hc: HeaderCarrier): Future[Seq[Submission]] =
     httpClient
       .GET[Seq[Submission]](s"${appConfig.customsDeclareExportsMovementsUrl}$Submissions", providerIdQueryParam(providerId))
@@ -101,6 +95,12 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
       }
 
   private def providerIdQueryParam(providerId: String): Seq[(String, String)] = Seq("providerId" -> providerId)
+
+  private def logSuccessfulExchange[T](`type`: String, payload: T)(implicit fmt: Format[T]): Unit =
+    logger.debug(`type` + "\n" + Json.toJson(payload))
+
+  private def logFailedExchange(`type`: String, exception: Throwable): Unit =
+    logger.error(`type` + " failed", exception)
 }
 
 object CustomsDeclareExportsMovementsConnector {
