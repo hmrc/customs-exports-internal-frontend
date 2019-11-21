@@ -1,6 +1,11 @@
 import forms.Choice
+import models.cache.{Cache, DepartureAnswers}
 import play.api.http.Status
-import play.api.libs.ws.WSResponse
+import play.api.libs.json.Json
+import play.api.test.Helpers._
+import reactivemongo.play.json.ImplicitBSONHandlers._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ChoiceSpec extends IntegrationSpec {
 
@@ -8,17 +13,17 @@ class ChoiceSpec extends IntegrationSpec {
     "return 403" in {
       givenAuthFailed()
 
-      val response: WSResponse = get(controllers.routes.ChoiceController.displayPage())
+      val response = get(controllers.routes.ChoiceController.displayPage())
 
-      response.status mustBe Status.FORBIDDEN
+      status(response) mustBe Status.FORBIDDEN
     }
 
     "return 200" in {
       givenAuthSuccess()
 
-      val response: WSResponse = get(controllers.routes.ChoiceController.displayPage())
+      val response = get(controllers.routes.ChoiceController.displayPage())
 
-      response.status mustBe Status.OK
+      status(response) mustBe Status.OK
     }
   }
 
@@ -26,17 +31,18 @@ class ChoiceSpec extends IntegrationSpec {
     "return 403" in {
       givenAuthFailed()
 
-      val response: WSResponse = post(controllers.routes.ChoiceController.submit(), Choice.Departure)
+      val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Departure.value)
 
-      response.status mustBe Status.FORBIDDEN
+      status(response) mustBe Status.FORBIDDEN
     }
 
     "return 200" in {
-      givenAuthSuccess()
+      givenAuthSuccess("pid")
 
-      val response: WSResponse = post(controllers.routes.ChoiceController.submit(), Choice.Departure)
+      val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Departure.value)
 
-      response.status mustBe Status.OK
+      status(response) mustBe Status.SEE_OTHER
+      await(cache.find(Json.obj("providerId" -> "pid")).one[Cache]) mustBe Some(Cache("pid", DepartureAnswers()))
     }
   }
 }
