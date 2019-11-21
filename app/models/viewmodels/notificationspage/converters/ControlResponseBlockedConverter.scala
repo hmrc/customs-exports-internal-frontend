@@ -64,7 +64,7 @@ class ControlResponseBlockedConverter @Inject()(decoder: Decoder, dateTimeFormat
       .error(errorCode)
       .map(code => messages(code.messageKey))
       .orElse {
-        logger.info(s"Received inventoryLinkingControlResponse with unknown error code: $errorCode")
+        logger.warn(s"Received inventoryLinkingControlResponse with unknown error code: $errorCode")
         None
       }
 

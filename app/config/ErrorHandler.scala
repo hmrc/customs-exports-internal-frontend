@@ -18,6 +18,7 @@ package config
 
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
+import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Request, RequestHeader, Result, Results}
 import play.twirl.api.Html
@@ -26,11 +27,18 @@ import views.html.error
 
 @Singleton
 class ErrorHandler @Inject()(val messagesApi: MessagesApi, errorTemplate: error) extends FrontendErrorHandler {
+
+  private val logger = Logger(classOf[ErrorHandler])
+
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
     errorTemplate(pageTitle, heading, message)
 
   override def resolveError(rh: RequestHeader, ex: Throwable): Result = ex match {
-    case ReturnToStartException => Results.Redirect(controllers.routes.ChoiceController.displayPage())
-    case _                      => super.resolveError(rh, ex)
+    case ReturnToStartException =>
+      logger.warn(s"User Answers was in an invalid state, returning them to the Start Page from [${rh.uri}]")
+      Results.Redirect(controllers.routes.ChoiceController.displayPage())
+    case _                      =>
+      logger.warn(s"Unexpected Exception was thrown accessing [${rh.uri}]", ex)
+      super.resolveError(rh, ex)
   }
 }
