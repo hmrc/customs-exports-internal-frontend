@@ -21,7 +21,8 @@ object AppDependencies {
     "org.mockito"             %  "mockito-core"             % "3.0.0"                 % "test, it",
     "com.github.tomakehurst"  % "wiremock-jre8"             % "2.24.1"                % "test, it",
     "org.pegdown"             %  "pegdown"                  % "1.6.0"                 % "test, it",
-    "org.scalatestplus.play"  %% "scalatestplus-play"       % "3.1.2"                 % "test, it"
+    "org.scalatestplus.play"  %% "scalatestplus-play"       % "3.1.2"                 % "test, it",
+    "uk.gov.hmrc"             %% "reactivemongo-test"       % "4.14.0-play-25"        % "test, it"
   ).map(_.withSources())
 
 }
