@@ -18,10 +18,10 @@ package testdata
 
 import java.time.{Instant, ZoneId}
 
+import connectors.exchanges.MovementExchange
 import forms.{Choice, ConsignmentReferences, MovementBuilder, MovementDetails}
 import models.UcrBlock
 import models.cache.{ArrivalAnswers, DepartureAnswers}
-import models.requests.MovementRequest
 import models.submissions.{ActionType, Submission}
 import testdata.CommonTestData.{conversationId, correctUcr, providerId, validEori}
 
@@ -33,7 +33,7 @@ object MovementsTestData {
 
   val movementBuilder = new MovementBuilder(zoneId)
 
-  def validMovementRequest(movementType: Choice): MovementRequest =
+  def validMovementRequest(movementType: Choice): MovementExchange =
     movementType match {
       case Choice.Arrival   => movementBuilder.createMovementRequest(providerId, validArrivalAnswers)
       case Choice.Departure => movementBuilder.createMovementRequest(providerId, validDepartureAnswers)

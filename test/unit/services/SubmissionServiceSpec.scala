@@ -18,7 +18,7 @@ package services
 
 import base.UnitSpec
 import connectors.CustomsDeclareExportsMovementsConnector
-import connectors.exchanges.{AssociateUCRRequest, Consolidation, DisassociateDUCRRequest, ShutMUCRRequest}
+import connectors.exchanges.{AssociateUCRExchange, ConsolidationExchange, DisassociateDUCRExchange, ShutMUCRExchange}
 import forms._
 import metrics.MovementsMetrics
 import models.ReturnToStartException
@@ -60,26 +60,26 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
     "delegate to connector" in {
 
-      given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
+      given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
       given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
       val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
       await(service.submit(providerId, answers))
 
-      theAssociationSubmitted mustBe AssociateUCRRequest(providerId, validEori, mucr, ucr)
+      theAssociationSubmitted mustBe AssociateUCRExchange(providerId, validEori, mucr, ucr)
       verify(repository).removeByProviderId(providerId)
       verify(audit).auditAssociate(validEori, mucr, ucr, "Success")
     }
 
     "audit when failed" in {
-      given(connector.submit(any[Consolidation]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
+      given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
 
       val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
       intercept[RuntimeException] {
         await(service.submit(providerId, answers))
       }
 
-      theAssociationSubmitted mustBe AssociateUCRRequest(providerId, validEori, mucr, ucr)
+      theAssociationSubmitted mustBe AssociateUCRExchange(providerId, validEori, mucr, ucr)
       verify(repository, never()).removeByProviderId(providerId)
       verify(audit).auditAssociate(validEori, mucr, ucr, "Failed")
     }
@@ -104,8 +104,8 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
       verifyZeroInteractions(audit)
     }
 
-    def theAssociationSubmitted: AssociateUCRRequest = {
-      val captor: ArgumentCaptor[AssociateUCRRequest] = ArgumentCaptor.forClass(classOf[AssociateUCRRequest])
+    def theAssociationSubmitted: AssociateUCRExchange = {
+      val captor: ArgumentCaptor[AssociateUCRExchange] = ArgumentCaptor.forClass(classOf[AssociateUCRExchange])
       verify(connector).submit(captor.capture())(any())
       captor.getValue
     }
@@ -114,39 +114,39 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
   "Submit Disassociate" should {
     "delegate to connector" when {
       "Disassociate MUCR" in {
-        given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
+        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
         given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
         val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Mucr, None, Some("ucr"))))
         await(service.submit(providerId, answers))
 
-        theDisassociationSubmitted mustBe DisassociateDUCRRequest(providerId, validEori, "ucr")
+        theDisassociationSubmitted mustBe DisassociateDUCRExchange(providerId, validEori, "ucr")
         verify(repository).removeByProviderId(providerId)
         verify(audit).auditDisassociate(validEori, "ucr", "Success")
       }
 
       "Disassociate DUCR" in {
-        given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
+        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
         given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
         val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Ducr, Some("ucr"), None)))
         await(service.submit(providerId, answers))
 
-        theDisassociationSubmitted mustBe DisassociateDUCRRequest(providerId, validEori, "ucr")
+        theDisassociationSubmitted mustBe DisassociateDUCRExchange(providerId, validEori, "ucr")
         verify(repository).removeByProviderId(providerId)
         verify(audit).auditDisassociate(validEori, "ucr", "Success")
       }
     }
 
     "audit when failed" in {
-      given(connector.submit(any[Consolidation]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
+      given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
 
       val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Mucr, None, Some("ucr"))))
       intercept[RuntimeException] {
         await(service.submit(providerId, answers))
       }
 
-      theDisassociationSubmitted mustBe DisassociateDUCRRequest(providerId, validEori, "ucr")
+      theDisassociationSubmitted mustBe DisassociateDUCRExchange(providerId, validEori, "ucr")
       verify(repository, never()).removeByProviderId(providerId)
       verify(audit).auditDisassociate(validEori, "ucr", "Failed")
     }
@@ -195,8 +195,8 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
       }
     }
 
-    def theDisassociationSubmitted: DisassociateDUCRRequest = {
-      val captor: ArgumentCaptor[DisassociateDUCRRequest] = ArgumentCaptor.forClass(classOf[DisassociateDUCRRequest])
+    def theDisassociationSubmitted: DisassociateDUCRExchange = {
+      val captor: ArgumentCaptor[DisassociateDUCRExchange] = ArgumentCaptor.forClass(classOf[DisassociateDUCRExchange])
       verify(connector).submit(captor.capture())(any())
       captor.getValue
     }
@@ -204,26 +204,26 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
   "Submit ShutMUCR" should {
     "delegate to connector" in {
-      given(connector.submit(any[Consolidation]())(any())).willReturn(Future.successful((): Unit))
+      given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
       given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
       val answers = ShutMucrAnswers(Some(validEori), Some(ShutMucr("mucr")))
       await(service.submit(providerId, answers))
 
-      theShutMucrSubmitted mustBe ShutMUCRRequest(providerId, validEori, "mucr")
+      theShutMucrSubmitted mustBe ShutMUCRExchange(providerId, validEori, "mucr")
       verify(repository).removeByProviderId(providerId)
       verify(audit).auditShutMucr(validEori, "mucr", "Success")
     }
 
     "audit when failed" in {
-      given(connector.submit(any[Consolidation]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
+      given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
 
       val answers = ShutMucrAnswers(Some(validEori), Some(ShutMucr("mucr")))
       intercept[RuntimeException] {
         await(service.submit(providerId, answers))
       }
 
-      theShutMucrSubmitted mustBe ShutMUCRRequest(providerId, validEori, "mucr")
+      theShutMucrSubmitted mustBe ShutMUCRExchange(providerId, validEori, "mucr")
       verify(repository, never()).removeByProviderId(providerId)
       verify(audit).auditShutMucr(validEori, "mucr", "Failed")
     }
@@ -248,8 +248,8 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
       verifyZeroInteractions(audit)
     }
 
-    def theShutMucrSubmitted: ShutMUCRRequest = {
-      val captor: ArgumentCaptor[ShutMUCRRequest] = ArgumentCaptor.forClass(classOf[ShutMUCRRequest])
+    def theShutMucrSubmitted: ShutMUCRExchange = {
+      val captor: ArgumentCaptor[ShutMUCRExchange] = ArgumentCaptor.forClass(classOf[ShutMUCRExchange])
       verify(connector).submit(captor.capture())(any())
       captor.getValue
     }

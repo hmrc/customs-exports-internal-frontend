@@ -17,7 +17,7 @@
 package services
 
 import connectors.CustomsDeclareExportsMovementsConnector
-import connectors.exchanges.{AssociateUCRRequest, DisassociateDUCRRequest, ShutMUCRRequest}
+import connectors.exchanges.{AssociateUCRExchange, DisassociateDUCRExchange, ShutMUCRExchange}
 import forms._
 import javax.inject.{Inject, Singleton}
 import metrics.MovementsMetrics
@@ -45,7 +45,7 @@ class SubmissionService @Inject()(
     val ucr = answers.ucr.getOrElse(throw ReturnToStartException).ucr
 
     connector
-      .submit(DisassociateDUCRRequest(providerId, eori, ucr))
+      .submit(DisassociateDUCRExchange(providerId, eori, ucr))
       .andThen {
         case Success(_) =>
           cache.removeByProviderId(providerId).flatMap { _ =>
@@ -62,7 +62,7 @@ class SubmissionService @Inject()(
     val ucr = answers.associateUcr.map(_.ucr).getOrElse(throw ReturnToStartException)
 
     connector
-      .submit(AssociateUCRRequest(providerId, eori, mucr, ucr))
+      .submit(AssociateUCRExchange(providerId, eori, mucr, ucr))
       .andThen {
         case Success(_) =>
           cache.removeByProviderId(providerId).flatMap { _ =>
@@ -78,7 +78,7 @@ class SubmissionService @Inject()(
     val mucr = answers.shutMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
 
     connector
-      .submit(ShutMUCRRequest(providerId, eori, mucr))
+      .submit(ShutMUCRExchange(providerId, eori, mucr))
       .andThen {
         case Success(_) =>
           cache.removeByProviderId(providerId).flatMap { _ =>

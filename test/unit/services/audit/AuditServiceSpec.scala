@@ -17,8 +17,8 @@
 package services.audit
 
 import base.UnitSpec
+import connectors.exchanges.{ArrivalExchange, MovementDetailsExchange}
 import forms._
-import models.requests.{ArrivalRequest, MovementDetailsRequest}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import org.mockito.Mockito.{reset, verify, when}
@@ -72,11 +72,11 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
         EventData.submissionResult.toString -> "200"
       )
       val data =
-        ArrivalRequest(
+        ArrivalExchange(
           eori = "GB12345678",
           providerId = "122343",
           consignmentReference = ConsignmentReferences("UCR", "D"),
-          movementDetails = MovementDetailsRequest("dateTime"),
+          movementDetails = MovementDetailsExchange("dateTime"),
           location = Location("location"),
           arrivalReference = ArrivalReference(Some("ref"))
         )

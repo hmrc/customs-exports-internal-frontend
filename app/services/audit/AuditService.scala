@@ -17,10 +17,10 @@
 package services.audit
 
 import com.google.inject.Inject
+import connectors.exchanges.{ArrivalExchange, MovementExchange}
 import forms._
 import javax.inject.Named
 import models.cache.{Answers, ArrivalAnswers, DepartureAnswers, JourneyType}
-import models.requests.{ArrivalRequest, MovementRequest, MovementType}
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -57,7 +57,7 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
       )
     )
 
-  def auditMovements(data: MovementRequest, result: String, movementAuditType: AuditTypes.Audit)(implicit hc: HeaderCarrier): Future[AuditResult] =
+  def auditMovements(data: MovementExchange, result: String, movementAuditType: AuditTypes.Audit)(implicit hc: HeaderCarrier): Future[AuditResult] =
     audit(
       movementAuditType,
       Map(
@@ -67,8 +67,8 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
         EventData.ucr.toString -> data.consignmentReference.reference,
         EventData.submissionResult.toString -> result
       ).++(data match {
-        case arrival: ArrivalRequest => Map(EventData.movementReference.toString -> arrival.arrivalReference.reference.getOrElse(""))
-        case _                       => Map()
+        case arrival: ArrivalExchange => Map(EventData.movementReference.toString -> arrival.arrivalReference.reference.getOrElse(""))
+        case _                        => Map()
       })
     )
 

@@ -19,22 +19,22 @@ package forms
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+import connectors.exchanges.{ArrivalExchange, DepartureExchange, MovementDetailsExchange, MovementExchange}
 import javax.inject.Inject
 import models.ReturnToStartException
 import models.cache.{ArrivalAnswers, DepartureAnswers, MovementAnswers}
-import models.requests.{ArrivalRequest, DepartureRequest, MovementDetailsRequest, MovementRequest}
 
 class MovementBuilder @Inject()(zoneId: ZoneId) {
 
   private val movementDateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
-  def createMovementRequest(providerId: String, answers: MovementAnswers): MovementRequest = answers match {
+  def createMovementRequest(providerId: String, answers: MovementAnswers): MovementExchange = answers match {
     case arrivalAnswers: ArrivalAnswers     => createMovementArrivalRequest(providerId, arrivalAnswers)
     case departureAnswers: DepartureAnswers => createMovementDepartureRequest(providerId, departureAnswers)
   }
 
   private def createMovementArrivalRequest(providerId: String, answers: ArrivalAnswers) =
-    ArrivalRequest(
+    ArrivalExchange(
       eori = answers.eori.getOrElse(throw ReturnToStartException),
       providerId = providerId,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
@@ -44,7 +44,7 @@ class MovementBuilder @Inject()(zoneId: ZoneId) {
     )
 
   private def createMovementDepartureRequest(providerId: String, answers: DepartureAnswers) =
-    DepartureRequest(
+    DepartureExchange(
       eori = answers.eori.getOrElse(throw ReturnToStartException),
       providerId = providerId,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
@@ -54,14 +54,14 @@ class MovementBuilder @Inject()(zoneId: ZoneId) {
     )
 
   private def movementDetails(answers: ArrivalAnswers) =
-    MovementDetailsRequest(
+    MovementDetailsExchange(
       answers.arrivalDetails
         .map(arrival => movementDateTimeFormatter.format(arrival.goodsArrivalMoment(zoneId)))
         .getOrElse("")
     )
 
-  private def movementDetails(answers: DepartureAnswers): MovementDetailsRequest =
-    MovementDetailsRequest(
+  private def movementDetails(answers: DepartureAnswers): MovementDetailsExchange =
+    MovementDetailsExchange(
       answers.departureDetails
         .map(departure => movementDateTimeFormatter.format(departure.goodsDepartureMoment(zoneId)))
         .getOrElse("")

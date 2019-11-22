@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.ExecutionContext
 
-class ConnectorSpec extends WordSpec with WiremockTestServer with Injector with MustMatchers with BeforeAndAfterEach with ScalaFutures {
+abstract class ConnectorSpec extends WordSpec with WiremockTestServer with Injector with MustMatchers with BeforeAndAfterEach with ScalaFutures {
 
   def overrideConfig: Map[String, Any] = Map()
 

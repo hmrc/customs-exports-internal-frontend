@@ -18,10 +18,9 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.AppConfig
-import connectors.exchanges.DisassociateDUCRRequest
+import connectors.exchanges.{ArrivalExchange, DisassociateDUCRExchange, MovementDetailsExchange}
 import forms.{ArrivalReference, ConsignmentReferences, Location}
 import models.notifications.ResponseType.ControlResponse
-import models.requests.{ArrivalRequest, MovementDetailsRequest}
 import org.mockito.BDDMockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
@@ -49,11 +48,11 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
       )
 
       val request =
-        ArrivalRequest(
+        ArrivalExchange(
           "eori",
           "provider-id",
           ConsignmentReferences("ref", "value"),
-          MovementDetailsRequest("datetime"),
+          MovementDetailsExchange("datetime"),
           Location("code"),
           ArrivalReference(Some("reference"))
         )
@@ -85,7 +84,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
           )
       )
 
-      val request = DisassociateDUCRRequest("provider-id", "eori", "ucr")
+      val request = DisassociateDUCRExchange("provider-id", "eori", "ucr")
       connector.submit(request).futureValue
 
       verify(

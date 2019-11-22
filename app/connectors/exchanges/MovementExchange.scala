@@ -14,53 +14,53 @@
  * limitations under the License.
  */
 
-package models.requests
+package connectors.exchanges
 
 import forms._
 import play.api.libs.json.{Format, Json, OFormat}
 import uk.gov.hmrc.play.json.Union
 
-case class ArrivalRequest(
+case class ArrivalExchange(
   override val eori: String,
   override val providerId: String,
   override val consignmentReference: ConsignmentReferences,
-  override val movementDetails: MovementDetailsRequest,
+  override val movementDetails: MovementDetailsExchange,
   override val location: Location,
   arrivalReference: ArrivalReference
-) extends MovementRequest {
+) extends MovementExchange {
   override val choice: MovementType = MovementType.Arrival
 }
-object ArrivalRequest {
-  implicit val format: OFormat[ArrivalRequest] = Json.format[ArrivalRequest]
+object ArrivalExchange {
+  implicit val format: OFormat[ArrivalExchange] = Json.format[ArrivalExchange]
 }
 
-case class DepartureRequest(
+case class DepartureExchange(
   override val eori: String,
   override val providerId: String,
   override val consignmentReference: ConsignmentReferences,
-  override val movementDetails: MovementDetailsRequest,
+  override val movementDetails: MovementDetailsExchange,
   override val location: Location,
   transport: Transport
-) extends MovementRequest {
+) extends MovementExchange {
   override val choice: MovementType = MovementType.Departure
 }
-object DepartureRequest {
-  implicit val format: OFormat[DepartureRequest] = Json.format[DepartureRequest]
+object DepartureExchange {
+  implicit val format: OFormat[DepartureExchange] = Json.format[DepartureExchange]
 }
 
-trait MovementRequest {
+trait MovementExchange {
   val eori: String
   val providerId: String
   val choice: MovementType
   val consignmentReference: ConsignmentReferences
-  val movementDetails: MovementDetailsRequest
+  val movementDetails: MovementDetailsExchange
   val location: Location
 }
 
-object MovementRequest {
-  implicit val format: Format[MovementRequest] = Union
-    .from[MovementRequest]("choice")
-    .and[DepartureRequest](MovementType.Departure.toString)
-    .and[ArrivalRequest](MovementType.Arrival.toString)
+object MovementExchange {
+  implicit val format: Format[MovementExchange] = Union
+    .from[MovementExchange]("choice")
+    .and[DepartureExchange](MovementType.Departure.toString)
+    .and[ArrivalExchange](MovementType.Arrival.toString)
     .format
 }

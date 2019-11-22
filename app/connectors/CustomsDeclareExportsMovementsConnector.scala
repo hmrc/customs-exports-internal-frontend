@@ -17,11 +17,10 @@
 package connectors
 
 import config.AppConfig
-import connectors.exchanges.Consolidation
+import connectors.exchanges.{ConsolidationExchange, MovementExchange}
 import connectors.formats.Implicit.optionFormat
 import javax.inject.{Inject, Singleton}
 import models.notifications.NotificationFrontendModel
-import models.requests.MovementRequest
 import models.submissions.Submission
 import play.api.Logger
 import play.api.http.{ContentTypes, HeaderNames}
@@ -41,16 +40,16 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
 
   private val JsonHeaders = Seq(HeaderNames.CONTENT_TYPE -> ContentTypes.JSON, HeaderNames.ACCEPT -> ContentTypes.JSON)
 
-  def submit(request: MovementRequest)(implicit hc: HeaderCarrier): Future[Unit] =
+  def submit(request: MovementExchange)(implicit hc: HeaderCarrier): Future[Unit] =
     httpClient
-      .POST[MovementRequest, HttpResponse](appConfig.customsDeclareExportsMovementsUrl + Movements, request, JsonHeaders)
+      .POST[MovementExchange, HttpResponse](appConfig.customsDeclareExportsMovementsUrl + Movements, request, JsonHeaders)
       .andThen {
         case Success(response)  => logSuccessfulExchange("Submit Movement", response.body)
         case Failure(exception) => logFailedExchange("Submit Movement", exception)
       }
       .map(_ => (): Unit)
 
-  def submit[T <: Consolidation](request: T)(implicit hc: HeaderCarrier): Future[Unit] =
+  def submit[T <: ConsolidationExchange](request: T)(implicit hc: HeaderCarrier): Future[Unit] =
     httpClient
       .POST[T, HttpResponse](appConfig.customsDeclareExportsMovementsUrl + Consolidations, request, JsonHeaders)
       .andThen {

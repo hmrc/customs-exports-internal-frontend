@@ -26,40 +26,40 @@ object ConsolidationType extends Enumeration {
   implicit val format: Format[ConsolidationType] = Format(Reads.enumNameReads(ConsolidationType), Writes.enumNameWrites)
 }
 
-case class AssociateUCRRequest(override val providerId: String, override val eori: String, mucr: String, ucr: String) extends Consolidation {
+case class AssociateUCRExchange(override val providerId: String, override val eori: String, mucr: String, ucr: String) extends ConsolidationExchange {
   override val consolidationType: ConsolidationType.Value = ConsolidationType.ASSOCIATE_DUCR
 }
 
-object AssociateUCRRequest {
-  implicit val format: OFormat[AssociateUCRRequest] = Json.format[AssociateUCRRequest]
+object AssociateUCRExchange {
+  implicit val format: OFormat[AssociateUCRExchange] = Json.format[AssociateUCRExchange]
 }
 
-case class DisassociateDUCRRequest(override val providerId: String, override val eori: String, ucr: String) extends Consolidation {
+case class DisassociateDUCRExchange(override val providerId: String, override val eori: String, ucr: String) extends ConsolidationExchange {
   override val consolidationType: ConsolidationType.Value = ConsolidationType.DISASSOCIATE_DUCR
 }
 
-object DisassociateDUCRRequest {
-  implicit val format: OFormat[DisassociateDUCRRequest] = Json.format[DisassociateDUCRRequest]
+object DisassociateDUCRExchange {
+  implicit val format: OFormat[DisassociateDUCRExchange] = Json.format[DisassociateDUCRExchange]
 }
 
-case class ShutMUCRRequest(override val providerId: String, override val eori: String, mucr: String) extends Consolidation {
+case class ShutMUCRExchange(override val providerId: String, override val eori: String, mucr: String) extends ConsolidationExchange {
   override val consolidationType: ConsolidationType.Value = ConsolidationType.SHUT_MUCR
 }
-object ShutMUCRRequest {
-  implicit val format: OFormat[ShutMUCRRequest] = Json.format[ShutMUCRRequest]
+object ShutMUCRExchange {
+  implicit val format: OFormat[ShutMUCRExchange] = Json.format[ShutMUCRExchange]
 }
 
-trait Consolidation {
+trait ConsolidationExchange {
   val consolidationType: ConsolidationType
   val eori: String
   val providerId: String
 }
 
-object Consolidation {
-  implicit val format: Format[Consolidation] = Union
-    .from[Consolidation](typeField = "consolidationType")
-    .and[AssociateUCRRequest](typeTag = ConsolidationType.ASSOCIATE_DUCR.toString)
-    .and[DisassociateDUCRRequest](typeTag = ConsolidationType.DISASSOCIATE_DUCR.toString)
-    .and[ShutMUCRRequest](typeTag = ConsolidationType.SHUT_MUCR.toString)
+object ConsolidationExchange {
+  implicit val format: Format[ConsolidationExchange] = Union
+    .from[ConsolidationExchange](typeField = "consolidationType")
+    .and[AssociateUCRExchange](typeTag = ConsolidationType.ASSOCIATE_DUCR.toString)
+    .and[DisassociateDUCRExchange](typeTag = ConsolidationType.DISASSOCIATE_DUCR.toString)
+    .and[ShutMUCRExchange](typeTag = ConsolidationType.SHUT_MUCR.toString)
     .format
 }
