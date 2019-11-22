@@ -49,9 +49,9 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
       }
       .map(_ => (): Unit)
 
-  def submit[T <: ConsolidationExchange](request: T)(implicit hc: HeaderCarrier): Future[Unit] =
+  def submit(request: ConsolidationExchange)(implicit hc: HeaderCarrier): Future[Unit] =
     httpClient
-      .POST[T, HttpResponse](appConfig.customsDeclareExportsMovementsUrl + Consolidations, request, JsonHeaders)
+      .POST[ConsolidationExchange, HttpResponse](appConfig.customsDeclareExportsMovementsUrl + Consolidations, request, JsonHeaders)
       .andThen {
         case Success(response)  => logSuccessfulExchange("Submit Consolidation", response.body)
         case Failure(exception) => logFailedExchange("Submit Consolidation", exception)

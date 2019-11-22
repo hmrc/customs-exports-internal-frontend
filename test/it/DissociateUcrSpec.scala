@@ -24,22 +24,28 @@ class DissociateUcrSpec extends IntegrationSpec {
   "Dissociate UCR Page" when {
     "GET" should {
       "return 200" in {
+        // Given
         givenAuthSuccess("pid")
         givenCacheFor("pid", DisassociateUcrAnswers())
 
+        // When
         val response = get(controllers.consolidations.routes.DisassociateUCRController.display())
 
+        // Then
         status(response) mustBe OK
       }
     }
 
     "POST" should {
       "continue" in {
+        // Given
         givenAuthSuccess("pid")
         givenCacheFor("pid", DisassociateUcrAnswers())
 
+        // When
         val response = post(controllers.consolidations.routes.DisassociateUCRController.submit(), "kind" -> "mucr", "mucr" -> "GB/321-54321")
 
+        // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.DisassociateUCRSummaryController.display().url)
         theCacheFor("pid") mustBe Some(
@@ -52,20 +58,24 @@ class DissociateUcrSpec extends IntegrationSpec {
   "Dissociate UCR Summary Page" when {
     "GET" should {
       "return 200" in {
+        // Given
         givenAuthSuccess("pid")
         givenCacheFor(
           "pid",
           DisassociateUcrAnswers(ucr = Some(DisassociateUcr(kind = DisassociateKind.Mucr, mucr = Some("GB/321-54321"), ducr = None)))
         )
 
+        // When
         val response = get(controllers.consolidations.routes.DisassociateUCRSummaryController.display())
 
+        // Then
         status(response) mustBe OK
       }
     }
 
     "POST" should {
       "continue" in {
+        // Given
         givenAuthSuccess("pid")
         givenCacheFor(
           "pid",
@@ -73,8 +83,10 @@ class DissociateUcrSpec extends IntegrationSpec {
         )
         givenMovementsBackendAcceptsTheConsolidation()
 
+        // When
         val response = post(controllers.consolidations.routes.DisassociateUCRSummaryController.submit())
 
+        // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.DisassociateUCRConfirmationController.display().url)
         theCacheFor("pid") mustBe None

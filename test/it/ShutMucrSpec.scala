@@ -24,22 +24,28 @@ class ShutMucrSpec extends IntegrationSpec {
   "Enter MUCR Page" when {
     "GET" should {
       "return 200" in {
+        // Given
         givenAuthSuccess("pid")
         givenCacheFor("pid", ShutMucrAnswers())
 
+        // When
         val response = get(controllers.consolidations.routes.ShutMucrController.displayPage())
 
+        // Then
         status(response) mustBe OK
       }
     }
 
     "POST" should {
       "continue" in {
+        // Given
         givenAuthSuccess("pid")
         givenCacheFor("pid", ShutMucrAnswers())
 
+        // When
         val response = post(controllers.consolidations.routes.ShutMucrController.submit(), "mucr" -> "GB/123-12345")
 
+        // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.ShutMucrSummaryController.displayPage().url)
         theCacheFor("pid") mustBe Some(ShutMucrAnswers(shutMucr = Some(ShutMucr("GB/123-12345"))))
@@ -50,23 +56,29 @@ class ShutMucrSpec extends IntegrationSpec {
   "Shut MUCR Summary Page" when {
     "GET" should {
       "return 200" in {
+        // Given
         givenAuthSuccess("pid")
         givenCacheFor("pid", ShutMucrAnswers(shutMucr = Some(ShutMucr("GB/123-12345"))))
 
+        // When
         val response = get(controllers.consolidations.routes.ShutMucrSummaryController.displayPage())
 
+        // Then
         status(response) mustBe OK
       }
     }
 
     "POST" should {
       "continue" in {
+        // Given
         givenAuthSuccess("pid")
         givenCacheFor("pid", ShutMucrAnswers(shutMucr = Some(ShutMucr("GB/123-12345"))))
         givenMovementsBackendAcceptsTheConsolidation()
 
+        // When
         val response = post(controllers.consolidations.routes.ShutMucrSummaryController.submit())
 
+        // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.ShutMUCRConfirmationController.display().url)
         theCacheFor("pid") mustBe None

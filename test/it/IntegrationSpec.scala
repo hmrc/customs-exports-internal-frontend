@@ -39,7 +39,7 @@ abstract class IntegrationSpec
   /*
     Intentionally NOT exposing the real CacheRepository as we shouldn't test our production code using our production classes.
    */
-  protected lazy val cache: JSONCollection = app.injector.instanceOf[CacheRepository].collection
+  private lazy val cache: JSONCollection = app.injector.instanceOf[CacheRepository].collection
 
   override lazy val port = 14681
   override def fakeApplication(): Application =
