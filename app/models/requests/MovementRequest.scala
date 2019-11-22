@@ -17,19 +17,50 @@
 package models.requests
 
 import forms._
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Format, Json, OFormat}
+import uk.gov.hmrc.play.json.Union
 
-case class MovementRequest(
-  eori: String,
-  providerId: String,
-  choice: MovementType,
-  consignmentReference: ConsignmentReferences,
-  movementDetails: MovementDetailsRequest,
-  location: Option[Location] = None,
-  arrivalReference: Option[ArrivalReference] = None,
-  transport: Option[Transport] = None
-)
+case class ArrivalRequest(
+  override val eori: String,
+  override val providerId: String,
+  override val consignmentReference: ConsignmentReferences,
+  override val movementDetails: MovementDetailsRequest,
+  override val location: Location,
+  arrivalReference: ArrivalReference
+) extends MovementRequest {
+  override val choice: MovementType = MovementType.Arrival
+}
+object ArrivalRequest {
+  implicit val format: OFormat[ArrivalRequest] = Json.format[ArrivalRequest]
+}
+
+case class DepartureRequest(
+  override val eori: String,
+  override val providerId: String,
+  override val consignmentReference: ConsignmentReferences,
+  override val movementDetails: MovementDetailsRequest,
+  override val location: Location,
+  transport: Transport
+) extends MovementRequest {
+  override val choice: MovementType = MovementType.Departure
+}
+object DepartureRequest {
+  implicit val format: OFormat[DepartureRequest] = Json.format[DepartureRequest]
+}
+
+trait MovementRequest {
+  val eori: String
+  val providerId: String
+  val choice: MovementType
+  val consignmentReference: ConsignmentReferences
+  val movementDetails: MovementDetailsRequest
+  val location: Location
+}
 
 object MovementRequest {
-  implicit val format: OFormat[MovementRequest] = Json.format[MovementRequest]
+  implicit val format: Format[MovementRequest] = Union
+    .from[MovementRequest]("choice")
+    .and[DepartureRequest](MovementType.Departure.toString)
+    .and[ArrivalRequest](MovementType.Arrival.toString)
+    .format
 }

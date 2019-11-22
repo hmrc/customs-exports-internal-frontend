@@ -18,7 +18,7 @@ package services.audit
 
 import base.UnitSpec
 import forms._
-import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
+import models.requests.{ArrivalRequest, MovementDetailsRequest}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import org.mockito.Mockito.{reset, verify, when}
@@ -31,11 +31,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
-  implicit val ec: ExecutionContext = ExecutionContext.global
-  implicit val headerCarrier = HeaderCarrier()
+  private implicit val ec: ExecutionContext = ExecutionContext.global
+  private implicit val headerCarrier = HeaderCarrier()
 
-  val mockAuditConnector = mock[AuditConnector]
-  val spyAuditService = Mockito.spy(new AuditService(mockAuditConnector, "appName"))
+  private val mockAuditConnector = mock[AuditConnector]
+  private val service = Mockito.spy(new AuditService(mockAuditConnector, "appName"))
 
   override def beforeEach(): Unit =
     when(mockAuditConnector.sendEvent(any())(any[HeaderCarrier], any[ExecutionContext]))
@@ -46,25 +46,25 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
   "AuditService" should {
     "audit Shut a Mucr data" in {
       val dataToAudit = Map(eori.toString -> "eori", mucr.toString -> "mucr", submissionResult.toString -> "200")
-      spyAuditService.auditShutMucr("eori", "mucr", "200")
-      verify(spyAuditService).audit(AuditTypes.AuditShutMucr, dataToAudit)
+      service.auditShutMucr("eori", "mucr", "200")
+      verify(service).audit(AuditTypes.AuditShutMucr, dataToAudit)
     }
 
     "audit an association" in {
       val dataToAudit = Map(eori.toString -> "eori", mucr.toString -> "mucr", ducr.toString -> "ducr", submissionResult.toString -> "200")
-      spyAuditService.auditAssociate("eori", "mucr", "ducr", "200")
-      verify(spyAuditService).audit(AuditTypes.AuditAssociate, dataToAudit)
+      service.auditAssociate("eori", "mucr", "ducr", "200")
+      verify(service).audit(AuditTypes.AuditAssociate, dataToAudit)
     }
 
     "audit a disassociation" in {
       val dataToAudit = Map(eori.toString -> "eori", ducr.toString -> "ducr", submissionResult.toString -> "200")
-      spyAuditService.auditDisassociate("eori", "ducr", "200")
-      verify(spyAuditService).audit(AuditTypes.AuditDisassociate, dataToAudit)
+      service.auditDisassociate("eori", "ducr", "200")
+      verify(service).audit(AuditTypes.AuditDisassociate, dataToAudit)
     }
 
     "audit a movement" in {
       val dataToAudit = Map(
-        EventData.movementReference.toString -> "",
+        EventData.movementReference.toString -> "ref",
         EventData.eori.toString -> "GB12345678",
         EventData.messageCode.toString -> "EAL",
         EventData.ucr.toString -> "UCR",
@@ -72,15 +72,16 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
         EventData.submissionResult.toString -> "200"
       )
       val data =
-        MovementRequest(
+        ArrivalRequest(
           eori = "GB12345678",
           providerId = "122343",
-          choice = MovementType.Arrival,
           consignmentReference = ConsignmentReferences("UCR", "D"),
-          movementDetails = MovementDetailsRequest("dateTime")
+          movementDetails = MovementDetailsRequest("dateTime"),
+          location = Location("location"),
+          arrivalReference = ArrivalReference(Some("ref"))
         )
-      spyAuditService.auditMovements(data, "200", AuditTypes.AuditArrival)
-      verify(spyAuditService).audit(AuditTypes.AuditArrival, dataToAudit)
+      service.auditMovements(data, "200", AuditTypes.AuditArrival)
+      verify(service).audit(AuditTypes.AuditArrival, dataToAudit)
     }
   }
 }

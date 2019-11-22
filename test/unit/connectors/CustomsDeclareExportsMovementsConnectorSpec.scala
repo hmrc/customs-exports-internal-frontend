@@ -19,9 +19,9 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.AppConfig
 import connectors.exchanges.DisassociateDUCRRequest
-import forms.ConsignmentReferences
+import forms.{ArrivalReference, ConsignmentReferences, Location}
 import models.notifications.ResponseType.ControlResponse
-import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
+import models.requests.{ArrivalRequest, MovementDetailsRequest}
 import org.mockito.BDDMockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
@@ -49,16 +49,27 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
       )
 
       val request =
-        MovementRequest("eori", "provider-id", MovementType.Arrival, ConsignmentReferences("ref", "value"), MovementDetailsRequest("datetime"))
+        ArrivalRequest(
+          "eori",
+          "provider-id",
+          ConsignmentReferences("ref", "value"),
+          MovementDetailsRequest("datetime"),
+          Location("code"),
+          ArrivalReference(Some("reference"))
+        )
       connector.submit(request).futureValue
 
       verify(
         postRequestedFor(urlEqualTo("/movements"))
-          .withRequestBody(
-            equalTo(
-              """{"eori":"eori","providerId":"provider-id","choice":"EAL","consignmentReference":{"reference":"ref","referenceValue":"value"},"movementDetails":{"dateTime":"datetime"}}"""
-            )
-          )
+          .withRequestBody(equalToJson("""{
+                 "eori":"eori",
+                 "providerId":"provider-id",
+                 "consignmentReference":{"reference":"ref","referenceValue":"value"},
+                 "movementDetails":{"dateTime":"datetime"},
+                 "location":{"code":"code"},
+                 "arrivalReference":{"reference":"reference"},
+                 "choice":"EAL"
+                 }"""))
       )
     }
   }

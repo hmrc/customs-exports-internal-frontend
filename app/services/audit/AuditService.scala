@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import forms._
 import javax.inject.Named
 import models.cache.{Answers, ArrivalAnswers, DepartureAnswers, JourneyType}
-import models.requests.MovementRequest
+import models.requests.{ArrivalRequest, MovementRequest, MovementType}
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -65,9 +65,11 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
         EventData.messageCode.toString -> data.choice.toString,
         EventData.ucrType.toString -> data.consignmentReference.referenceValue,
         EventData.ucr.toString -> data.consignmentReference.reference,
-        EventData.movementReference.toString -> data.arrivalReference.flatMap(_.reference).getOrElse(""),
         EventData.submissionResult.toString -> result
-      )
+      ).++(data match {
+        case arrival: ArrivalRequest => Map(EventData.movementReference.toString -> arrival.arrivalReference.reference.getOrElse(""))
+        case _                       => Map()
+      })
     )
 
   def audit(auditType: AuditTypes.Audit, auditData: Map[String, String])(implicit hc: HeaderCarrier): Future[AuditResult] = {
@@ -130,8 +132,7 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
           ConsignmentReferences.formId -> Json.toJson(departureAnswers.consignmentReferences),
           Location.formId -> Json.toJson(departureAnswers.location),
           MovementDetails.formId -> Json.toJson(departureAnswers.departureDetails),
-          Transport.formId -> Json.toJson(departureAnswers.transport),
-          ArrivalReference.formId -> Json.toJson(departureAnswers.arrivalReference)
+          Transport.formId -> Json.toJson(departureAnswers.transport)
         )
     }
 

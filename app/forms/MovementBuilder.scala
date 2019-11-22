@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import models.ReturnToStartException
 import models.cache.{ArrivalAnswers, DepartureAnswers, MovementAnswers}
-import models.requests.{MovementDetailsRequest, MovementRequest, MovementType}
+import models.requests.{ArrivalRequest, DepartureRequest, MovementDetailsRequest, MovementRequest}
 
 class MovementBuilder @Inject()(zoneId: ZoneId) {
 
@@ -34,26 +34,23 @@ class MovementBuilder @Inject()(zoneId: ZoneId) {
   }
 
   private def createMovementArrivalRequest(providerId: String, answers: ArrivalAnswers) =
-    MovementRequest(
+    ArrivalRequest(
       eori = answers.eori.getOrElse(throw ReturnToStartException),
       providerId = providerId,
-      choice = MovementType.Arrival,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
       movementDetails = movementDetails(answers),
-      location = answers.location,
-      arrivalReference = answers.arrivalReference
+      location = answers.location.getOrElse(throw ReturnToStartException),
+      arrivalReference = answers.arrivalReference.getOrElse(throw ReturnToStartException)
     )
 
   private def createMovementDepartureRequest(providerId: String, answers: DepartureAnswers) =
-    MovementRequest(
+    DepartureRequest(
       eori = answers.eori.getOrElse(throw ReturnToStartException),
       providerId = providerId,
-      choice = MovementType.Departure,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
       movementDetails = movementDetails(answers),
-      location = answers.location,
-      arrivalReference = answers.arrivalReference,
-      transport = answers.transport
+      location = answers.location.getOrElse(throw ReturnToStartException),
+      transport = answers.transport.getOrElse(throw ReturnToStartException)
     )
 
   private def movementDetails(answers: ArrivalAnswers) =
@@ -63,7 +60,7 @@ class MovementBuilder @Inject()(zoneId: ZoneId) {
         .getOrElse("")
     )
 
-  private def movementDetails(answers: DepartureAnswers) =
+  private def movementDetails(answers: DepartureAnswers): MovementDetailsRequest =
     MovementDetailsRequest(
       answers.departureDetails
         .map(departure => movementDateTimeFormatter.format(departure.goodsDepartureMoment(zoneId)))
