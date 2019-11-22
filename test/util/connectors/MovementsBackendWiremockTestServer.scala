@@ -10,7 +10,7 @@ trait MovementsBackendWiremockTestServer extends WiremockTestServer {
   protected val movementsBackendConfiguration: Configuration =
     Configuration.from(Map("microservice.services.customs-declare-exports-movements.port" -> wirePort))
 
-  protected def givenMovementsBackendAcceptsTheConsolidation(): Unit = {
+  protected def givenMovementsBackendAcceptsTheConsolidation(): Unit =
     stubFor(
       post("/consolidation")
         .willReturn(
@@ -18,9 +18,8 @@ trait MovementsBackendWiremockTestServer extends WiremockTestServer {
             .withStatus(Status.ACCEPTED)
         )
     )
-  }
 
-  protected def givenTheMovementsBackendAcceptsTheMovement(): Unit = {
+  protected def givenTheMovementsBackendAcceptsTheMovement(): Unit =
     stubFor(
       post("/movements")
         .willReturn(
@@ -28,7 +27,6 @@ trait MovementsBackendWiremockTestServer extends WiremockTestServer {
             .withStatus(Status.ACCEPTED)
         )
     )
-  }
 
   protected def postRequestedForConsolidation(): RequestPatternBuilder = postRequestedFor(urlEqualTo("/consolidation"))
   protected def postRequestedForMovement(): RequestPatternBuilder = postRequestedFor(urlEqualTo("/movements"))
