@@ -1,7 +1,7 @@
 import forms.ShutMucr
 import models.cache.ShutMucrAnswers
 import play.api.test.Helpers._
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{verify, equalTo}
 
 class ShutMucrSpec extends IntegrationSpec {
 
