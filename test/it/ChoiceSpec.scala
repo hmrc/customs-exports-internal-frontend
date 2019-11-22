@@ -31,14 +31,14 @@ class ChoiceSpec extends IntegrationSpec {
       status(response) mustBe FORBIDDEN
     }
 
-    "continue journey" when {
+    "return 200" when {
       "Departure" in {
         givenAuthSuccess("pid")
 
         val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Departure.value)
 
         status(response) mustBe SEE_OTHER
-        theCacheFor("pid") mustBe Some(DepartureAnswers())
+        theCacheFor("pid") mustBe Some(Cache("pid", DepartureAnswers()))
       }
 
       "Arrival" in {
@@ -47,7 +47,7 @@ class ChoiceSpec extends IntegrationSpec {
         val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Arrival.value)
 
         status(response) mustBe SEE_OTHER
-        theCacheFor("pid") mustBe Some(ArrivalAnswers())
+        theCacheFor("pid") mustBe Some(Cache("pid", ArrivalAnswers()))
       }
 
       "Associate UCR" in {
@@ -56,7 +56,7 @@ class ChoiceSpec extends IntegrationSpec {
         val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.AssociateUCR.value)
 
         status(response) mustBe SEE_OTHER
-        theCacheFor("pid") mustBe Some(AssociateUcrAnswers())
+        theCacheFor("pid") mustBe Some(Cache("pid", AssociateUcrAnswers()))
       }
 
       "Dissociate UCR" in {
@@ -65,7 +65,7 @@ class ChoiceSpec extends IntegrationSpec {
         val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.DisassociateUCR.value)
 
         status(response) mustBe SEE_OTHER
-        theCacheFor("pid") mustBe Some(DisassociateUcrAnswers())
+        theCacheFor("pid") mustBe Some(Cache("pid", DisassociateUcrAnswers()))
       }
 
       "Shut MUCR" in {
@@ -74,7 +74,7 @@ class ChoiceSpec extends IntegrationSpec {
         val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.ShutMUCR.value)
 
         status(response) mustBe SEE_OTHER
-        theCacheFor("pid") mustBe Some(ShutMucrAnswers())
+        theCacheFor("pid") mustBe Some(Cache("pid", ShutMucrAnswers()))
       }
     }
   }
