@@ -1,10 +1,6 @@
 import forms.Choice
-import models.cache.{Cache, DepartureAnswers}
-import play.api.libs.json.Json
+import models.cache._
 import play.api.test.Helpers._
-import reactivemongo.play.json.ImplicitBSONHandlers._
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class ChoiceSpec extends IntegrationSpec {
 
@@ -35,13 +31,51 @@ class ChoiceSpec extends IntegrationSpec {
       status(response) mustBe FORBIDDEN
     }
 
-    "return 200" in {
-      givenAuthSuccess("pid")
+    "return 200" when {
+      "Departure" in {
+        givenAuthSuccess("pid")
 
-      val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Departure.value)
+        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Departure.value)
 
-      status(response) mustBe SEE_OTHER
-      await(cache.find(Json.obj("providerId" -> "pid")).one[Cache]) mustBe Some(Cache("pid", DepartureAnswers()))
+        status(response) mustBe SEE_OTHER
+        theCacheFor("pid") mustBe Some(Cache("pid", DepartureAnswers()))
+      }
+
+      "Arrival" in {
+        givenAuthSuccess("pid")
+
+        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Arrival.value)
+
+        status(response) mustBe SEE_OTHER
+        theCacheFor("pid") mustBe Some(Cache("pid", ArrivalAnswers()))
+      }
+
+      "Associate UCR" in {
+        givenAuthSuccess("pid")
+
+        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.AssociateUCR.value)
+
+        status(response) mustBe SEE_OTHER
+        theCacheFor("pid") mustBe Some(Cache("pid", AssociateUcrAnswers()))
+      }
+
+      "Dissociate UCR" in {
+        givenAuthSuccess("pid")
+
+        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.DisassociateUCR.value)
+
+        status(response) mustBe SEE_OTHER
+        theCacheFor("pid") mustBe Some(Cache("pid", DisassociateUcrAnswers()))
+      }
+
+      "Shut MUCR" in {
+        givenAuthSuccess("pid")
+
+        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.ShutMUCR.value)
+
+        status(response) mustBe SEE_OTHER
+        theCacheFor("pid") mustBe Some(Cache("pid", ShutMucrAnswers()))
+      }
     }
   }
 }
