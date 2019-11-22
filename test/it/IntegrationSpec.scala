@@ -32,7 +32,7 @@ import repository.TestMongoDB
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class IntegrationSpec
+abstract class IntegrationSpec
     extends WordSpec with MustMatchers with BeforeAndAfterEach with GuiceOneServerPerSuite with AuthWiremockTestServer
     with MovementsBackendWiremockTestServer with TestMongoDB {
 

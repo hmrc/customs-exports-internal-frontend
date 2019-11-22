@@ -17,7 +17,7 @@
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, LocalDateTime, LocalTime, ZoneOffset}
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{equalToJson, verify}
 import forms.common.{Date, Time}
 import forms.{ArrivalDetails, ArrivalReference, ConsignmentReferences, Location}
 import models.cache.ArrivalAnswers
@@ -259,11 +259,15 @@ class ArrivalSpec extends IntegrationSpec {
         theCacheFor("pid") mustBe None
         verify(
           postRequestedForMovement()
-            .withRequestBody(
-              equalTo(
-                s"""{"eori":"GB1234567890","providerId":"pid","choice":"EAL","consignmentReference":{"reference":"M","referenceValue":"GB/123-12345"},"movementDetails":{"dateTime":"${datetime}"},"location":{"code":"GBAUEMAEMAEMA"},"arrivalReference":{"reference":"ABC"}}"""
-              )
-            )
+            .withRequestBody(equalToJson(s"""{
+                   |"eori":"GB1234567890",
+                   |"providerId":"pid",
+                   |"choice":"EAL",
+                   |"consignmentReference":{"reference":"M","referenceValue":"GB/123-12345"},
+                   |"movementDetails":{"dateTime":"${datetime}"},
+                   |"location":{"code":"GBAUEMAEMAEMA"},
+                   |"arrivalReference":{"reference":"ABC"}
+                   |}""".stripMargin))
         )
       }
     }

@@ -17,7 +17,7 @@
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, LocalDateTime, LocalTime, ZoneOffset}
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{equalToJson, verify}
 import forms.GoodsDeparted.DepartureLocation
 import forms.common.{Date, Time}
 import forms._
@@ -323,11 +323,15 @@ class DepartureSpec extends IntegrationSpec {
         theCacheFor("pid") mustBe None
         verify(
           postRequestedForMovement()
-            .withRequestBody(
-              equalTo(
-                s"""{"eori":"GB1234567890","providerId":"pid","choice":"EDL","consignmentReference":{"reference":"M","referenceValue":"GB/123-12345"},"movementDetails":{"dateTime":"$datetime"},"location":{"code":"GBAUEMAEMAEMA"},"transport":{"modeOfTransport":"1","nationality":"FR","transportId":"123"}}"""
-              )
-            )
+            .withRequestBody(equalToJson(s"""{
+                   |"eori":"GB1234567890",
+                   |"providerId":"pid",
+                   |"choice":"EDL",
+                   |"consignmentReference":{"reference":"M","referenceValue":"GB/123-12345"},
+                   |"movementDetails":{"dateTime":"$datetime"},
+                   |"location":{"code":"GBAUEMAEMAEMA"},
+                   |"transport":{"modeOfTransport":"1","nationality":"FR","transportId":"123"}
+                   |}""".stripMargin))
         )
       }
     }
