@@ -1,6 +1,5 @@
 import forms.Choice
 import models.cache.{Cache, DepartureAnswers}
-import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import reactivemongo.play.json.ImplicitBSONHandlers._
@@ -15,7 +14,7 @@ class ChoiceSpec extends IntegrationSpec {
 
       val response = get(controllers.routes.ChoiceController.displayPage())
 
-      status(response) mustBe Status.FORBIDDEN
+      status(response) mustBe FORBIDDEN
     }
 
     "return 200" in {
@@ -23,7 +22,7 @@ class ChoiceSpec extends IntegrationSpec {
 
       val response = get(controllers.routes.ChoiceController.displayPage())
 
-      status(response) mustBe Status.OK
+      status(response) mustBe OK
     }
   }
 
@@ -33,7 +32,7 @@ class ChoiceSpec extends IntegrationSpec {
 
       val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Departure.value)
 
-      status(response) mustBe Status.FORBIDDEN
+      status(response) mustBe FORBIDDEN
     }
 
     "return 200" in {
@@ -41,7 +40,7 @@ class ChoiceSpec extends IntegrationSpec {
 
       val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Departure.value)
 
-      status(response) mustBe Status.SEE_OTHER
+      status(response) mustBe SEE_OTHER
       await(cache.find(Json.obj("providerId" -> "pid")).one[Cache]) mustBe Some(Cache("pid", DepartureAnswers()))
     }
   }
