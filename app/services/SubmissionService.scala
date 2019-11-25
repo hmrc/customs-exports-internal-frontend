@@ -49,10 +49,10 @@ class SubmissionService @Inject()(
       .andThen {
         case Success(_) =>
           cache.removeByProviderId(providerId).flatMap { _ =>
-            auditService.auditDisassociate(eori, ucr, "Success")
+            auditService.auditDisassociate(providerId, ucr, "Success")
           }
         case Failure(_) =>
-          auditService.auditDisassociate(eori, ucr, "Failed")
+          auditService.auditDisassociate(providerId, ucr, "Failed")
       }
   }
 
@@ -66,10 +66,10 @@ class SubmissionService @Inject()(
       .andThen {
         case Success(_) =>
           cache.removeByProviderId(providerId).flatMap { _ =>
-            auditService.auditAssociate(eori, mucr, ucr, "Success")
+            auditService.auditAssociate(providerId, mucr, ucr, "Success")
           }
         case Failure(_) =>
-          auditService.auditAssociate(eori, mucr, ucr, "Failed")
+          auditService.auditAssociate(providerId, mucr, ucr, "Failed")
       }
   }
 
@@ -82,10 +82,10 @@ class SubmissionService @Inject()(
       .andThen {
         case Success(_) =>
           cache.removeByProviderId(providerId).flatMap { _ =>
-            auditService.auditShutMucr(eori, mucr, "Success")
+            auditService.auditShutMucr(providerId, mucr, "Success")
           }
         case Failure(_) =>
-          auditService.auditShutMucr(eori, mucr, "Failed")
+          auditService.auditShutMucr(providerId, mucr, "Failed")
       }
   }
 

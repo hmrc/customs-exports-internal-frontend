@@ -34,23 +34,23 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuditService @Inject()(connector: AuditConnector, @Named("appName") appName: String)(implicit ec: ExecutionContext) {
   private val logger = Logger(this.getClass)
 
-  def auditShutMucr(eori: String, mucr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
+  def auditShutMucr(providerId: String, mucr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
     audit(
       AuditTypes.AuditShutMucr,
-      Map(EventData.eori.toString -> eori, EventData.mucr.toString -> mucr, EventData.submissionResult.toString -> result)
+      Map(EventData.providerId.toString -> providerId, EventData.mucr.toString -> mucr, EventData.submissionResult.toString -> result)
     )
 
-  def auditDisassociate(eori: String, ducr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
+  def auditDisassociate(providerId: String, ducr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
     audit(
       AuditTypes.AuditDisassociate,
-      Map(EventData.eori.toString -> eori, EventData.ducr.toString -> ducr, EventData.submissionResult.toString -> result)
+      Map(EventData.providerId.toString -> providerId, EventData.ducr.toString -> ducr, EventData.submissionResult.toString -> result)
     )
 
-  def auditAssociate(eori: String, mucr: String, ducr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
+  def auditAssociate(providerId: String, mucr: String, ducr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
     audit(
       AuditTypes.AuditAssociate,
       Map(
-        EventData.eori.toString -> eori,
+        EventData.providerId.toString -> providerId,
         EventData.mucr.toString -> mucr,
         EventData.ducr.toString -> ducr,
         EventData.submissionResult.toString -> result
@@ -61,7 +61,7 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
     audit(
       movementAuditType,
       Map(
-        EventData.eori.toString -> data.eori,
+        EventData.providerId.toString -> data.providerId,
         EventData.messageCode.toString -> data.choice.toString,
         EventData.ucrType.toString -> data.consignmentReference.referenceValue,
         EventData.ucr.toString -> data.consignmentReference.reference,
@@ -155,5 +155,5 @@ object AuditTypes extends Enumeration {
 }
 object EventData extends Enumeration {
   type Data = Value
-  val eori, mucr, ducr, ucr, ucrType, messageCode, movementReference, submissionResult, Success, Failure = Value
+  val providerId, mucr, ducr, ucr, ucrType, messageCode, movementReference, submissionResult, Success, Failure = Value
 }
