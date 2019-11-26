@@ -40,6 +40,9 @@ class SubmissionService @Inject()(
   movementBuilder: MovementBuilder
 )(implicit ec: ExecutionContext) {
 
+  private val success = "Success"
+  private val failed = "Failed"
+
   def submit(providerId: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
     val ucr = answers.ucr.getOrElse(throw ReturnToStartException).ucr
@@ -49,10 +52,10 @@ class SubmissionService @Inject()(
       .andThen {
         case Success(_) =>
           cache.removeByProviderId(providerId).flatMap { _ =>
-            auditService.auditDisassociate(providerId, ucr, "Success")
+            auditService.auditDisassociate(providerId, ucr, success)
           }
         case Failure(_) =>
-          auditService.auditDisassociate(providerId, ucr, "Failed")
+          auditService.auditDisassociate(providerId, ucr, failed)
       }
   }
 
@@ -66,10 +69,10 @@ class SubmissionService @Inject()(
       .andThen {
         case Success(_) =>
           cache.removeByProviderId(providerId).flatMap { _ =>
-            auditService.auditAssociate(providerId, mucr, ucr, "Success")
+            auditService.auditAssociate(providerId, mucr, ucr, success)
           }
         case Failure(_) =>
-          auditService.auditAssociate(providerId, mucr, ucr, "Failed")
+          auditService.auditAssociate(providerId, mucr, ucr, failed)
       }
   }
 
@@ -82,10 +85,10 @@ class SubmissionService @Inject()(
       .andThen {
         case Success(_) =>
           cache.removeByProviderId(providerId).flatMap { _ =>
-            auditService.auditShutMucr(providerId, mucr, "Success")
+            auditService.auditShutMucr(providerId, mucr, success)
           }
         case Failure(_) =>
-          auditService.auditShutMucr(providerId, mucr, "Failed")
+          auditService.auditShutMucr(providerId, mucr, failed)
       }
   }
 
@@ -103,7 +106,7 @@ class SubmissionService @Inject()(
     connector.submit(data).map { _ =>
       metrics.incrementCounter(cache.answers.`type`)
       auditService
-        .auditMovements(data, Status.OK.toString, movementAuditType)
+        .auditMovements(data, success, movementAuditType)
       timer.stop()
       data.consignmentReference
     }

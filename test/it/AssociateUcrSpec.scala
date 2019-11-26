@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, matchingJsonPath, verify}
 import forms.MucrOptions.CreateOrAddValues.Create
 import forms.{AssociateKind, AssociateUcr, MucrOptions}
 import models.cache.AssociateUcrAnswers
@@ -121,6 +121,14 @@ class AssociateUcrSpec extends IntegrationSpec {
                 """{"providerId":"pid","eori":"GB1234567890","mucr":"GB/123-12345","ucr":"GB/321-54321","consolidationType":"ASSOCIATE_DUCR"}"""
               )
             )
+        )
+        verify(
+          postRequestedForAudit()
+            .withRequestBody(matchingJsonPath("auditType", equalTo("Associate")))
+            .withRequestBody(matchingJsonPath("detail.providerId", equalTo("pid")))
+            .withRequestBody(matchingJsonPath("detail.mucr", equalTo("GB/123-12345")))
+            .withRequestBody(matchingJsonPath("detail.ducr", equalTo("GB/321-54321")))
+            .withRequestBody(matchingJsonPath("detail.submissionResult", equalTo("Success")))
         )
       }
     }

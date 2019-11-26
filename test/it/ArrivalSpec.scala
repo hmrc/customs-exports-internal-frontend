@@ -17,7 +17,7 @@
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, LocalDateTime, LocalTime, ZoneOffset}
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalToJson, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
 import forms.common.{Date, Time}
 import forms.{ArrivalDetails, ArrivalReference, ConsignmentReferences, Location}
 import models.cache.ArrivalAnswers
@@ -268,6 +268,16 @@ class ArrivalSpec extends IntegrationSpec {
                    |"location":{"code":"GBAUEMAEMAEMA"},
                    |"arrivalReference":{"reference":"ABC"}
                    |}""".stripMargin))
+        )
+        verify(
+          postRequestedForAudit()
+            .withRequestBody(matchingJsonPath("auditType", equalTo("Arrival")))
+            .withRequestBody(matchingJsonPath("detail.providerId", equalTo("pid")))
+            .withRequestBody(matchingJsonPath("detail.ucr", equalTo("GB/123-12345")))
+            .withRequestBody(matchingJsonPath("detail.ucrType", equalTo("M")))
+            .withRequestBody(matchingJsonPath("detail.messageCode", equalTo("EAL")))
+            .withRequestBody(matchingJsonPath("detail.movementReference", equalTo("ABC")))
+            .withRequestBody(matchingJsonPath("detail.submissionResult", equalTo("Success")))
         )
       }
     }
