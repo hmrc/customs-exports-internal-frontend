@@ -23,10 +23,10 @@ sealed abstract class MovementType(val value: String) {
 }
 
 object MovementType {
-  val allValues = Seq(Arrival, Departure)
+  val allValues = Seq(Arrival, RetrospectiveArrival, Departure)
 
   case object Arrival extends MovementType("EAL")
-
+  case object RetrospectiveArrival extends MovementType("RET")
   case object Departure extends MovementType("EDL")
 
   implicit object MovementTypeFormat extends Format[MovementType] {

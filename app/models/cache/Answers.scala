@@ -21,6 +21,29 @@ import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
 
+sealed trait Answers {
+  val `type`: JourneyType
+  val eori: Option[String]
+}
+
+object Answers {
+  implicit val format: Format[Answers] = Union
+    .from[Answers]("type")
+    .and[ArrivalAnswers](JourneyType.ARRIVE.toString)
+    .and[DepartureAnswers](JourneyType.DEPART.toString)
+    .and[AssociateUcrAnswers](JourneyType.ASSOCIATE_UCR.toString)
+    .and[DisassociateUcrAnswers](JourneyType.DISSOCIATE_UCR.toString)
+    .and[ShutMucrAnswers](JourneyType.SHUT_MUCR.toString)
+    .format
+
+  val fakeEORI = Some("GB1234567890")
+}
+
+sealed trait MovementAnswers extends Answers {
+  val consignmentReferences: Option[ConsignmentReferences]
+  val location: Option[Location]
+}
+
 case class ArrivalAnswers(
   override val eori: Option[String] = Answers.fakeEORI,
   override val consignmentReferences: Option[ConsignmentReferences] = None,
@@ -31,8 +54,20 @@ case class ArrivalAnswers(
   override val `type`: JourneyType.Value = JourneyType.ARRIVE
 }
 
-object DepartureAnswers {
-  implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
+object ArrivalAnswers {
+  implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
+}
+
+case class RetrospectiveArrivalAnswers(
+  override val eori: Option[String] = Answers.fakeEORI,
+  override val consignmentReferences: Option[ConsignmentReferences] = None,
+  override val location: Option[Location] = None
+) extends MovementAnswers {
+  override val `type`: JourneyType.Value = JourneyType.RETROSPECTIVE_ARRIVE
+}
+
+object RetrospectiveArrivalAnswers {
+  implicit val format: Format[RetrospectiveArrivalAnswers] = Json.format[RetrospectiveArrivalAnswers]
 }
 
 case class DepartureAnswers(
@@ -46,13 +81,8 @@ case class DepartureAnswers(
   override val `type`: JourneyType.Value = JourneyType.DEPART
 }
 
-object ArrivalAnswers {
-  implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
-}
-
-trait MovementAnswers extends Answers {
-  val consignmentReferences: Option[ConsignmentReferences]
-  val location: Option[Location]
+object DepartureAnswers {
+  implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
 }
 
 case class AssociateUcrAnswers(
@@ -81,22 +111,4 @@ case class ShutMucrAnswers(override val eori: Option[String] = Answers.fakeEORI,
 
 object ShutMucrAnswers {
   implicit val format: Format[ShutMucrAnswers] = Json.format[ShutMucrAnswers]
-}
-
-trait Answers {
-  val `type`: JourneyType
-  val eori: Option[String]
-}
-
-object Answers {
-  implicit val format: Format[Answers] = Union
-    .from[Answers]("type")
-    .and[ArrivalAnswers](JourneyType.ARRIVE.toString)
-    .and[DepartureAnswers](JourneyType.DEPART.toString)
-    .and[AssociateUcrAnswers](JourneyType.ASSOCIATE_UCR.toString)
-    .and[DisassociateUcrAnswers](JourneyType.DISSOCIATE_UCR.toString)
-    .and[ShutMucrAnswers](JourneyType.SHUT_MUCR.toString)
-    .format
-
-  val fakeEORI = Some("GB1234567890")
 }

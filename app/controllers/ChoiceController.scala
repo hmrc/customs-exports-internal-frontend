@@ -57,12 +57,13 @@ class ChoiceController @Inject()(
   }
 
   private def proceed(choice: Choice)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] = choice match {
-    case forms.Choice.Arrival         => saveAndRedirect(ArrivalAnswers(), movements.routes.ConsignmentReferencesController.displayPage())
-    case forms.Choice.Departure       => saveAndRedirect(DepartureAnswers(), movements.routes.ConsignmentReferencesController.displayPage())
-    case forms.Choice.AssociateUCR    => saveAndRedirect(AssociateUcrAnswers(), consolidations.routes.MucrOptionsController.displayPage())
-    case forms.Choice.DisassociateUCR => saveAndRedirect(DisassociateUcrAnswers(), consolidations.routes.DisassociateUCRController.display())
-    case forms.Choice.ShutMUCR        => saveAndRedirect(ShutMucrAnswers(), consolidations.routes.ShutMucrController.displayPage())
-    case forms.Choice.ViewSubmissions => Future.successful(Redirect(routes.ViewSubmissionsController.displayPage()))
+    case Choice.Arrival              => saveAndRedirect(ArrivalAnswers(), movements.routes.ConsignmentReferencesController.displayPage())
+    case Choice.RetrospectiveArrival => saveAndRedirect(RetrospectiveArrivalAnswers(), routes.ChoiceController.displayPage())
+    case Choice.Departure            => saveAndRedirect(DepartureAnswers(), movements.routes.ConsignmentReferencesController.displayPage())
+    case Choice.AssociateUCR         => saveAndRedirect(AssociateUcrAnswers(), consolidations.routes.MucrOptionsController.displayPage())
+    case Choice.DisassociateUCR      => saveAndRedirect(DisassociateUcrAnswers(), consolidations.routes.DisassociateUCRController.display())
+    case Choice.ShutMUCR             => saveAndRedirect(ShutMucrAnswers(), consolidations.routes.ShutMucrController.displayPage())
+    case Choice.ViewSubmissions      => Future.successful(Redirect(routes.ViewSubmissionsController.displayPage()))
   }
 
   private def saveAndRedirect(answers: Answers, call: Call)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
