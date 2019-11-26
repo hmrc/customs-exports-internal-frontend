@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import connectors.{AuthWiremockTestServer, MovementsBackendWiremockTestServer}
+import connectors.{AuditWiremockTestServer, AuthWiremockTestServer, MovementsBackendWiremockTestServer}
 import models.cache.{Answers, Cache}
 import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 abstract class IntegrationSpec
     extends WordSpec with MustMatchers with BeforeAndAfterEach with GuiceOneServerPerSuite with AuthWiremockTestServer
-    with MovementsBackendWiremockTestServer with TestMongoDB {
+    with MovementsBackendWiremockTestServer with AuditWiremockTestServer with TestMongoDB {
 
   /*
     Intentionally NOT exposing the real CacheRepository as we shouldn't test our production code using our production classes.
@@ -48,6 +48,7 @@ abstract class IntegrationSpec
       .configure(authConfiguration)
       .configure(movementsBackendConfiguration)
       .configure(mongoConfiguration)
+      .configure(auditConfiguration)
       .build()
 
   override def beforeEach(): Unit = {
