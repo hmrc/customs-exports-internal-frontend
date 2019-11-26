@@ -46,7 +46,7 @@
 
     <h2 id="what-next">@messages("movement.confirmation.whatNext")</h2>
 
-    @if(journeyType == JourneyType.ARRIVE) {
+    @if(Set(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE).contains(journeyType)) {
         <div id="next-steps">
             @Html(messages("movement.arrival.confirmation.nextSteps", associateLink, departureLinkForArrival))
         </div>

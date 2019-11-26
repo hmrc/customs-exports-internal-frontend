@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import forms.ConsignmentReferences
 import forms.ConsignmentReferences._
 import javax.inject.{Inject, Singleton}
-import models.cache.{ArrivalAnswers, Cache, DepartureAnswers, JourneyType, MovementAnswers}
+import models.cache._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,9 +45,9 @@ class ConsignmentReferencesController @Inject()(
     Ok(consignmentReferencesPage(references.fold(form())(form().fill(_))))
   }
 
-  def saveConsignmentReferences(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
-    implicit request =>
-      form
+  def saveConsignmentReferences(): Action[AnyContent] =
+    (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)).async { implicit request =>
+      form()
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[ConsignmentReferences]) => Future.successful(BadRequest(consignmentReferencesPage(formWithErrors))),
@@ -57,6 +57,10 @@ class ConsignmentReferencesController @Inject()(
                 cache.upsert(Cache(request.providerId, arrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
                   Redirect(controllers.movements.routes.ArrivalReferenceController.displayPage())
                 }
+              case retroArrivalAnswers: RetrospectiveArrivalAnswers =>
+                cache.upsert(Cache(request.providerId, retroArrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
+                  Redirect(controllers.movements.routes.LocationController.displayPage())
+                }
               case departureAnswers: DepartureAnswers =>
                 cache.upsert(Cache(request.providerId, departureAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
                   Redirect(controllers.movements.routes.MovementDetailsController.displayPage())
@@ -64,5 +68,5 @@ class ConsignmentReferencesController @Inject()(
             }
           }
         )
-  }
+    }
 }

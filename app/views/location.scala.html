@@ -14,20 +14,26 @@
  * limitations under the License.
  *@
 
+@import controllers.exchanges.JourneyRequest
 @import controllers.movements.routes
 @import forms.Location
+@import models.cache.JourneyType
 @import views.Title
 @import views.html.templates.main_template
 
 @this(main_template: main_template)
 
-@(form: Form[Location])(implicit request: Request[_], messages: Messages)
+@(form: Form[Location])(implicit request: JourneyRequest[_], messages: Messages)
 
 @main_template(title = Title("location.question", None)) {
     @helper.form(routes.LocationController.saveLocation(), 'autoComplete -> "off") {
         @helper.CSRF.formField
 
-        @components.back_link(routes.MovementDetailsController.displayPage())
+        @{ request.answers.`type` match {
+            case JourneyType.ARRIVE | JourneyType.DEPART => components.back_link(routes.MovementDetailsController.displayPage())
+            case JourneyType.RETROSPECTIVE_ARRIVE => components.back_link(routes.ConsignmentReferencesController.displayPage())
+          }
+        }
 
         @components.error_summary(form.errors)
 

@@ -19,13 +19,13 @@ package controllers.movements
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.storage.FlashKeys
 import javax.inject.Inject
-import models.cache.{ArrivalAnswers, DepartureAnswers, JourneyType, MovementAnswers}
+import models.cache._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.summary.{arrival_summary_page, departure_summary_page}
+import views.html.summary.{arrival_summary_page, departure_summary_page, retrospective_arrival_summary_page}
 
 import scala.concurrent.ExecutionContext
 
@@ -36,19 +36,22 @@ class MovementSummaryController @Inject()(
   submissionService: SubmissionService,
   mcc: MessagesControllerComponents,
   arrivalSummaryPage: arrival_summary_page,
+  retrospectiveArrivalSummaryPage: retrospective_arrival_summary_page,
   departureSummaryPage: departure_summary_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)) { implicit request =>
-    request.answers match {
-      case arrivalAnswers: ArrivalAnswers     => Ok(arrivalSummaryPage(arrivalAnswers))
-      case departureAnswers: DepartureAnswers => Ok(departureSummaryPage(departureAnswers))
+  def displayPage(): Action[AnyContent] =
+    (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)) { implicit request =>
+      request.answers match {
+        case arrivalAnswers: ArrivalAnswers                   => Ok(arrivalSummaryPage(arrivalAnswers))
+        case retroArrivalAnswers: RetrospectiveArrivalAnswers => Ok(retrospectiveArrivalSummaryPage(retroArrivalAnswers))
+        case departureAnswers: DepartureAnswers               => Ok(departureSummaryPage(departureAnswers))
+      }
     }
-  }
 
-  def submitMovementRequest(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
-    implicit request =>
+  def submitMovementRequest(): Action[AnyContent] =
+    (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)).async { implicit request =>
       submissionService
         .submit(request.providerId, request.answersAs[MovementAnswers])
         .flatMap { consignmentReferences =>
@@ -61,5 +64,5 @@ class MovementSummaryController @Inject()(
               )
           }
         }
-  }
+    }
 }

@@ -138,7 +138,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().startSpecificJourney(Choice.RetrospectiveArrival)(getRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
+        redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
       }
 
       "user chooses view submissions" in {
@@ -207,7 +207,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(RetrospectiveArrival))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ChoiceController.displayPage().url)
+        redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
         theCacheUpserted mustBe Cache(providerId, RetrospectiveArrivalAnswers())
       }
 

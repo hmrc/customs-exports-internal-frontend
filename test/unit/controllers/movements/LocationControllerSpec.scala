@@ -18,7 +18,7 @@ package controllers.movements
 
 import controllers.ControllerLayerSpec
 import forms.Location
-import models.cache.{Answers, ArrivalAnswers, Cache, DepartureAnswers}
+import models.cache._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -54,7 +54,13 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
   private def theResponseForm: Form[Location] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[Location]])
     verify(page).apply(captor.capture())(any(), any())
-    captor.getValue()
+    captor.getValue
+  }
+
+  private def theCache: Cache = {
+    val captor = ArgumentCaptor.forClass(classOf[Cache])
+    verify(cache).upsert(captor.capture())
+    captor.getValue
   }
 
   "Location Controller" should {
@@ -97,26 +103,80 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
         status(result) mustBe BAD_REQUEST
       }
     }
+  }
 
-    "return 303 (SEE_OTHER)" when {
+  "Location Controller" when {
 
-      "POST submit is invoked with correct form for arrival" in {
+    "POST submit is invoked with correct form for arrival" should {
+
+      "call cache upsert method" in {
 
         givenTheCacheIsEmpty()
 
-        val correctForm = Json.toJson(Location("GBAUEMAEMAEMA"))
+        val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
+
+        await(controller(ArrivalAnswers()).saveLocation()(postRequest(correctForm)))
+
+        theCache.answers mustBe an[ArrivalAnswers]
+      }
+
+      "return 303 (SEE_OTHER)" in {
+
+        givenTheCacheIsEmpty()
+
+        val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
 
         val result = controller(ArrivalAnswers()).saveLocation()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.movements.routes.MovementSummaryController.displayPage().url)
       }
+    }
 
-      "POST submit is invoked with correct form for departure" in {
+    "POST submit is invoked with correct form for retrospective arrival" should {
+
+      "call cache upsert method" in {
 
         givenTheCacheIsEmpty()
 
-        val correctForm = Json.toJson(Location("GBAUEMAEMAEMA"))
+        val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
+
+        await(controller(RetrospectiveArrivalAnswers()).saveLocation()(postRequest(correctForm)))
+
+        theCache.answers mustBe an[RetrospectiveArrivalAnswers]
+      }
+
+      "return 303 (SEE_OTHER)" in {
+
+        givenTheCacheIsEmpty()
+
+        val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
+
+        val result = controller(RetrospectiveArrivalAnswers()).saveLocation()(postRequest(correctForm))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.movements.routes.MovementSummaryController.displayPage().url)
+      }
+    }
+
+    "POST submit is invoked with correct form for departure" should {
+
+      "call cache upsert method" in {
+
+        givenTheCacheIsEmpty()
+
+        val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
+
+        await(controller(DepartureAnswers()).saveLocation()(postRequest(correctForm)))
+
+        theCache.answers mustBe an[DepartureAnswers]
+      }
+
+      "return 303 (SEE_OTHER)" in {
+
+        givenTheCacheIsEmpty()
+
+        val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
 
         val result = controller(DepartureAnswers()).saveLocation()(postRequest(correctForm))
 
@@ -125,4 +185,5 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
       }
     }
   }
+
 }
