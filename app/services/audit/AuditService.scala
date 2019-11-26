@@ -40,10 +40,10 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
       Map(EventData.providerId.toString -> providerId, EventData.mucr.toString -> mucr, EventData.submissionResult.toString -> result)
     )
 
-  def auditDisassociate(providerId: String, ducr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
+  def auditDisassociate(providerId: String, ucr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
     audit(
       AuditTypes.AuditDisassociate,
-      Map(EventData.providerId.toString -> providerId, EventData.ducr.toString -> ducr, EventData.submissionResult.toString -> result)
+      Map(EventData.providerId.toString -> providerId, EventData.ucr.toString -> ucr, EventData.submissionResult.toString -> result)
     )
 
   def auditAssociate(providerId: String, mucr: String, ducr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
@@ -63,8 +63,8 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
       Map(
         EventData.providerId.toString -> data.providerId,
         EventData.messageCode.toString -> data.choice.toString,
-        EventData.ucrType.toString -> data.consignmentReference.referenceValue,
-        EventData.ucr.toString -> data.consignmentReference.reference,
+        EventData.ucrType.toString -> data.consignmentReference.reference,
+        EventData.ucr.toString -> data.consignmentReference.referenceValue,
         EventData.submissionResult.toString -> result
       ).++(data match {
         case arrival: ArrivalExchange => Map(EventData.movementReference.toString -> arrival.arrivalReference.reference.getOrElse(""))

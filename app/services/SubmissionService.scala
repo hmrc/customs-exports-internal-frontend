@@ -103,7 +103,7 @@ class SubmissionService @Inject()(
     connector.submit(data).map { _ =>
       metrics.incrementCounter(cache.answers.`type`)
       auditService
-        .auditMovements(data, Status.OK.toString, movementAuditType)
+        .auditMovements(data, "Success", movementAuditType)
       timer.stop()
       data.consignmentReference
     }

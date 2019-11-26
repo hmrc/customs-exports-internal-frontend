@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, matchingJsonPath, verify}
 import forms.ShutMucr
 import models.cache.ShutMucrAnswers
 import play.api.test.Helpers._
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, containing, verify}
 
 class ShutMucrSpec extends IntegrationSpec {
 
@@ -88,10 +88,10 @@ class ShutMucrSpec extends IntegrationSpec {
         )
         verify(
           postRequestedForAudit()
-            .withRequestBody(matchingJsonPath("auditType", containing("ShutMucr")))
-            .withRequestBody(matchingJsonPath("detail.providerId", containing("pid")))
-            .withRequestBody(matchingJsonPath("detail.mucr", containing("GB/123-12345")))
-            .withRequestBody(matchingJsonPath("detail.submissionResult", containing("Success")))
+            .withRequestBody(matchingJsonPath("auditType", equalTo("ShutMucr")))
+            .withRequestBody(matchingJsonPath("detail.providerId", equalTo("pid")))
+            .withRequestBody(matchingJsonPath("detail.mucr", equalTo("GB/123-12345")))
+            .withRequestBody(matchingJsonPath("detail.submissionResult", equalTo("Success")))
         )
       }
     }

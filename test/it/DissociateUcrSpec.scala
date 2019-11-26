@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, matchingJsonPath, verify}
 import forms.{DisassociateKind, DisassociateUcr}
 import models.cache.DisassociateUcrAnswers
 import play.api.test.Helpers._
@@ -93,6 +93,13 @@ class DissociateUcrSpec extends IntegrationSpec {
         verify(
           postRequestedForConsolidation()
             .withRequestBody(equalTo("""{"providerId":"pid","eori":"GB1234567890","ucr":"GB/321-54321","consolidationType":"DISASSOCIATE_DUCR"}"""))
+        )
+        verify(
+          postRequestedForAudit()
+            .withRequestBody(matchingJsonPath("auditType", equalTo("Disassociate")))
+            .withRequestBody(matchingJsonPath("detail.providerId", equalTo("pid")))
+            .withRequestBody(matchingJsonPath("detail.ucr", equalTo("GB/321-54321")))
+            .withRequestBody(matchingJsonPath("detail.submissionResult", equalTo("Success")))
         )
       }
     }
