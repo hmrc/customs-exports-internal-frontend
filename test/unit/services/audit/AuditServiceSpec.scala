@@ -45,27 +45,27 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
   "AuditService" should {
     "audit Shut a Mucr data" in {
-      val dataToAudit = Map(eori.toString -> "eori", mucr.toString -> "mucr", submissionResult.toString -> "200")
-      service.auditShutMucr("eori", "mucr", "200")
+      val dataToAudit = Map(providerId.toString -> "providerId", mucr.toString -> "mucr", submissionResult.toString -> "200")
+      service.auditShutMucr("providerId", "mucr", "200")
       verify(service).audit(AuditTypes.AuditShutMucr, dataToAudit)
     }
 
     "audit an association" in {
-      val dataToAudit = Map(eori.toString -> "eori", mucr.toString -> "mucr", ducr.toString -> "ducr", submissionResult.toString -> "200")
-      service.auditAssociate("eori", "mucr", "ducr", "200")
+      val dataToAudit = Map(providerId.toString -> "providerId", mucr.toString -> "mucr", ducr.toString -> "ducr", submissionResult.toString -> "200")
+      service.auditAssociate("providerId", "mucr", "ducr", "200")
       verify(service).audit(AuditTypes.AuditAssociate, dataToAudit)
     }
 
     "audit a disassociation" in {
-      val dataToAudit = Map(eori.toString -> "eori", ducr.toString -> "ducr", submissionResult.toString -> "200")
-      service.auditDisassociate("eori", "ducr", "200")
+      val dataToAudit = Map(providerId.toString -> "providerId", ducr.toString -> "ducr", submissionResult.toString -> "200")
+      service.auditDisassociate("providerId", "ducr", "200")
       verify(service).audit(AuditTypes.AuditDisassociate, dataToAudit)
     }
 
     "audit a movement" in {
       val dataToAudit = Map(
         EventData.movementReference.toString -> "ref",
-        EventData.eori.toString -> "GB12345678",
+        EventData.providerId.toString -> "122343",
         EventData.messageCode.toString -> "EAL",
         EventData.ucr.toString -> "UCR",
         EventData.ucrType.toString -> "D",

@@ -68,7 +68,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
       theAssociationSubmitted mustBe AssociateUCRExchange(providerId, validEori, mucr, ucr)
       verify(repository).removeByProviderId(providerId)
-      verify(audit).auditAssociate(validEori, mucr, ucr, "Success")
+      verify(audit).auditAssociate(providerId, mucr, ucr, "Success")
     }
 
     "audit when failed" in {
@@ -81,7 +81,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
       theAssociationSubmitted mustBe AssociateUCRExchange(providerId, validEori, mucr, ucr)
       verify(repository, never()).removeByProviderId(providerId)
-      verify(audit).auditAssociate(validEori, mucr, ucr, "Failed")
+      verify(audit).auditAssociate(providerId, mucr, ucr, "Failed")
     }
 
     "handle missing eori" in {
@@ -122,7 +122,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
         theDisassociationSubmitted mustBe DisassociateDUCRExchange(providerId, validEori, "ucr")
         verify(repository).removeByProviderId(providerId)
-        verify(audit).auditDisassociate(validEori, "ucr", "Success")
+        verify(audit).auditDisassociate(providerId, "ucr", "Success")
       }
 
       "Disassociate DUCR" in {
@@ -134,7 +134,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
         theDisassociationSubmitted mustBe DisassociateDUCRExchange(providerId, validEori, "ucr")
         verify(repository).removeByProviderId(providerId)
-        verify(audit).auditDisassociate(validEori, "ucr", "Success")
+        verify(audit).auditDisassociate(providerId, "ucr", "Success")
       }
     }
 
@@ -148,7 +148,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
       theDisassociationSubmitted mustBe DisassociateDUCRExchange(providerId, validEori, "ucr")
       verify(repository, never()).removeByProviderId(providerId)
-      verify(audit).auditDisassociate(validEori, "ucr", "Failed")
+      verify(audit).auditDisassociate(providerId, "ucr", "Failed")
     }
 
     "handle missing eori" in {
@@ -212,7 +212,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
       theShutMucrSubmitted mustBe ShutMUCRExchange(providerId, validEori, "mucr")
       verify(repository).removeByProviderId(providerId)
-      verify(audit).auditShutMucr(validEori, "mucr", "Success")
+      verify(audit).auditShutMucr(providerId, "mucr", "Success")
     }
 
     "audit when failed" in {
@@ -225,7 +225,7 @@ class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
       theShutMucrSubmitted mustBe ShutMUCRExchange(providerId, validEori, "mucr")
       verify(repository, never()).removeByProviderId(providerId)
-      verify(audit).auditShutMucr(validEori, "mucr", "Failed")
+      verify(audit).auditShutMucr(providerId, "mucr", "Failed")
     }
 
     "handle missing eori" in {
