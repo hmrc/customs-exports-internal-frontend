@@ -28,7 +28,7 @@ class MovementBuilder @Inject()(zoneId: ZoneId) {
 
   private val movementDateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
-  def createMovementRequest(providerId: String, answers: MovementAnswers): MovementExchange = answers match {
+  def createMovementExchange(providerId: String, answers: MovementAnswers): MovementExchange = answers match {
     case arrivalAnswers: ArrivalAnswers     => createMovementArrivalRequest(providerId, arrivalAnswers)
     case departureAnswers: DepartureAnswers => createMovementDepartureRequest(providerId, departureAnswers)
   }

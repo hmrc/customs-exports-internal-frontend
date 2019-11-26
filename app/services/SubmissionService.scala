@@ -95,7 +95,7 @@ class SubmissionService @Inject()(
   def submit(providerId: String, answers: MovementAnswers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
     val cache = Cache(providerId, answers)
 
-    val data = movementBuilder.createMovementRequest(providerId, answers)
+    val data = movementBuilder.createMovementExchange(providerId, answers)
     val timer = metrics.startTimer(cache.answers.`type`)
 
     auditService.auditAllPagesUserInput(answers)

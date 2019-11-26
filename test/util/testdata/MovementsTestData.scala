@@ -35,8 +35,8 @@ object MovementsTestData {
 
   def validMovementRequest(movementType: Choice): MovementExchange =
     movementType match {
-      case Choice.Arrival   => movementBuilder.createMovementRequest(providerId, validArrivalAnswers)
-      case Choice.Departure => movementBuilder.createMovementRequest(providerId, validDepartureAnswers)
+      case Choice.Arrival   => movementBuilder.createMovementExchange(providerId, validArrivalAnswers)
+      case Choice.Departure => movementBuilder.createMovementExchange(providerId, validDepartureAnswers)
     }
 
   def validArrivalAnswers =
