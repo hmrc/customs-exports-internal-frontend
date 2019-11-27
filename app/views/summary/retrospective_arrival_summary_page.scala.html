@@ -25,11 +25,11 @@
 
 @(data: RetrospectiveArrivalAnswers)(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title("summary.arrival.title", None)){
+@main_template(title = Title("summary.retrospectiveArrival.title", None)){
 
     @components.back_link(routes.LocationController.displayPage())
 
-    @components.page_title(Some(messages("summary.arrival.title")))
+    @components.page_title(Some(messages("summary.retrospectiveArrival.title")))
 
     @components.summary_list(Some(messages("summary.consignmentDetails"))){
         @components.table_row_no_change_link(HtmlTableRow(

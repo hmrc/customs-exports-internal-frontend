@@ -140,6 +140,8 @@ summary.arrival.title = Is the information provided for this arrival correct?
 summary.arrival.date = Date of arrival
 summary.arrival.time = Time of arrival
 
+summary.retrospectiveArrival.title = Is the information provided for this retrospective arrival request correct?
+
 summary.departure.title = Is the information provided for this departure correct?
 summary.departure.date = Date of departure
 summary.departure.time = Time of departure

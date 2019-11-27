@@ -30,11 +30,11 @@ class RetrospectiveArrivalSummaryViewSpec extends ViewSpec {
 
   "View" should {
     "render title" in {
-      page(answers).getTitle must containMessage("summary.arrival.title")
+      page(answers).getTitle must containMessage("summary.retrospectiveArrival.title")
     }
 
     "render heading" in {
-      page(answers).getElementById("title") must containMessage("summary.arrival.title")
+      page(answers).getElementById("title") must containMessage("summary.retrospectiveArrival.title")
     }
 
     "render back button" in {
