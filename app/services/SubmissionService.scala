@@ -33,7 +33,7 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class SubmissionService @Inject()(
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   connector: CustomsDeclareExportsMovementsConnector,
   auditService: AuditService,
   metrics: MovementsMetrics,
@@ -51,7 +51,7 @@ class SubmissionService @Inject()(
       .submit(DisassociateDUCRExchange(providerId, eori, ucr))
       .andThen {
         case Success(_) =>
-          cache.removeByProviderId(providerId).flatMap { _ =>
+          cacheRepository.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditDisassociate(providerId, ucr, success)
           }
         case Failure(_) =>
@@ -68,7 +68,7 @@ class SubmissionService @Inject()(
       .submit(AssociateUCRExchange(providerId, eori, mucr, ucr))
       .andThen {
         case Success(_) =>
-          cache.removeByProviderId(providerId).flatMap { _ =>
+          cacheRepository.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditAssociate(providerId, mucr, ucr, success)
           }
         case Failure(_) =>
@@ -84,7 +84,7 @@ class SubmissionService @Inject()(
       .submit(ShutMUCRExchange(providerId, eori, mucr))
       .andThen {
         case Success(_) =>
-          cache.removeByProviderId(providerId).flatMap { _ =>
+          cacheRepository.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditShutMucr(providerId, mucr, success)
           }
         case Failure(_) =>
@@ -100,15 +100,17 @@ class SubmissionService @Inject()(
 
     auditService.auditAllPagesUserInput(answers)
 
-    val movementAuditType =
-      if (cache.answers.`type` == JourneyType.ARRIVE) AuditTypes.AuditArrival else AuditTypes.AuditDeparture
-
     connector.submit(data).map { _ =>
       metrics.incrementCounter(cache.answers.`type`)
-      auditService
-        .auditMovements(data, success, movementAuditType)
+      auditService.auditMovements(data, Status.OK.toString, movementAuditType(cache))
       timer.stop()
       data.consignmentReference
     }
+  }
+
+  private def movementAuditType(cache: Cache): AuditTypes.Value = cache.answers.`type` match {
+    case JourneyType.ARRIVE               => AuditTypes.AuditArrival
+    case JourneyType.RETROSPECTIVE_ARRIVE => AuditTypes.AuditRetrospectiveArrival
+    case JourneyType.DEPART               => AuditTypes.AuditDeparture
   }
 }

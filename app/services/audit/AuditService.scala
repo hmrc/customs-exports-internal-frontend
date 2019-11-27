@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import connectors.exchanges.{ArrivalExchange, MovementExchange}
 import forms._
 import javax.inject.Named
-import models.cache.{Answers, ArrivalAnswers, DepartureAnswers, JourneyType}
+import models.cache._
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -66,13 +66,15 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
         EventData.ucrType.toString -> data.consignmentReference.reference,
         EventData.ucr.toString -> data.consignmentReference.referenceValue,
         EventData.submissionResult.toString -> result
-      ).++(data match {
-        case arrival: ArrivalExchange => Map(EventData.movementReference.toString -> arrival.arrivalReference.reference.getOrElse(""))
-        case _                        => Map()
-      })
+      ).++(movementReference(data))
     )
 
-  def audit(auditType: AuditTypes.Audit, auditData: Map[String, String])(implicit hc: HeaderCarrier): Future[AuditResult] = {
+  private def movementReference(data: MovementExchange): Map[String, String] = data match {
+    case arrival: ArrivalExchange => Map(EventData.movementReference.toString -> arrival.arrivalReference.reference.getOrElse(""))
+    case _                        => Map()
+  }
+
+  private def audit(auditType: AuditTypes.Audit, auditData: Map[String, String])(implicit hc: HeaderCarrier): Future[AuditResult] = {
     val event = createAuditEvent(auditType, auditData)
     connector.sendEvent(event).map(handleResponse(_, auditType.toString))
   }
@@ -81,14 +83,14 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
     DataEvent(
       auditSource = appName,
       auditType = choice.toString,
-      tags = getAuditTags(s"${choice}-request", path = s"$choice.value}"),
+      tags = getAuditTags(transactionNameSuffix = s"${choice}-request", path = s"$choice"),
       detail = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails() ++ auditData
     )
 
-  private def getAuditTags(transactionName: String, path: String)(implicit hc: HeaderCarrier) =
+  private def getAuditTags(transactionNameSuffix: String, path: String)(implicit hc: HeaderCarrier) =
     AuditExtensions
       .auditHeaderCarrier(hc)
-      .toAuditTags(transactionName = s"Export-Declaration-${transactionName}", path = s"customs-declare-exports/${path}")
+      .toAuditTags(transactionName = s"Export-Declaration-${transactionNameSuffix}", path = s"customs-declare-exports/${path}")
 
   private def handleResponse(result: AuditResult, auditType: String) = result match {
     case Success =>
@@ -103,10 +105,11 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
   }
 
   def auditAllPagesUserInput(answers: Answers)(implicit hc: HeaderCarrier): Future[AuditResult] = {
-    val auditType =
-      if (answers.`type` == JourneyType.ARRIVE)
-        AuditTypes.AuditArrival.toString
-      else AuditTypes.AuditDeparture.toString
+    val auditType = answers.`type` match {
+      case JourneyType.ARRIVE               => AuditTypes.AuditArrival.toString
+      case JourneyType.RETROSPECTIVE_ARRIVE => AuditTypes.AuditRetrospectiveArrival.toString
+      case JourneyType.DEPART               => AuditTypes.AuditDeparture.toString
+    }
 
     val extendedEvent = ExtendedDataEvent(
       auditSource = appName,
@@ -115,6 +118,11 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
       detail = getAuditDetails(getMovementsData(answers))
     )
     connector.sendExtendedEvent(extendedEvent).map(handleResponse(_, auditType))
+  }
+
+  private def getAuditDetails(userInput: JsObject)(implicit hc: HeaderCarrier) = {
+    val hcAuditDetails = Json.toJson(AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()).as[JsObject]
+    hcAuditDetails.deepMerge(userInput)
   }
 
   private def getMovementsData(answers: Answers): JsObject = {
@@ -127,6 +135,11 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
           MovementDetails.formId -> Json.toJson(arrivalAnswers.arrivalDetails),
           ArrivalReference.formId -> Json.toJson(arrivalAnswers.arrivalReference)
         )
+      case retroArrivalAnswers: RetrospectiveArrivalAnswers =>
+        Map(
+          ConsignmentReferences.formId -> Json.toJson(retroArrivalAnswers.consignmentReferences),
+          Location.formId -> Json.toJson(retroArrivalAnswers.location)
+        )
       case departureAnswers: DepartureAnswers =>
         Map(
           ConsignmentReferences.formId -> Json.toJson(departureAnswers.consignmentReferences),
@@ -138,16 +151,12 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
 
     Json.toJson(userInput).as[JsObject]
   }
-
-  private def getAuditDetails(userInput: JsObject)(implicit hc: HeaderCarrier) = {
-    val hcAuditDetails = Json.toJson(AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()).as[JsObject]
-    hcAuditDetails.deepMerge(userInput)
-  }
 }
 
 object AuditTypes extends Enumeration {
   type Audit = Value
   val AuditArrival: AuditTypes.Value = Value("Arrival")
+  val AuditRetrospectiveArrival: AuditTypes.Value = Value("RetrospectiveArrival")
   val AuditDeparture: AuditTypes.Value = Value("Departure")
   val AuditAssociate: AuditTypes.Value = Value("Associate")
   val AuditDisassociate: AuditTypes.Value = Value("Disassociate")
