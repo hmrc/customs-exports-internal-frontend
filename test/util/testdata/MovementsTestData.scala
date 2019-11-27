@@ -16,12 +16,15 @@
 
 package testdata
 
-import java.time.{Instant, ZoneId}
+import java.time.{Instant, LocalDate, LocalTime, ZoneId}
 
 import connectors.exchanges.MovementExchange
-import forms.{Choice, ConsignmentReferences, MovementBuilder, MovementDetails}
+import forms.GoodsDeparted.DepartureLocation.OutOfTheUk
+import forms.Transport.ModesOfTransport
+import forms._
+import forms.common.{Date, Time}
 import models.UcrBlock
-import models.cache.{ArrivalAnswers, DepartureAnswers}
+import models.cache.{ArrivalAnswers, DepartureAnswers, RetrospectiveArrivalAnswers}
 import models.submissions.{ActionType, Submission}
 import testdata.CommonTestData.{conversationId, correctUcr, providerId, validEori}
 
@@ -40,10 +43,30 @@ object MovementsTestData {
     }
 
   def validArrivalAnswers =
-    ArrivalAnswers(Some("eori"), consignmentReferences = Some(ConsignmentReferences("ref", "value")))
+    ArrivalAnswers(
+      eori = Some(validEori),
+      consignmentReferences = Some(ConsignmentReferences("D", correctUcr)),
+      arrivalReference = Some(ArrivalReference(Some("arrivalReference"))),
+      arrivalDetails = Some(ArrivalDetails(Date(LocalDate.now().minusDays(1)), Time(LocalTime.of(1, 1)))),
+      location = Some(Location("GBAUEMAEMAEMA"))
+    )
+
+  def validRetrospectiveArrivalAnswers =
+    RetrospectiveArrivalAnswers(
+      eori = Some(validEori),
+      consignmentReferences = Some(ConsignmentReferences("D", correctUcr)),
+      location = Some(Location("GBAUEMAEMAEMA"))
+    )
 
   def validDepartureAnswers =
-    DepartureAnswers(Some("eori"), consignmentReferences = Some(ConsignmentReferences("ref", "value")))
+    DepartureAnswers(
+      eori = Some(validEori),
+      consignmentReferences = Some(ConsignmentReferences("D", correctUcr)),
+      departureDetails = Some(DepartureDetails(Date(LocalDate.of(2019, 1, 1)), Time(LocalTime.of(0, 0)))),
+      location = Some(Location("GBAUEMAEMAEMA")),
+      goodsDeparted = Some(GoodsDeparted(OutOfTheUk)),
+      transport = Some(Transport(modeOfTransport = Some(ModesOfTransport.Sea), nationality = Some("GB"), transportId = Some("transportID")))
+    )
 
   def exampleSubmission(
     eori: String = validEori,

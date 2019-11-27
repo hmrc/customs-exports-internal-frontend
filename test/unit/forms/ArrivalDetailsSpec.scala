@@ -16,7 +16,7 @@
 
 package forms
 
-import java.time.{LocalDate, LocalTime, ZoneId}
+import java.time.{LocalDate, LocalTime}
 
 import base.UnitSpec
 import forms.common.{Date, Time}
@@ -28,11 +28,9 @@ class ArrivalDetailsSpec extends UnitSpec {
   private val date = LocalDate.now().minusDays(1)
 
   private val timeMapping = Time.mapping.withPrefix("timeOfArrival")
-
   private val timeInputData = timeMapping.unbind(Time(LocalTime.of(1, 1)))
 
   private val dateMapping: Mapping[Date] = Date.mapping.withPrefix("dateOfArrival")
-
   private val dateInputData = dateMapping.unbind(Date(date))
 
   val movementDetails = MovementsTestData.movementDetails

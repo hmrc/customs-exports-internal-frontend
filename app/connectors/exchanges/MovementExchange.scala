@@ -34,6 +34,18 @@ object ArrivalExchange {
   implicit val format: OFormat[ArrivalExchange] = Json.format[ArrivalExchange]
 }
 
+case class RetrospectiveArrivalExchange(
+  override val eori: String,
+  override val providerId: String,
+  override val consignmentReference: ConsignmentReferences,
+  override val location: Location
+) extends MovementExchange {
+  override val choice: MovementType = MovementType.RetrospectiveArrival
+}
+object RetrospectiveArrivalExchange {
+  implicit val format: OFormat[RetrospectiveArrivalExchange] = Json.format[RetrospectiveArrivalExchange]
+}
+
 case class DepartureExchange(
   override val eori: String,
   override val providerId: String,

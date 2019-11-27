@@ -19,18 +19,19 @@ package forms
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-import connectors.exchanges.{ArrivalExchange, DepartureExchange, MovementDetailsExchange, MovementExchange}
+import connectors.exchanges._
 import javax.inject.Inject
 import models.ReturnToStartException
-import models.cache.{ArrivalAnswers, DepartureAnswers, MovementAnswers}
+import models.cache.{ArrivalAnswers, DepartureAnswers, MovementAnswers, RetrospectiveArrivalAnswers}
 
 class MovementBuilder @Inject()(zoneId: ZoneId) {
 
   private val movementDateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
   def createMovementExchange(providerId: String, answers: MovementAnswers): MovementExchange = answers match {
-    case arrivalAnswers: ArrivalAnswers     => createMovementArrivalRequest(providerId, arrivalAnswers)
-    case departureAnswers: DepartureAnswers => createMovementDepartureRequest(providerId, departureAnswers)
+    case arrivalAnswers: ArrivalAnswers                   => createMovementArrivalRequest(providerId, arrivalAnswers)
+    case retroArrivalAnswers: RetrospectiveArrivalAnswers => createRetrospectiveArrivalExchange(providerId, retroArrivalAnswers)
+    case departureAnswers: DepartureAnswers               => createMovementDepartureRequest(providerId, departureAnswers)
   }
 
   private def createMovementArrivalRequest(providerId: String, answers: ArrivalAnswers) =
@@ -38,9 +39,17 @@ class MovementBuilder @Inject()(zoneId: ZoneId) {
       eori = answers.eori.getOrElse(throw ReturnToStartException),
       providerId = providerId,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
-      movementDetails = movementDetails(answers)getOrElse(throw ReturnToStartException),
+      movementDetails = movementDetails(answers).getOrElse(throw ReturnToStartException),
       location = answers.location.getOrElse(throw ReturnToStartException),
       arrivalReference = answers.arrivalReference.getOrElse(throw ReturnToStartException)
+    )
+
+  private def createRetrospectiveArrivalExchange(providerId: String, answers: RetrospectiveArrivalAnswers) =
+    RetrospectiveArrivalExchange(
+      eori = answers.eori.getOrElse(throw ReturnToStartException),
+      providerId = providerId,
+      consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
+      location = answers.location.getOrElse(throw ReturnToStartException)
     )
 
   private def createMovementDepartureRequest(providerId: String, answers: DepartureAnswers) =
@@ -48,7 +57,7 @@ class MovementBuilder @Inject()(zoneId: ZoneId) {
       eori = answers.eori.getOrElse(throw ReturnToStartException),
       providerId = providerId,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
-      movementDetails = movementDetails(answers)getOrElse(throw ReturnToStartException),
+      movementDetails = movementDetails(answers).getOrElse(throw ReturnToStartException),
       location = answers.location.getOrElse(throw ReturnToStartException),
       transport = answers.transport.getOrElse(throw ReturnToStartException)
     )
