@@ -39,8 +39,10 @@ choicePage.input.error.incorrectValue = Please, choose valid option
 
 consignmentReferences.title = Consignment references
 consignmentReferences.ARRIVE.heading = Arrive consignment
+consignmentReferences.RETROSPECTIVE_ARRIVE.heading = Retrospectively arrive a consignment
 consignmentReferences.DEPART.heading = Depart consignment
 consignmentReferences.ARRIVE.question = What consignment do you want to arrive?
+consignmentReferences.RETROSPECTIVE_ARRIVE.question = Which consignment do you want to retrospectively arrive?
 consignmentReferences.DEPART.question = What consignment do you want to depart?
 consignmentReferences.reference.ducr = Declaration Consignment Reference (DUCR)
 consignmentReferences.reference.mucr = Master Consignment Reference (MUCR)
