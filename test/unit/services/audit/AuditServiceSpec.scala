@@ -76,7 +76,7 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
           eori = "GB12345678",
           providerId = "122343",
           consignmentReference = ConsignmentReferences("UCR", "D"),
-          movementDetails = Some(MovementDetailsExchange("dateTime")),
+          movementDetails = MovementDetailsExchange("dateTime"),
           location = Location("location"),
           arrivalReference = ArrivalReference(Some("ref"))
         )

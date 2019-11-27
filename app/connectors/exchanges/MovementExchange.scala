@@ -24,8 +24,8 @@ case class ArrivalExchange(
   override val eori: String,
   override val providerId: String,
   override val consignmentReference: ConsignmentReferences,
-  override val movementDetails: Option[MovementDetailsExchange],
   override val location: Location,
+  movementDetails: MovementDetailsExchange,
   arrivalReference: ArrivalReference
 ) extends MovementExchange {
   override val choice: MovementType = MovementType.Arrival
@@ -38,8 +38,8 @@ case class DepartureExchange(
   override val eori: String,
   override val providerId: String,
   override val consignmentReference: ConsignmentReferences,
-  override val movementDetails: Option[MovementDetailsExchange],
   override val location: Location,
+  movementDetails: MovementDetailsExchange,
   transport: Transport
 ) extends MovementExchange {
   override val choice: MovementType = MovementType.Departure
@@ -53,7 +53,6 @@ trait MovementExchange {
   val providerId: String
   val choice: MovementType
   val consignmentReference: ConsignmentReferences
-  val movementDetails: Option[MovementDetailsExchange]
   val location: Location
 }
 

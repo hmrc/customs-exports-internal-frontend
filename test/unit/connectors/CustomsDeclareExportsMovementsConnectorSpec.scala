@@ -52,8 +52,8 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
           "eori",
           "provider-id",
           ConsignmentReferences("ref", "value"),
-          Some(MovementDetailsExchange("datetime")),
           Location("code"),
+          MovementDetailsExchange("datetime"),
           ArrivalReference(Some("reference"))
         )
       connector.submit(request).futureValue

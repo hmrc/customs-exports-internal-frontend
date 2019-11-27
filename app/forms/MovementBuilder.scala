@@ -38,7 +38,7 @@ class MovementBuilder @Inject()(zoneId: ZoneId) {
       eori = answers.eori.getOrElse(throw ReturnToStartException),
       providerId = providerId,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
-      movementDetails = movementDetails(answers),
+      movementDetails = movementDetails(answers)getOrElse(throw ReturnToStartException),
       location = answers.location.getOrElse(throw ReturnToStartException),
       arrivalReference = answers.arrivalReference.getOrElse(throw ReturnToStartException)
     )
@@ -48,7 +48,7 @@ class MovementBuilder @Inject()(zoneId: ZoneId) {
       eori = answers.eori.getOrElse(throw ReturnToStartException),
       providerId = providerId,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
-      movementDetails = movementDetails(answers),
+      movementDetails = movementDetails(answers)getOrElse(throw ReturnToStartException),
       location = answers.location.getOrElse(throw ReturnToStartException),
       transport = answers.transport.getOrElse(throw ReturnToStartException)
     )
