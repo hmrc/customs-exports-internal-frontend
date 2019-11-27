@@ -93,6 +93,7 @@ dateTime.time.minute.empty = Minute cannot be empty
 dateTime.time.minute.error = Minute is incorrect
 
 location.title = Location
+location.sectionHeader.RETROSPECTIVE_ARRIVE = Retrospectively arrive a consignment
 location.question = What is the goods location code?
 location.hint = This is an alphanumeric code. For example, GBAUEMAEMAEMA
 location.code.empty = Goods location code cannot be empty

@@ -25,26 +25,39 @@
 
 @(form: Form[Location])(implicit request: JourneyRequest[_], messages: Messages)
 
-@main_template(title = Title("location.question", None)) {
-    @helper.form(routes.LocationController.saveLocation(), 'autoComplete -> "off") {
-        @helper.CSRF.formField
-
-        @{ request.answers.`type` match {
-            case JourneyType.ARRIVE | JourneyType.DEPART => components.back_link(routes.MovementDetailsController.displayPage())
-            case JourneyType.RETROSPECTIVE_ARRIVE => components.back_link(routes.ConsignmentReferencesController.displayPage())
-          }
-        }
-
-        @components.error_summary(form.errors)
-
-        @components.page_title(Some(messages("location.question")))
-
-        @components.input_text(
-            field = form("code"),
-            label = "",
-            hint = Some(messages("location.hint"))
-        )
-
-        @components.submit_button(messages("site.continue"))
+  @backLink(request: JourneyRequest[_]) = @{
+    request.answers.`type` match {
+      case JourneyType.ARRIVE | JourneyType.DEPART => components.back_link(routes.MovementDetailsController.displayPage())
+      case JourneyType.RETROSPECTIVE_ARRIVE => components.back_link(routes.ConsignmentReferencesController.displayPage())
     }
-}
+  }
+
+  @sectionHeaderVal(request: JourneyRequest[_]) = @{
+    if (request.answers.`type` == JourneyType.RETROSPECTIVE_ARRIVE)
+      messages("location.sectionHeader.RETROSPECTIVE_ARRIVE")
+    else
+      ""
+  }
+
+  @main_template(title = Title("location.question", None)) {
+    @helper.form(routes.LocationController.saveLocation(), 'autoComplete -> "off") {
+      @helper.CSRF.formField
+
+      @backLink(request)
+
+      @components.error_summary(form.errors)
+
+      @components.heading(
+        title = messages("location.question"),
+        sectionHeader = sectionHeaderVal(request),
+        hint = messages("location.hint")
+      )
+
+      @components.input_text(
+        field = form("code"),
+        label = ""
+      )
+
+      @components.submit_button(messages("site.continue"))
+    }
+  }
