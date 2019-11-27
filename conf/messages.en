@@ -94,7 +94,7 @@ dateTime.time.minute.error = Minute is incorrect
 
 location.title = Location
 location.question = What is the goods location code?
-location.hint = The is an alphanumeric code. For example, GBAUEMAEMAEMA
+location.hint = This is an alphanumeric code. For example, GBAUEMAEMAEMA
 location.code.empty = Goods location code cannot be empty
 location.code.error = Goods location code is incorrect
 
