@@ -69,23 +69,39 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
       "GET displayPage is invoked without data in cache" in {
 
-        givenTheCacheIsEmpty()
-
         val result = controller().displayPage()(getRequest)
 
         status(result) mustBe OK
         theResponseForm.value mustBe empty
       }
 
-      "GET displayPage is invoked with data in cache" in {
+      "GET displayPage is invoked with data for Arrival" in {
 
         val cachedForm = Some(Location("GBAUEMAEMAEMA"))
-        givenTheCacheContains(Cache("12345", ArrivalAnswers(location = cachedForm)))
 
         val result = controller(ArrivalAnswers(location = cachedForm)).displayPage()(getRequest)
 
         status(result) mustBe OK
+        theResponseForm.value mustBe cachedForm
+      }
 
+      "GET displayPage is invoked with data for Retrospective Arrival" in {
+
+        val cachedForm = Some(Location("GBAUEMAEMAEMA"))
+
+        val result = controller(RetrospectiveArrivalAnswers(location = cachedForm)).displayPage()(getRequest)
+
+        status(result) mustBe OK
+        theResponseForm.value mustBe cachedForm
+      }
+
+      "GET displayPage is invoked with data for Departure" in {
+
+        val cachedForm = Some(Location("GBAUEMAEMAEMA"))
+
+        val result = controller(DepartureAnswers(location = cachedForm)).displayPage()(getRequest)
+
+        status(result) mustBe OK
         theResponseForm.value mustBe cachedForm
       }
     }
