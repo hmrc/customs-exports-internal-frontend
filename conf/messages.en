@@ -31,6 +31,7 @@ movement.choice.departure.label = Depart a consignment
 movement.choice.associate.label = Associate a consignment
 movement.choice.disassociateDucr.label = Disassociate a consignment
 movement.choice.shutMucr.label = Shut a master consignment
+movement.choice.retrospectiveArrival.label = Retrospectively arrive a consignment
 movement.choice.submissions.label = View requests
 
 choicePage.input.error.empty = Please, choose what do you want to do
