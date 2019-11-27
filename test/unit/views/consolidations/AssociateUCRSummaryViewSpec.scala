@@ -46,8 +46,8 @@ class AssociateUCRSummaryViewSpec extends ViewSpec {
 
     "display 'Change' link on the page for mucr" in {
 
-      view.getElementById("mucr-change") must containText(messages("site.change"))
-      view.getElementById("mucr-change") must haveHref(controllers.consolidations.routes.MucrOptionsController.displayPage())
+      view.getElementById("associate_mucr-change") must containText(messages("site.change"))
+      view.getElementById("associate_mucr-change") must haveHref(controllers.consolidations.routes.MucrOptionsController.displayPage())
     }
 
     "display 'Reference' link on page" in {
