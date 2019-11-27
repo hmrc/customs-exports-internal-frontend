@@ -16,6 +16,8 @@
 
 package services
 
+import java.time.ZoneId
+
 import base.UnitSpec
 import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.{AssociateUCRExchange, ConsolidationExchange, DisassociateDUCRExchange, ShutMUCRExchange}
@@ -32,7 +34,6 @@ import play.api.test.Helpers._
 import repositories.CacheRepository
 import services.audit.AuditService
 import testdata.CommonTestData._
-import testdata.MovementsTestData
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -40,12 +41,15 @@ import scala.concurrent.Future
 
 class SubmissionServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
+  private val zoneId: ZoneId = ZoneId.of("Europe/London")
   private implicit val hc: HeaderCarrier = mock[HeaderCarrier]
+
   private val metrics = mock[MovementsMetrics]
   private val audit = mock[AuditService]
   private val repository = mock[CacheRepository]
   private val connector = mock[CustomsDeclareExportsMovementsConnector]
-  private val service = new SubmissionService(repository, connector, audit, metrics, MovementsTestData.movementBuilder)
+  private val movementBuilder = new MovementBuilder(zoneId)
+  private val service = new SubmissionService(repository, connector, audit, metrics, movementBuilder)
 
   override def afterEach(): Unit = {
     reset(audit, connector, metrics, repository)

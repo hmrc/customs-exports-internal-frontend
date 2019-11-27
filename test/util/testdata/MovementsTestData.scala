@@ -18,7 +18,6 @@ package testdata
 
 import java.time.{Instant, LocalDate, LocalTime, ZoneId}
 
-import connectors.exchanges.MovementExchange
 import forms.GoodsDeparted.DepartureLocation.OutOfTheUk
 import forms.Transport.ModesOfTransport
 import forms._
@@ -26,21 +25,12 @@ import forms.common.{Date, Time}
 import models.UcrBlock
 import models.cache.{ArrivalAnswers, DepartureAnswers, RetrospectiveArrivalAnswers}
 import models.submissions.{ActionType, Submission}
-import testdata.CommonTestData.{conversationId, correctUcr, providerId, validEori}
+import testdata.CommonTestData.{conversationId, correctUcr, validEori}
 
 object MovementsTestData {
 
   private val zoneId: ZoneId = ZoneId.of("Europe/London")
-
   val movementDetails = new MovementDetails(zoneId)
-
-  val movementBuilder = new MovementBuilder(zoneId)
-
-  def validMovementRequest(movementType: Choice): MovementExchange =
-    movementType match {
-      case Choice.Arrival   => movementBuilder.createMovementExchange(providerId, validArrivalAnswers)
-      case Choice.Departure => movementBuilder.createMovementExchange(providerId, validDepartureAnswers)
-    }
 
   def validArrivalAnswers =
     ArrivalAnswers(
