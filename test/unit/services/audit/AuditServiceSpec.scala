@@ -117,10 +117,7 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
         val answers = MovementsTestData.validRetrospectiveArrivalAnswers
 
         val auditTags = auditTagsPayload("RetrospectiveArrival")
-        val auditDetail: JsValue = Json.obj(
-          "ConsignmentReferences" -> answers.consignmentReferences,
-          "Location" -> answers.location
-        )
+        val auditDetail: JsValue = Json.obj("ConsignmentReferences" -> answers.consignmentReferences, "Location" -> answers.location)
         val expectedExtendedDataEvent =
           ExtendedDataEvent(auditSource = "appName", auditType = AuditType.AuditRetrospectiveArrival.toString, tags = auditTags, detail = auditDetail)
 
@@ -162,7 +159,11 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
       "used for Shut a Mucr" in {
 
         val auditTags = auditTagsResult("ShutMucr")
-        val auditDetail = Map(EventData.providerId.toString -> CommonTestData.providerId, EventData.mucr.toString -> "mucr", EventData.submissionResult.toString -> "200")
+        val auditDetail = Map(
+          EventData.providerId.toString -> CommonTestData.providerId,
+          EventData.mucr.toString -> "mucr",
+          EventData.submissionResult.toString -> "200"
+        )
         val expectedDataEvent =
           DataEvent(auditSource = "appName", auditType = AuditType.AuditShutMucr.toString, tags = auditTags, detail = auditDetail)
 
@@ -179,7 +180,12 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
         val auditTags = auditTagsResult("Associate")
         val auditDetail =
-          Map(EventData.providerId.toString -> CommonTestData.providerId, EventData.mucr.toString -> "mucr", EventData.ducr.toString -> "ducr", EventData.submissionResult.toString -> "200")
+          Map(
+            EventData.providerId.toString -> CommonTestData.providerId,
+            EventData.mucr.toString -> "mucr",
+            EventData.ducr.toString -> "ducr",
+            EventData.submissionResult.toString -> "200"
+          )
         val expectedDataEvent =
           DataEvent(auditSource = "appName", auditType = AuditType.AuditAssociate.toString, tags = auditTags, detail = auditDetail)
 
@@ -195,7 +201,11 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
       "used for Disassociation" in {
 
         val auditTags = auditTagsResult("Disassociate")
-        val auditDetail = Map(EventData.providerId.toString -> CommonTestData.providerId, EventData.ducr.toString -> "ducr", EventData.submissionResult.toString -> "200")
+        val auditDetail = Map(
+          EventData.providerId.toString -> CommonTestData.providerId,
+          EventData.ducr.toString -> "ducr",
+          EventData.submissionResult.toString -> "200"
+        )
         val expectedDataEvent =
           DataEvent(auditSource = "appName", auditType = AuditType.AuditDisassociate.toString, tags = auditTags, detail = auditDetail)
 

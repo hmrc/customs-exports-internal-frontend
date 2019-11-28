@@ -30,7 +30,9 @@ class MovementConfirmationRetrospectiveArrivalViewSpec extends ViewSpec {
 
   "View" should {
     "render title" in {
-      page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getTitle must containMessage("movement.RETROSPECTIVE_ARRIVE.confirmation.tab.heading")
+      page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getTitle must containMessage(
+        "movement.RETROSPECTIVE_ARRIVE.confirmation.tab.heading"
+      )
     }
 
     "render confirmation" in {

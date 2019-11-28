@@ -152,15 +152,13 @@ movement.ARRIVE.confirmation.tab.heading = Arrival request submitted
 movement.RETROSPECTIVE_ARRIVE.confirmation.tab.heading = Retrospective Arrival request submitted
 movement.ARRIVE.confirmation.heading = Request to arrive {0} {1} has been submitted
 movement.RETROSPECTIVE_ARRIVE.confirmation.heading = Request to retrospectively arrive {0} {1} has been submitted
-movement.arrival.confirmation.nextSteps = {0} a consignment, or {1} a consignment.
-movement.arrival.confirmation.nextSteps.associate = Associate
-movement.arrival.confirmation.nextSteps.depart = depart
+movement.arrival.confirmation.nextSteps.associate = Associate a consignment
+movement.arrival.confirmation.nextSteps.depart = depart a consignment
 
 movement.DEPART.confirmation.tab.heading = Departure request submitted
 movement.DEPART.confirmation.heading = Request to depart {0} {1} has been submitted
-movement.departure.confirmation.nextSteps = {0}. {1} a new consignment.
 movement.departure.confirmation.nextSteps.depart = Depart another consignment
-movement.departure.confirmation.nextSteps.arrive = Arrive
+movement.departure.confirmation.nextSteps.arrive = Arrive a new consignment
 
 associate.heading = Add to MUCR {0}
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with

@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.main_template
+@import forms.ConsignmentReferences
 @import models.cache.JourneyType
 @import models.cache.JourneyType.JourneyType
 @import views.Title
-@import forms.ConsignmentReferences
+@import views.html.templates.main_template
 
 @this(main_template: main_template)
 
@@ -48,12 +48,12 @@
 
     @if(Set(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE).contains(journeyType)) {
         <div id="next-steps">
-            @Html(messages("movement.arrival.confirmation.nextSteps", associateLink, departureLinkForArrival))
+            @Html(s"$associateLink, or $departureLinkForArrival.")
         </div>
     }
     @if(journeyType == JourneyType.DEPART) {
         <div id="next-steps">
-            @Html(messages("movement.departure.confirmation.nextSteps", departureLinkForDeparture, arrivalLink))
+            @Html(s"$departureLinkForDeparture. $arrivalLink.")
         </div>
     }
 
