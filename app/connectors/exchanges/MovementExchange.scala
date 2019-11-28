@@ -71,7 +71,8 @@ trait MovementExchange {
 object MovementExchange {
   implicit val format: Format[MovementExchange] = Union
     .from[MovementExchange]("choice")
-    .and[DepartureExchange](MovementType.Departure.toString)
     .and[ArrivalExchange](MovementType.Arrival.toString)
+    .and[RetrospectiveArrivalExchange](MovementType.RetrospectiveArrival.toString)
+    .and[DepartureExchange](MovementType.Departure.toString)
     .format
 }
