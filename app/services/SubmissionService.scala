@@ -25,7 +25,7 @@ import models.ReturnToStartException
 import models.cache._
 import play.api.http.Status
 import repositories.CacheRepository
-import services.audit.{AuditService, AuditTypes}
+import services.audit.{AuditService, AuditType}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -108,9 +108,9 @@ class SubmissionService @Inject()(
     }
   }
 
-  private def movementAuditType(cache: Cache): AuditTypes.Value = cache.answers.`type` match {
-    case JourneyType.ARRIVE               => AuditTypes.AuditArrival
-    case JourneyType.RETROSPECTIVE_ARRIVE => AuditTypes.AuditRetrospectiveArrival
-    case JourneyType.DEPART               => AuditTypes.AuditDeparture
+  private def movementAuditType(cache: Cache): AuditType.Value = cache.answers.`type` match {
+    case JourneyType.ARRIVE               => AuditType.AuditArrival
+    case JourneyType.RETROSPECTIVE_ARRIVE => AuditType.AuditRetrospectiveArrival
+    case JourneyType.DEPART               => AuditType.AuditDeparture
   }
 }
