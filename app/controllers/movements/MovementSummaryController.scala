@@ -54,15 +54,13 @@ class MovementSummaryController @Inject()(
     (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)).async { implicit request =>
       submissionService
         .submit(request.providerId, request.answersAs[MovementAnswers])
-        .flatMap { consignmentReferences =>
-          cache.removeByProviderId(request.providerId).map { _ =>
-            Redirect(controllers.movements.routes.MovementConfirmationController.display())
-              .flashing(
-                FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString,
-                FlashKeys.UCR_KIND -> consignmentReferences.reference,
-                FlashKeys.UCR -> consignmentReferences.referenceValue
-              )
-          }
+        .map { consignmentReferences =>
+          Redirect(controllers.movements.routes.MovementConfirmationController.display())
+            .flashing(
+              FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString,
+              FlashKeys.UCR_KIND -> consignmentReferences.reference,
+              FlashKeys.UCR -> consignmentReferences.referenceValue
+            )
         }
     }
 }
