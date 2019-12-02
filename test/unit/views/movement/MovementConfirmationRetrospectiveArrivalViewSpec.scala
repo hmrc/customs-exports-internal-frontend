@@ -31,13 +31,13 @@ class MovementConfirmationRetrospectiveArrivalViewSpec extends ViewSpec {
   "View" should {
     "render title" in {
       page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getTitle must containMessage(
-        "movement.RETROSPECTIVE_ARRIVE.confirmation.tab.heading"
+        "movement.confirmation.RETROSPECTIVE_ARRIVE.tab.heading"
       )
     }
 
     "render confirmation" in {
       page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences)
-        .getElementById("highlight-box-heading") must containMessage("movement.RETROSPECTIVE_ARRIVE.confirmation.heading", "DUCR", "9GB12345678")
+        .getElementById("highlight-box-heading") must containMessage("movement.confirmation.RETROSPECTIVE_ARRIVE.heading", "DUCR", "9GB12345678")
     }
 
     "have back to start button" in {

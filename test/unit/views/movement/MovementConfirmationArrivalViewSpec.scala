@@ -30,12 +30,12 @@ class MovementConfirmationArrivalViewSpec extends ViewSpec {
 
   "View" should {
     "render title" in {
-      page(JourneyType.ARRIVE, consignmentReferences).getTitle must containMessage("movement.ARRIVE.confirmation.tab.heading")
+      page(JourneyType.ARRIVE, consignmentReferences).getTitle must containMessage("movement.confirmation.ARRIVE.tab.heading")
     }
 
     "render confirmation" in {
       page(JourneyType.ARRIVE, consignmentReferences)
-        .getElementById("highlight-box-heading") must containMessage("movement.ARRIVE.confirmation.heading", "DUCR", "9GB12345678")
+        .getElementById("highlight-box-heading") must containMessage("movement.confirmation.ARRIVE.heading", "DUCR", "9GB12345678")
     }
 
     "have back to start button" in {

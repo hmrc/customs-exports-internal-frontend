@@ -148,19 +148,19 @@ summary.departure.time = Time of departure
 
 summary.arrivalReference.reference = Unique reference
 
-movement.ARRIVE.confirmation.tab.heading = Arrival request submitted
-movement.RETROSPECTIVE_ARRIVE.confirmation.tab.heading = Retrospective Arrival request submitted
-movement.ARRIVE.confirmation.heading = Request to arrive {0} {1} has been submitted
-movement.RETROSPECTIVE_ARRIVE.confirmation.heading = Request to retrospectively arrive {0} {1} has been submitted
-movement.arrival.confirmation.nextSteps = {0}, or {1}
-movement.arrival.confirmation.nextSteps.associate = Associate a consignment
-movement.arrival.confirmation.nextSteps.depart = depart a consignment
+movement.confirmation.ARRIVE.tab.heading = Arrival request submitted
+movement.confirmation.RETROSPECTIVE_ARRIVE.tab.heading = Retrospective Arrival request submitted
+movement.confirmation.ARRIVE.heading = Request to arrive {0} {1} has been submitted
+movement.confirmation.RETROSPECTIVE_ARRIVE.heading = Request to retrospectively arrive {0} {1} has been submitted
+movement.confirmation.arrival.nextSteps = {0}, or {1}
+movement.confirmation.arrival.nextSteps.associate = Associate a consignment
+movement.confirmation.arrival.nextSteps.depart = depart a consignment
 
-movement.DEPART.confirmation.tab.heading = Departure request submitted
-movement.DEPART.confirmation.heading = Request to depart {0} {1} has been submitted
-movement.departure.confirmation.nextSteps = {0}. {1}
-movement.departure.confirmation.nextSteps.depart = Depart another consignment
-movement.departure.confirmation.nextSteps.arrive = Arrive a new consignment
+movement.confirmation.DEPART.tab.heading = Departure request submitted
+movement.confirmation.DEPART.heading = Request to depart {0} {1} has been submitted
+movement.confirmation.departure.nextSteps = {0}. {1}
+movement.confirmation.departure.nextSteps.depart = Depart another consignment
+movement.confirmation.departure.nextSteps.arrive = Arrive a new consignment
 
 associate.heading = Add to MUCR {0}
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
