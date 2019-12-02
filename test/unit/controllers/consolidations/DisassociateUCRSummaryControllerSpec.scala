@@ -21,7 +21,7 @@ import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
 import forms.{DisassociateKind, DisassociateUcr}
 import models.ReturnToStartException
-import models.cache.{Answers, Cache, DisassociateUcrAnswers}
+import models.cache.{Answers, DisassociateUcrAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
@@ -29,14 +29,14 @@ import org.mockito.Mockito.verify
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{MockCache, SubmissionService}
+import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.disassociate_ucr_summary
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DisassociateUCRSummaryControllerSpec extends ControllerLayerSpec with MockCache {
+class DisassociateUCRSummaryControllerSpec extends ControllerLayerSpec {
 
   private val ucr = "9AB123456"
   private val disassociation = DisassociateUcr(DisassociateKind.Ducr, Some(ucr), None)
@@ -45,7 +45,7 @@ class DisassociateUCRSummaryControllerSpec extends ControllerLayerSpec with Mock
   private val page = new disassociate_ucr_summary(main_template)
 
   private def controller(auth: AuthenticatedAction, existingAnswers: Answers) =
-    new DisassociateUCRSummaryController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), submissionService, cache, page)
+    new DisassociateUCRSummaryController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), submissionService, page)
 
   "GET" should {
     implicit val get = FakeRequest("GET", "/").withCSRFToken

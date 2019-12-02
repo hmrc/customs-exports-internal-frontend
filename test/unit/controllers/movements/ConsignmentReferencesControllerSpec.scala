@@ -37,7 +37,7 @@ class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockC
   private val page = mock[consignment_references]
 
   private def controller(answers: Answers = ArrivalAnswers()) =
-    new ConsignmentReferencesController(SuccessfulAuth(), ValidJourney(answers), cache, stubMessagesControllerComponents(), page)(global)
+    new ConsignmentReferencesController(SuccessfulAuth(), ValidJourney(answers), cacheRepository, stubMessagesControllerComponents(), page)(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -59,7 +59,7 @@ class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockC
 
   private def theCache: Cache = {
     val captor = ArgumentCaptor.forClass(classOf[Cache])
-    verify(cache).upsert(captor.capture())
+    verify(cacheRepository).upsert(captor.capture())
     captor.getValue
   }
 

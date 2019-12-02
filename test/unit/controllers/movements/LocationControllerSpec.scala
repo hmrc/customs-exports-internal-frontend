@@ -37,7 +37,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
   private val page = mock[location]
 
   private def controller(answers: Answers = ArrivalAnswers()) =
-    new LocationController(SuccessfulAuth(), ValidJourney(answers), cache, stubMessagesControllerComponents(), page)(global)
+    new LocationController(SuccessfulAuth(), ValidJourney(answers), cacheRepository, stubMessagesControllerComponents(), page)(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -59,7 +59,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
   private def theCache: Cache = {
     val captor = ArgumentCaptor.forClass(classOf[Cache])
-    verify(cache).upsert(captor.capture())
+    verify(cacheRepository).upsert(captor.capture())
     captor.getValue
   }
 

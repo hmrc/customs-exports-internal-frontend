@@ -39,7 +39,7 @@ abstract class IntegrationSpec
   /*
     Intentionally NOT exposing the real CacheRepository as we shouldn't test our production code using our production classes.
    */
-  private lazy val cache: JSONCollection = app.injector.instanceOf[CacheRepository].collection
+  private lazy val cacheRepository: JSONCollection = app.injector.instanceOf[CacheRepository].collection
 
   override lazy val port = 14681
   override def fakeApplication(): Application =
@@ -52,7 +52,7 @@ abstract class IntegrationSpec
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    await(cache.drop(failIfNotFound = false))
+    await(cacheRepository.drop(failIfNotFound = false))
   }
 
   protected def get(call: Call): Future[Result] =
@@ -63,8 +63,8 @@ abstract class IntegrationSpec
     route(app, request).get
   }
 
-  protected def theCacheFor(pid: String): Option[Answers] = await(cache.find(Json.obj("providerId" -> "pid")).one[Cache]).map(_.answers)
+  protected def theCacheFor(pid: String): Option[Answers] = await(cacheRepository.find(Json.obj("providerId" -> "pid")).one[Cache]).map(_.answers)
 
-  protected def givenCacheFor(pid: String, answers: Answers): Unit = await(cache.insert(Cache.format.writes(Cache(pid, answers))))
+  protected def givenCacheFor(pid: String, answers: Answers): Unit = await(cacheRepository.insert(Cache.format.writes(Cache(pid, answers))))
 
 }

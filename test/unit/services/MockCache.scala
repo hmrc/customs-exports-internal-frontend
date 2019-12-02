@@ -32,33 +32,33 @@ import scala.concurrent.Future
 trait MockCache extends MockitoSugar with BeforeAndAfterEach {
   this: Suite =>
 
-  protected val cache: CacheRepository = mock[CacheRepository]
+  protected val cacheRepository: CacheRepository = mock[CacheRepository]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    given(cache.upsert(any())).willAnswer(withTheCacheUpserted)
-    given(cache.removeByProviderId(any())).willReturn(Future.successful((): Unit))
+    given(cacheRepository.upsert(any())).willAnswer(withTheCacheUpserted)
+    given(cacheRepository.removeByProviderId(any())).willReturn(Future.successful((): Unit))
   }
 
   override protected def afterEach(): Unit = {
-    Mockito.reset(cache)
+    Mockito.reset(cacheRepository)
     super.afterEach()
   }
 
   protected def givenTheCacheContains(content: Cache): Unit =
-    given(cache.findByProviderId(any())).willReturn(Future.successful(Some(content)))
+    given(cacheRepository.findByProviderId(any())).willReturn(Future.successful(Some(content)))
 
   protected def givenTheCacheIsEmpty(): Unit =
-    given(cache.findByProviderId(any())).willReturn(Future.successful(None))
+    given(cacheRepository.findByProviderId(any())).willReturn(Future.successful(None))
 
   protected def theCacheUpserted: Cache = {
     val captor: ArgumentCaptor[Cache] = ArgumentCaptor.forClass(classOf[Cache])
-    verify(cache).upsert(captor.capture())
+    verify(cacheRepository).upsert(captor.capture())
     captor.getValue
   }
 
   protected def successfulRemoving(): Unit =
-    given(cache.removeByProviderId(any())).willReturn(Future.successful((): Unit))
+    given(cacheRepository.removeByProviderId(any())).willReturn(Future.successful((): Unit))
 
   protected def withTheCacheUpserted: Answer[Future[Cache]] = new Answer[Future[Cache]] {
     override def answer(invocation: InvocationOnMock): Future[Cache] = Future.successful(invocation.getArgument(0))

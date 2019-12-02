@@ -38,7 +38,7 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache {
   private val page = mock[mucr_options]
 
   private def controller(answers: AssociateUcrAnswers = AssociateUcrAnswers()) =
-    new MucrOptionsController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), cache, page)(global)
+    new MucrOptionsController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), cacheRepository, page)(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

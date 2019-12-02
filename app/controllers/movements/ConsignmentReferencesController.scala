@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConsignmentReferencesController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   mcc: MessagesControllerComponents,
   consignmentReferencesPage: consignment_references
 )(implicit ec: ExecutionContext)
@@ -54,15 +54,15 @@ class ConsignmentReferencesController @Inject()(
           validForm => {
             request.answers match {
               case arrivalAnswers: ArrivalAnswers =>
-                cache.upsert(Cache(request.providerId, arrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
+                cacheRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
                   Redirect(controllers.movements.routes.ArrivalReferenceController.displayPage())
                 }
               case retroArrivalAnswers: RetrospectiveArrivalAnswers =>
-                cache.upsert(Cache(request.providerId, retroArrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
+                cacheRepository.upsert(Cache(request.providerId, retroArrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
                   Redirect(controllers.movements.routes.LocationController.displayPage())
                 }
               case departureAnswers: DepartureAnswers =>
-                cache.upsert(Cache(request.providerId, departureAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
+                cacheRepository.upsert(Cache(request.providerId, departureAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
                   Redirect(controllers.movements.routes.MovementDetailsController.displayPage())
                 }
             }

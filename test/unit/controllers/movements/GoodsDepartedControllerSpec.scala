@@ -38,7 +38,7 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
   private val page = mock[goods_departed]
 
   private def controller(answers: Answers = DepartureAnswers()) =
-    new GoodsDepartedController(SuccessfulAuth(), ValidJourney(answers), cache, stubMessagesControllerComponents(), page)(global)
+    new GoodsDepartedController(SuccessfulAuth(), ValidJourney(answers), cacheRepository, stubMessagesControllerComponents(), page)(global)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -60,7 +60,7 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
 
   private def cachePassedToRepository: Cache = {
     val captor = ArgumentCaptor.forClass(classOf[Cache])
-    verify(cache).upsert(captor.capture())
+    verify(cacheRepository).upsert(captor.capture())
     captor.getValue
   }
 

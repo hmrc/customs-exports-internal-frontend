@@ -48,7 +48,7 @@ class MovementSummaryControllerSpec extends ControllerLayerSpec with MockCache {
     new MovementSummaryController(
       SuccessfulAuth(),
       ValidJourney(answers),
-      cache,
+      cacheRepository,
       submissionService,
       stubMessagesControllerComponents(),
       arrivalSummaryPage,

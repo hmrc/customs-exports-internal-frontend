@@ -33,13 +33,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChoiceController @Inject()(
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   choicePage: choice_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage: Action[AnyContent] = authenticate.async { implicit request =>
-    cache.findByProviderId(request.providerId).map {
+    cacheRepository.findByProviderId(request.providerId).map {
       case Some(cache) => Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
       case None        => Ok(choicePage(Choice.form()))
     }
@@ -67,5 +67,5 @@ class ChoiceController @Inject()(
   }
 
   private def saveAndRedirect(answers: Answers, call: Call)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
-    cache.upsert(Cache(request.providerId, answers)).map(_ => Redirect(call))
+    cacheRepository.upsert(Cache(request.providerId, answers)).map(_ => Redirect(call))
 }

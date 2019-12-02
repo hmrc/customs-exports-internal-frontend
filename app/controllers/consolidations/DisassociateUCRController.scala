@@ -33,7 +33,7 @@ class DisassociateUCRController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   page: disassociate_ucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -51,7 +51,7 @@ class DisassociateUCRController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
         answers =>
-          cache.upsert(Cache(request.providerId, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
+          cacheRepository.upsert(Cache(request.providerId, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
             Redirect(controllers.consolidations.routes.DisassociateUCRSummaryController.display())
         }
       )

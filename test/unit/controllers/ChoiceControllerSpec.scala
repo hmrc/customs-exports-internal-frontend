@@ -41,7 +41,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
   private val choicePage: choice_page = mock[choice_page]
 
   private def controller(auth: AuthenticatedAction = SuccessfulAuth()) =
-    new ChoiceController(auth, stubMessagesControllerComponents(), cache, choicePage)
+    new ChoiceController(auth, stubMessagesControllerComponents(), cacheRepository, choicePage)
 
   private def theResponseForm: Form[Choice] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[Choice]])

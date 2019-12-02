@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext
 class MovementSummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   submissionService: SubmissionService,
   mcc: MessagesControllerComponents,
   arrivalSummaryPage: arrival_summary_page,

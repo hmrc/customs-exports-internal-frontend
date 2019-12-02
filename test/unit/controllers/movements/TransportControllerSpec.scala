@@ -41,7 +41,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
   private val page = mock[transport]
 
   private def controller(answers: Answers = DepartureAnswers()) =
-    new TransportController(SuccessfulAuth(), ValidJourney(answers), cache, formProvider, stubMessagesControllerComponents(), page)(global)
+    new TransportController(SuccessfulAuth(), ValidJourney(answers), cacheRepository, formProvider, stubMessagesControllerComponents(), page)(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

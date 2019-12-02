@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class MovementDetailsController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   mcc: MessagesControllerComponents,
   details: MovementDetails,
   arrivalDetailsPage: arrival_details,
@@ -74,7 +74,7 @@ class MovementDetailsController @Inject()(
       .fold(
         (formWithErrors: Form[ArrivalDetails]) => Future.successful(Left(arrivalDetailsPage(formWithErrors))),
         validForm =>
-          cache.upsert(Cache(request.providerId, arrivalAnswers.copy(arrivalDetails = Some(validForm)))).map { _ =>
+          cacheRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(arrivalDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
         }
       )
@@ -86,7 +86,7 @@ class MovementDetailsController @Inject()(
       .fold(
         (formWithErrors: Form[DepartureDetails]) => Future.successful(Left(departureDetailsPage(formWithErrors))),
         validForm =>
-          cache.upsert(Cache(request.providerId, departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
+          cacheRepository.upsert(Cache(request.providerId, departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
         }
       )
