@@ -22,6 +22,7 @@ sealed abstract class ActionType(val value: String)
 
 object ActionType {
   case object Arrival extends ActionType("Arrival")
+  case object RetrospectiveArrival extends ActionType("RetrospectiveArrival")
   case object Departure extends ActionType("Departure")
   case object DucrAssociation extends ActionType("DucrAssociation")
   case object MucrAssociation extends ActionType("MucrAssociation")
@@ -33,14 +34,15 @@ object ActionType {
     override def writes(actionType: ActionType): JsValue = JsString(actionType.value)
 
     override def reads(json: JsValue): JsResult[ActionType] = json match {
-      case JsString("Arrival")            => JsSuccess(Arrival)
-      case JsString("Departure")          => JsSuccess(Departure)
-      case JsString("DucrAssociation")    => JsSuccess(DucrAssociation)
-      case JsString("MucrAssociation")    => JsSuccess(MucrAssociation)
-      case JsString("DucrDisassociation") => JsSuccess(DucrDisassociation)
-      case JsString("MucrDisassociation") => JsSuccess(MucrDisassociation)
-      case JsString("ShutMucr")           => JsSuccess(ShutMucr)
-      case _                              => JsError("Unknown ActionType")
+      case JsString("Arrival")              => JsSuccess(Arrival)
+      case JsString("RetrospectiveArrival") => JsSuccess(RetrospectiveArrival)
+      case JsString("Departure")            => JsSuccess(Departure)
+      case JsString("DucrAssociation")      => JsSuccess(DucrAssociation)
+      case JsString("MucrAssociation")      => JsSuccess(MucrAssociation)
+      case JsString("DucrDisassociation")   => JsSuccess(DucrDisassociation)
+      case JsString("MucrDisassociation")   => JsSuccess(MucrDisassociation)
+      case JsString("ShutMucr")             => JsSuccess(ShutMucr)
+      case _                                => JsError("Unknown ActionType")
     }
   }
 }
