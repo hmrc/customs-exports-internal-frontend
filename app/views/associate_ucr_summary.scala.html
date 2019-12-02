@@ -43,7 +43,9 @@
                     <td class="text-right associate_ucr__change">
                         <a id="associate_ducr-change" href="@consolidations.routes.AssociateUCRController.displayPage()">
                             <span aria-hidden="true">@messages("site.change")</span>
-                            <span class="visuallyhidden">@{messages("site.change.hint.associate.ucr", "DUCR")}</span>
+                            <span class="visuallyhidden">
+                                @{messages("site.change.hint.associate.ucr", messages(s"associate.ucr.summary.kind.${associateUcr.kind.formValue}"))}
+                            </span>
                         </a>
                     </td>
                 </tr>
@@ -60,7 +62,9 @@
                     <td class="text-right associate_ucr__change">
                         <a id="associate_mucr-change" href="@consolidations.routes.MucrOptionsController.displayPage()">
                             <span aria-hidden="true">@messages("site.change")</span>
-                            <span class="visuallyhidden">@{messages("site.change.hint.associate.ucr", "MUCR")}</span>
+                            <span class="visuallyhidden">
+                                @{messages("site.change.hint.associate.mucr")}
+                            </span>
                         </a>
                     </td>
                 </tr>
