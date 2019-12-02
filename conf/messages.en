@@ -246,6 +246,7 @@ submissions.status = Status
 
 submissions.shutmucr = Shut
 submissions.arrival = Arrive
+submissions.retrospectivearrival = RET
 submissions.departure = Depart
 submissions.ducrassociation = Associate DUCR
 submissions.mucrassociation = Associate MUCR
@@ -257,6 +258,7 @@ submissions.mucrdisassociation = Disassociate MUCR
 notifications.title = Notifications relating to {0}
 
 notifications.elem.title.Arrival = Request to arrive has been received
+notifications.elem.title.RetrospectiveArrival = Request to retrospectively arrive has been received
 notifications.elem.title.Departure = Request to depart has been received
 notifications.elem.title.DucrAssociation = Request to associate this DUCR has been received
 notifications.elem.title.MucrAssociation = Request to associate this MUCR has been received
@@ -272,6 +274,7 @@ notifications.elem.title.inventoryLinkingMovementTotalsResponse = Update message
 notifications.elem.title.unknown = Update message
 
 notifications.elem.content.Arrival = Your request to arrive this {0} has been received.
+notifications.elem.content.RetrospectiveArrival = Your request to retrospectively arrive this {0} has been received.
 notifications.elem.content.Departure = Your request to depart this {0} has been received.
 notifications.elem.content.DucrAssociation = Your request to consolidate these DUCRs into this MUCR has been received:
 notifications.elem.content.MucrAssociation = Your request to consolidate MUCR into this MUCR has been received.
