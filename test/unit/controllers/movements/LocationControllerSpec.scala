@@ -57,12 +57,6 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
     captor.getValue
   }
 
-  private def theCache: Cache = {
-    val captor = ArgumentCaptor.forClass(classOf[Cache])
-    verify(cacheRepository).upsert(captor.capture())
-    captor.getValue
-  }
-
   "Location Controller" should {
 
     "return 200 (OK)" when {
@@ -133,7 +127,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
         await(controller(ArrivalAnswers()).saveLocation()(postRequest(correctForm)))
 
-        theCache.answers mustBe an[ArrivalAnswers]
+        theCacheUpserted.answers mustBe an[ArrivalAnswers]
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -159,7 +153,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
         await(controller(RetrospectiveArrivalAnswers()).saveLocation()(postRequest(correctForm)))
 
-        theCache.answers mustBe an[RetrospectiveArrivalAnswers]
+        theCacheUpserted.answers mustBe an[RetrospectiveArrivalAnswers]
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -185,7 +179,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
         await(controller(DepartureAnswers()).saveLocation()(postRequest(correctForm)))
 
-        theCache.answers mustBe an[DepartureAnswers]
+        theCacheUpserted.answers mustBe an[DepartureAnswers]
       }
 
       "return 303 (SEE_OTHER)" in {

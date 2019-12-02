@@ -57,12 +57,6 @@ class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockC
     captor.getValue
   }
 
-  private def theCache: Cache = {
-    val captor = ArgumentCaptor.forClass(classOf[Cache])
-    verify(cacheRepository).upsert(captor.capture())
-    captor.getValue
-  }
-
   "Consignment References Controller" should {
 
     "return 200 (OK)" when {
@@ -117,7 +111,7 @@ class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockC
 
         await(controller().saveConsignmentReferences()(postRequest(correctForm)))
 
-        theCache.answers mustBe an[ArrivalAnswers]
+        theCacheUpserted.answers mustBe an[ArrivalAnswers]
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -143,7 +137,7 @@ class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockC
 
         await(controller(RetrospectiveArrivalAnswers()).saveConsignmentReferences()(postRequest(correctForm)))
 
-        theCache.answers mustBe an[RetrospectiveArrivalAnswers]
+        theCacheUpserted.answers mustBe an[RetrospectiveArrivalAnswers]
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -169,7 +163,7 @@ class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockC
 
         await(controller(DepartureAnswers()).saveConsignmentReferences()(postRequest(correctForm)))
 
-        theCache.answers mustBe an[DepartureAnswers]
+        theCacheUpserted.answers mustBe an[DepartureAnswers]
       }
 
       "return 303 (SEE_OTHER)" in {
