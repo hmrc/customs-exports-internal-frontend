@@ -152,11 +152,13 @@ movement.ARRIVE.confirmation.tab.heading = Arrival request submitted
 movement.RETROSPECTIVE_ARRIVE.confirmation.tab.heading = Retrospective Arrival request submitted
 movement.ARRIVE.confirmation.heading = Request to arrive {0} {1} has been submitted
 movement.RETROSPECTIVE_ARRIVE.confirmation.heading = Request to retrospectively arrive {0} {1} has been submitted
+movement.arrival.confirmation.nextSteps = {0}, or {1}
 movement.arrival.confirmation.nextSteps.associate = Associate a consignment
 movement.arrival.confirmation.nextSteps.depart = depart a consignment
 
 movement.DEPART.confirmation.tab.heading = Departure request submitted
 movement.DEPART.confirmation.heading = Request to depart {0} {1} has been submitted
+movement.departure.confirmation.nextSteps = {0}. {1}
 movement.departure.confirmation.nextSteps.depart = Depart another consignment
 movement.departure.confirmation.nextSteps.arrive = Arrive a new consignment
 

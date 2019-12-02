@@ -48,12 +48,12 @@
 
     @if(Set(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE).contains(journeyType)) {
         <div id="next-steps">
-            @Html(s"$associateLink, or $departureLinkForArrival.")
+          @Html(messages("movement.arrival.confirmation.nextSteps", associateLink, departureLinkForArrival))
         </div>
     }
     @if(journeyType == JourneyType.DEPART) {
         <div id="next-steps">
-            @Html(s"$departureLinkForDeparture. $arrivalLink.")
+          @Html(messages("movement.departure.confirmation.nextSteps", departureLinkForDeparture, arrivalLink))
         </div>
     }
 
