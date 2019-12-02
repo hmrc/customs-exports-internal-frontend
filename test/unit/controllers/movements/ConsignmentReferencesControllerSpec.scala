@@ -18,7 +18,7 @@ package controllers.movements
 
 import controllers.ControllerLayerSpec
 import forms.ConsignmentReferences
-import models.cache.{Answers, ArrivalAnswers, Cache, DepartureAnswers}
+import models.cache._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -32,12 +32,12 @@ import views.html.consignment_references
 
 import scala.concurrent.ExecutionContext.global
 
-class ConsignmentlReferencesControllerSpec extends ControllerLayerSpec with MockCache {
+class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockCache {
 
   private val page = mock[consignment_references]
 
   private def controller(answers: Answers = ArrivalAnswers()) =
-    new ConsignmentReferencesController(SuccessfulAuth(), ValidJourney(answers), cache, stubMessagesControllerComponents(), page)(global)
+    new ConsignmentReferencesController(SuccessfulAuth(), ValidJourney(answers), cacheRepository, stubMessagesControllerComponents(), page)(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -54,7 +54,7 @@ class ConsignmentlReferencesControllerSpec extends ControllerLayerSpec with Mock
   private def theResponseForm: Form[ConsignmentReferences] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[ConsignmentReferences]])
     verify(page).apply(captor.capture())(any(), any())
-    captor.getValue()
+    captor.getValue
   }
 
   "Consignment References Controller" should {
@@ -97,10 +97,24 @@ class ConsignmentlReferencesControllerSpec extends ControllerLayerSpec with Mock
         status(result) mustBe BAD_REQUEST
       }
     }
+  }
 
-    "return 303 (SEE_OTHER)" when {
+  "Consignment References Controller" when {
 
-      "POST submit is invoked with correct form for arrival" in {
+    "POST submit is invoked with correct form for arrival" should {
+
+      "call cache upsert method" in {
+
+        givenTheCacheIsEmpty()
+
+        val correctForm = JsObject(Map("reference" -> JsString("D"), "ducrValue" -> JsString("9GB123456"), "mucrValue" -> JsString("")))
+
+        await(controller().saveConsignmentReferences()(postRequest(correctForm)))
+
+        theCacheUpserted.answers mustBe an[ArrivalAnswers]
+      }
+
+      "return 303 (SEE_OTHER)" in {
 
         givenTheCacheIsEmpty()
 
@@ -111,8 +125,48 @@ class ConsignmentlReferencesControllerSpec extends ControllerLayerSpec with Mock
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.movements.routes.ArrivalReferenceController.displayPage().url)
       }
+    }
 
-      "POST submit is invoked with correct form for departure" in {
+    "POST submit is invoked with correct form for retrospective arrival" should {
+
+      "call cache upsert method" in {
+
+        givenTheCacheIsEmpty()
+
+        val correctForm = JsObject(Map("reference" -> JsString("D"), "ducrValue" -> JsString("9GB123456"), "mucrValue" -> JsString("")))
+
+        await(controller(RetrospectiveArrivalAnswers()).saveConsignmentReferences()(postRequest(correctForm)))
+
+        theCacheUpserted.answers mustBe an[RetrospectiveArrivalAnswers]
+      }
+
+      "return 303 (SEE_OTHER)" in {
+
+        givenTheCacheIsEmpty()
+
+        val correctForm = JsObject(Map("reference" -> JsString("D"), "ducrValue" -> JsString("9GB123456"), "mucrValue" -> JsString("")))
+
+        val result = controller(RetrospectiveArrivalAnswers()).saveConsignmentReferences()(postRequest(correctForm))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.movements.routes.LocationController.displayPage().url)
+      }
+    }
+
+    "POST submit is invoked with correct form for departure" should {
+
+      "call cache upsert method" in {
+
+        givenTheCacheIsEmpty()
+
+        val correctForm = JsObject(Map("reference" -> JsString("M"), "ducrValue" -> JsString(""), "mucrValue" -> JsString("GB/ABC-12345")))
+
+        await(controller(DepartureAnswers()).saveConsignmentReferences()(postRequest(correctForm)))
+
+        theCacheUpserted.answers mustBe an[DepartureAnswers]
+      }
+
+      "return 303 (SEE_OTHER)" in {
 
         givenTheCacheIsEmpty()
 
@@ -125,4 +179,5 @@ class ConsignmentlReferencesControllerSpec extends ControllerLayerSpec with Mock
       }
     }
   }
+
 }

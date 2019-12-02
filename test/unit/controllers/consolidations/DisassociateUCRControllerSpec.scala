@@ -37,7 +37,7 @@ class DisassociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
   private val page = new disassociate_ucr(main_template)
 
   private def controller(auth: AuthenticatedAction, existingAnswers: Answers) =
-    new DisassociateUCRController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), cache, page)
+    new DisassociateUCRController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), cacheRepository, page)
 
   "GET" should {
     implicit val get = FakeRequest("GET", "/").withCSRFToken

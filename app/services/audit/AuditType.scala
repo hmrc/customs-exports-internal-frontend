@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(title: String = "", sectionHeader: String = "", hint: String = "")
+package services.audit
 
-<header class="page-heading">
-  @if(sectionHeader.nonEmpty) {
-    <span class="visuallyhidden">This section is </span>
-    <span id="section-header" class="heading-secondary">@sectionHeader</span>
-  }
+object AuditType extends Enumeration {
+  type Audit = Value
 
-  @if(title.nonEmpty) {
-    <h1 id="title" class="title">@title</h1>
-  }
-
-  @if(hint.nonEmpty) {
-    <span id="hint" class="form-hint">@hint</span>
-  }
-</header>
+  val AuditArrival: AuditType.Value = Value("Arrival")
+  val AuditRetrospectiveArrival: AuditType.Value = Value("RetrospectiveArrival")
+  val AuditDeparture: AuditType.Value = Value("Departure")
+  val AuditAssociate: AuditType.Value = Value("Associate")
+  val AuditDisassociate: AuditType.Value = Value("Disassociate")
+  val AuditShutMucr: AuditType.Value = Value("ShutMucr")
+}

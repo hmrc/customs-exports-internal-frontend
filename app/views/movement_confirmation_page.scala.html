@@ -14,29 +14,29 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.main_template
+@import forms.ConsignmentReferences
 @import models.cache.JourneyType
 @import models.cache.JourneyType.JourneyType
 @import views.Title
-@import forms.ConsignmentReferences
+@import views.html.templates.main_template
 
 @this(main_template: main_template)
 
 @(journeyType: JourneyType, consignmentReferences: ConsignmentReferences)(implicit request: Request[_], messages: Messages)
 
 
-@associateLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.AssociateUCR)">@messages("movement.arrival.confirmation.nextSteps.associate")</a>}
-@departureLinkForArrival = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.Departure)">@messages("movement.arrival.confirmation.nextSteps.depart")</a>}
-@departureLinkForDeparture = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.Departure)">@messages("movement.departure.confirmation.nextSteps.depart")</a>}
-@arrivalLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.Arrival)">@messages("movement.departure.confirmation.nextSteps.arrive")</a>}
+@associateLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.AssociateUCR)">@messages("movement.confirmation.arrival.nextSteps.associate")</a>}
+@departureLinkForArrival = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.Departure)">@messages("movement.confirmation.arrival.nextSteps.depart")</a>}
+@departureLinkForDeparture = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.Departure)">@messages("movement.confirmation.departure.nextSteps.depart")</a>}
+@arrivalLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.Arrival)">@messages("movement.confirmation.departure.nextSteps.arrive")</a>}
 
 @main_template(
-    title = Title(s"movement.${journeyType}.confirmation.tab.heading", None)
+    title = Title(s"movement.confirmation.${journeyType}.tab.heading", None)
 ) {
 
     @components.highlight_box_with_reference(
         headingText = messages(
-            s"movement.${journeyType}.confirmation.heading",
+            s"movement.confirmation.${journeyType}.heading",
             if(consignmentReferences.reference == "D") "DUCR" else "MUCR",
             consignmentReferences.referenceValue
         )
@@ -46,14 +46,14 @@
 
     <h2 id="what-next">@messages("movement.confirmation.whatNext")</h2>
 
-    @if(journeyType == JourneyType.ARRIVE) {
+    @if(Set(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE).contains(journeyType)) {
         <div id="next-steps">
-            @Html(messages("movement.arrival.confirmation.nextSteps", associateLink, departureLinkForArrival))
+          @Html(messages("movement.confirmation.arrival.nextSteps", associateLink, departureLinkForArrival))
         </div>
     }
     @if(journeyType == JourneyType.DEPART) {
         <div id="next-steps">
-            @Html(messages("movement.departure.confirmation.nextSteps", departureLinkForDeparture, arrivalLink))
+          @Html(messages("movement.confirmation.departure.nextSteps", departureLinkForDeparture, arrivalLink))
         </div>
     }
 

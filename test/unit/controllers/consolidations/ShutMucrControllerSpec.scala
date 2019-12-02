@@ -37,7 +37,7 @@ class ShutMucrControllerSpec extends ControllerLayerSpec with MockCache {
   private val page = mock[shut_mucr]
 
   private def controller(answers: Answers = ShutMucrAnswers()) =
-    new ShutMucrController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), cache, page)(global)
+    new ShutMucrController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), cacheRepository, page)(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

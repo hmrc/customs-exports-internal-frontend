@@ -34,7 +34,7 @@ class AssociateUCRController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   associateUcrPage: associate_ucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -56,7 +56,7 @@ class AssociateUCRController @Inject()(
         formWithErrors => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions))),
         formData => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(associateUcr = Some(formData))
-          cache.upsert(Cache(request.providerId, updatedCache)).map { _ =>
+          cacheRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(consolidationRoutes.AssociateUCRSummaryController.displayPage())
           }
         }

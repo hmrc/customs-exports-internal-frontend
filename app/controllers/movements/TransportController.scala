@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class TransportController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   formProvider: TransportFormProvider,
   mcc: MessagesControllerComponents,
   transportPage: transport
@@ -57,7 +57,7 @@ class TransportController @Inject()(
         (formWithErrors: Form[Transport]) => Future.successful(BadRequest(transportPage(formWithErrors))),
         validForm => {
           val movementAnswers = request.answersAs[DepartureAnswers].copy(transport = Some(validForm))
-          cache.upsert(Cache(request.providerId, movementAnswers)).map { _ =>
+          cacheRepository.upsert(Cache(request.providerId, movementAnswers)).map { _ =>
             Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
           }
         }

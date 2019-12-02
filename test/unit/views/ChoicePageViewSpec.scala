@@ -30,16 +30,29 @@ class ChoicePageViewSpec extends ViewSpec {
   "Choice page page" should {
 
     "render title" in {
-      page(Choice.form).getTitle must containMessage("movement.choice.title")
+      page(Choice.form()).getTitle must containMessage("movement.choice.title")
+    }
+
+    "render all options for radio button" in {
+
+      val choicePage = page(Choice.form())
+
+      choicePage.getElementById("arrival-label") must containMessage("movement.choice.arrival.label")
+      choicePage.getElementById("associate-label") must containMessage("movement.choice.associate.label")
+      choicePage.getElementById("disassociate-label") must containMessage("movement.choice.disassociateDucr.label")
+      choicePage.getElementById("shut_mucr-label") must containMessage("movement.choice.shutMucr.label")
+      choicePage.getElementById("departure-label") must containMessage("movement.choice.departure.label")
+      choicePage.getElementById("retrospectiveArrival-label") must containMessage("movement.choice.retrospectiveArrival.label")
+      choicePage.getElementById("submissions-label") must containMessage("movement.choice.submissions.label")
     }
 
     "render error summary" when {
       "no errors" in {
-        page(Choice.form).getErrorSummary mustBe empty
+        page(Choice.form()).getErrorSummary mustBe empty
       }
 
       "some errors" in {
-        page(Choice.form.withError("error", "error.required")).getErrorSummary mustBe defined
+        page(Choice.form().withError("error", "error.required")).getErrorSummary mustBe defined
       }
     }
   }

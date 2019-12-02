@@ -37,11 +37,12 @@ object Choice {
     allChoices.find(_.value == input).getOrElse(throw new IllegalArgumentException("Incorrect choice"))
 
   def apply(`type`: JourneyType): Choice = `type` match {
-    case ARRIVE         => Arrival
-    case DEPART         => Departure
-    case ASSOCIATE_UCR  => AssociateUCR
-    case DISSOCIATE_UCR => DisassociateUCR
-    case SHUT_MUCR      => ShutMUCR
+    case ARRIVE               => Arrival
+    case RETROSPECTIVE_ARRIVE => RetrospectiveArrival
+    case DEPART               => Departure
+    case ASSOCIATE_UCR        => AssociateUCR
+    case DISSOCIATE_UCR       => DisassociateUCR
+    case SHUT_MUCR            => ShutMUCR
   }
 
   implicit object ChoiceValueFormat extends Format[Choice] {
@@ -61,13 +62,14 @@ object Choice {
   }
 
   case object Arrival extends Choice("arrival")
+  case object RetrospectiveArrival extends Choice("retrospectiveArrival")
   case object Departure extends Choice("departure")
   case object AssociateUCR extends Choice("associateUCR")
   case object DisassociateUCR extends Choice("disassociateUCR")
   case object ShutMUCR extends Choice("shutMUCR")
   case object ViewSubmissions extends Choice("submissions")
 
-  val allChoices = Seq(Arrival, Departure, AssociateUCR, DisassociateUCR, ShutMUCR, ViewSubmissions)
+  val allChoices: Seq[Choice] = Seq(Arrival, RetrospectiveArrival, Departure, AssociateUCR, DisassociateUCR, ShutMUCR, ViewSubmissions)
 
   val choiceId = "choice"
 

@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ArrivalReferenceController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   mcc: MessagesControllerComponents,
   arrivalReferencePage: arrival_reference
 )(implicit ec: ExecutionContext)
@@ -51,7 +51,7 @@ class ArrivalReferenceController @Inject()(
         (formWithErrors: Form[ArrivalReference]) => Future.successful(BadRequest(arrivalReferencePage(formWithErrors))),
         validForm => {
           val movementAnswers = request.answersAs[ArrivalAnswers].copy(arrivalReference = Some(validForm))
-          cache.upsert(Cache(request.providerId, movementAnswers)).map { _ =>
+          cacheRepository.upsert(Cache(request.providerId, movementAnswers)).map { _ =>
             Redirect(controllers.movements.routes.MovementDetailsController.displayPage())
           }
         }

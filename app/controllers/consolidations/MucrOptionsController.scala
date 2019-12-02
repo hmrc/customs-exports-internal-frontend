@@ -33,7 +33,7 @@ class MucrOptionsController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   mucrOptionsPage: mucr_options
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -51,7 +51,7 @@ class MucrOptionsController @Inject()(
         formWithErrors => Future.successful(BadRequest(mucrOptionsPage(formWithErrors))),
         validForm => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(mucrOptions = Some(validForm))
-          cache.upsert(Cache(request.providerId, updatedCache)).map { _ =>
+          cacheRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(consolidationsRoutes.AssociateUCRController.displayPage())
           }
         }

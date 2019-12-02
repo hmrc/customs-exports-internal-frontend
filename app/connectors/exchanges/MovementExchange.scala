@@ -24,8 +24,8 @@ case class ArrivalExchange(
   override val eori: String,
   override val providerId: String,
   override val consignmentReference: ConsignmentReferences,
-  override val movementDetails: MovementDetailsExchange,
   override val location: Location,
+  movementDetails: MovementDetailsExchange,
   arrivalReference: ArrivalReference
 ) extends MovementExchange {
   override val choice: MovementType = MovementType.Arrival
@@ -34,12 +34,24 @@ object ArrivalExchange {
   implicit val format: OFormat[ArrivalExchange] = Json.format[ArrivalExchange]
 }
 
+case class RetrospectiveArrivalExchange(
+  override val eori: String,
+  override val providerId: String,
+  override val consignmentReference: ConsignmentReferences,
+  override val location: Location
+) extends MovementExchange {
+  override val choice: MovementType = MovementType.RetrospectiveArrival
+}
+object RetrospectiveArrivalExchange {
+  implicit val format: OFormat[RetrospectiveArrivalExchange] = Json.format[RetrospectiveArrivalExchange]
+}
+
 case class DepartureExchange(
   override val eori: String,
   override val providerId: String,
   override val consignmentReference: ConsignmentReferences,
-  override val movementDetails: MovementDetailsExchange,
   override val location: Location,
+  movementDetails: MovementDetailsExchange,
   transport: Transport
 ) extends MovementExchange {
   override val choice: MovementType = MovementType.Departure
@@ -53,14 +65,14 @@ trait MovementExchange {
   val providerId: String
   val choice: MovementType
   val consignmentReference: ConsignmentReferences
-  val movementDetails: MovementDetailsExchange
   val location: Location
 }
 
 object MovementExchange {
   implicit val format: Format[MovementExchange] = Union
     .from[MovementExchange]("choice")
-    .and[DepartureExchange](MovementType.Departure.toString)
     .and[ArrivalExchange](MovementType.Arrival.toString)
+    .and[RetrospectiveArrivalExchange](MovementType.RetrospectiveArrival.toString)
+    .and[DepartureExchange](MovementType.Departure.toString)
     .format
 }

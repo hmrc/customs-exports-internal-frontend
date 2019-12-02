@@ -17,7 +17,8 @@
 package forms
 
 import base.UnitSpec
-import forms.Choice.{Arrival, ChoiceValueFormat, Departure}
+import forms.Choice._
+import models.cache.JourneyType.{apply => _, _}
 import org.scalatest.OptionValues
 import play.api.libs.json._
 
@@ -59,11 +60,33 @@ class ChoiceSpec extends UnitSpec with OptionValues {
     "have correctly prepared unapply method" in {
 
       Choice.unapply(Arrival).value mustBe "arrival"
+      Choice.unapply(RetrospectiveArrival).value mustBe "retrospectiveArrival"
+      Choice.unapply(Departure).value mustBe "departure"
+      Choice.unapply(AssociateUCR).value mustBe "associateUCR"
+      Choice.unapply(DisassociateUCR).value mustBe "disassociateUCR"
+      Choice.unapply(ShutMUCR).value mustBe "shutMUCR"
+      Choice.unapply(ViewSubmissions).value mustBe "submissions"
     }
 
     "correctly map input to choice" in {
 
       Choice.apply("arrival") mustBe Arrival
+      Choice.apply("retrospectiveArrival") mustBe RetrospectiveArrival
+      Choice.apply("departure") mustBe Departure
+      Choice.apply("associateUCR") mustBe AssociateUCR
+      Choice.apply("disassociateUCR") mustBe DisassociateUCR
+      Choice.apply("shutMUCR") mustBe ShutMUCR
+      Choice.apply("submissions") mustBe ViewSubmissions
+    }
+
+    "correctly map JourneyType into choice" in {
+
+      Choice.apply(ARRIVE) mustBe Arrival
+      Choice.apply(RETROSPECTIVE_ARRIVE) mustBe RetrospectiveArrival
+      Choice.apply(DEPART) mustBe Departure
+      Choice.apply(ASSOCIATE_UCR) mustBe AssociateUCR
+      Choice.apply(DISSOCIATE_UCR) mustBe DisassociateUCR
+      Choice.apply(SHUT_MUCR) mustBe ShutMUCR
     }
 
     "throw an exception during apply method when choice is incorrect" in {

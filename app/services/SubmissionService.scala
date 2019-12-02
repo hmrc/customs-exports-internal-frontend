@@ -23,9 +23,8 @@ import javax.inject.{Inject, Singleton}
 import metrics.MovementsMetrics
 import models.ReturnToStartException
 import models.cache._
-import play.api.http.Status
 import repositories.CacheRepository
-import services.audit.{AuditService, AuditTypes}
+import services.audit.{AuditService, AuditType}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,7 +32,7 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class SubmissionService @Inject()(
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   connector: CustomsDeclareExportsMovementsConnector,
   auditService: AuditService,
   metrics: MovementsMetrics,
@@ -45,13 +44,13 @@ class SubmissionService @Inject()(
 
   def submit(providerId: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
-    val ucr = answers.ucr.getOrElse(throw ReturnToStartException).ucr
+    val ucr = answers.ucr.map(_.ucr).getOrElse(throw ReturnToStartException)
 
     connector
       .submit(DisassociateDUCRExchange(providerId, eori, ucr))
       .andThen {
         case Success(_) =>
-          cache.removeByProviderId(providerId).flatMap { _ =>
+          cacheRepository.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditDisassociate(providerId, ucr, success)
           }
         case Failure(_) =>
@@ -68,7 +67,7 @@ class SubmissionService @Inject()(
       .submit(AssociateUCRExchange(providerId, eori, mucr, ucr))
       .andThen {
         case Success(_) =>
-          cache.removeByProviderId(providerId).flatMap { _ =>
+          cacheRepository.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditAssociate(providerId, mucr, ucr, success)
           }
         case Failure(_) =>
@@ -84,7 +83,7 @@ class SubmissionService @Inject()(
       .submit(ShutMUCRExchange(providerId, eori, mucr))
       .andThen {
         case Success(_) =>
-          cache.removeByProviderId(providerId).flatMap { _ =>
+          cacheRepository.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditShutMucr(providerId, mucr, success)
           }
         case Failure(_) =>
@@ -94,21 +93,30 @@ class SubmissionService @Inject()(
 
   def submit(providerId: String, answers: MovementAnswers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
     val cache = Cache(providerId, answers)
-
-    val data = movementBuilder.createMovementRequest(providerId, answers)
+    val data = movementBuilder.createMovementExchange(providerId, answers)
     val timer = metrics.startTimer(cache.answers.`type`)
 
-    auditService.auditAllPagesUserInput(answers)
-
-    val movementAuditType =
-      if (cache.answers.`type` == JourneyType.ARRIVE) AuditTypes.AuditArrival else AuditTypes.AuditDeparture
-
-    connector.submit(data).map { _ =>
+    def performSideEffects(result: String)(implicit hc: HeaderCarrier): Unit = {
       metrics.incrementCounter(cache.answers.`type`)
-      auditService
-        .auditMovements(data, success, movementAuditType)
+      auditService.auditMovements(data, result, movementAuditType(cache))
       timer.stop()
-      data.consignmentReference
     }
+
+    auditService.auditAllPagesUserInput(answers)
+    connector
+      .submit(data)
+      .map(_ => cacheRepository.removeByProviderId(providerId))
+      .map(_ => data.consignmentReference)
+      .andThen {
+        case Success(_) => performSideEffects(success)
+        case Failure(_) => performSideEffects(failed)
+      }
+
+  }
+
+  private def movementAuditType(cache: Cache): AuditType.Value = cache.answers.`type` match {
+    case JourneyType.ARRIVE               => AuditType.AuditArrival
+    case JourneyType.RETROSPECTIVE_ARRIVE => AuditType.AuditRetrospectiveArrival
+    case JourneyType.DEPART               => AuditType.AuditDeparture
   }
 }

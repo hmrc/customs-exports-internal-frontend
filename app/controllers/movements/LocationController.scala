@@ -34,34 +34,40 @@ import scala.concurrent.{ExecutionContext, Future}
 class LocationController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   mcc: MessagesControllerComponents,
   locationPage: location
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)) { implicit request =>
-    val location = request.answersAs[MovementAnswers].location
-    Ok(locationPage(location.fold(form())(form().fill(_))))
-  }
+  def displayPage(): Action[AnyContent] =
+    (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)) { implicit request =>
+      val location = request.answersAs[MovementAnswers].location
+      Ok(locationPage(location.fold(form())(form().fill(_))))
+    }
 
-  def saveLocation(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async { implicit request =>
-    form()
-      .bindFromRequest()
-      .fold(
-        (formWithErrors: Form[Location]) => Future.successful(BadRequest(locationPage(formWithErrors))),
-        validForm => {
-          request.answers match {
-            case arrivalAnswers: ArrivalAnswers =>
-              cache.upsert(Cache(request.providerId, arrivalAnswers.copy(location = Some(validForm)))).map { _ =>
-                Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
-              }
-            case departureAnswers: DepartureAnswers =>
-              cache.upsert(Cache(request.providerId, departureAnswers.copy(location = Some(validForm)))).map { _ =>
-                Redirect(controllers.movements.routes.GoodsDepartedController.displayPage())
-              }
+  def saveLocation(): Action[AnyContent] =
+    (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)).async { implicit request =>
+      form()
+        .bindFromRequest()
+        .fold(
+          (formWithErrors: Form[Location]) => Future.successful(BadRequest(locationPage(formWithErrors))),
+          validLocation => {
+            request.answers match {
+              case arrivalAnswers: ArrivalAnswers =>
+                cacheRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
+                  Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
+                }
+              case retroArrivalAnswers: RetrospectiveArrivalAnswers =>
+                cacheRepository.upsert(Cache(request.providerId, retroArrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
+                  Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
+                }
+              case departureAnswers: DepartureAnswers =>
+                cacheRepository.upsert(Cache(request.providerId, departureAnswers.copy(location = Some(validLocation)))).map { _ =>
+                  Redirect(controllers.movements.routes.GoodsDepartedController.displayPage())
+                }
+            }
           }
-        }
-      )
-  }
+        )
+    }
 }

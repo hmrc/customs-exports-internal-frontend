@@ -23,19 +23,15 @@ sealed abstract class MovementType(val value: String) {
 }
 
 object MovementType {
-  val allValues = Seq(Arrival, Departure)
-
-  def apply(input: String): MovementType =
-    MovementType.allValues
-      .find(_.value == input)
-      .getOrElse(throw new IllegalArgumentException("Incorrect movement type"))
+  val allValues = Seq(Arrival, RetrospectiveArrival, Departure)
 
   case object Arrival extends MovementType("EAL")
-
+  case object RetrospectiveArrival extends MovementType("RET")
   case object Departure extends MovementType("EDL")
 
   implicit object MovementTypeFormat extends Format[MovementType] {
     def writes(movementType: MovementType): JsValue = JsString(movementType.value)
+
     def reads(jsonValue: JsValue): JsResult[MovementType] = jsonValue match {
       case JsString(choice) =>
         MovementType.allValues.find(_.value == choice).map(JsSuccess(_)).getOrElse(JsError("Incorrect movement type"))

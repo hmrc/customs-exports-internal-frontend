@@ -16,34 +16,79 @@
 
 package testdata
 
-import java.time.{Instant, ZoneId}
+import java.time.format.DateTimeFormatter
+import java.time.{Instant, LocalDate, LocalTime, ZoneId}
 
-import connectors.exchanges.MovementExchange
-import forms.{Choice, ConsignmentReferences, MovementBuilder, MovementDetails}
+import connectors.exchanges.{ArrivalExchange, DepartureExchange, MovementDetailsExchange, RetrospectiveArrivalExchange}
+import forms.GoodsDeparted.DepartureLocation.OutOfTheUk
+import forms.Transport.ModesOfTransport
+import forms._
+import forms.common.{Date, Time}
 import models.UcrBlock
-import models.cache.{ArrivalAnswers, DepartureAnswers}
+import models.cache.{ArrivalAnswers, DepartureAnswers, RetrospectiveArrivalAnswers}
 import models.submissions.{ActionType, Submission}
-import testdata.CommonTestData.{conversationId, correctUcr, providerId, validEori}
+import testdata.CommonTestData._
 
 object MovementsTestData {
 
   private val zoneId: ZoneId = ZoneId.of("Europe/London")
-
+  private val dateTimeFormatter = DateTimeFormatter.ISO_INSTANT
   val movementDetails = new MovementDetails(zoneId)
 
-  val movementBuilder = new MovementBuilder(zoneId)
-
-  def validMovementRequest(movementType: Choice): MovementExchange =
-    movementType match {
-      case Choice.Arrival   => movementBuilder.createMovementRequest(providerId, validArrivalAnswers)
-      case Choice.Departure => movementBuilder.createMovementRequest(providerId, validDepartureAnswers)
-    }
-
   def validArrivalAnswers =
-    ArrivalAnswers(Some("eori"), consignmentReferences = Some(ConsignmentReferences("ref", "value")))
+    ArrivalAnswers(
+      eori = Some(validEori),
+      consignmentReferences = Some(ConsignmentReferences(reference = "D", referenceValue = correctUcr)),
+      arrivalReference = Some(ArrivalReference(Some("arrivalReference"))),
+      arrivalDetails = Some(ArrivalDetails(Date(LocalDate.now().minusDays(1)), Time(LocalTime.of(1, 1)))),
+      location = Some(Location("GBAUEMAEMAEMA"))
+    )
+
+  def validRetrospectiveArrivalAnswers =
+    RetrospectiveArrivalAnswers(
+      eori = Some(validEori),
+      consignmentReferences = Some(ConsignmentReferences(reference = "D", referenceValue = correctUcr)),
+      location = Some(Location("GBAUEMAEMAEMA"))
+    )
 
   def validDepartureAnswers =
-    DepartureAnswers(Some("eori"), consignmentReferences = Some(ConsignmentReferences("ref", "value")))
+    DepartureAnswers(
+      eori = Some(validEori),
+      consignmentReferences = Some(ConsignmentReferences(reference = "D", referenceValue = correctUcr)),
+      departureDetails = Some(DepartureDetails(Date(LocalDate.of(2019, 1, 1)), Time(LocalTime.of(0, 0)))),
+      location = Some(Location("GBAUEMAEMAEMA")),
+      goodsDeparted = Some(GoodsDeparted(OutOfTheUk)),
+      transport = Some(Transport(modeOfTransport = Some(ModesOfTransport.Sea), nationality = Some("GB"), transportId = Some("transportID")))
+    )
+
+  def validArrivalExchange = ArrivalExchange(
+    eori = validEori,
+    providerId = providerId,
+    consignmentReference = ConsignmentReferences(reference = "D", referenceValue = correctUcr),
+    location = Location("GBAUEMAEMAEMA"),
+    arrivalReference = ArrivalReference(Some("arrivalReference")),
+    movementDetails = MovementDetailsExchange(
+      dateTimeFormatter.format(ArrivalDetails(Date(LocalDate.now().minusDays(1)), Time(LocalTime.of(1, 1))).goodsArrivalMoment(zoneId))
+    )
+  )
+
+  def validRetrospectiveArrivalExchange = RetrospectiveArrivalExchange(
+    eori = validEori,
+    providerId = providerId,
+    consignmentReference = ConsignmentReferences(reference = "D", referenceValue = correctUcr),
+    location = Location("GBAUEMAEMAEMA")
+  )
+
+  def validDepartureExchange = DepartureExchange(
+    eori = validEori,
+    providerId = providerId,
+    consignmentReference = ConsignmentReferences(reference = "D", referenceValue = correctUcr),
+    location = Location("GBAUEMAEMAEMA"),
+    movementDetails = MovementDetailsExchange(
+      dateTimeFormatter.format(DepartureDetails(Date(LocalDate.of(2019, 1, 1)), Time(LocalTime.of(0, 0))).goodsDepartureMoment(zoneId))
+    ),
+    transport = Transport(modeOfTransport = Some(ModesOfTransport.Sea), nationality = Some("GB"), transportId = Some("transportID"))
+  )
 
   def exampleSubmission(
     eori: String = validEori,

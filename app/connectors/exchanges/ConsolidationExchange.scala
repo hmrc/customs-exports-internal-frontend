@@ -22,7 +22,9 @@ import uk.gov.hmrc.play.json.Union
 
 object ConsolidationType extends Enumeration {
   type ConsolidationType = Value
+
   val ASSOCIATE_DUCR, DISASSOCIATE_DUCR, SHUT_MUCR = Value
+
   implicit val format: Format[ConsolidationType] = Format(Reads.enumNameReads(ConsolidationType), Writes.enumNameWrites)
 }
 
@@ -49,7 +51,7 @@ object ShutMUCRExchange {
   implicit val format: OFormat[ShutMUCRExchange] = Json.format[ShutMUCRExchange]
 }
 
-trait ConsolidationExchange {
+sealed trait ConsolidationExchange {
   val consolidationType: ConsolidationType
   val eori: String
   val providerId: String

@@ -17,7 +17,7 @@
 package views.movement
 
 import forms.ConsignmentReferences
-import models.cache.ArrivalAnswers
+import models.cache.{ArrivalAnswers, DepartureAnswers, RetrospectiveArrivalAnswers}
 import views.ViewSpec
 import views.html.consignment_references
 
@@ -28,33 +28,56 @@ class ConsignmentReferenceViewSpec extends ViewSpec {
   private val page = new consignment_references(main_template)
 
   "View" should {
+
     "render title" in {
-      page(ConsignmentReferences.form).getTitle must containMessage("consignmentReferences.title")
+
+      page(ConsignmentReferences.form()).getTitle must containMessage("consignmentReferences.title")
     }
 
-    "render heading" in {
-      page(ConsignmentReferences.form).getElementById("section-header") must containMessage("consignmentReferences.ARRIVE.heading")
+    "render heading" when {
+
+      "used for Arrival journey" in {
+
+        page(ConsignmentReferences.form()).getElementById("section-header") must containMessage("consignmentReferences.ARRIVE.heading")
+      }
+
+      "used for Retrospective Arrival journey" in {
+
+        implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
+        page(ConsignmentReferences.form()).getElementById("section-header") must containMessage("consignmentReferences.RETROSPECTIVE_ARRIVE.heading")
+      }
+
+      "used for Departure journey" in {
+
+        implicit val request = journeyRequest(DepartureAnswers())
+        page(ConsignmentReferences.form()).getElementById("section-header") must containMessage("consignmentReferences.DEPART.heading")
+      }
     }
 
     "render options" in {
-      page(ConsignmentReferences.form).getElementById("Ducr-label") must containMessage("consignmentReferences.reference.ducr")
-      page(ConsignmentReferences.form).getElementById("Mucr-label") must containMessage("consignmentReferences.reference.mucr")
+
+      page(ConsignmentReferences.form()).getElementById("Ducr-label") must containMessage("consignmentReferences.reference.ducr")
+      page(ConsignmentReferences.form()).getElementById("Mucr-label") must containMessage("consignmentReferences.reference.mucr")
     }
 
     "render back button" in {
-      val backButton = page(ConsignmentReferences.form).getBackButton
+
+      val backButton = page(ConsignmentReferences.form()).getBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
     }
 
     "render error summary" when {
+
       "no errors" in {
-        page(ConsignmentReferences.form).getErrorSummary mustBe empty
+
+        page(ConsignmentReferences.form()).getErrorSummary mustBe empty
       }
 
       "some errors" in {
-        page(ConsignmentReferences.form.withError("error", "error.required")).getErrorSummary mustBe defined
+
+        page(ConsignmentReferences.form().withError("error", "error.required")).getErrorSummary mustBe defined
       }
     }
   }

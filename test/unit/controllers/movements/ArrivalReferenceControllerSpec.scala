@@ -37,7 +37,7 @@ class ArrivalReferenceControllerSpec extends ControllerLayerSpec with MockCache 
   private val page = mock[arrival_reference]
 
   private def controller(answers: ArrivalAnswers = ArrivalAnswers()) =
-    new ArrivalReferenceController(SuccessfulAuth(), ValidJourney(answers), cache, stubMessagesControllerComponents(), page)(global)
+    new ArrivalReferenceController(SuccessfulAuth(), ValidJourney(answers), cacheRepository, stubMessagesControllerComponents(), page)(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

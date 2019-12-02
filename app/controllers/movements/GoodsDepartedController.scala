@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class GoodsDepartedController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   mcc: MessagesControllerComponents,
   goodsDepartedPage: goods_departed
 )(implicit ec: ExecutionContext)
@@ -54,7 +54,7 @@ class GoodsDepartedController @Inject()(
         validGoodsDeparted => {
           val updatedCache = request.answersAs[DepartureAnswers].copy(goodsDeparted = Some(validGoodsDeparted))
 
-          cache.upsert(Cache(request.providerId, updatedCache)).map { _ =>
+          cacheRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
             Redirect(controllers.movements.routes.TransportController.displayPage())
           }
         }

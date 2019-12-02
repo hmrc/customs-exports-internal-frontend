@@ -17,7 +17,7 @@
 package views.movement
 
 import forms.Location
-import models.cache.ArrivalAnswers
+import models.cache.{ArrivalAnswers, DepartureAnswers, RetrospectiveArrivalAnswers}
 import views.ViewSpec
 import views.html.location
 
@@ -28,28 +28,92 @@ class LocationViewSpec extends ViewSpec {
   private val page = new location(main_template)
 
   "View" should {
+
     "render title" in {
-      page(Location.form).getTitle must containMessage("location.question")
+
+      page(Location.form()).getTitle must containMessage("location.question")
     }
 
-    "render hint" in {
-      page(Location.form).getElementById("code-hint") must containMessage("location.hint")
+    "render heading" when {
+
+      "used for Arrival journey" in {
+
+        val locationPage = page(Location.form())
+
+        locationPage.getElementById("title") must containMessage("location.question")
+        locationPage.getElementById("hint") must containMessage("location.hint")
+      }
+
+      "used for Retrospective Arrival journey" in {
+
+        implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
+        val locationPage = page(Location.form())
+
+        locationPage.getElementById("section-header") must containMessage("location.sectionHeader.RETROSPECTIVE_ARRIVE")
+        locationPage.getElementById("title") must containMessage("location.question")
+        locationPage.getElementById("hint") must containMessage("location.hint")
+      }
+
+      "used for Departure journey" in {
+
+        implicit val request = journeyRequest(DepartureAnswers())
+        val locationPage = page(Location.form())
+
+        locationPage.getElementById("title") must containMessage("location.question")
+        locationPage.getElementById("hint") must containMessage("location.hint")
+      }
     }
 
-    "render back button" in {
-      val backButton = page(Location.form).getBackButton
+    "render back button" which {
 
-      backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.MovementDetailsController.displayPage())
+      "links to Movement Details page" when {
+
+        "user is on Arrival journey" in {
+
+          implicit val request = journeyRequest(ArrivalAnswers())
+
+          val backButton = page(Location.form()).getBackButton
+
+          backButton mustBe defined
+          backButton.get must haveHref(controllers.movements.routes.MovementDetailsController.displayPage())
+        }
+
+        "user is on Departure journey" in {
+
+          implicit val request = journeyRequest(DepartureAnswers())
+
+          val backButton = page(Location.form()).getBackButton
+
+          backButton mustBe defined
+          backButton.get must haveHref(controllers.movements.routes.MovementDetailsController.displayPage())
+        }
+      }
+
+      "links to Consignment References page" when {
+
+        "user is on Retrospective Arrival journey" in {
+
+          implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
+
+          val backButton = page(Location.form()).getBackButton
+
+          backButton mustBe defined
+          backButton.get must haveHref(controllers.movements.routes.ConsignmentReferencesController.displayPage())
+
+        }
+      }
     }
 
     "render error summary" when {
+
       "no errors" in {
-        page(Location.form).getErrorSummary mustBe empty
+
+        page(Location.form()).getErrorSummary mustBe empty
       }
 
       "some errors" in {
-        page(Location.form.withError("error", "error.required")).getErrorSummary mustBe defined
+
+        page(Location.form().withError("error", "error.required")).getErrorSummary mustBe defined
       }
     }
   }
