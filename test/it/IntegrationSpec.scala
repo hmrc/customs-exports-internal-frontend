@@ -18,15 +18,16 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import connectors.{AuditWiremockTestServer, AuthWiremockTestServer, MovementsBackendWiremockTestServer}
 import models.cache.{Answers, Cache}
+import org.apache.bcel.verifier.exc.VerificationException
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Call, Request, Result}
 import play.api.test.Helpers._
 import play.api.test.{CSRFTokenHelper, FakeRequest}
+import play.api.{Application, Logger}
 import reactivemongo.play.json.ImplicitBSONHandlers._
 import reactivemongo.play.json.collection.JSONCollection
 import repositories.CacheRepository
@@ -34,11 +35,12 @@ import repository.TestMongoDB
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.Try
 
 abstract class IntegrationSpec
     extends WordSpec with MustMatchers with BeforeAndAfterEach with GuiceOneServerPerSuite with AuthWiremockTestServer
     with MovementsBackendWiremockTestServer with AuditWiremockTestServer with Eventually with TestMongoDB {
+
+  private lazy val logger = Logger(classOf[IntegrationSpec])
 
   /*
     Intentionally NOT exposing the real CacheRepository as we shouldn't test our production code using our production classes.
@@ -72,10 +74,9 @@ abstract class IntegrationSpec
 
   protected def givenCacheFor(pid: String, answers: Answers): Unit = await(cacheRepository.insert(Cache.format.writes(Cache(pid, answers))))
 
-  protected def verifyEventually(requestPatternBuilder: RequestPatternBuilder): Unit = {
+  protected def verifyEventually(requestPatternBuilder: RequestPatternBuilder): Unit =
     eventually {
-      Try(WireMock.verify(requestPatternBuilder)).isSuccess mustBe true
+      WireMock.verify(requestPatternBuilder)
     }
-  }
 
 }
