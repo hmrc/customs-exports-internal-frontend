@@ -203,7 +203,7 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
         val auditTags = auditTagsResult("Disassociate")
         val auditDetail = Map(
           EventData.providerId.toString -> CommonTestData.providerId,
-          EventData.ducr.toString -> "ducr",
+          EventData.ucr.toString -> "ducr",
           EventData.submissionResult.toString -> "200"
         )
         val expectedDataEvent =
