@@ -74,9 +74,6 @@ abstract class IntegrationSpec
 
   protected def givenCacheFor(pid: String, answers: Answers): Unit = await(cacheRepository.insert(Cache.format.writes(Cache(pid, answers))))
 
-  protected def verifyEventually(requestPatternBuilder: RequestPatternBuilder): Unit =
-    eventually {
-      WireMock.verify(requestPatternBuilder)
-    }
+  protected def verifyEventually(requestPatternBuilder: RequestPatternBuilder): Unit = eventually(WireMock.verify(requestPatternBuilder))
 
 }
