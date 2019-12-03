@@ -44,7 +44,7 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
   def auditDisassociate(providerId: String, ucr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
     audit(
       AuditType.AuditDisassociate,
-      Map(EventData.providerId.toString -> providerId, EventData.ducr.toString -> ucr, EventData.submissionResult.toString -> result)
+      Map(EventData.providerId.toString -> providerId, EventData.ucr.toString -> ucr, EventData.submissionResult.toString -> result)
     )
 
   def auditAssociate(providerId: String, mucr: String, ducr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =

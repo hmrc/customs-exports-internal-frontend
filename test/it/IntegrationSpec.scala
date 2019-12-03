@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-import connectors.{AuthWiremockTestServer, MovementsBackendWiremockTestServer}
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
+import connectors.{AuditWiremockTestServer, AuthWiremockTestServer, MovementsBackendWiremockTestServer}
 import models.cache.{Answers, Cache}
+import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
@@ -31,10 +34,11 @@ import repository.TestMongoDB
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.Try
 
 abstract class IntegrationSpec
     extends WordSpec with MustMatchers with BeforeAndAfterEach with GuiceOneServerPerSuite with AuthWiremockTestServer
-    with MovementsBackendWiremockTestServer with TestMongoDB {
+    with MovementsBackendWiremockTestServer with AuditWiremockTestServer with Eventually with TestMongoDB {
 
   /*
     Intentionally NOT exposing the real CacheRepository as we shouldn't test our production code using our production classes.
@@ -48,6 +52,7 @@ abstract class IntegrationSpec
       .configure(authConfiguration)
       .configure(movementsBackendConfiguration)
       .configure(mongoConfiguration)
+      .configure(auditConfiguration)
       .build()
 
   override def beforeEach(): Unit = {
@@ -66,5 +71,11 @@ abstract class IntegrationSpec
   protected def theCacheFor(pid: String): Option[Answers] = await(cacheRepository.find(Json.obj("providerId" -> "pid")).one[Cache]).map(_.answers)
 
   protected def givenCacheFor(pid: String, answers: Answers): Unit = await(cacheRepository.insert(Cache.format.writes(Cache(pid, answers))))
+
+  protected def verifyEventually(requestPatternBuilder: RequestPatternBuilder): Unit = {
+    eventually {
+      Try(WireMock.verify(requestPatternBuilder)).isSuccess mustBe true
+    }
+  }
 
 }
