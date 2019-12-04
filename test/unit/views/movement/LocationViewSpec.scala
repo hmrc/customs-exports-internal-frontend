@@ -29,9 +29,24 @@ class LocationViewSpec extends ViewSpec {
 
   "View" should {
 
-    "render title" in {
+    "render title" when {
 
-      page(Location.form()).getTitle must containMessage("location.question")
+      "used for Arrival journey" in {
+
+        page(Location.form()).getTitle must containMessage("location.question")
+      }
+
+      "used for Retrospective Arrival journey" in {
+
+        implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
+        page(Location.form()).getTitle must containMessage("location.question.retrospectiveArrival")
+      }
+
+      "used for Departure journey" in {
+
+        implicit val request = journeyRequest(DepartureAnswers())
+        page(Location.form()).getTitle must containMessage("location.question")
+      }
     }
 
     "render heading" when {
@@ -49,8 +64,8 @@ class LocationViewSpec extends ViewSpec {
         implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
         val locationPage = page(Location.form())
 
-        locationPage.getElementById("section-header") must containMessage("location.sectionHeader.RETROSPECTIVE_ARRIVE")
-        locationPage.getElementById("title") must containMessage("location.question")
+        locationPage.getElementById("section-header") must containMessage("location.sectionHeader.retrospectiveArrival")
+        locationPage.getElementById("title") must containMessage("location.question.retrospectiveArrival")
         locationPage.getElementById("hint") must containMessage("location.hint")
       }
 

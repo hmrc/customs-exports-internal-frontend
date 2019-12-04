@@ -32,14 +32,21 @@
     }
   }
 
-  @sectionHeaderVal(request: JourneyRequest[_]) = @{
+  @pageTitleKey(request: JourneyRequest[_]) = @{
     if (request.answers.`type` == JourneyType.RETROSPECTIVE_ARRIVE)
-      messages("location.sectionHeader.RETROSPECTIVE_ARRIVE")
+      "location.question.retrospectiveArrival"
+    else
+      "location.question"
+  }
+
+  @sectionHeaderKey(request: JourneyRequest[_]) = @{
+    if (request.answers.`type` == JourneyType.RETROSPECTIVE_ARRIVE)
+      messages("location.sectionHeader.retrospectiveArrival")
     else
       ""
   }
 
-  @main_template(title = Title("location.question", None)) {
+  @main_template(title = Title(pageTitleKey(request), None)) {
     @helper.form(routes.LocationController.saveLocation(), 'autoComplete -> "off") {
       @helper.CSRF.formField
 
@@ -48,8 +55,8 @@
       @components.error_summary(form.errors)
 
       @components.heading(
-        title = messages("location.question"),
-        sectionHeader = sectionHeaderVal(request),
+        title = messages(pageTitleKey(request)),
+        sectionHeader = sectionHeaderKey(request),
         hint = messages("location.hint")
       )
 
