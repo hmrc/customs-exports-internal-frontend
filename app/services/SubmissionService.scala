@@ -33,7 +33,7 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class SubmissionService @Inject()(
-  cache: CacheRepository,
+  cacheRepository: CacheRepository,
   connector: CustomsDeclareExportsMovementsConnector,
   auditService: AuditService,
   metrics: MovementsMetrics,
@@ -51,7 +51,7 @@ class SubmissionService @Inject()(
       .submit(DisassociateDUCRExchange(providerId, eori, ucr))
       .andThen {
         case Success(_) =>
-          cache.removeByProviderId(providerId).flatMap { _ =>
+          cacheRepository.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditDisassociate(providerId, ucr, success)
           }
         case Failure(_) =>
@@ -68,7 +68,7 @@ class SubmissionService @Inject()(
       .submit(AssociateUCRExchange(providerId, eori, mucr, ucr))
       .andThen {
         case Success(_) =>
-          cache.removeByProviderId(providerId).flatMap { _ =>
+          cacheRepository.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditAssociate(providerId, mucr, ucr, success)
           }
         case Failure(_) =>
@@ -84,7 +84,7 @@ class SubmissionService @Inject()(
       .submit(ShutMUCRExchange(providerId, eori, mucr))
       .andThen {
         case Success(_) =>
-          cache.removeByProviderId(providerId).flatMap { _ =>
+          cacheRepository.removeByProviderId(providerId).flatMap { _ =>
             auditService.auditShutMucr(providerId, mucr, success)
           }
         case Failure(_) =>
@@ -93,27 +93,28 @@ class SubmissionService @Inject()(
   }
 
   def submit(providerId: String, answers: MovementAnswers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
+    val journeyType = answers.`type`
     val data = movementBuilder.createMovementExchange(providerId, answers)
-    val timer = metrics.startTimer(answers.`type`)
-
-    def on(result: String)(implicit hc: HeaderCarrier): Unit = {
-      metrics.incrementCounter(answers.`type`)
-      auditService.auditMovements(data, result, movementAuditType(answers.`type`))
-      timer.stop()
-    }
+    val timer = metrics.startTimer(journeyType)
 
     auditService.auditAllPagesUserInput(answers)
+
     connector
       .submit(data)
-      .map(_ => cache.removeByProviderId(providerId))
+      .map(_ => cacheRepository.removeByProviderId(providerId))
       .map(_ => data.consignmentReference)
       .andThen {
-        case Success(_) => on(success)
-        case Failure(_) => on(failed)
+        case Success(_) => auditService.auditMovements(data, success, movementAuditType(journeyType))
+        case Failure(_) => auditService.auditMovements(data, failed, movementAuditType(journeyType))
+      }
+      .andThen {
+        case _ =>
+          metrics.incrementCounter(journeyType)
+          timer.stop()
       }
   }
 
-  private def movementAuditType(`type`: JourneyType): AuditType.Value = `type` match {
+  private def movementAuditType(journeyType: JourneyType): AuditType.Value = journeyType match {
     case JourneyType.ARRIVE               => AuditType.AuditArrival
     case JourneyType.RETROSPECTIVE_ARRIVE => AuditType.AuditRetrospectiveArrival
     case JourneyType.DEPART               => AuditType.AuditDeparture
