@@ -96,8 +96,8 @@ class DissociateUcrSpec extends IntegrationSpec {
         )
         verifyEventually(
           postRequestedForAudit()
-            .withRequestBody(matchingJsonPath("auditType", equalTo("Disassociate")))
-            .withRequestBody(matchingJsonPath("detail.providerId", equalTo("pid")))
+            .withRequestBody(matchingJsonPath("auditType", equalTo("disassociate")))
+            .withRequestBody(matchingJsonPath("detail.pid", equalTo("pid")))
             .withRequestBody(matchingJsonPath("detail.ucr", equalTo("GB/321-54321")))
             .withRequestBody(matchingJsonPath("detail.submissionResult", equalTo("Success")))
         )
