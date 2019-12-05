@@ -18,7 +18,7 @@ package controllers.movements
 
 import controllers.ControllerLayerSpec
 import controllers.storage.FlashKeys
-import forms.ConsignmentReferences
+import forms.{ConsignmentReferenceType, ConsignmentReferences}
 import models.cache._
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.BDDMockito.given
@@ -82,8 +82,9 @@ class MovementSummaryControllerSpec extends ControllerLayerSpec with MockCache {
 
       "there are answers for Arrival" in {
 
-        val result = controller(ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(reference = "D", referenceValue = correctUcr))))
-          .displayPage()(getRequest)
+        val result = controller(
+          ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.D, referenceValue = correctUcr)))
+        ).displayPage()(getRequest)
 
         status(result) mustBe OK
         verify(arrivalSummaryPage).apply(any())(any(), any())
@@ -92,8 +93,11 @@ class MovementSummaryControllerSpec extends ControllerLayerSpec with MockCache {
       "there are answers for Retrospective Arrival" in {
 
         val result =
-          controller(RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(reference = "D", referenceValue = correctUcr))))
-            .displayPage()(getRequest)
+          controller(
+            RetrospectiveArrivalAnswers(
+              consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.D, referenceValue = correctUcr))
+            )
+          ).displayPage()(getRequest)
 
         status(result) mustBe OK
         verify(retrospectiveArrivalSummaryPage).apply(any())(any(), any())
@@ -101,8 +105,9 @@ class MovementSummaryControllerSpec extends ControllerLayerSpec with MockCache {
 
       "there are answers for Departure" in {
 
-        val result = controller(DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(reference = "D", referenceValue = correctUcr))))
-          .displayPage()(getRequest)
+        val result = controller(
+          DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.D, referenceValue = correctUcr)))
+        ).displayPage()(getRequest)
 
         status(result) mustBe OK
         verify(departureSummaryPage).apply(any())(any(), any())
@@ -125,7 +130,7 @@ class MovementSummaryControllerSpec extends ControllerLayerSpec with MockCache {
         "user is on Arrival journey" in {
 
           given(submissionService.submit(anyString(), any[MovementAnswers])(any()))
-            .willReturn(Future.successful(ConsignmentReferences("D", "9GB23456543")))
+            .willReturn(Future.successful(ConsignmentReferences(ConsignmentReferenceType.D, "9GB23456543")))
 
           val result = controller(ArrivalAnswers()).submitMovementRequest()(postRequest(JsString("")))
 
@@ -139,7 +144,7 @@ class MovementSummaryControllerSpec extends ControllerLayerSpec with MockCache {
         "user is on Retrospective Arrival journey" in {
 
           given(submissionService.submit(anyString(), any[MovementAnswers])(any()))
-            .willReturn(Future.successful(ConsignmentReferences("D", "9GB23456543")))
+            .willReturn(Future.successful(ConsignmentReferences(ConsignmentReferenceType.D, "9GB23456543")))
 
           val result = controller(RetrospectiveArrivalAnswers()).submitMovementRequest()(postRequest(JsString("")))
 
@@ -153,7 +158,7 @@ class MovementSummaryControllerSpec extends ControllerLayerSpec with MockCache {
         "user is on Departure journey" in {
 
           given(submissionService.submit(anyString(), any[MovementAnswers])(any()))
-            .willReturn(Future.successful(ConsignmentReferences("D", "9GB23456543")))
+            .willReturn(Future.successful(ConsignmentReferences(ConsignmentReferenceType.D, "9GB23456543")))
 
           val result = controller(DepartureAnswers()).submitMovementRequest()(postRequest(JsString("")))
 

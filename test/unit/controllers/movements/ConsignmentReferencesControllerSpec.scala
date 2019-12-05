@@ -17,7 +17,7 @@
 package controllers.movements
 
 import controllers.ControllerLayerSpec
-import forms.ConsignmentReferences
+import forms.{ConsignmentReferenceType, ConsignmentReferences}
 import models.cache._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -73,7 +73,7 @@ class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockC
 
       "GET displayPage is invoked with data in cache" in {
 
-        val cachedForm = Some(ConsignmentReferences("ref", "value"))
+        val cachedForm = Some(ConsignmentReferences(ConsignmentReferenceType.D, "value"))
         givenTheCacheContains(Cache("12345", ArrivalAnswers(consignmentReferences = cachedForm)))
 
         val result = controller(ArrivalAnswers(consignmentReferences = cachedForm)).displayPage()(getRequest)

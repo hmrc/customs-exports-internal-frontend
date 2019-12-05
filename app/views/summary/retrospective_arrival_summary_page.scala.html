@@ -15,7 +15,7 @@
  *@
 
 @import controllers.movements.routes
-@import forms.ConsignmentReferences.AllowedReferences
+@import forms.ConsignmentReferenceType
 @import models.cache.RetrospectiveArrivalAnswers
 @import models.viewmodels.HtmlTableRow
 @import views.Title
@@ -35,7 +35,7 @@
         @components.table_row_no_change_link(HtmlTableRow(
             label = messages("summary.referenceType"),
             value = data.consignmentReferences.map(ref =>
-                if(ref.reference.equals(AllowedReferences.Ducr)) {
+                if(ref.reference.equals(ConsignmentReferenceType.D)) {
                     messages("consignmentReferences.reference.ducr")
                 } else {
                     messages("consignmentReferences.reference.mucr")

@@ -58,7 +58,7 @@ class MovementSummaryController @Inject()(
           Redirect(controllers.movements.routes.MovementConfirmationController.display())
             .flashing(
               FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString,
-              FlashKeys.UCR_KIND -> consignmentReferences.reference,
+              FlashKeys.UCR_KIND -> consignmentReferences.reference.toString,
               FlashKeys.UCR -> consignmentReferences.referenceValue
             )
         }

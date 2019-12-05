@@ -18,7 +18,7 @@ import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, LocalDateTime, LocalTime, ZoneOffset}
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
-import forms.{ConsignmentReferences, Location}
+import forms.{ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.cache.RetrospectiveArrivalAnswers
 import play.api.test.Helpers._
 
@@ -60,7 +60,9 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.LocationController.displayPage().url)
         theCacheFor("pid") mustBe Some(
-          RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(reference = "M", referenceValue = "GB/123-12345")))
+          RetrospectiveArrivalAnswers(
+            consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345"))
+          )
         )
       }
     }
@@ -73,7 +75,9 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         givenAuthSuccess("pid")
         givenCacheFor(
           "pid",
-          RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(reference = "M", referenceValue = "GB/123-12345")))
+          RetrospectiveArrivalAnswers(
+            consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345"))
+          )
         )
 
         // When
@@ -90,7 +94,9 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         givenAuthSuccess("pid")
         givenCacheFor(
           "pid",
-          RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(reference = "M", referenceValue = "GB/123-12345")))
+          RetrospectiveArrivalAnswers(
+            consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345"))
+          )
         )
 
         // When
@@ -101,7 +107,7 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementSummaryController.displayPage().url)
         theCacheFor("pid") mustBe Some(
           RetrospectiveArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences(reference = "M", referenceValue = "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345")),
             location = Some(Location("GBAUEMAEMAEMA"))
           )
         )
@@ -117,7 +123,7 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           RetrospectiveArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences(reference = "M", referenceValue = "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345")),
             location = Some(Location("GBAUEMAEMAEMA"))
           )
         )
@@ -137,7 +143,7 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           RetrospectiveArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences(reference = "M", referenceValue = "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345")),
             location = Some(Location("GBAUEMAEMAEMA"))
           )
         )

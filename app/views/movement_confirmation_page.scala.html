@@ -17,6 +17,7 @@
 @import forms.ConsignmentReferences
 @import models.cache.JourneyType
 @import models.cache.JourneyType.JourneyType
+@import forms.ConsignmentReferenceType
 @import views.Title
 @import views.html.templates.main_template
 
@@ -37,7 +38,7 @@
     @components.highlight_box_with_reference(
         headingText = messages(
             s"movement.confirmation.${journeyType}.heading",
-            if(consignmentReferences.reference == "D") "DUCR" else "MUCR",
+            if(consignmentReferences.reference == ConsignmentReferenceType.D) "DUCR" else "MUCR",
             consignmentReferences.referenceValue
         )
     )

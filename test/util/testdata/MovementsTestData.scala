@@ -38,7 +38,7 @@ object MovementsTestData {
   def validArrivalAnswers =
     ArrivalAnswers(
       eori = Some(validEori),
-      consignmentReferences = Some(ConsignmentReferences(reference = "D", referenceValue = correctUcr)),
+      consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.D, referenceValue = correctUcr)),
       arrivalReference = Some(ArrivalReference(Some("arrivalReference"))),
       arrivalDetails = Some(ArrivalDetails(Date(LocalDate.now().minusDays(1)), Time(LocalTime.of(1, 1)))),
       location = Some(Location("GBAUEMAEMAEMA"))
@@ -47,14 +47,14 @@ object MovementsTestData {
   def validRetrospectiveArrivalAnswers =
     RetrospectiveArrivalAnswers(
       eori = Some(validEori),
-      consignmentReferences = Some(ConsignmentReferences(reference = "D", referenceValue = correctUcr)),
+      consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.D, referenceValue = correctUcr)),
       location = Some(Location("GBAUEMAEMAEMA"))
     )
 
   def validDepartureAnswers =
     DepartureAnswers(
       eori = Some(validEori),
-      consignmentReferences = Some(ConsignmentReferences(reference = "D", referenceValue = correctUcr)),
+      consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.D, referenceValue = correctUcr)),
       departureDetails = Some(DepartureDetails(Date(LocalDate.of(2019, 1, 1)), Time(LocalTime.of(0, 0)))),
       location = Some(Location("GBAUEMAEMAEMA")),
       goodsDeparted = Some(GoodsDeparted(OutOfTheUk)),
@@ -64,7 +64,7 @@ object MovementsTestData {
   def validArrivalExchange = ArrivalExchange(
     eori = validEori,
     providerId = providerId,
-    consignmentReference = ConsignmentReferences(reference = "D", referenceValue = correctUcr),
+    consignmentReference = ConsignmentReferences(reference = ConsignmentReferenceType.D, referenceValue = correctUcr),
     location = Location("GBAUEMAEMAEMA"),
     arrivalReference = ArrivalReference(Some("arrivalReference")),
     movementDetails = MovementDetailsExchange(
@@ -75,14 +75,14 @@ object MovementsTestData {
   def validRetrospectiveArrivalExchange = RetrospectiveArrivalExchange(
     eori = validEori,
     providerId = providerId,
-    consignmentReference = ConsignmentReferences(reference = "D", referenceValue = correctUcr),
+    consignmentReference = ConsignmentReferences(reference = ConsignmentReferenceType.D, referenceValue = correctUcr),
     location = Location("GBAUEMAEMAEMA")
   )
 
   def validDepartureExchange = DepartureExchange(
     eori = validEori,
     providerId = providerId,
-    consignmentReference = ConsignmentReferences(reference = "D", referenceValue = correctUcr),
+    consignmentReference = ConsignmentReferences(reference = ConsignmentReferenceType.D, referenceValue = correctUcr),
     location = Location("GBAUEMAEMAEMA"),
     movementDetails = MovementDetailsExchange(
       dateTimeFormatter.format(DepartureDetails(Date(LocalDate.of(2019, 1, 1)), Time(LocalTime.of(0, 0))).goodsDepartureMoment(zoneId))
