@@ -20,6 +20,7 @@ import java.time.{LocalDate, LocalTime}
 
 import base.UnitSpec
 import forms.common.{Date, Time}
+import matchers.FormMatchers
 import testdata.MovementsTestData
 
 class DepartureDetailsSpec extends UnitSpec with FormMatchers {
