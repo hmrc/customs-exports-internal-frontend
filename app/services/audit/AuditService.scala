@@ -64,7 +64,7 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
       Map(
         EventData.providerId.toString -> data.providerId,
         EventData.messageCode.toString -> data.choice.toString,
-        EventData.ucrType.toString -> data.consignmentReference.reference,
+        EventData.ucrType.toString -> data.consignmentReference.reference.toString,
         EventData.ucr.toString -> data.consignmentReference.referenceValue,
         EventData.submissionResult.toString -> result
       ).++(movementReference(data))

@@ -19,7 +19,7 @@ import java.time.{LocalDate, LocalDateTime, LocalTime, ZoneOffset}
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
 import forms.common.{Date, Time}
-import forms.{ArrivalDetails, ArrivalReference, ConsignmentReferences, Location}
+import forms.{ArrivalDetails, ArrivalReference, ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.cache.ArrivalAnswers
 import play.api.test.Helpers._
 
@@ -60,7 +60,9 @@ class ArrivalSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.ArrivalReferenceController.displayPage().url)
-        theCacheFor("pid") mustBe Some(ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345"))))
+        theCacheFor("pid") mustBe Some(
+          ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")))
+        )
       }
     }
   }
@@ -70,7 +72,7 @@ class ArrivalSpec extends IntegrationSpec {
       "return 200" in {
         // Given
         givenAuthSuccess("pid")
-        givenCacheFor("pid", ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345"))))
+        givenCacheFor("pid", ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345"))))
 
         // When
         val response = get(controllers.movements.routes.ArrivalReferenceController.displayPage())
@@ -84,7 +86,7 @@ class ArrivalSpec extends IntegrationSpec {
       "continue" in {
         // Given
         givenAuthSuccess("pid")
-        givenCacheFor("pid", ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345"))))
+        givenCacheFor("pid", ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345"))))
 
         // When
         val response = post(controllers.movements.routes.ArrivalReferenceController.submit(), "reference" -> "ABC")
@@ -94,7 +96,7 @@ class ArrivalSpec extends IntegrationSpec {
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementDetailsController.displayPage().url)
         theCacheFor("pid") mustBe Some(
           ArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             arrivalReference = Some(ArrivalReference(Some("ABC")))
           )
         )
@@ -110,7 +112,7 @@ class ArrivalSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           ArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             arrivalReference = Some(ArrivalReference(Some("ABC")))
           )
         )
@@ -130,7 +132,7 @@ class ArrivalSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           ArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             arrivalReference = Some(ArrivalReference(Some("ABC")))
           )
         )
@@ -150,7 +152,7 @@ class ArrivalSpec extends IntegrationSpec {
         redirectLocation(response) mustBe Some(controllers.movements.routes.LocationController.displayPage().url)
         theCacheFor("pid") mustBe Some(
           ArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             arrivalReference = Some(ArrivalReference(Some("ABC"))),
             arrivalDetails = Some(ArrivalDetails(Date(date), Time(time)))
           )
@@ -167,7 +169,7 @@ class ArrivalSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           ArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             arrivalReference = Some(ArrivalReference(Some("ABC"))),
             arrivalDetails = Some(ArrivalDetails(Date(date), Time(time)))
           )
@@ -188,7 +190,7 @@ class ArrivalSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           ArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             arrivalReference = Some(ArrivalReference(Some("ABC"))),
             arrivalDetails = Some(ArrivalDetails(Date(date), Time(time)))
           )
@@ -202,7 +204,7 @@ class ArrivalSpec extends IntegrationSpec {
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementSummaryController.displayPage().url)
         theCacheFor("pid") mustBe Some(
           ArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             arrivalReference = Some(ArrivalReference(Some("ABC"))),
             arrivalDetails = Some(ArrivalDetails(Date(date), Time(time))),
             location = Some(Location("GBAUEMAEMAEMA"))
@@ -220,7 +222,7 @@ class ArrivalSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           ArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             arrivalReference = Some(ArrivalReference(Some("ABC"))),
             arrivalDetails = Some(ArrivalDetails(Date(date), Time(time))),
             location = Some(Location("GBAUEMAEMAEMA"))
@@ -242,7 +244,7 @@ class ArrivalSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           ArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             arrivalReference = Some(ArrivalReference(Some("ABC"))),
             arrivalDetails = Some(ArrivalDetails(Date(date), Time(time))),
             location = Some(Location("GBAUEMAEMAEMA"))

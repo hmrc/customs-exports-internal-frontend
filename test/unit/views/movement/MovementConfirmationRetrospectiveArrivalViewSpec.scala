@@ -16,7 +16,7 @@
 
 package views.movement
 
-import forms.ConsignmentReferences
+import forms.{ConsignmentReferenceType, ConsignmentReferences}
 import models.cache.{JourneyType, RetrospectiveArrivalAnswers}
 import views.ViewSpec
 import views.html.movement_confirmation_page
@@ -25,7 +25,7 @@ class MovementConfirmationRetrospectiveArrivalViewSpec extends ViewSpec {
 
   private implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
 
-  private val consignmentReferences = ConsignmentReferences(ConsignmentReferences.AllowedReferences.Ducr, "9GB12345678")
+  private val consignmentReferences = ConsignmentReferences(ConsignmentReferenceType.D, "9GB12345678")
   private val page = new movement_confirmation_page(main_template)
 
   "View" should {

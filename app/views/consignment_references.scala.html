@@ -16,7 +16,7 @@
 
 @import controllers.exchanges.JourneyRequest
 @import forms.ConsignmentReferences
-@import forms.ConsignmentReferences.AllowedReferences._
+@import forms.ConsignmentReferenceType._
 @import views.components.fields.RadioOption
 @import views.html.templates.main_template
 @import views.Title
@@ -44,7 +44,7 @@
             inputs = Seq(
               RadioOption(
                   id = "Ducr",
-                  value = Ducr,
+                  value = D.toString,
                   messageKey = "consignmentReferences.reference.ducr",
                   revealComponent = Some(components.input_text(
                       field = form("ducrValue"),
@@ -54,7 +54,7 @@
               ),
               RadioOption(
                   id = "Mucr",
-                  value = Mucr,
+                  value = M.toString,
                   messageKey = "consignmentReferences.reference.mucr",
                   revealComponent = Some(components.input_text(
                       field = form("mucrValue"),

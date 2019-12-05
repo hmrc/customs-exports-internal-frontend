@@ -19,7 +19,7 @@ package controllers.movements
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
-import forms.ConsignmentReferences
+import forms.{ConsignmentReferenceType, ConsignmentReferences}
 import models.ReturnToStartException
 import models.cache.JourneyType
 import play.api.http.Status
@@ -42,10 +42,10 @@ class MovementConfirmationControllerSpec extends ControllerLayerSpec {
 
     "return 200 when authenticated" in {
       val result = controller(SuccessfulAuth())
-        .display(get.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString, FlashKeys.UCR_KIND -> "kind", FlashKeys.UCR -> "123"))
+        .display(get.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString, FlashKeys.UCR_KIND -> "D", FlashKeys.UCR -> "123"))
 
       status(result) mustBe Status.OK
-      contentAsHtml(result) mustBe page(JourneyType.ARRIVE, ConsignmentReferences("kind", "123"))
+      contentAsHtml(result) mustBe page(JourneyType.ARRIVE, ConsignmentReferences(ConsignmentReferenceType.D, "123"))
     }
 
     "return to start" when {
@@ -64,7 +64,7 @@ class MovementConfirmationControllerSpec extends ControllerLayerSpec {
       "ucr is missing" in {
         intercept[RuntimeException] {
           await(
-            controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString, FlashKeys.UCR_KIND -> "kind"))
+            controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString, FlashKeys.UCR_KIND -> "D"))
           )
         } mustBe ReturnToStartException
       }

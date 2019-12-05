@@ -19,7 +19,7 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.AppConfig
 import connectors.exchanges.{ArrivalExchange, DisassociateDUCRExchange, MovementDetailsExchange}
-import forms.{ArrivalReference, ConsignmentReferences, Location}
+import forms.{ArrivalReference, ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.notifications.ResponseType.ControlResponse
 import org.mockito.BDDMockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -51,7 +51,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
         ArrivalExchange(
           "eori",
           "provider-id",
-          ConsignmentReferences("ref", "value"),
+          ConsignmentReferences(ConsignmentReferenceType.D, "value"),
           Location("code"),
           MovementDetailsExchange("datetime"),
           ArrivalReference(Some("reference"))
@@ -63,7 +63,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
           .withRequestBody(equalToJson("""{
                  "eori":"eori",
                  "providerId":"provider-id",
-                 "consignmentReference":{"reference":"ref","referenceValue":"value"},
+                 "consignmentReference":{"reference":"D","referenceValue":"value"},
                  "movementDetails":{"dateTime":"datetime"},
                  "location":{"code":"code"},
                  "arrivalReference":{"reference":"reference"},

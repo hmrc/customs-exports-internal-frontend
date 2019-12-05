@@ -61,7 +61,9 @@ class DepartureSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementDetailsController.displayPage().url)
-        theCacheFor("pid") mustBe Some(DepartureAnswers(consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345"))))
+        theCacheFor("pid") mustBe Some(
+          DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")))
+        )
       }
     }
   }
@@ -71,7 +73,7 @@ class DepartureSpec extends IntegrationSpec {
       "return 200" in {
         // Given
         givenAuthSuccess("pid")
-        givenCacheFor("pid", DepartureAnswers(consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345"))))
+        givenCacheFor("pid", DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345"))))
 
         // When
         val response = get(controllers.movements.routes.MovementDetailsController.displayPage())
@@ -85,7 +87,7 @@ class DepartureSpec extends IntegrationSpec {
       "continue" in {
         // Given
         givenAuthSuccess("pid")
-        givenCacheFor("pid", DepartureAnswers(consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345"))))
+        givenCacheFor("pid", DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345"))))
 
         // When
         val response = post(
@@ -102,7 +104,7 @@ class DepartureSpec extends IntegrationSpec {
         redirectLocation(response) mustBe Some(controllers.movements.routes.LocationController.displayPage().url)
         theCacheFor("pid") mustBe Some(
           DepartureAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time)))
           )
         )
@@ -118,7 +120,7 @@ class DepartureSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           DepartureAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time)))
           )
         )
@@ -138,7 +140,7 @@ class DepartureSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           DepartureAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time)))
           )
         )
@@ -151,7 +153,7 @@ class DepartureSpec extends IntegrationSpec {
         redirectLocation(response) mustBe Some(controllers.movements.routes.GoodsDepartedController.displayPage().url)
         theCacheFor("pid") mustBe Some(
           DepartureAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time))),
             location = Some(Location("GBAUEMAEMAEMA"))
           )
@@ -168,7 +170,7 @@ class DepartureSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           DepartureAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time))),
             location = Some(Location("GBAUEMAEMAEMA"))
           )
@@ -189,7 +191,7 @@ class DepartureSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           DepartureAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time))),
             location = Some(Location("GBAUEMAEMAEMA"))
           )
@@ -203,7 +205,7 @@ class DepartureSpec extends IntegrationSpec {
         redirectLocation(response) mustBe Some(controllers.movements.routes.TransportController.displayPage().url)
         theCacheFor("pid") mustBe Some(
           DepartureAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time))),
             location = Some(Location("GBAUEMAEMAEMA")),
             goodsDeparted = Some(GoodsDeparted(DepartureLocation.OutOfTheUk))
@@ -221,7 +223,7 @@ class DepartureSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           DepartureAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time))),
             location = Some(Location("GBAUEMAEMAEMA")),
             goodsDeparted = Some(GoodsDeparted(DepartureLocation.OutOfTheUk))
@@ -243,7 +245,7 @@ class DepartureSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           DepartureAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time))),
             location = Some(Location("GBAUEMAEMAEMA")),
             goodsDeparted = Some(GoodsDeparted(DepartureLocation.OutOfTheUk))
@@ -263,7 +265,7 @@ class DepartureSpec extends IntegrationSpec {
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementSummaryController.displayPage().url)
         theCacheFor("pid") mustBe Some(
           DepartureAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time))),
             location = Some(Location("GBAUEMAEMAEMA")),
             goodsDeparted = Some(GoodsDeparted(DepartureLocation.OutOfTheUk)),
@@ -282,7 +284,7 @@ class DepartureSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           DepartureAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time))),
             location = Some(Location("GBAUEMAEMAEMA")),
             goodsDeparted = Some(GoodsDeparted(DepartureLocation.OutOfTheUk)),
@@ -305,7 +307,7 @@ class DepartureSpec extends IntegrationSpec {
         givenCacheFor(
           "pid",
           DepartureAnswers(
-            consignmentReferences = Some(ConsignmentReferences("M", "GB/123-12345")),
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time))),
             location = Some(Location("GBAUEMAEMAEMA")),
             goodsDeparted = Some(GoodsDeparted(DepartureLocation.OutOfTheUk)),
