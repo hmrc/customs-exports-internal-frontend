@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms
+package matchers
 
 import org.scalatest.matchers.{BeMatcher, MatchResult}
 import play.api.data.{Form, FormError}
