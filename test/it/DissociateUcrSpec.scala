@@ -92,7 +92,7 @@ class DissociateUcrSpec extends IntegrationSpec {
         theCacheFor("pid") mustBe None
         verify(
           postRequestedForConsolidation()
-            .withRequestBody(equalTo("""{"providerId":"pid","eori":"GB1234567890","ucr":"GB/321-54321","consolidationType":"DISASSOCIATE_DUCR"}"""))
+            .withRequestBody(equalTo("""{"providerId":"pid","eori":"GB1234567890","ucr":"GB/321-54321","consolidationType":"DISASSOCIATE_MUCR"}"""))
         )
         verifyEventually(
           postRequestedForAudit()
