@@ -60,16 +60,30 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
   "Submit Associate" should {
 
-    "delegate to connector" in {
-      given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
-      given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
+    "delegate to connector" when {
+      "Associate DUCR" in {
+        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
+        given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
-      val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
-      await(service.submit(providerId, answers))
+        val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
+        await(service.submit(providerId, answers))
 
-      theAssociationSubmitted mustBe AssociateUCRExchange(providerId, validEori, mucr, ucr)
-      verify(repository).removeByProviderId(providerId)
-      verify(audit).auditAssociate(providerId, mucr, ucr, "Success")
+        theAssociationSubmitted[AssociateDUCRExchange] mustBe AssociateDUCRExchange(providerId, validEori, mucr, ucr)
+        verify(repository).removeByProviderId(providerId)
+        verify(audit).auditAssociate(providerId, mucr, ucr, "Success")
+      }
+
+      "Associate MUCR" in {
+        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
+        given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
+
+        val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Mucr, ucr)))
+        await(service.submit(providerId, answers))
+
+        theAssociationSubmitted[AssociateMUCRExchange] mustBe AssociateMUCRExchange(providerId, validEori, mucr, ucr)
+        verify(repository).removeByProviderId(providerId)
+        verify(audit).auditAssociate(providerId, mucr, ucr, "Success")
+      }
     }
 
     "audit when failed" in {
@@ -80,7 +94,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         await(service.submit(providerId, answers))
       }
 
-      theAssociationSubmitted mustBe AssociateUCRExchange(providerId, validEori, mucr, ucr)
+      theAssociationSubmitted[AssociateDUCRExchange] mustBe AssociateDUCRExchange(providerId, validEori, mucr, ucr)
       verify(repository, never()).removeByProviderId(providerId)
       verify(audit).auditAssociate(providerId, mucr, ucr, "Failed")
     }
@@ -105,10 +119,10 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       verifyZeroInteractions(audit)
     }
 
-    def theAssociationSubmitted: AssociateUCRExchange = {
-      val captor: ArgumentCaptor[AssociateUCRExchange] = ArgumentCaptor.forClass(classOf[AssociateUCRExchange])
+    def theAssociationSubmitted[T <: ConsolidationExchange]: T = {
+      val captor: ArgumentCaptor[ConsolidationExchange] = ArgumentCaptor.forClass(classOf[ConsolidationExchange])
       verify(connector).submit(captor.capture())(any())
-      captor.getValue
+      captor.getValue.asInstanceOf[T]
     }
   }
 
@@ -123,7 +137,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Mucr, None, Some(mucr))))
         await(service.submit(providerId, answers))
 
-        theDisassociationSubmitted mustBe DisassociateDUCRExchange(providerId, validEori, mucr)
+        theDisassociationSubmitted[DisassociateMUCRExchange] mustBe DisassociateMUCRExchange(providerId, validEori, mucr)
         verify(repository).removeByProviderId(providerId)
         verify(audit).auditDisassociate(providerId, mucr, "Success")
       }
@@ -135,7 +149,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Ducr, Some(ucr), None)))
         await(service.submit(providerId, answers))
 
-        theDisassociationSubmitted mustBe DisassociateDUCRExchange(providerId, validEori, ucr)
+        theDisassociationSubmitted[DisassociateDUCRExchange] mustBe DisassociateDUCRExchange(providerId, validEori, ucr)
         verify(repository).removeByProviderId(providerId)
         verify(audit).auditDisassociate(providerId, ucr, "Success")
       }
@@ -149,7 +163,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         await(service.submit(providerId, answers))
       }
 
-      theDisassociationSubmitted mustBe DisassociateDUCRExchange(providerId, validEori, mucr)
+      theDisassociationSubmitted[DisassociateMUCRExchange] mustBe DisassociateMUCRExchange(providerId, validEori, mucr)
       verify(repository, never()).removeByProviderId(providerId)
       verify(audit).auditDisassociate(providerId, mucr, "Failed")
     }
@@ -200,10 +214,10 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       }
     }
 
-    def theDisassociationSubmitted: DisassociateDUCRExchange = {
-      val captor: ArgumentCaptor[DisassociateDUCRExchange] = ArgumentCaptor.forClass(classOf[DisassociateDUCRExchange])
+    def theDisassociationSubmitted[T <: ConsolidationExchange]: T = {
+      val captor: ArgumentCaptor[ConsolidationExchange] = ArgumentCaptor.forClass(classOf[ConsolidationExchange])
       verify(connector).submit(captor.capture())(any())
-      captor.getValue
+      captor.getValue.asInstanceOf[T]
     }
   }
 

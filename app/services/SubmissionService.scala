@@ -17,7 +17,7 @@
 package services
 
 import connectors.CustomsDeclareExportsMovementsConnector
-import connectors.exchanges.{AssociateUCRExchange, DisassociateDUCRExchange, ShutMUCRExchange}
+import connectors.exchanges.{AssociateDUCRExchange, AssociateMUCRExchange, DisassociateDUCRExchange, DisassociateMUCRExchange, ShutMUCRExchange}
 import forms._
 import javax.inject.{Inject, Singleton}
 import metrics.MovementsMetrics
@@ -46,9 +46,13 @@ class SubmissionService @Inject()(
   def submit(providerId: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
     val ucr = answers.ucr.map(_.ucr).getOrElse(throw ReturnToStartException)
+    val exchange = answers.ucr.map(_.kind) match {
+      case Some(DisassociateKind.Ducr) => DisassociateDUCRExchange(providerId, eori, ucr)
+      case Some(DisassociateKind.Mucr) => DisassociateMUCRExchange(providerId, eori, ucr)
+    }
 
     connector
-      .submit(DisassociateDUCRExchange(providerId, eori, ucr))
+      .submit(exchange)
       .andThen {
         case Success(_) =>
           cacheRepository.removeByProviderId(providerId).flatMap { _ =>
@@ -63,9 +67,13 @@ class SubmissionService @Inject()(
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
     val mucr = answers.mucrOptions.map(_.mucr).getOrElse(throw ReturnToStartException)
     val ucr = answers.associateUcr.map(_.ucr).getOrElse(throw ReturnToStartException)
+    val exchange = answers.associateUcr.map(_.kind) match {
+      case Some(AssociateKind.Ducr) => AssociateDUCRExchange(providerId, eori, mucr, ucr)
+      case Some(AssociateKind.Mucr) => AssociateMUCRExchange(providerId, eori, mucr, ucr)
+    }
 
     connector
-      .submit(AssociateUCRExchange(providerId, eori, mucr, ucr))
+      .submit(exchange)
       .andThen {
         case Success(_) =>
           cacheRepository.removeByProviderId(providerId).flatMap { _ =>
