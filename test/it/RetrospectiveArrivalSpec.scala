@@ -168,8 +168,8 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         )
         verifyEventually(
           postRequestedForAudit()
-            .withRequestBody(matchingJsonPath("auditType", equalTo("RetrospectiveArrival")))
-            .withRequestBody(matchingJsonPath("detail.providerId", equalTo("pid")))
+            .withRequestBody(matchingJsonPath("auditType", equalTo("retrospective-arrival")))
+            .withRequestBody(matchingJsonPath("detail.pid", equalTo("pid")))
             .withRequestBody(matchingJsonPath("detail.ucr", equalTo("GB/123-12345")))
             .withRequestBody(matchingJsonPath("detail.ucrType", equalTo("M")))
             .withRequestBody(matchingJsonPath("detail.messageCode", equalTo("RET")))

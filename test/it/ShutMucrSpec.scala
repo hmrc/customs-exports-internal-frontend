@@ -88,8 +88,8 @@ class ShutMucrSpec extends IntegrationSpec {
         )
         verifyEventually(
           postRequestedForAudit()
-            .withRequestBody(matchingJsonPath("auditType", equalTo("ShutMucr")))
-            .withRequestBody(matchingJsonPath("detail.providerId", equalTo("pid")))
+            .withRequestBody(matchingJsonPath("auditType", equalTo("shut-mucr")))
+            .withRequestBody(matchingJsonPath("detail.pid", equalTo("pid")))
             .withRequestBody(matchingJsonPath("detail.mucr", equalTo("GB/123-12345")))
             .withRequestBody(matchingJsonPath("detail.submissionResult", equalTo("Success")))
         )

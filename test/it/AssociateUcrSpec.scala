@@ -124,8 +124,8 @@ class AssociateUcrSpec extends IntegrationSpec {
         )
         verifyEventually(
           postRequestedForAudit()
-            .withRequestBody(matchingJsonPath("auditType", equalTo("Associate")))
-            .withRequestBody(matchingJsonPath("detail.providerId", equalTo("pid")))
+            .withRequestBody(matchingJsonPath("auditType", equalTo("associate")))
+            .withRequestBody(matchingJsonPath("detail.pid", equalTo("pid")))
             .withRequestBody(matchingJsonPath("detail.mucr", equalTo("GB/123-12345")))
             .withRequestBody(matchingJsonPath("detail.ducr", equalTo("GB/321-54321")))
             .withRequestBody(matchingJsonPath("detail.submissionResult", equalTo("Success")))

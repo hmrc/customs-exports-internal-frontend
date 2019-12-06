@@ -91,7 +91,7 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
   private def getAuditTags(transactionNameSuffix: String, path: String)(implicit hc: HeaderCarrier) =
     AuditExtensions
       .auditHeaderCarrier(hc)
-      .toAuditTags(transactionName = s"Export-Declaration-${transactionNameSuffix}", path = s"customs-declare-exports/${path}")
+      .toAuditTags(transactionName = s"export-declaration-${transactionNameSuffix}", path = s"customs-declare-exports/${path}")
 
   private def handleResponse(result: AuditResult, auditType: String) = result match {
     case Success =>
@@ -160,6 +160,8 @@ object AuditService {
 
   object EventData extends Enumeration {
     type Data = Value
-    val providerId, mucr, ducr, ucr, ucrType, messageCode, movementReference, submissionResult = Value
+
+    val providerId = Value("pid")
+    val mucr, ducr, ucr, ucrType, messageCode, movementReference, submissionResult = Value
   }
 }

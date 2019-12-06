@@ -273,8 +273,8 @@ class ArrivalSpec extends IntegrationSpec {
         )
         verifyEventually(
           postRequestedForAudit()
-            .withRequestBody(matchingJsonPath("auditType", equalTo("Arrival")))
-            .withRequestBody(matchingJsonPath("detail.providerId", equalTo("pid")))
+            .withRequestBody(matchingJsonPath("auditType", equalTo("arrival")))
+            .withRequestBody(matchingJsonPath("detail.pid", equalTo("pid")))
             .withRequestBody(matchingJsonPath("detail.ucr", equalTo("GB/123-12345")))
             .withRequestBody(matchingJsonPath("detail.ucrType", equalTo("M")))
             .withRequestBody(matchingJsonPath("detail.messageCode", equalTo("EAL")))
