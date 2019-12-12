@@ -18,13 +18,16 @@ package views
 
 import play.api.i18n.Messages
 
-case class Title(title: String)
+case class Title(headingKey: String, sectionKey: Option[String] = None, headingArgs: Seq[String] = Seq.empty) {
 
-object Title {
-  def apply(headingKey: String, sectionKey: Option[String])(implicit messages: Messages): Title =
-    if (sectionKey.isEmpty) {
-      Title(messages("title.format", messages(headingKey), messages("service.name")))
-    } else {
-      Title(messages("title.withSection.format", messages(headingKey), messages(sectionKey.getOrElse("")), messages("service.name")))
+  def format(implicit messages: Messages): String = {
+    val heading = messages(headingKey, headingArgs: _*)
+    val service = messages("service.name")
+
+    sectionKey match {
+      case Some(section) => messages("title.withSection.format", heading, messages(section), service)
+      case _             => messages("title.format", heading, service)
     }
+
+  }
 }

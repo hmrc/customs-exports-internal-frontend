@@ -21,6 +21,6 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title(messages("view.unauthorized.title"))) {
+@main_template(title = Title("view.unauthorized.title")) {
     <h1>@messages("view.unauthorized.title")</h1>
 }

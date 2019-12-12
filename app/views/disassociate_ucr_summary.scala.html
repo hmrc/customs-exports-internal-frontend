@@ -22,7 +22,7 @@
 
 @(disassociateUcr: DisassociateUcr)(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title(messages("disassociate.ucr.summary.title")), fullWidth = true) {
+@main_template(title = Title("disassociate.ucr.summary.title"), fullWidth = true) {
     @helper.form(consolidations.routes.DisassociateUCRSummaryController.submit(), 'autoComplete -> "off") {
       @helper.CSRF.formField
 

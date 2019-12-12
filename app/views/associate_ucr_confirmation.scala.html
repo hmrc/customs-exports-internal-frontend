@@ -28,7 +28,7 @@
 @associateLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.AssociateUCR)">@messages("association.confirmation.associateOrDepart.associate")</a>}
 @shutMucrLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.Departure)">@messages("association.confirmation.associateOrDepart.depart")</a>}
 
-@main_template(title = Title(messages(s"$prefix.tab.heading"))) {
+@main_template(title = Title(s"$prefix.tab.heading")) {
 
     @components.highlight_box_with_reference(
         headingText = messages(s"$prefix.heading", ucr)
