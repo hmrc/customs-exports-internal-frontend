@@ -25,7 +25,7 @@
 @(submissions: Seq[(Submission, Seq[NotificationFrontendModel])])(implicit request: Request[_], messages: Messages)
 
 
-@main_template(title = Title(messages("submissions.title")), fullWidth = true) {
+@main_template(title = Title("submissions.title"), fullWidth = true) {
 
   @components.back_link(routes.ChoiceController.displayPage())
 

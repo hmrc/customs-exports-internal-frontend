@@ -32,7 +32,7 @@
 @arrivalLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.Arrival)">@messages("movement.confirmation.departure.nextSteps.arrive")</a>}
 
 @main_template(
-    title = Title(s"movement.confirmation.${journeyType}.tab.heading", None)
+    title = Title(s"movement.confirmation.${journeyType}.tab.heading")
 ) {
 
     @components.highlight_box_with_reference(

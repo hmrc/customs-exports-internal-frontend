@@ -31,26 +31,26 @@ class ConsignmentReferenceViewSpec extends ViewSpec {
 
     "render title" in {
 
-      page(ConsignmentReferences.form()).getTitle must containMessage("consignmentReferences.title")
+      page(ConsignmentReferences.form()).getTitle must containMessage("consignmentReferences.arrive.question")
     }
 
     "render heading" when {
 
       "used for Arrival journey" in {
 
-        page(ConsignmentReferences.form()).getElementById("section-header") must containMessage("consignmentReferences.ARRIVE.heading")
+        page(ConsignmentReferences.form()).getElementById("section-header") must containMessage("consignmentReferences.arrive.heading")
       }
 
       "used for Retrospective Arrival journey" in {
 
         implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
-        page(ConsignmentReferences.form()).getElementById("section-header") must containMessage("consignmentReferences.RETROSPECTIVE_ARRIVE.heading")
+        page(ConsignmentReferences.form()).getElementById("section-header") must containMessage("consignmentReferences.retrospective_arrive.heading")
       }
 
       "used for Departure journey" in {
 
         implicit val request = journeyRequest(DepartureAnswers())
-        page(ConsignmentReferences.form()).getElementById("section-header") must containMessage("consignmentReferences.DEPART.heading")
+        page(ConsignmentReferences.form()).getElementById("section-header") must containMessage("consignmentReferences.depart.heading")
       }
     }
 

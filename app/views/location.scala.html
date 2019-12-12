@@ -46,7 +46,7 @@
       ""
   }
 
-  @main_template(title = Title(pageTitleKey(request), None)) {
+  @main_template(title = Title(pageTitleKey(request))) {
     @helper.form(routes.LocationController.saveLocation(), 'autoComplete -> "off") {
       @helper.CSRF.formField
 

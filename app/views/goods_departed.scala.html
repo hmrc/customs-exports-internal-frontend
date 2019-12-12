@@ -23,7 +23,7 @@
 
 @(form: Form[GoodsDeparted])(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title(messages("goodsDeparted.title"))) {
+@main_template(title = Title("goodsDeparted.title")) {
   @helper.form(controllers.movements.routes.GoodsDepartedController.saveGoodsDeparted(), 'autoComplete -> "off") {
     @helper.CSRF.formField
 

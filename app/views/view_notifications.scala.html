@@ -16,6 +16,7 @@
 
 @import models.viewmodels.notificationspage.NotificationsPageSingleElement
 @import views.Title
+@import views.Title.NO_SECTION
 
 @this(main_template: views.html.templates.main_template)
 
@@ -35,7 +36,7 @@
     </div>
 }
 
-@main_template(title = Title(messages("notifications.title", submissionUcr))) {
+@main_template(title = Title("notifications.title", NO_SECTION, Seq(submissionUcr))) {
 
   @components.back_link(routes.ViewSubmissionsController.displayPage())
 

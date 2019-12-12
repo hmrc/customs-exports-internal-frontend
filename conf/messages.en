@@ -41,13 +41,12 @@ movement.choice.submissions.label = View requests
 choicePage.input.error.empty = Please, choose what do you want to do
 choicePage.input.error.incorrectValue = Please, choose valid option
 
-consignmentReferences.title = Consignment references
-consignmentReferences.ARRIVE.heading = Arrive consignment
-consignmentReferences.RETROSPECTIVE_ARRIVE.heading = Retrospectively arrive a consignment
-consignmentReferences.DEPART.heading = Depart consignment
-consignmentReferences.ARRIVE.question = What consignment do you want to arrive?
-consignmentReferences.RETROSPECTIVE_ARRIVE.question = Which consignment do you want to retrospectively arrive?
-consignmentReferences.DEPART.question = What consignment do you want to depart?
+consignmentReferences.arrive.heading = Arrive consignment
+consignmentReferences.retrospective_arrive.heading = Retrospectively arrive a consignment
+consignmentReferences.depart.heading = Depart consignment
+consignmentReferences.arrive.question = What consignment do you want to arrive?
+consignmentReferences.retrospective_arrive.question = Which consignment do you want to retrospectively arrive?
+consignmentReferences.depart.question = What consignment do you want to depart?
 consignmentReferences.reference.ducr = Declaration Consignment Reference (DUCR)
 consignmentReferences.reference.mucr = Master Consignment Reference (MUCR)
 consignmentReferences.reference.empty = Please choose reference
@@ -156,6 +155,7 @@ movement.confirmation.departure.nextSteps.depart = Depart another consignment
 movement.confirmation.departure.nextSteps.arrive = Arrive a new consignment
 
 associate.heading = Add to MUCR {0}
+mucrOptions.heading = Add to MUCR
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
 mucrOptions.create = Create a new Master Consignment Reference (MUCR)
 mucrOptions.add = Add to an existing Master Consignment Reference (MUCR)

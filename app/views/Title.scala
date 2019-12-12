@@ -17,14 +17,23 @@
 package views
 
 import play.api.i18n.Messages
+import views.Title.NO_SECTION
 
-case class Title(title: String)
+case class Title(headingKey: String, sectionKey: String = NO_SECTION, headingArgs: Seq[String] = Seq.empty) {
+
+  def format(implicit messages: Messages): String = {
+    val heading = messages(headingKey, headingArgs: _*)
+    val service = messages("service.name")
+
+    if (sectionKey.nonEmpty) {
+      messages("title.withSection.format", heading, messages(sectionKey), service)
+    } else {
+      messages("title.format", heading, service)
+    }
+
+  }
+}
 
 object Title {
-  def apply(headingKey: String, sectionKey: Option[String])(implicit messages: Messages): Title =
-    if (sectionKey.isEmpty) {
-      Title(messages("title.format", messages(headingKey), messages("service.name")))
-    } else {
-      Title(messages("title.withSection.format", messages(headingKey), messages(sectionKey.getOrElse("")), messages("service.name")))
-    }
+  val NO_SECTION = ""
 }

@@ -25,7 +25,10 @@
 
 @(form: Form[ConsignmentReferences])(implicit request: JourneyRequest[_], messages: Messages)
 
-@main_template(title = Title("consignmentReferences.title", None)) {
+@headerKey = @{s"consignmentReferences.${request.answers.`type`.toString.toLowerCase}.question"}
+@sectionHeaderKey = @{s"consignmentReferences.${request.answers.`type`.toString.toLowerCase}.heading"}
+
+@main_template(title = Title(headerKey, sectionHeaderKey)) {
     @helper.form(controllers.movements.routes.ConsignmentReferencesController.saveConsignmentReferences(), 'autoComplete -> "off") {
         @helper.CSRF.formField
 
@@ -34,8 +37,8 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            title = messages(s"consignmentReferences.${request.answers.`type`}.question"),
-            sectionHeader = messages(s"consignmentReferences.${request.answers.`type`}.heading")
+            title = messages(headerKey),
+            sectionHeader = messages(sectionHeaderKey)
         )
 
         @components.input_radio(
