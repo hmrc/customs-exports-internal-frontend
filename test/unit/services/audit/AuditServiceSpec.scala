@@ -22,6 +22,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.libs.json.{JsValue, Json}
+import testdata.CommonTestData.providerId
 import testdata.{CommonTestData, MovementsTestData}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -94,6 +95,7 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
         val auditTags = auditTagsPayload("arrival")
         val auditDetail: JsValue = Json.obj(
+          "pid" -> providerId,
           "ConsignmentReferences" -> answers.consignmentReferences,
           "Location" -> answers.location,
           "MovementDetails" -> answers.arrivalDetails,
@@ -102,7 +104,7 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
         val expectedExtendedDataEvent =
           ExtendedDataEvent(auditSource = "appName", auditType = "arrival", tags = auditTags, detail = auditDetail)
 
-        service.auditAllPagesUserInput(answers)
+        service.auditAllPagesUserInput(providerId, answers)
 
         val actualExtendedDataEvent = sentExtendedDataEvent
         actualExtendedDataEvent.auditSource mustBe expectedExtendedDataEvent.auditSource
@@ -116,11 +118,12 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
         val answers = MovementsTestData.validRetrospectiveArrivalAnswers
 
         val auditTags = auditTagsPayload("retrospective-arrival")
-        val auditDetail: JsValue = Json.obj("ConsignmentReferences" -> answers.consignmentReferences, "Location" -> answers.location)
+        val auditDetail: JsValue =
+          Json.obj("pid" -> providerId, "ConsignmentReferences" -> answers.consignmentReferences, "Location" -> answers.location)
         val expectedExtendedDataEvent =
           ExtendedDataEvent(auditSource = "appName", auditType = "retrospective-arrival", tags = auditTags, detail = auditDetail)
 
-        service.auditAllPagesUserInput(answers)
+        service.auditAllPagesUserInput(providerId, answers)
 
         val actualExtendedDataEvent = sentExtendedDataEvent
         actualExtendedDataEvent.auditSource mustBe expectedExtendedDataEvent.auditSource
@@ -135,6 +138,7 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
         val auditTags = auditTagsPayload("departure")
         val auditDetail: JsValue = Json.obj(
+          "pid" -> providerId,
           "ConsignmentReferences" -> answers.consignmentReferences,
           "Location" -> answers.location,
           "MovementDetails" -> answers.departureDetails,
@@ -143,7 +147,7 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
         val expectedExtendedDataEvent =
           ExtendedDataEvent(auditSource = "appName", auditType = "departure", tags = auditTags, detail = auditDetail)
 
-        service.auditAllPagesUserInput(answers)
+        service.auditAllPagesUserInput(providerId, answers)
 
         val actualExtendedDataEvent = sentExtendedDataEvent
         actualExtendedDataEvent.auditSource mustBe expectedExtendedDataEvent.auditSource
@@ -158,11 +162,11 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
       "used for Shut a Mucr" in {
 
         val auditTags = auditTagsResult("shut-mucr")
-        val auditDetail = Map("pid" -> CommonTestData.providerId, "mucr" -> "mucr", "submissionResult" -> "Success")
+        val auditDetail = Map("pid" -> providerId, "mucr" -> "mucr", "submissionResult" -> "Success")
         val expectedDataEvent =
           DataEvent(auditSource = "appName", auditType = "shut-mucr", tags = auditTags, detail = auditDetail)
 
-        service.auditShutMucr(CommonTestData.providerId, "mucr", "Success")
+        service.auditShutMucr(providerId, "mucr", "Success")
 
         val actualDataEvent = sentDataEvent
         actualDataEvent.auditSource mustBe expectedDataEvent.auditSource
@@ -175,11 +179,11 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
         val auditTags = auditTagsResult("associate")
         val auditDetail =
-          Map("pid" -> CommonTestData.providerId, "mucr" -> "mucr", "ducr" -> "ducr", "submissionResult" -> "Success")
+          Map("pid" -> providerId, "mucr" -> "mucr", "ducr" -> "ducr", "submissionResult" -> "Success")
         val expectedDataEvent =
           DataEvent(auditSource = "appName", auditType = "associate", tags = auditTags, detail = auditDetail)
 
-        service.auditAssociate(CommonTestData.providerId, "mucr", "ducr", "Success")
+        service.auditAssociate(providerId, "mucr", "ducr", "Success")
 
         val actualDataEvent = sentDataEvent
         actualDataEvent.auditSource mustBe expectedDataEvent.auditSource
@@ -191,11 +195,11 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
       "used for Disassociation" in {
 
         val auditTags = auditTagsResult("disassociate")
-        val auditDetail = Map("pid" -> CommonTestData.providerId, "ucr" -> "ucr", "submissionResult" -> "Success")
+        val auditDetail = Map("pid" -> providerId, "ucr" -> "ucr", "submissionResult" -> "Success")
         val expectedDataEvent =
           DataEvent(auditSource = "appName", auditType = "disassociate", tags = auditTags, detail = auditDetail)
 
-        service.auditDisassociate(CommonTestData.providerId, "ucr", "Success")
+        service.auditDisassociate(providerId, "ucr", "Success")
 
         val actualDataEvent = sentDataEvent
         actualDataEvent.auditSource mustBe expectedDataEvent.auditSource
@@ -209,7 +213,7 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
         val auditTags = auditTagsResult("arrival")
         val auditDetail = Map(
           "movementReference" -> "arrivalReference",
-          "pid" -> CommonTestData.providerId,
+          "pid" -> providerId,
           "messageCode" -> "EAL",
           "ucr" -> CommonTestData.correctUcr,
           "ucrType" -> "D",
@@ -232,13 +236,8 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
       "used for Retrospective Arrival" in {
 
         val auditTags = auditTagsResult("retrospective-arrival")
-        val auditDetail = Map(
-          "pid" -> CommonTestData.providerId,
-          "messageCode" -> "RET",
-          "ucr" -> CommonTestData.correctUcr,
-          "ucrType" -> "D",
-          "submissionResult" -> "Success"
-        )
+        val auditDetail =
+          Map("pid" -> providerId, "messageCode" -> "RET", "ucr" -> CommonTestData.correctUcr, "ucrType" -> "D", "submissionResult" -> "Success")
         val expectedDataEvent =
           DataEvent(auditSource = "appName", auditType = "retrospective-arrival", tags = auditTags, detail = auditDetail)
 
@@ -256,13 +255,8 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
       "used for Departure" in {
 
         val auditTags = auditTagsResult("departure")
-        val auditDetail = Map(
-          "pid" -> CommonTestData.providerId,
-          "messageCode" -> "EDL",
-          "ucr" -> CommonTestData.correctUcr,
-          "ucrType" -> "D",
-          "submissionResult" -> "Success"
-        )
+        val auditDetail =
+          Map("pid" -> providerId, "messageCode" -> "EDL", "ucr" -> CommonTestData.correctUcr, "ucrType" -> "D", "submissionResult" -> "Success")
         val expectedDataEvent =
           DataEvent(auditSource = "appName", auditType = "departure", tags = auditTags, detail = auditDetail)
 

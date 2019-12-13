@@ -17,7 +17,7 @@
 package services
 
 import connectors.CustomsDeclareExportsMovementsConnector
-import connectors.exchanges.{AssociateDUCRExchange, AssociateMUCRExchange, DisassociateDUCRExchange, DisassociateMUCRExchange, ShutMUCRExchange}
+import connectors.exchanges._
 import forms._
 import javax.inject.{Inject, Singleton}
 import metrics.MovementsMetrics
@@ -105,7 +105,7 @@ class SubmissionService @Inject()(
     val data = movementBuilder.createMovementExchange(providerId, answers)
     val timer = metrics.startTimer(journeyType)
 
-    auditService.auditAllPagesUserInput(answers)
+    auditService.auditAllPagesUserInput(providerId, answers)
 
     connector
       .submit(data)

@@ -166,15 +166,24 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
                    |"location":{"code":"GBAUEMAEMAEMA"}
                    |}""".stripMargin))
         )
-        verifyEventually(
-          postRequestedForAudit()
-            .withRequestBody(matchingJsonPath("auditType", equalTo("retrospective-arrival")))
-            .withRequestBody(matchingJsonPath("detail.pid", equalTo("pid")))
-            .withRequestBody(matchingJsonPath("detail.ucr", equalTo("GB/123-12345")))
-            .withRequestBody(matchingJsonPath("detail.ucrType", equalTo("M")))
-            .withRequestBody(matchingJsonPath("detail.messageCode", equalTo("RET")))
-            .withRequestBody(matchingJsonPath("detail.submissionResult", equalTo("Success")))
-        )
+
+        val submissionPayloadRequestBuilder = postRequestedForAudit()
+          .withRequestBody(matchingJsonPath("auditType", equalTo("retrospective-arrival")))
+          .withRequestBody(matchingJsonPath("detail.pid", equalTo("pid")))
+          .withRequestBody(matchingJsonPath("detail.ConsignmentReferences.reference", equalTo("M")))
+          .withRequestBody(matchingJsonPath("detail.ConsignmentReferences.referenceValue", equalTo("GB/123-12345")))
+          .withRequestBody(matchingJsonPath("detail.Location.code", equalTo("GBAUEMAEMAEMA")))
+
+        val submissionResultRequestBuilder = postRequestedForAudit()
+          .withRequestBody(matchingJsonPath("auditType", equalTo("retrospective-arrival")))
+          .withRequestBody(matchingJsonPath("detail.pid", equalTo("pid")))
+          .withRequestBody(matchingJsonPath("detail.ucr", equalTo("GB/123-12345")))
+          .withRequestBody(matchingJsonPath("detail.ucrType", equalTo("M")))
+          .withRequestBody(matchingJsonPath("detail.messageCode", equalTo("RET")))
+          .withRequestBody(matchingJsonPath("detail.submissionResult", equalTo("Success")))
+
+        verifyEventually(submissionPayloadRequestBuilder)
+        verifyEventually(submissionResultRequestBuilder)
       }
     }
   }

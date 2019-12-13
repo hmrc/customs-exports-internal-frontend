@@ -284,7 +284,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         "return same UCR as in the answers" in {
           given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
           given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful((): Unit))
-          given(audit.auditAllPagesUserInput(any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
+          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
           given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(validArrivalExchange)
@@ -299,7 +299,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         "call MovementBuilder, AuditService, backend Connector, CacheRepository and AuditService again" in {
           given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
           given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful((): Unit))
-          given(audit.auditAllPagesUserInput(any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
+          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
           val arrivalExchange = validArrivalExchange
@@ -311,7 +311,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
           val inOrder = Mockito.inOrder(movementBuilder, repository, audit, connector)
           inOrder.verify(movementBuilder).createMovementExchange(meq(providerId), meq(answers))
-          inOrder.verify(audit).auditAllPagesUserInput(meq(answers))(any())
+          inOrder.verify(audit).auditAllPagesUserInput(meq(providerId), meq(answers))(any())
           inOrder.verify(connector).submit(meq(arrivalExchange))(any())
           inOrder.verify(repository).removeByProviderId(meq(providerId))
           inOrder.verify(audit).auditMovements(meq(arrivalExchange), meq("Success"), meq(AuditType.AuditArrival))(any())
@@ -348,7 +348,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
         "not call CacheRepository" in {
           given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
-          given(audit.auditAllPagesUserInput(any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
+          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
           given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(validArrivalExchange)
@@ -364,7 +364,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
         "call AuditService second time with failed result" in {
           given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
-          given(audit.auditAllPagesUserInput(any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
+          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
           val arrivalExchange = validArrivalExchange
@@ -388,7 +388,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         "return same UCR as in the answers" in {
           given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
           given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful((): Unit))
-          given(audit.auditAllPagesUserInput(any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
+          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
           given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(validRetrospectiveArrivalExchange)
@@ -403,7 +403,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         "call MovementBuilder, AuditService, backend Connector, CacheRepository and AuditService again" in {
           given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
           given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful((): Unit))
-          given(audit.auditAllPagesUserInput(any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
+          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
           val retroArrivalExchange = validRetrospectiveArrivalExchange
@@ -415,7 +415,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
           val inOrder = Mockito.inOrder(movementBuilder, repository, audit, connector)
           inOrder.verify(movementBuilder).createMovementExchange(meq(providerId), meq(answers))
-          inOrder.verify(audit).auditAllPagesUserInput(meq(answers))(any())
+          inOrder.verify(audit).auditAllPagesUserInput(meq(providerId), meq(answers))(any())
           inOrder.verify(connector).submit(meq(retroArrivalExchange))(any())
           inOrder.verify(repository).removeByProviderId(meq(providerId))
           inOrder.verify(audit).auditMovements(meq(retroArrivalExchange), meq("Success"), meq(AuditType.AuditRetrospectiveArrival))(any())
@@ -452,7 +452,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
         "not call CacheRepository" in {
           given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
-          given(audit.auditAllPagesUserInput(any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
+          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
           given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(validRetrospectiveArrivalExchange)
@@ -468,7 +468,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
         "call AuditService second time with failed result" in {
           given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
-          given(audit.auditAllPagesUserInput(any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
+          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
           val retroArrivalExchange = validRetrospectiveArrivalExchange
@@ -492,7 +492,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         "return same UCR as in the answers" in {
           given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
           given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful((): Unit))
-          given(audit.auditAllPagesUserInput(any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
+          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
           given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(validDepartureExchange)
@@ -507,7 +507,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         "call MovementBuilder, AuditService, backend Connector, CacheRepository and AuditService again" in {
           given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
           given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful((): Unit))
-          given(audit.auditAllPagesUserInput(any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
+          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
           val departureExchange = validDepartureExchange
@@ -519,7 +519,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
           val inOrder = Mockito.inOrder(movementBuilder, repository, audit, connector)
           inOrder.verify(movementBuilder).createMovementExchange(meq(providerId), meq(answers))
-          inOrder.verify(audit).auditAllPagesUserInput(meq(answers))(any())
+          inOrder.verify(audit).auditAllPagesUserInput(meq(providerId), meq(answers))(any())
           inOrder.verify(connector).submit(meq(departureExchange))(any())
           inOrder.verify(repository).removeByProviderId(meq(providerId))
           inOrder.verify(audit).auditMovements(meq(departureExchange), meq("Success"), meq(AuditType.AuditDeparture))(any())
@@ -556,7 +556,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
         "not call CacheRepository" in {
           given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
-          given(audit.auditAllPagesUserInput(any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
+          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
           given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(validDepartureExchange)
@@ -572,7 +572,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
         "call AuditService second time with failed result" in {
           given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
-          given(audit.auditAllPagesUserInput(any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
+          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
           val departureExchange = validDepartureExchange
