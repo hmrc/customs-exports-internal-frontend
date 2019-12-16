@@ -4,10 +4,10 @@ import sbt._
 object AppDependencies {
 
   val compile = Seq(
-    "uk.gov.hmrc" %% "simple-reactivemongo"          % "7.20.0-play-26",
+    "uk.gov.hmrc" %% "simple-reactivemongo"          % "7.21.0-play-26",
     "uk.gov.hmrc" %% "govuk-template"                % "5.42.0-play-26",
     "uk.gov.hmrc" %% "play-json-union-formatter"     % "1.5.0",
-    "uk.gov.hmrc" %% "play-ui"                       % "8.2.0-play-26",
+    "uk.gov.hmrc" %% "play-ui"                       % "8.5.0-play-26",
     "uk.gov.hmrc" %% "bootstrap-play-26"             % "1.1.0",
     "uk.gov.hmrc" %% "play-conditional-form-mapping" % "1.1.0-play-26",
     "com.github.tototoshi" %% "scala-csv" % "1.3.6"
@@ -22,7 +22,7 @@ object AppDependencies {
     "com.github.tomakehurst"  % "wiremock-jre8"             % "2.24.1"                % "test, it",
     "org.pegdown"             %  "pegdown"                  % "1.6.0"                 % "test, it",
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "3.1.2"                 % "test, it",
-    "uk.gov.hmrc"             %% "reactivemongo-test"       % "4.14.0-play-25"        % "test, it"
+    "uk.gov.hmrc"             %% "reactivemongo-test"       % "4.15.0-play-26"        % "test, it"
   ).map(_.withSources())
 
 }
