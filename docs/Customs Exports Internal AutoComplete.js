@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Customs Exports Internal AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  Customs Exports Internal AutoComplete
 // @author       You
 // @match        http*://*/*customs-exports-internal*
@@ -19,7 +19,7 @@ function createQuickButton() {
     button.id="quickSubmit";
     button.classList.add('button-start');
     button.innerHTML = 'Quick Submit';
-    button.onclick = () => completePage();
+    button.onclick = completePage;
     return button;
 }
 
@@ -52,12 +52,12 @@ function selectRadioOption(element, index){
 }
 
 function currentPageIs(path) {
-    let matches = window.location.pathname.match(path + "$");
+    let matches = window.location.pathname.match(path);
     return matches && matches.length > 0
 }
 
 function completePage() {
-    if(currentPageIs('stride-idp-stub')){
+    if(currentPageIs('/stride-idp-stub')){
         document.getElementById('pid').value = '123';
         document.getElementById('roles').value = 'write:customs-inventory-linking-exports';
         document.getElementById('continue-button').click();
@@ -121,7 +121,7 @@ function completePage() {
         document.getElementById("newMucr").value = "GB/1234-123ABC456DEFIIIII";
         document.getElementsByClassName('button')[0].click()
     }
-    if(currentPageIs("/customs-exports-internal/associate-ucr")){
+    if(currentPageIs("/customs-exports-internal/associate-ucr$")){
         selectRadioOption(document.getElementById("kind"), 0);
         const now = new Date();
         document.getElementById("ducr").value = `5GB123456789000-${now.valueOf()}IIIII`;
@@ -133,13 +133,13 @@ function completePage() {
     if(currentPageIs("/customs-exports-internal/dissociate-ucr-summary")){
         document.getElementsByClassName('button')[0].click()
     }
-    if(currentPageIs("/customs-exports-internal/dissociate-ucr")){
+    if(currentPageIs("/customs-exports-internal/dissociate-ucr$")){
         selectRadioOption(document.getElementById("kind"), 0);
         const now = new Date();
         document.getElementById("ducr").value = `5GB123456789000-${now.valueOf()}IIIII`;
         document.getElementsByClassName('button')[0].click()
     }
-    if(currentPageIs("/customs-exports-internal/shut-mucr")){
+    if(currentPageIs("/customs-exports-internal/shut-mucr$")){
         const now = new Date();
         document.getElementById("mucr").value = `GB/ABCDE1234-${now.valueOf()}IIIII`;
         document.getElementsByClassName('button')[0].click()
