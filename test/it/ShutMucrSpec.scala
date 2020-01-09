@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, matchingJsonPath, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
 import forms.ShutMucr
 import models.cache.ShutMucrAnswers
 import play.api.test.Helpers._
@@ -84,7 +84,7 @@ class ShutMucrSpec extends IntegrationSpec {
         theCacheFor("pid") mustBe None
         verify(
           postRequestedForConsolidation()
-            .withRequestBody(equalTo("""{"providerId":"pid","eori":"GB1234567890","mucr":"GB/123-12345","consolidationType":"SHUT_MUCR"}"""))
+            .withRequestBody(equalToJson("""{"providerId":"pid","eori":"GB1234567890","mucr":"GB/123-12345","consolidationType":"SHUT_MUCR"}"""))
         )
         verifyEventually(
           postRequestedForAudit()

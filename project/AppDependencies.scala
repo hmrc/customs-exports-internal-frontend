@@ -5,16 +5,15 @@ object AppDependencies {
 
   val compile = Seq(
     "uk.gov.hmrc" %% "simple-reactivemongo"          % "7.22.0-play-26",
-    "uk.gov.hmrc" %% "govuk-template"                % "5.42.0-play-26",
-    "uk.gov.hmrc" %% "play-json-union-formatter"     % "1.5.0",
+    "uk.gov.hmrc" %% "govuk-template"                % "5.48.0-play-26",
+    "uk.gov.hmrc" %% "play-json-union-formatter"     % "1.7.0",
     "uk.gov.hmrc" %% "play-ui"                       % "8.5.0-play-26",
-    "uk.gov.hmrc" %% "bootstrap-play-26"             % "1.1.0",
-    "uk.gov.hmrc" %% "play-conditional-form-mapping" % "1.1.0-play-26",
+    "uk.gov.hmrc" %% "bootstrap-play-26"             % "1.3.0",
+    "uk.gov.hmrc" %% "play-conditional-form-mapping" % "1.2.0-play-26",
     "com.github.tototoshi" %% "scala-csv" % "1.3.6"
   ).map(_.withSources())
 
   val test = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.1.0" % Test classifier "tests",
     "org.scalatest"           %% "scalatest"                % "3.0.8"                 % "test, it",
     "org.jsoup"               %  "jsoup"                    % "1.10.2"                % "test, it",
     "com.typesafe.play"       %% "play-test"                % current                 % "test, it",

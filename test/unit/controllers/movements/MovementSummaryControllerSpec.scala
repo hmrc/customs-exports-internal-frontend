@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.{MockCache, SubmissionService}
 import testdata.CommonTestData.correctUcr
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.movement_confirmation_page
 import views.html.summary.{arrival_summary_page, departure_summary_page, retrospective_arrival_summary_page}
 

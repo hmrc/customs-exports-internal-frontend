@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import testdata.CommonTestData.providerId
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.transport
 
 import scala.concurrent.ExecutionContext.global

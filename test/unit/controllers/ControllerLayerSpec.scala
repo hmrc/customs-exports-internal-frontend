@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,22 @@ import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
 import models.cache.Answers
 import models.cache.JourneyType.JourneyType
 import org.scalatest.BeforeAndAfterEach
-import play.api.i18n.Messages
+import play.api.http.{DefaultFileMimeTypes, FileMimeTypes, FileMimeTypesConfiguration}
+import play.api.i18n.{Langs, Messages, MessagesApi}
 import play.api.libs.json.Writes
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.api.test.NoMaterializer
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import repositories.CacheRepository
 import testdata.CommonTestData.providerId
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.ViewTemplates
 import views.html.unauthorized
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with BeforeAndAfterEach with CSRFSupport {
 
@@ -93,4 +94,21 @@ abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with Befo
       Future.successful(Left(Results.Forbidden))
   }
 
+  def stubMessagesControllerComponents(
+    bodyParser: BodyParser[AnyContent] = stubBodyParser(AnyContentAsEmpty),
+    playBodyParsers: PlayBodyParsers = stubPlayBodyParsers(NoMaterializer),
+    messagesApi: MessagesApi = stubMessagesApi(),
+    langs: Langs = stubLangs(),
+    fileMimeTypes: FileMimeTypes = new DefaultFileMimeTypes(FileMimeTypesConfiguration()),
+    executionContext: ExecutionContext = ExecutionContext.global
+  ): MessagesControllerComponents =
+    DefaultMessagesControllerComponents(
+      new DefaultMessagesActionBuilderImpl(bodyParser, messagesApi)(executionContext),
+      DefaultActionBuilder(bodyParser)(executionContext),
+      playBodyParsers,
+      messagesApi,
+      langs,
+      fileMimeTypes,
+      executionContext
+    )
 }
