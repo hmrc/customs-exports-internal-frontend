@@ -26,7 +26,6 @@ import org.mockito.Mockito.{reset, verify, when}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.SubmissionService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.associate_ucr_summary
 
 import scala.concurrent.ExecutionContext.global

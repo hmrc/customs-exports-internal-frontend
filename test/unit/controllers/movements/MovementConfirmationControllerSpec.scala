@@ -25,7 +25,6 @@ import models.cache.JourneyType
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.movement_confirmation_page
 
 import scala.concurrent.ExecutionContext.Implicits.global

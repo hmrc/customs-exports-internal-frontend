@@ -30,7 +30,6 @@ import play.twirl.api.HtmlFormat
 import testdata.CommonTestData.{conversationId, providerId, validEori}
 import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.view_notifications
 
 import scala.concurrent.{ExecutionContext, Future}

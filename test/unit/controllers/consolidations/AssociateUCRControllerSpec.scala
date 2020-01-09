@@ -26,7 +26,6 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.MockCache
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.associate_ucr
 
 import scala.concurrent.ExecutionContext.global

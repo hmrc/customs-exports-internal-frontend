@@ -23,7 +23,6 @@ import models.ReturnToStartException
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.shut_mucr_confirmation
 
 import scala.concurrent.ExecutionContext.Implicits.global

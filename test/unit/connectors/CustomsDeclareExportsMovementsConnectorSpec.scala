@@ -89,7 +89,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
 
       verify(
         postRequestedFor(urlEqualTo("/consolidation"))
-          .withRequestBody(equalTo("""{"providerId":"provider-id","eori":"eori","ucr":"ucr","consolidationType":"DISASSOCIATE_DUCR"}"""))
+          .withRequestBody(equalToJson("""{"ucr":"ucr","providerId":"provider-id","consolidationType":"DISASSOCIATE_DUCR", "eori":"eori"}"""))
       )
     }
   }

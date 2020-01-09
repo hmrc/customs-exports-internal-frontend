@@ -31,7 +31,6 @@ import testdata.CommonTestData.{conversationId, conversationId_2, conversationId
 import testdata.MovementsTestData
 import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.view_submissions
 
 import scala.concurrent.ExecutionContext.Implicits.global
