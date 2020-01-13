@@ -21,7 +21,7 @@ object AppDependencies {
     "com.github.tomakehurst"  % "wiremock-jre8"             % "2.24.1"                % "test, it",
     "org.pegdown"             %  "pegdown"                  % "1.6.0"                 % "test, it",
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "3.1.2"                 % "test, it",
-    "uk.gov.hmrc"             %% "reactivemongo-test"       % "4.15.0-play-26"        % "test, it"
+    "uk.gov.hmrc"             %% "reactivemongo-test"       % "4.16.0-play-26"        % "test, it"
   ).map(_.withSources())
 
 }
