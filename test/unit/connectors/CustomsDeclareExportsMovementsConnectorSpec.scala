@@ -18,8 +18,9 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.AppConfig
-import connectors.exchanges.{ArrivalExchange, DisassociateDUCRExchange, MovementDetailsExchange}
+import connectors.exchanges.{ArrivalExchange, DisassociateDUCRExchange, IleQueryExchange, MovementDetailsExchange}
 import forms.{ArrivalReference, ConsignmentReferenceType, ConsignmentReferences, Location}
+import models.UcrBlock
 import models.notifications.ResponseType.ControlResponse
 import org.mockito.BDDMockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -91,6 +92,31 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
         postRequestedFor(urlEqualTo("/consolidation"))
           .withRequestBody(equalToJson("""{"ucr":"ucr","providerId":"provider-id","consolidationType":"DISASSOCIATE_DUCR", "eori":"eori"}"""))
       )
+    }
+  }
+
+  "Submit ILE Query" should {
+
+    "POST to the Back End" in {
+      stubFor(
+        post("/consignment-query")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.ACCEPTED)
+              .withBody(s"$conversationId")
+              .withHeader("Content-Type", "application/json")
+          )
+      )
+
+      val request = IleQueryExchange("eori", "provider-id", UcrBlock("ucr", "D"))
+      val result = connector.submit(request).futureValue
+
+      verify(
+        postRequestedFor(urlEqualTo("/consignment-query"))
+          .withRequestBody(equalToJson("""{"eori":"eori","providerId":"provider-id","ucrBlock":{"ucr":"ucr","ucrType":"D"}}""".stripMargin))
+      )
+
+      result mustBe conversationId
     }
   }
 

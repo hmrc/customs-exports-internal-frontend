@@ -17,7 +17,7 @@
 package connectors
 
 import config.AppConfig
-import connectors.exchanges.{ConsolidationExchange, MovementExchange}
+import connectors.exchanges.{ConsolidationExchange, IleQueryExchange, MovementExchange}
 import connectors.formats.Implicit.optionFormat
 import javax.inject.{Inject, Singleton}
 import models.notifications.NotificationFrontendModel
@@ -57,6 +57,15 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
         case Failure(exception) => logFailedExchange("Submit Consolidation", exception)
       }
       .map(_ => (): Unit)
+
+  def submit(request: IleQueryExchange)(implicit hc: HeaderCarrier): Future[String] =
+    httpClient
+      .POST[IleQueryExchange, HttpResponse](appConfig.customsDeclareExportsMovementsUrl + IleQuery, request, JsonHeaders)
+      .andThen {
+        case Success(response)  => logSuccessfulExchange("Submit ILE Query", response.body)
+        case Failure(exception) => logFailedExchange("Submit ILE Query", exception)
+      }
+      .map(_.body)
 
   def fetchAllSubmissions(providerId: String)(implicit hc: HeaderCarrier): Future[Seq[Submission]] =
     httpClient
@@ -108,4 +117,5 @@ object CustomsDeclareExportsMovementsConnector {
   val Consolidations = "/consolidation"
   val Submissions = "/submissions"
   val Notifications = "/notifications"
+  val IleQuery = "/consignment-query"
 }
