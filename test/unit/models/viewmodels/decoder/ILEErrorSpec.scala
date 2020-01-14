@@ -28,7 +28,7 @@ class ILEErrorSpec extends UnitSpec with ViewMatchers with CSRFSupport {
 
     "have correct amount of codes" in {
 
-      val expectedCodesAmount = 29
+      val expectedCodesAmount = 30
       ILEError.allErrors.size mustBe expectedCodesAmount
     }
 
@@ -54,7 +54,6 @@ class ILEErrorSpec extends UnitSpec with ViewMatchers with CSRFSupport {
         "UcrTypeNotMatchingUcrFormat",
         "DeclarationNotExist",
         "UcrAlreadyAssociated",
-        "PriorMovementLocationDifferentThanOnDeparture",
         "NoPriorArrivalFoundAtDepartureLocation",
         "DeclarationsMissingP2P",
         "DeclarationCancelledOrTerminated",
@@ -66,13 +65,15 @@ class ILEErrorSpec extends UnitSpec with ViewMatchers with CSRFSupport {
         "UcrIsNotMucr",
         "UcrNotExist",
         "UcrAlreadyDisassociated",
-        "UcrFieldCompletionNotMatchingEacAction",
         "EmptyMucr",
-        "InvalidExitMessage",
         "LocationBasedPermissionFailed",
         "InvalidGoodsLocation",
         "MucrAlreadyDeparted",
-        "UcrRejectedUponArrival"
+        "UcrRejectedUponArrival",
+        "AlreadyRetrospectiveArrived",
+        "PreviouslyArrivedDUCROrMUCR",
+        "AlreadyArrived",
+        "UCRDoesNotExist"
       )
 
       ileErrorsNames.foreach { errorName =>
