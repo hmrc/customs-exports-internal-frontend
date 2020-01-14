@@ -243,7 +243,6 @@ shutMucr.confirmation.nextSteps = {0} another master consignment. {1}.
 shutMucr.confirmation.nextSteps.shutMucr = Shut
 shutMucr.confirmation.nextSteps.depart = Depart a consignment
 
-
 view.unauthorized.title=You are not authorized
 
 submissions.title = All requests
@@ -305,3 +304,7 @@ notifications.elem.content.inventoryLinkingMovementResponse.crc = CRC:
 
 notifications.elem.content.inventoryLinkingMovementTotalsResponse.roe = Route of entry is:
 notifications.elem.content.inventoryLinkingMovementTotalsResponse.soe = Status of entry is:
+
+ileQuery.title = Find a consignment
+ileQuery.ucr.empty = Enter a Unique Consignment Reference
+ileQuery.ucr.incorrect = Unique Consignment Reference is incorrect

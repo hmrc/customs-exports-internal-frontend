@@ -1,0 +1,24 @@
+@import views.Title
+
+@this(main_template: views.html.templates.main_template)
+
+@(form: Form[String])(implicit request: Request[_], messages: Messages)
+
+@main_template(title = Title("ileQuery.title")) {
+
+  @helper.form(controllers.ileQuery.routes.IleQueryController.submit, 'autoComplete -> "off") {
+
+    @helper.CSRF.formField
+
+    @components.error_summary(form.errors)
+
+    @components.page_title(Some(messages("ileQuery.title")))
+
+    @components.input_text(
+      field = form("ucr"),
+      label = ""
+    )
+
+    @components.submit_button(messages("site.continue"))
+  }
+}
