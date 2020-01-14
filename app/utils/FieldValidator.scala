@@ -16,7 +16,6 @@
 
 package utils
 
-import services.Countries
 import services.Countries.allCountries
 
 import scala.util.{Success, Try}

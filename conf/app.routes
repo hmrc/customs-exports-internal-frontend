@@ -79,3 +79,9 @@ GET         /submissions                           controllers.ViewSubmissionsCo
 
 # Notifications page
 GET         /notifications/:conversationId         controllers.ViewNotificationsController.listOfNotifications(conversationId)
+
+# ILE Query
+GET         /consignment-query                     controllers.ileQuery.IleQueryController.displayPage()
+POST        /consignment-query                     controllers.ileQuery.IleQueryController.submit()
+
+GET         /consignment-query/:ucr                controllers.ileQuery.IleQueryController.submitQuery(ucr: String)
