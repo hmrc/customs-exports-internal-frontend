@@ -73,6 +73,14 @@ arrivalDetails.time.hint = Enter the time in 24 hour format. For example, 13 30
 arrival.details.error.overdue = Time of Arrival cannot be more than 60 days in the past
 arrival.details.error.future = Time of Arrival cannot be in the future
 
+arrivalSubmission.title = Your arrival request has been submitted
+associationSubmission.title = Your associate request has been submitted
+disassociationSubmission.title = Your dissociate request has been submitted
+shutMUCRSubmission.title = Your shut MUCR request has been submitted
+movementSubmission.header = It might take a few minutes before a decision is made. Go to the {0} to check the status.
+movementSubmission.notification.timeline = consignment’s notification timeline
+movementSubmission.redirect.link = Find another consignment
+
 departureDetails.title = Departure date and time
 departureDetails.header = Enter departure details
 departureDetails.date.question = Date of departure
