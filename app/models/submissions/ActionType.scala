@@ -29,6 +29,7 @@ object ActionType {
   case object DucrDisassociation extends ActionType("DucrDisassociation")
   case object MucrDisassociation extends ActionType("MucrDisassociation")
   case object ShutMucr extends ActionType("ShutMucr")
+  case object IleQuery extends ActionType("IleQuery")
 
   implicit val format = new Format[ActionType] {
     override def writes(actionType: ActionType): JsValue = JsString(actionType.value)
@@ -42,6 +43,7 @@ object ActionType {
       case JsString("DucrDisassociation")   => JsSuccess(DucrDisassociation)
       case JsString("MucrDisassociation")   => JsSuccess(MucrDisassociation)
       case JsString("ShutMucr")             => JsSuccess(ShutMucr)
+      case JsString("IleQuery")             => JsSuccess(IleQuery)
       case _                                => JsError("Unknown ActionType")
     }
   }
