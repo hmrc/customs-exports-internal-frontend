@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.ileQuery
 
 import connectors.CustomsDeclareExportsMovementsConnector
@@ -25,11 +41,11 @@ class IleQueryController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = authenticate { implicit request =>
+  def displayQueryForm(): Action[AnyContent] = authenticate { implicit request =>
     Ok(ileQueryPage(IleQuery.form))
   }
 
-  def submit(): Action[AnyContent] = authenticate { implicit request =>
+  def submitQueryForm(): Action[AnyContent] = authenticate { implicit request =>
     IleQuery.form.fold(
       formWithErrors => BadRequest(ileQueryPage(formWithErrors)),
       validUcr => Redirect(controllers.ileQuery.routes.IleQueryController.submitQuery(validUcr))
@@ -57,16 +73,7 @@ class IleQueryController @Inject()(
           val ileQueryRequest = buildIleQuery(request.providerId, validUcr)
 
           connector.submit(ileQueryRequest).map { conversationId =>
-            Redirect(controllers.ileQuery.routes.IleQueryController.submitQuery(ucr))
-              .withCookies(
-                Cookie(
-                  name = "conversationId",
-                  value = conversationId,
-                  maxAge = Some(60),
-                  secure = true,
-                  httpOnly = true
-                )
-              )
+            redirect(ucr, conversationId)
           }
         }
       )
@@ -78,4 +85,16 @@ class IleQueryController @Inject()(
 
     IleQueryExchange(Answers.fakeEORI.get, providerId, ucrBlock)
   }
+
+  private def redirect(ucr: String, conversationId: String): Result =
+    Redirect(controllers.ileQuery.routes.IleQueryController.submitQuery(ucr))
+      .withCookies(
+        Cookie(
+          name = "conversationId",
+          value = conversationId,
+          maxAge = Some(60),
+          secure = true,
+          httpOnly = true
+        )
+      )
 }

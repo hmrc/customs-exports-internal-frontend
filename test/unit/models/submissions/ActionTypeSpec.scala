@@ -17,7 +17,7 @@
 package models.submissions
 
 import base.UnitSpec
-import models.submissions.ActionType.{Arrival, Departure, DucrAssociation, DucrDisassociation, ShutMucr}
+import models.submissions.ActionType.{Arrival, Departure, DucrAssociation, DucrDisassociation, IleQuery, ShutMucr}
 import play.api.libs.json.{JsError, JsString}
 
 class ActionTypeSpec extends UnitSpec {
@@ -105,6 +105,14 @@ class ActionTypeSpec extends UnitSpec {
 
         val actionType = ActionType.format.reads(JsString("ShutMucr")).get
         val expectedActionType = ShutMucr
+
+        actionType must equal(expectedActionType)
+      }
+
+      "it is ILE Query" in {
+
+        val actionType = ActionType.format.reads(JsString("IleQuery")).get
+        val expectedActionType = IleQuery
 
         actionType must equal(expectedActionType)
       }
