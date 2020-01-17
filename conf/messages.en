@@ -32,6 +32,10 @@ error.mucr.format = MUCR number is in incorrect format
 date.error.invalid = Date is incorrect
 time.error.invalid = Time is incorrect
 
+global.error.title = There is a problem
+global.error.heading = There is a problem with a service
+global.error.message = Please try again later.
+
 movement.choice.title = What do you want to do?
 movement.choice.arrival.label = Arrive a consignment
 movement.choice.departure.label = Depart a consignment
@@ -308,3 +312,6 @@ notifications.elem.content.inventoryLinkingMovementTotalsResponse.soe = Status o
 ileQuery.title = Find a consignment
 ileQuery.ucr.empty = Enter a Unique Consignment Reference
 ileQuery.ucr.incorrect = Unique Consignment Reference is incorrect
+
+ileQuery.loading.title = Looking for consignment
+ileQuery.loading.hint = This should only take a few seconds, do not refresh the page
