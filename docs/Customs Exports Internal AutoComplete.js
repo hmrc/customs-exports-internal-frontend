@@ -85,14 +85,14 @@ function completePage() {
         validDate.setDate(validDate.getDate() - 1); // One day before
         if (title.indexOf('departure') !== -1) {
             document.getElementById('dateOfDeparture_day').value = validDate.getDate();
-            document.getElementById('dateOfDeparture_month').value = validDate.getMonth();
+            document.getElementById('dateOfDeparture_month').value = validDate.getMonth()+1;
             document.getElementById('dateOfDeparture_year').value = validDate.getFullYear();
             document.getElementById('timeOfDeparture_hour').value = '10';
             document.getElementById('timeOfDeparture_minute').value = '00';
         }
         if (title.indexOf('arrival') !== -1) {
             document.getElementById('dateOfArrival_day').value = validDate.getDate();
-            document.getElementById('dateOfArrival_month').value = validDate.getMonth();
+            document.getElementById('dateOfArrival_month').value = validDate.getMonth()+1;
             document.getElementById('dateOfArrival_year').value = validDate.getFullYear();
             document.getElementById('timeOfArrival_hour').value = '10';
             document.getElementById('timeOfArrival_minute').value = '00';
