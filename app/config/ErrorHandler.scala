@@ -41,4 +41,7 @@ class ErrorHandler @Inject()(val messagesApi: MessagesApi, errorTemplate: error)
       logger.warn(s"Unexpected Exception was thrown accessing [${request.uri}]", exception)
       super.resolveError(request, exception)
   }
+
+  def standardErrorTemplate()(implicit request: Request[_]): Html =
+    errorTemplate("global.error.title", "global.error.heading", "global.error.message")
 }
