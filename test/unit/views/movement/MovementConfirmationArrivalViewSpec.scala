@@ -30,31 +30,30 @@ class MovementConfirmationArrivalViewSpec extends ViewSpec {
 
   "View" should {
     "render title" in {
-      page(JourneyType.ARRIVE, consignmentReferences).getTitle must containMessage("movement.confirmation.ARRIVE.tab.heading")
+      page(JourneyType.ARRIVE, consignmentReferences).getTitle must containMessage("movement.confirmation.title.ARRIVE")
     }
 
-    "render confirmation" in {
+    "render header" in {
       page(JourneyType.ARRIVE, consignmentReferences)
-        .getElementById("highlight-box-heading") must containMessage("movement.confirmation.ARRIVE.heading", "DUCR", "9GB12345678")
+        .getElementsByClass("govuk-heading-xl").first() must containMessage("movement.confirmation.title.ARRIVE", "DUCR", "9GB12345678")
     }
 
-    "have back to start button" in {
+    "have go to timeline link" in {
 
-      val backButton = page(JourneyType.ARRIVE, consignmentReferences).getElementsByClass("button").first()
+      val inset = page(JourneyType.ARRIVE, consignmentReferences).getElementsByClass("govuk-inset-text").first()
+      val findGotoTimelineLink = inset.getElementsByClass("govuk-link").first()
 
-      backButton must containMessage("site.backToStart")
-      backButton must haveHref(controllers.routes.ChoiceController.displayPage())
+      findGotoTimelineLink must containMessage("movement.confirmation.notification.timeline.link")
+      findGotoTimelineLink must haveHref(controllers.routes.ChoiceController.displayPage())
     }
 
-    "have 'view requests' link" in {
-      val statusInfo = page(JourneyType.ARRIVE, consignmentReferences).getElementById("status-info")
-      statusInfo.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ViewSubmissions))
-    }
+    "have find another consignment link" in {
 
-    "have 'next steps' link" in {
-      val nextSteps = page(JourneyType.ARRIVE, consignmentReferences).getElementById("next-steps")
-      nextSteps.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.AssociateUCR))
-      nextSteps.getElementsByTag("a").get(1) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.Departure))
+      val body = page(JourneyType.ARRIVE, consignmentReferences).getElementsByClass("govuk-body").first()
+      val findConsignmentLink = body.getElementsByClass("govuk-link").first()
+
+      findConsignmentLink must containMessage("movement.confirmation.redirect.link")
+      findConsignmentLink must haveHref(controllers.routes.ChoiceController.displayPage())
     }
   }
 
