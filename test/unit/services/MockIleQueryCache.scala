@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(title: Option[String] = None, subtitle: Option[String] = None)(implicit messages: Messages)
+package services
 
-<fieldset>
-    <legend class="heading-large" role="heading" aria="" level="1">
-        @if(title.nonEmpty) {
-            <h1 id="title" style="margin:0">@(title.get)</h1>
-        }
-        @if(subtitle.nonEmpty) {
-            <span id="subtitle" class="form-hint">@(subtitle.get)</span>
-        }
-    </legend>
-</fieldset>
+import org.mockito.Mockito.reset
+import org.scalatest.{BeforeAndAfterEach, Suite}
+import org.scalatestplus.mockito.MockitoSugar
+import repositories.IleQueryRepository
+
+trait MockIleQueryCache extends MockitoSugar with BeforeAndAfterEach {
+  this: Suite =>
+
+  protected val ileQueryRepository: IleQueryRepository = mock[IleQueryRepository]
+
+  override protected def afterEach(): Unit = {
+    reset(ileQueryRepository)
+
+    super.afterEach()
+  }
+}

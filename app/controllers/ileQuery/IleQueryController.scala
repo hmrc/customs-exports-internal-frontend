@@ -77,6 +77,7 @@ class IleQueryController @Inject()(
               ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
                 InternalServerError(errorHandler.standardErrorTemplate())
               }
+            case _ => Future.successful(BadRequest(errorHandler.standardErrorTemplate()))
           }
         }
 
@@ -112,5 +113,5 @@ class IleQueryController @Inject()(
   }
 
   def retrieveSessionId()(implicit hc: HeaderCarrier): String =
-    hc.sessionId.getOrElse(throw new Exception("")).value
+    hc.sessionId.getOrElse(throw new Exception("Session ID is missing")).value
 }
