@@ -47,10 +47,21 @@ class ErrorHandlerSpec extends UnitSpec with BeforeAndAfterEach with CSRFSupport
     super.afterEach()
   }
 
-  "error template" in {
-    handler.standardErrorTemplate("title", "heading", "message")(fakeRequest)
+  "Error handler" should {
 
-    verify(errorTemplate).apply(meq("title"), meq("heading"), meq("message"))(any(), any())
+    "display error template" in {
+
+      handler.standardErrorTemplate("title", "heading", "message")(fakeRequest)
+
+      verify(errorTemplate).apply(meq("title"), meq("heading"), meq("message"))(any(), any())
+    }
+
+    "display error template with default messages" in {
+
+      handler.standardErrorTemplate()(fakeRequest)
+
+      verify(errorTemplate).apply(meq("global.error.title"), meq("global.error.heading"), meq("global.error.message"))(any(), any())
+    }
   }
 
   "resolve error" should {
