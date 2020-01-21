@@ -26,12 +26,8 @@
 
 @gotoTimelineLink = {<a class="govuk-link" href="@routes.ChoiceController.displayPage()">@messages("movement.confirmation.notification.timeline.link")</a>}
 
-@* @govuk_internal_template(title = messages(s"movement.confirmation.title.${journeyType}"), contentHeader = Some(contentHeader), mainContent = mainContent)*@
-
 @main_template(
-    title = Title(s"movement.confirmation.title.${journeyType}")
-  , bodyClasses = Some("govuk-template__body")
-  , mainClass = Some("govuk-main-wrapper govuk-main-wrapper--auto-spacing")
+    Title(s"movement.confirmation.title.${journeyType}")
 ) {
 
   <h1 class="govuk-heading-xl">@messages(s"movement.confirmation.title.${journeyType}")</h1>
