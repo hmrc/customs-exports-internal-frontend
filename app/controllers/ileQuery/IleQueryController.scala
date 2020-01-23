@@ -54,7 +54,7 @@ class IleQueryController @Inject()(
   }
 
   def submitQueryForm(): Action[AnyContent] = authenticate { implicit request =>
-    form.fold(
+    form.bindFromRequest().fold(
       formWithErrors => BadRequest(ileQueryPage(formWithErrors)),
       validUcr => Redirect(controllers.ileQuery.routes.IleQueryController.submitQuery(validUcr))
     )
@@ -95,6 +95,7 @@ class IleQueryController @Inject()(
           val ileQueryRequest = buildIleQuery(request.providerId, validUcr)
 
           connector.submit(ileQueryRequest).flatMap { conversationId =>
+
             val ileQuery = IleQuery(retrieveSessionId, validUcr, conversationId)
 
             ileQueryRepository.insert(ileQuery).map { _ =>
@@ -112,6 +113,6 @@ class IleQueryController @Inject()(
     IleQueryExchange(Answers.fakeEORI.get, providerId, ucrBlock)
   }
 
-  def retrieveSessionId()(implicit hc: HeaderCarrier): String =
+  private def retrieveSessionId()(implicit hc: HeaderCarrier): String =
     hc.sessionId.getOrElse(throw new Exception("Session ID is missing")).value
 }
