@@ -15,38 +15,31 @@
  *@
 
 @import forms.ConsignmentReferences
+@import models.cache.JourneyType
 @import models.cache.JourneyType.JourneyType
+@import forms.ConsignmentReferenceType
 @import views.Title
+@import components.gds.gds_main_template
 @import views.html.templates.main_template
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(main_template: main_template)
+@* this(main_template: main_template) *@
+@this(
+    govukLayout: gds_main_template,
+    govukPanel : GovukPanel,
+    formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+)
 
 @* TODO remove consignmentReferences: ConsignmentReferences when all pages are done *@
 @(journeyType: JourneyType, consignmentReferences: ConsignmentReferences)(implicit request: Request[_], messages: Messages)
 
 @gotoTimelineLink = {<a class="govuk-link" href="@routes.ChoiceController.displayPage()">@messages("movement.confirmation.notification.timeline.link")</a>}
 
-@* @govuk_internal_template(title = messages(s"movement.confirmation.title.${journeyType}"), contentHeader = Some(contentHeader), mainContent = mainContent)*@
+@govukLayout(title = Title(s"movement.confirmation.title.${journeyType}")) {
 
-@main_template(
-    title = Title(s"movement.confirmation.title.${journeyType}")
-  , bodyClasses = Some("govuk-template__body")
-  , mainClass = Some("govuk-main-wrapper govuk-main-wrapper--auto-spacing")
-) {
+    @govukPanel(Panel(
+        title = Text(messages(s"movement.confirmation.title.${journeyType}"))
+    ))
 
-  <h1 class="govuk-heading-xl">@messages(s"movement.confirmation.title.${journeyType}")</h1>
-
-  <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
-          <div class="govuk-inset-text">
-              @messages("movement.confirmation.header")
-              <br>
-              @Html(messages("movement.confirmation.header.check", gotoTimelineLink))
-          </div>
-      </div>
-  </div>
-
-  <p class="govuk-body">
-      <a class="govuk-link" href="@routes.ChoiceController.displayPage()">@messages("movement.confirmation.redirect.link")</a>
-  </p>
+    @components.button_link("site.backToStart", routes.ChoiceController.displayPage())
 }

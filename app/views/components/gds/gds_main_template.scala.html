@@ -1,0 +1,99 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import components.gds.{phaseBanner, siteHeader}
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import views.Title
+@import views.components.BackButton
+@import views.html.components.gds.govukFlexibleLayout
+
+@this(
+  govukHeader: GovukHeader,
+  govukLayout: GovukLayout,
+  govukFlexibleLayout: govukFlexibleLayout,
+  govukPhaseBanner: GovukPhaseBanner,
+  govukBackLink: GovukBackLink,
+  siteHeader: siteHeader,
+  phaseBanner: phaseBanner
+)
+
+@(
+  title: Title,
+  backButton: Option[BackButton] = None,
+  useCustomContentWidth: Boolean = false
+)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+
+@head = {
+    <link rel="shortcut icon" href='@routes.Assets.versioned("/lib/govuk-frontend/govuk/assets/images/favicon.ico")' type="image/x-icon" />
+    <meta name="format-detection" content="telephone=no" />
+        <!--[if lte IE 8]><link href='@controllers.routes.Assets.versioned("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
+        <!--[if gt IE 8]><!--><link href='@routes.Assets.versioned("stylesheets/customsdecexfrontend-app.css")' media="screen" rel="stylesheet" type="text/css" /><!--<![endif]-->
+}
+
+@scripts = {
+  <script src='@routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/google.tag.manager.min.js")'> </script>
+  <script src="@routes.Assets.versioned("javascripts/show-hide-content.js")" type="text/javascript"></script>
+  <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/vendor/jquery-ui.min.css")' type="text/css" >
+  <script>window.GOVUKFrontend.initAll();</script>
+}
+
+@beforeContentBlock = {
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NDJKHWK" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    @phaseBanner("beta")
+
+    @backButton.map(back =>
+        govukBackLink(BackLink(
+        content = Text(back.title),
+        attributes = Map("id" -> "back-link"),
+        href = back.call.url
+    )))
+
+}
+
+@footer = @{
+    Seq(
+        FooterItem(href = Some("help/cookies"), text = Some("Cookies")),
+        FooterItem(href = Some("help/privacy"), text = Some("Privacy Policy")),
+        FooterItem(href = Some("help/terms-and-conditions"), text = Some("Terms and conditions")),
+        FooterItem(href = Some("help"), text = Some("Help using GOV.UK"))
+    )}
+
+@if(useCustomContentWidth) {
+  @govukFlexibleLayout(
+    pageTitle = Some(title.format),
+    headBlock = Some(head),
+    beforeContentBlock = Some(beforeContentBlock),
+    bodyEndBlock = None,
+    scriptsBlock = Some(scripts),
+    headerBlock = Some(siteHeader()),
+    footerItems = footer
+  )(contentBlock)
+} else {
+  @govukLayout(
+    pageTitle = Some(title.format),
+    headBlock = Some(head),
+    beforeContentBlock = Some(beforeContentBlock),
+    bodyEndBlock = None,
+    scriptsBlock = Some(scripts),
+    headerBlock = Some(siteHeader()),
+    footerItems = footer
+  )(contentBlock)
+}
