@@ -22,7 +22,7 @@ import utils.FieldValidator._
 
 object IleQuery {
 
-  val form: Form[String] = Form(
+  def form: Form[String] = Form(
     Forms.single(
       "ucr" -> text()
         .verifying("ileQuery.ucr.empty", nonEmpty)
