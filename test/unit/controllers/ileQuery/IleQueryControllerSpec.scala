@@ -26,7 +26,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.MockIleQueryCache
 import uk.gov.hmrc.http.HttpResponse
-import views.html.{ile_query, loading_screen}
+import views.html._
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
@@ -37,6 +37,8 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
   private val connector = mock[CustomsDeclareExportsMovementsConnector]
   private val ileQueryPage = mock[ile_query]
   private val loadingScreenPage = mock[loading_screen]
+  private val ileQueryDucrResponsePage = mock[ile_query_ducr_response]
+  private val ileQueryMucrResponsePage = mock[ile_query_mucr_response]
 
   private val controller: IleQueryController = new IleQueryController(
     SuccessfulAuth(),
@@ -45,7 +47,9 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
     ileQueryRepository,
     connector,
     ileQueryPage,
-    loadingScreenPage
+    loadingScreenPage,
+    ileQueryDucrResponsePage,
+    ileQueryMucrResponsePage
   )(global)
 
   override protected def beforeEach(): Unit = {

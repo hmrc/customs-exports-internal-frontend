@@ -16,6 +16,8 @@
 
 package controllers.ileQuery
 
+import java.time.ZonedDateTime
+
 import config.ErrorHandler
 import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.IleQueryExchange
@@ -25,7 +27,8 @@ import forms.IleQuery.form
 import javax.inject.{Inject, Singleton}
 import models.UcrBlock
 import models.cache.{Answers, IleQuery}
-import models.notifications.NotificationFrontendModel
+import models.notifications.EntryStatus
+import models.notifications.queries.{DucrInfo, IleQueryResponse, MovementInfo, MucrInfo}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -33,7 +36,7 @@ import repositories.IleQueryRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.FieldValidator.validDucr
-import views.html.{ile_query, loading_screen}
+import views.html._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,12 +48,39 @@ class IleQueryController @Inject()(
   ileQueryRepository: IleQueryRepository,
   connector: CustomsDeclareExportsMovementsConnector,
   ileQueryPage: ile_query,
-  loadingScreenPage: loading_screen
+  loadingScreenPage: loading_screen,
+  ileQueryDucrResponsePage: ile_query_ducr_response,
+  ileQueryMucrResponsePage: ile_query_mucr_response
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayQueryForm(): Action[AnyContent] = authenticate { implicit request =>
     Ok(ileQueryPage(form))
+  }
+
+  def displayQueryResponse(): Action[AnyContent] = authenticate { implicit request =>
+    // TODO - get from response
+    val arrival = MovementInfo(
+      messageCode = "EAL",
+      goodsLocation = "GBAUFXTFXTFXT",
+      movementDateTime = Some(ZonedDateTime.parse("2019-10-23T12:34:18Z").toInstant)
+    )
+    val retro = MovementInfo(
+      messageCode = "RET",
+      goodsLocation = "GBAUDFGFSHFKD",
+      movementDateTime = Some(ZonedDateTime.parse("2019-11-23T12:34:18Z").toInstant)
+    )
+    val depart = MovementInfo(
+      messageCode = "EDL",
+      goodsLocation = "GBAUFDSASFDFDF",
+      movementDateTime = Some(ZonedDateTime.parse("2019-10-30T12:34:18Z").toInstant)
+    )
+    val status = EntryStatus(Some("3"), Some("1"), Some("8"))
+    val ducrInfo =
+      DucrInfo(ucr = "8GB123458302100-101SHIP1", declarationId = "121332435432", movements = Seq(arrival, depart, retro), entryStatus = Some(status))
+    val mucrInfo =
+      MucrInfo(ucr = "8GB123458302100-101SHIP1", movements = Seq(arrival, depart, retro), entryStatus = Some(status), isShut = Some(true))
+    Ok(ileQueryMucrResponsePage(mucrInfo))
   }
 
   def submitQueryForm(): Action[AnyContent] = authenticate { implicit request =>
@@ -67,9 +97,15 @@ class IleQueryController @Inject()(
           response.status match {
             case OK =>
               ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
-                val notifications = Json.parse(response.body).validate[Seq[NotificationFrontendModel]]
+                val queryResponse = Json.parse(response.body).validate[IleQueryResponse].get
 
-                Ok("Result" + notifications)
+                if (queryResponse.queriedDucr.isDefined) {
+                  Ok(ileQueryDucrResponsePage(queryResponse.queriedDucr.get))
+                } else if (queryResponse.queriedMucr.isDefined) {
+                  Ok(ileQueryMucrResponsePage(queryResponse.queriedMucr.get))
+                } else {
+                  Ok(loadingScreenPage()).withHeaders("refresh" -> "5")
+                }
               }
             case NO_CONTENT =>
               Future.successful(Ok(loadingScreenPage()).withHeaders("refresh" -> "5"))
@@ -89,8 +125,7 @@ class IleQueryController @Inject()(
     form
       .fillAndValidate(ucr)
       .fold(
-        formWithErrors =>
-          Future.successful(BadRequest(ileQueryPage(formWithErrors))),
+        formWithErrors => Future.successful(BadRequest(ileQueryPage(formWithErrors))),
         validUcr => {
           val ileQueryRequest = buildIleQuery(request.providerId, validUcr)
 

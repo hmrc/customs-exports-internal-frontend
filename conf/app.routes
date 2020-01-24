@@ -85,3 +85,6 @@ GET         /consignment-query                     controllers.ileQuery.IleQuery
 POST        /consignment-query                     controllers.ileQuery.IleQueryController.submitQueryForm()
 
 GET         /consignment-query/:ucr                controllers.ileQuery.IleQueryController.submitQuery(ucr: String)
+
+# TMP end-point
+GET         /consignment-query-response            controllers.ileQuery.IleQueryController.displayQueryResponse()
