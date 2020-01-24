@@ -18,14 +18,20 @@ package controllers.ileQuery
 
 import config.ErrorHandler
 import connectors.CustomsDeclareExportsMovementsConnector
+import connectors.exchanges.IleQueryExchange
 import controllers.ControllerLayerSpec
 import models.cache.IleQuery
+import models.notifications.NotificationFrontendModel
+import models.notifications.queries.IleQueryResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import play.api.libs.json.{JsString, Json}
+import play.api.mvc.Headers
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.MockIleQueryCache
 import uk.gov.hmrc.http.HttpResponse
+import testdata.CommonTestData.correctUcr
 import views.html._
 
 import scala.concurrent.ExecutionContext.global
@@ -82,11 +88,13 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
           .thenReturn(Future.successful(Some(IleQuery("sessionId", "ucr", "convId"))))
         when(connector.fetchQueryNotifications(any(), any())(any()))
-          .thenReturn(Future.successful(HttpResponse(ACCEPTED)))
+          .thenReturn(Future.successful(HttpResponse(OK, Some(Json.toJson(IleQueryResponse())))))
         when(ileQueryRepository.removeByConversationId(any()))
           .thenReturn(Future.successful((): Unit))
 
-        val result = controller.submitQuery("ucr")(getRequest)
+        val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+
+        val result = controller.submitQuery("ucr")(request)
 
         status(result) mustBe OK
       }
@@ -98,7 +106,9 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         when(connector.fetchQueryNotifications(any(), any())(any()))
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT)))
 
-        val result = controller.submitQuery("ucr")(getRequest)
+        val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+
+        val result = controller.submitQuery("ucr")(request)
 
         status(result) mustBe OK
       }
@@ -106,23 +116,87 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
     "return 400 (BAD_REQUEST)" when {
 
-      "query form is incorrect" in {}
+      "query form is incorrect" in {
 
-      "connector returned different status than OK, NO_CONTENT, GATEWAY_TIMEOUT" in {}
+        val incorrectForm = JsString("1234")
 
-      "ucr is incorrect during submitting ile query" in {}
+        val result = controller.submitQueryForm()(postRequest(incorrectForm))
+
+        status(result) mustBe BAD_REQUEST
+      }
+
+      "connector returned different status than OK, NO_CONTENT, GATEWAY_TIMEOUT" in {
+
+        when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
+          .thenReturn(Future.successful(Some(IleQuery("sessionId", "ucr", "convId"))))
+        when(connector.fetchQueryNotifications(any(), any())(any()))
+          .thenReturn(Future.successful(HttpResponse(ACCEPTED)))
+
+        val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+
+        val result = controller.submitQuery("ucr")(request)
+
+        status(result) mustBe BAD_REQUEST
+      }
+
+      "ucr is incorrect during submitting ile query" in {
+
+        when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
+          .thenReturn(Future.successful(None))
+
+        val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+
+        val result = controller.submitQuery("ucr")(request)
+
+        status(result) mustBe BAD_REQUEST
+      }
     }
 
     "return 500 (INTERNAL_SERVER_ERROR)" when {
 
-      "there is a timeout during waiting for notifications" in {}
+      "there is a timeout during waiting for notifications" in {
+
+        when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
+          .thenReturn(Future.successful(Some(IleQuery("sessionId", "ucr", "convId"))))
+        when(connector.fetchQueryNotifications(any(), any())(any()))
+          .thenReturn(Future.successful(HttpResponse(GATEWAY_TIMEOUT)))
+        when(ileQueryRepository.removeByConversationId(any()))
+          .thenReturn(Future.successful((): Unit))
+
+        val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+
+        val result = controller.submitQuery("ucr")(request)
+
+        status(result) mustBe INTERNAL_SERVER_ERROR
+      }
     }
 
     "return 303 (SEE_OTHER)" when {
 
-      "correct form has been submitted" in {}
+      "correct form has been submitted" in {
 
-      "correct ucr has been submitted" in {}
+        val correctForm = Json.obj(("ucr", JsString(correctUcr)))
+
+        val result = controller.submitQueryForm()(postRequest(correctForm))
+
+        status(result) mustBe SEE_OTHER
+      }
+
+      "correct ucr has been submitted" in {
+
+        when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
+          .thenReturn(Future.successful(None))
+        when(connector.submit(any[IleQueryExchange])(any()))
+          .thenReturn(Future.successful("convId"))
+        when(ileQueryRepository.insert(any())(any()))
+          .thenReturn(Future.successful(dummyWriteResultSuccess))
+
+        val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+
+        val result = controller.submitQuery(correctUcr)(request)
+
+        status(result) mustBe SEE_OTHER
+      }
     }
   }
 }
