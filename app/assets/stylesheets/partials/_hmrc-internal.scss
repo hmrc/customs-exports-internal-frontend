@@ -1,0 +1,2223 @@
+.hmrc-account-icon {
+  background-repeat: no-repeat;
+}
+
+.hmrc-account-icon--home {
+  padding-left: 22px;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyBkYXRhLW5hbWU9IkxheWVyIDEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWluWU1pZCI+PHBhdGggZD0iTTEyIDJMMSAxMi41aDMuMTl2OS4zOGg1LjQ0di03LjEzaDQuNXY3LjEzaDUuNDRWMTIuNUgyM0wxMiAyeiIvPjwvc3ZnPg==");
+  background-position: left -1px;
+  background-size: 19px;
+}
+
+.hmrc-account-menu {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 14px;
+  font-size: 0.875rem;
+  line-height: 1.14286;
+  position: relative;
+  z-index: 0;
+  margin-bottom: 0;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  border-bottom: 1px solid #b1b4b6;
+  background-color: #fff;
+}
+@media print {
+  .hmrc-account-menu {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .hmrc-account-menu {
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+}
+@media print {
+  .hmrc-account-menu {
+    font-size: 14pt;
+    line-height: 1.2;
+  }
+}
+
+.hmrc-account-menu:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.hmrc-account-menu.hmrc-subnav-is-open {
+  margin-bottom: 5em;
+}
+
+.is-smaller.hmrc-account-menu {
+  margin-bottom: 0;
+  -webkit-transition: none;
+  transition: none;
+  border-bottom: 1px solid #b1b4b6;
+}
+
+.is-smaller.hmrc-account-menu.main-nav-menu-is-open {
+  margin-bottom: 5em;
+}
+
+.is-smaller.hmrc-account-menu li:last-of-type a:last-of-type {
+  padding-right: 0;
+}
+
+.hmrc-account-menu__link {
+  box-sizing: border-box;
+  display: inline-block;
+  padding: 12px 16px 8px;
+  border-bottom: 4px solid transparent;
+  color: #4a4a4a;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.25;
+  text-decoration: none;
+  text-transform: none;
+}
+
+.hmrc-account-menu__link:visited {
+  color: #4a4a4a;
+}
+
+.hmrc-account-menu__link:focus,
+.hmrc-account-menu__link:hover {
+  border-bottom-width: 4px;
+  border-bottom-style: solid;
+  color: #5694ca;
+}
+
+.hmrc-account-menu__link:hover {
+  border-bottom-color: #f3f2f1;
+}
+
+.hmrc-account-menu__link:focus {
+  border-bottom-color: #fd0;
+  background-color: transparent;
+}
+
+.is-smaller .hmrc-account-menu__link {
+  padding-left: 10px;
+  color: #0b0c0c;
+}
+
+.is-smaller .hmrc-account-menu__link:hover {
+  color: #0b0c0c;
+}
+
+.hmrc-account-menu__link--home {
+  padding: 12px 18px 8px 0;
+  float: left;
+}
+
+.is-smaller .hmrc-account-menu__link--home,
+.is-smaller .hmrc-account-menu__link--menu {
+  padding-left: 0;
+}
+
+.is-smaller .hmrc-account-menu__link--home:hover,
+.is-smaller .hmrc-account-menu__link--menu:hover {
+  border-bottom-color: transparent;
+}
+
+.is-smaller .hmrc-account-menu__link--home:focus,
+.is-smaller .hmrc-account-menu__link--menu:focus {
+  border-bottom-color: #ffbf47;
+  color: #5694ca;
+}
+
+.is-smaller .hmrc-account-menu__link--home.hmrc-account-menu__link--active:hover,
+.is-smaller .hmrc-account-menu__link--menu.hmrc-account-menu__link--active:hover {
+  border-bottom-color: #1d70b8;
+  color: #0b0c0c;
+}
+
+.is-smaller .hmrc-account-menu__link--home.hmrc-account-menu__link--active:focus,
+.is-smaller .hmrc-account-menu__link--menu.hmrc-account-menu__link--active:focus {
+  border-bottom-color: #ffbf47;
+  color: #5694ca;
+}
+
+.hmrc-account-menu__link--menu {
+  padding: 12px 20px 8px 0;
+  float: right;
+  border-bottom: 4px solid transparent;
+}
+
+.hmrc-account-menu__link--active,
+.hmrc-account-menu__link--active:visited {
+  border-bottom: 4px solid #1d70b8;
+  color: #0b0c0c;
+}
+
+.hmrc-account-menu__main {
+  z-index: 995;
+  margin: 0;
+  float: right;
+}
+
+.hmrc-account-menu__main li {
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.is-smaller .hmrc-account-menu__main {
+  padding: 0;
+  float: none;
+  clear: both;
+  background-color: #f3f2f1;
+}
+
+.is-smaller .hmrc-account-menu__main.hmrc-subnav-is-open,
+.is-smaller .hmrc-account-menu__main.main-nav-is-open {
+  position: relative;
+  border-top: 1px solid #b1b4b6;
+}
+
+.is-smaller .hmrc-account-menu__main.hmrc-subnav-is-open:after,
+.is-smaller .hmrc-account-menu__main.hmrc-subnav-is-open:before,
+.is-smaller .hmrc-account-menu__main.main-nav-is-open:after,
+.is-smaller .hmrc-account-menu__main.main-nav-is-open:before {
+  content: " ";
+  position: absolute;
+  right: 4px;
+  bottom: 100%;
+  width: 0;
+  height: 0;
+  border: solid transparent;
+  pointer-events: none;
+}
+
+.is-smaller .hmrc-account-menu__main.hmrc-subnav-is-open:before,
+.is-smaller .hmrc-account-menu__main.main-nav-is-open:before {
+  right: 3px;
+  border-width: 7px;
+  border-bottom-color: #b1b4b6;
+}
+
+.is-smaller .hmrc-account-menu__main.hmrc-subnav-is-open:after,
+.is-smaller .hmrc-account-menu__main.main-nav-is-open:after {
+  margin-left: -6px;
+  border-width: 6px;
+  border-bottom-color: #fff;
+}
+
+.is-smaller .hmrc-account-menu__main li {
+  display: block;
+  overflow: hidden;
+  border-bottom: 1px solid #b1b4b6;
+}
+
+.is-smaller .hmrc-account-menu__main .hmrc-account-menu__link,
+.is-smaller .hmrc-account-menu__main .hmrc-account-menu__link:hover,
+.is-smaller .hmrc-account-menu__main li.active-subnav-parent,
+.is-smaller .hmrc-account-menu__main li:last-child {
+  border-bottom: 0;
+}
+
+.is-smaller .hmrc-account-menu__link--back {
+  padding-left: 20px;
+  border-bottom: 1px solid #f3f2f1;
+  background-image: url("/extension-assets/hmrc-frontend/hmrc/components/account-menu/images/icon-chevron-left.svg");
+  background-repeat: no-repeat;
+  background-position: 10px;
+  background-size: 12px;
+}
+
+.is-smaller .hmrc-account-menu__link--back .hmrc-account-menu__link {
+  padding: 12px 8px 8px;
+}
+
+.is-smaller .hmrc-account-menu__link--back .hmrc-account-menu__link:focus {
+  outline: none;
+}
+
+.hmrc-subnav {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 14px;
+  font-size: 0.875rem;
+  line-height: 1.14286;
+  display: none;
+  position: absolute;
+  z-index: -1;
+  top: -61px;
+  left: 0;
+  width: 100%;
+  border-bottom: 1px solid #b1b4b6;
+  outline: none;
+  background-color: #f3f2f1;
+}
+@media print {
+  .hmrc-subnav {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .hmrc-subnav {
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+}
+@media print {
+  .hmrc-subnav {
+    font-size: 14pt;
+    line-height: 1.2;
+  }
+}
+
+.hmrc-subnav:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.hmrc-subnav p {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 14px;
+  font-size: 0.875rem;
+  line-height: 1.14286;
+}
+@media print {
+  .hmrc-subnav p {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .hmrc-subnav p {
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+}
+@media print {
+  .hmrc-subnav p {
+    font-size: 14pt;
+    line-height: 1.2;
+  }
+}
+
+.hmrc-subnav a {
+  text-decoration: none;
+}
+
+.hmrc-subnav a:visited {
+  color: #1d70b8;
+}
+
+.hmrc-subnav a:hover {
+  color: #5694ca;
+  text-decoration: underline;
+}
+
+.hmrc-subnav.hmrc-subnav-reveal {
+  display: block;
+  top: 48px;
+}
+
+.is-smaller .hmrc-subnav {
+  position: relative;
+  z-index: 1;
+  top: inherit;
+  margin: 0 0 0 10px;
+  padding: 0;
+  -webkit-transition: none;
+  transition: none;
+  border-bottom: 0;
+  outline: none;
+}
+
+.is-smaller .hmrc-subnav.hmrc-subnav-reveal {
+  display: block;
+}
+
+.hmrc-subnav .hmrc-subnav__section {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.hmrc-subnav .hmrc-subnav__section:first-child > div,
+.hmrc-subnav .hmrc-subnav__section:first-child > p {
+  padding-right: 15px;
+  padding-left: 30px;
+}
+
+.hmrc-subnav .hmrc-subnav__section:nth-child(2) > div,
+.hmrc-subnav .hmrc-subnav__section:nth-child(2) > p {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.hmrc-subnav .hmrc-subnav__section:last-child > div,
+.hmrc-subnav .hmrc-subnav__section:last-child > p {
+  padding-right: 30px;
+}
+
+.is-smaller .hmrc-subnav__section {
+  width: 100%;
+  margin: 0;
+  padding: 1em 0;
+  border-bottom: 1px solid #b1b4b6;
+}
+
+.is-smaller .hmrc-subnav__section:last-child {
+  border-bottom: 0;
+}
+
+.is-smaller .hmrc-subnav__section a:hover {
+  color: #1d70b8;
+}
+
+.is-smaller .hmrc-subnav__section:first-child > div a,
+.is-smaller .hmrc-subnav__section:first-child > p,
+.is-smaller .hmrc-subnav__section:last-child > div a,
+.is-smaller .hmrc-subnav__section:last-child > p,
+.is-smaller .hmrc-subnav__section:nth-child(2) > div a,
+.is-smaller .hmrc-subnav__section:nth-child(2) > p {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+hmrc-subnav__section__heading {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 700;
+  font-size: 14px;
+  font-size: 0.875rem;
+  line-height: 1.14286;
+  margin: 0;
+  padding-bottom: 5px;
+  font-weight: 400;
+}
+@media print {
+  hmrc-subnav__section__heading {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  hmrc-subnav__section__heading {
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+}
+@media print {
+  hmrc-subnav__section__heading {
+    font-size: 14pt;
+    line-height: 1.2;
+  }
+}
+
+.is-smaller hmrc-subnav__section__heading {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 700;
+  font-size: 14px;
+  font-size: 0.875rem;
+  line-height: 1.14286;
+  margin-bottom: 7px;
+  font-weight: 600;
+}
+@media print {
+  .is-smaller hmrc-subnav__section__heading {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .is-smaller hmrc-subnav__section__heading {
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+}
+@media print {
+  .is-smaller hmrc-subnav__section__heading {
+    font-size: 14pt;
+    line-height: 1.2;
+  }
+}
+
+.js-enabled .hmrc-account-menu__link--menu,
+.js-enabled .is-smaller .hmrc-account-menu__link--more {
+  background-image: url("/extension-assets/hmrc-frontend/hmrc/components/account-menu/images/icon-chevron-right.svg");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  background-size: 12px;
+}
+
+.js-enabled .hmrc-account-home--account--is-open,
+.js-enabled .hmrc-account-menu__link--more,
+.js-enabled .is-smaller .hmrc-account-menu__link--more-expanded {
+  background-image: url("/extension-assets/hmrc-frontend/hmrc/components/account-menu/images/icon-chevron-down.svg");
+  background-position: right 4px center;
+  background-size: 12px;
+}
+
+.js-enabled .hmrc-account-menu__link--more {
+  position: relative;
+  padding-right: 31px;
+  background-image: url("/extension-assets/hmrc-frontend/hmrc/components/account-menu/images/icon-chevron-down.svg");
+  background-position: right 14px center;
+  background-size: 12px;
+}
+
+.js-enabled .hmrc-account-menu__link--more:after,
+.js-enabled .hmrc-account-menu__link--more:before {
+  content: none;
+}
+
+.js-enabled .hmrc-account-menu__link--more.hmrc-account-menu__link--more-expanded:after,
+.js-enabled .hmrc-account-menu__link--more.hmrc-account-menu__link--more-expanded:before {
+  content: " ";
+  position: absolute;
+  right: 14px;
+  bottom: -5px;
+  width: 0;
+  height: 0;
+  border: solid transparent;
+  pointer-events: none;
+}
+
+.js-enabled .hmrc-account-menu__link--more.hmrc-account-menu__link--more-expanded:before {
+  right: 13px;
+  border-width: 7px;
+  border-bottom-color: #b1b4b6;
+}
+
+.js-enabled .hmrc-account-menu__link--more.hmrc-account-menu__link--more-expanded:after {
+  margin-left: -6px;
+  border-width: 6px;
+  border-bottom-color: #f3f2f1;
+}
+
+.is-smaller .hmrc-account-menu__link--more-expanded {
+  display: none;
+}
+
+.no-js .hmrc-account-menu__main li {
+  display: inline;
+}
+
+.no-js .hmrc-subnav {
+  position: static;
+}
+
+.hmrc-full-width-banner {
+  display: block;
+  position: relative;
+  z-index: 999;
+  color: #fff;
+  background-color: #005ea5;
+}
+
+.hmrc-full-width-banner__container {
+  position: relative;
+  padding: 20px 0.78947em;
+}
+
+.hmrc-full-width-banner a {
+  color: #fff;
+}
+
+.hmrc-full-width-banner__title {
+  margin-bottom: 5px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.hmrc-full-width-banner__close {
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  color: #fff;
+  font-size: 14px;
+}
+@media (min-width:40.0625em) {
+  .hmrc-full-width-banner__close {
+    right: 35px;
+  }
+
+  .hmrc-full-width-banner__container {
+    padding: 20px 30px 10px;
+  }
+}
+
+.js-hidden {
+  display: none;
+}
+
+.hmrc-banner {
+  position: relative;
+  padding: 10px 0 8px;
+}
+
+.hmrc-organisation-logo {
+  padding: 5px 35px;
+  border-left: 2px solid #008670;
+  background: url("/extension-assets/hmrc-frontend/hmrc/components/banner/images/hmrc_crest_18px_x2.png") 5px no-repeat;
+  background-size: auto 26px;
+}
+
+.hmrc-organisation-logo p {
+  margin: 2px 0 0;
+}
+
+.hmrc-notification-badge {
+  display: inline-block;
+  min-width: 10px;
+  padding: 1px 4px 0;
+  border-radius: 10px;
+  color: #fff;
+  background: #d4351c;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.hmrc-page-heading {
+  display: table;
+  width: 100%;
+  margin-top: 1.875em;
+  margin-bottom: 0.9375em;
+  padding-top: 8px;
+  clear: both;
+  table-layout: fixed;
+}
+@media (min-width:40.0625em) {
+  .hmrc-page-heading {
+    margin-top: 1.875em;
+    margin-bottom: 1.25em;
+  }
+}
+
+.hmrc-page-heading .hmrc-caption-xl {
+  display: table-header-group;
+}
+
+.hrmc-lang-select {
+  overflow: auto;
+}
+
+.hrmc-lang-select__content {
+  width: auto;
+  margin: 1rem 0;
+  float: right;
+  list-style: none;
+  font-family: nta,Arial,sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.14286;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+@media (min-width:40.0625em) {
+  .hrmc-lang-select__content {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+}
+@media print {
+  .hrmc-lang-select__content {
+    font-family: sans-serif;
+    font-size: 14pt;
+    line-height: 1.2;
+  }
+}
+
+.hmrc-header.hmrc-header--with-additional-navigation .govuk-header__link--service-name {
+  float: left;
+}
+
+.hmrc-header.hmrc-header--with-additional-navigation .hmrc-sign-out-nav {
+  float: right;
+}
+
+.hmrc-header.hmrc-header--with-additional-navigation .hmrc-sign-out-nav__link {
+  color: #fff;
+  font-weight: 700;
+  line-height: 1.8em;
+  text-decoration: none;
+}
+
+.hmrc-header.hmrc-header--with-additional-navigation .hmrc-sign-out-nav__link:hover {
+  text-decoration: underline;
+}
+
+.hmrc-header.hmrc-header--with-additional-navigation .hmrc-language-select {
+  padding-right: 15px;
+  float: right;
+}
+
+.hmrc-header.hmrc-header--with-additional-navigation .hmrc-language-select .govuk-list {
+  margin-bottom: 0;
+}
+
+.hmrc-header.hmrc-header--with-additional-navigation .hmrc-language-select .govuk-list a {
+  color: #fff;
+}
+
+.hmrc-header.hmrc-header--with-additional-navigation .hmrc-language-select .govuk-list a:not(.govuk-header__link) {
+  color: #b1b4b6;
+  text-decoration: none;
+}
+
+.hmrc-header.hmrc-header--with-additional-navigation .hmrc-language-select .govuk-header__navigation-item {
+  display: inline-block;
+  margin-right: 0;
+  border-bottom: 0;
+}
+
+.hmrc-header.hmrc-header--with-additional-navigation .hmrc-language-select .govuk-header__navigation-item+.govuk-header__navigation-item:before {
+  content: "|";
+  padding-right: 2px;
+  color: #6f777b;
+}
+
+.hmrc-internal-header {
+  padding: 20px 15px;
+}
+
+.hmrc-internal-header__logo {
+  min-width: 275px;
+  margin-bottom: 10px;
+  border-left: 2px solid #008670;
+}
+@media (min-width:48.0625em) {
+  .hmrc-internal-header__logo {
+    display: table-cell;
+    width: 33.33%;
+    margin-bottom: 0;
+  }
+}
+
+.hmrc-internal-header__logo-link {
+  display: table;
+}
+
+.hmrc-internal-header__logo-link:before {
+  content: "";
+  display: table-cell;
+  width: 52px;
+  height: 32px;
+  background: url("/extension-assets/hmrc-frontend/hmrc/components/internal-header/images/hmrc-crown-logo_black.svg") no-repeat;
+  background-size: 32px 32px;
+  background-position-x: 10px;
+}
+
+.hmrc-internal-header__logo-link:link,
+.hmrc-internal-header__logo-link:visited {
+  color: #0b0c0c;
+  font-size: 20px;
+  line-height: 32px;
+  text-decoration: none;
+}
+@media (min-width:48.0625em) {
+  .hmrc-internal-header__service-name {
+    display: table-cell;
+  }
+}
+
+.hmrc-internal-header__link {
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.hmrc-internal-header__link:link,
+.hmrc-internal-header__link:visited {
+  color: #0b0c0c;
+}
+@media (min-width:48.0625em) {
+  .hmrc-internal-header__link {
+    font-size: 24px;
+  }
+}
+
+.hmrc-add-to-a-list {
+  padding-left: 0;
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 16px;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+@media print {
+  .hmrc-add-to-a-list {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .hmrc-add-to-a-list {
+    font-size: 19px;
+    font-size: 1.1875rem;
+    line-height: 1.31579;
+  }
+}
+@media print {
+  .hmrc-add-to-a-list {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
+}
+@media (min-width:48.0625em) {
+  .hmrc-add-to-a-list {
+    display: table;
+  }
+}
+@media (min-width:48.0625em) {
+  .hmrc-add-to-a-list--short {
+    width: 100%;
+  }
+
+  .hmrc-add-to-a-list--short .hmrc-add-to-a-list__identifier {
+    width: 30%;
+  }
+}
+@media (min-width:48.0625em) {
+  .hmrc-add-to-a-list--long {
+    width: 100%;
+  }
+
+  .hmrc-add-to-a-list--long .hmrc-add-to-a-list__identifier {
+    width: 50%;
+  }
+}
+
+.hmrc-add-to-a-list__contents {
+  display: block;
+  position: relative;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #b1b4b6;
+}
+@media (min-width:48.0625em) {
+  .hmrc-add-to-a-list__contents {
+    display: table-row;
+    padding-bottom: 0;
+    border-bottom-width: 0;
+  }
+}
+
+.hmrc-add-to-a-list__change,
+.hmrc-add-to-a-list__identifier,
+.hmrc-add-to-a-list__remove {
+  display: block;
+  margin: 0;
+}
+@media (min-width:48.0625em) {
+  .hmrc-add-to-a-list__change,
+  .hmrc-add-to-a-list__identifier,
+  .hmrc-add-to-a-list__remove {
+    display: table-cell;
+    padding: 15px 0;
+    border-bottom: 1px solid #b1b4b6;
+  }
+}
+
+.hmrc-add-to-a-list__identifier {
+  margin: 10px 60px 0 0;
+  font-weight: 700;
+}
+@media (min-width:48.0625em) {
+  .hmrc-add-to-a-list__identifier {
+    margin: 0;
+  }
+}
+
+.hmrc-add-to-a-list__identifier--light {
+  font-weight: 400;
+}
+
+.hmrc-add-to-a-list__remove {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: right;
+}
+@media (min-width:48.0625em) {
+  .hmrc-add-to-a-list__remove {
+    padding-right: 0;
+  }
+}
+
+.hmrc-add-to-a-list__change {
+  position: absolute;
+  top: 0;
+  right: 0;
+  text-align: right;
+}
+@media (min-width:48.0625em) {
+  .hmrc-add-to-a-list__change {
+    position: static;
+  }
+
+  .hmrc-add-to-a-list__change+.hmrc-add-to-a-list__remove {
+    width: 6em;
+  }
+}
+
+.hmrc-timeout-overlay {
+  position: fixed;
+  z-index: 1001;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+  background-color: #0b0c0c;
+  filter:alpha(opacity=80);
+  -moz-opacity: 0.8;
+}
+
+html.no-scroll {
+  overflow: hidden;
+}
+
+.hmrc-timeout-dialog {
+  position: fixed;
+  z-index: 1002;
+  top: 50%;
+  left: 50%;
+  width: 280px;
+  padding: 30px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+  border: 5px solid #0b0c0c;
+  background-color: #fff;
+}
+@media (min-width:40.0625em) {
+  .hmrc-timeout-dialog {
+    width: 435px;
+  }
+}
+
+.hmrc-timeout-dialog__message {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 16px;
+  font-size: 1rem;
+  line-height: 1.25;
+  line-height: 1.31579;
+}
+@media print {
+  .hmrc-timeout-dialog__message {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .hmrc-timeout-dialog__message {
+    font-size: 19px;
+    font-size: 1.1875rem;
+    line-height: 1.31579;
+  }
+}
+@media print {
+  .hmrc-timeout-dialog__message {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
+}
+
+.hmrc-timeout-dialog__countdown {
+  display: inline-block;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.hmrc-timeout-dialog__link {
+  display: inline-block;
+}
+@media (min-width:40.0625em) {
+  .hmrc-timeout-dialog__link {
+    position: relative;
+    top: 2px;
+    padding: 0.526315em 0.789473em 0.263157em;
+    line-height: 1.5;
+  }
+}
+
+.hmrc-width-container--wide {
+  max-width: 1100px;
+}
+
+.app-content {
+  padding: 20px;
+}
+@media (min-width:40.0625em) {
+  .app-content {
+    padding: 30px;
+  }
+}
+
+.app-content h1 {
+  max-width: 15em;
+}
+
+.app-content h2 {
+  max-width: 20em;
+}
+
+.app-content h3 {
+  max-width: 30em;
+}
+
+.app-content .app-table--constrained,
+.app-content h4,
+.app-content h5,
+.app-content h6,
+.app-content img,
+.app-content ol,
+.app-content p,
+.app-content ul:not(.app-tabs),
+.app-content video {
+  max-width: 38em;
+}
+
+.app-content img,
+.app-content video {
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #b1b4b6;
+}
+@media (min-width:40.0625em) {
+  .app-content img,
+  .app-content video {
+    margin-top: 10px;
+    margin-bottom: 30px;
+  }
+}
+
+.app-content img {
+  padding: 10px;
+}
+
+.app-content video:focus {
+  outline: 3px solid transparent;
+  color: #0b0c0c;
+  background-color: #fd0;
+  box-shadow: 0 -2px #fd0,0 4px #0b0c0c;
+  text-decoration: none;
+}
+
+.app-content code,
+.app-content pre {
+  font-family: monospace,monospace;
+  font-size: 1em;
+}
+
+.app-content pre {
+  max-width: 38em;
+  padding: 20px;
+  overflow: auto;
+  border: 1px solid #b1b4b6;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  margin: 0 0 15px;
+}
+@media (min-width:40.0625em) {
+  .app-content pre {
+    margin-bottom: 20px;
+  }
+}
+
+.app-cookie-banner {
+  padding: 10px;
+}
+
+.app-cookie-banner p {
+  font-family: nta,Arial,sans-serif;
+  font-size: 16px;
+  line-height: 1.25;
+  font-weight: 400;
+  text-transform: none;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.app-header__title {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 18px;
+  font-size: 1.125rem;
+  line-height: 1.11111;
+}
+@media print {
+  .app-header__title {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .app-header__title {
+    font-size: 24px;
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+}
+@media print {
+  .app-header__title {
+    font-size: 18pt;
+    line-height: 1.15;
+  }
+}
+
+.app-header__link {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 700;
+  display: inline-block;
+  font-size: 30px;
+  line-height: 30px;
+}
+@media print {
+  .app-header__link {
+    font-family: sans-serif;
+  }
+}
+
+.app-header__link:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.app-header__link:link,
+.app-header__link:visited {
+  margin-bottom: -1px;
+  border-bottom: 1px solid transparent;
+  color: #fff;
+  text-decoration: none;
+}
+
+.app-header__link:active,
+.app-header__link:hover {
+  border-bottom-color: currentColor;
+}
+
+.app-header__link:focus {
+  color: #0b0c0c;
+}
+
+.hmrc-logo {
+  border-left: 2px solid #009390;
+}
+
+.hmrc-logo__link {
+  display: table;
+}
+
+.hmrc-logo__link:before {
+  content: "";
+  display: table-cell;
+  background: url("https://design.tax.service.gov.uk/assets/images/hmrc-crown-logo_black.svg") no-repeat;
+  background-size: 100% 100%;
+  width: 52px;
+  height: 32px;
+}
+
+.hmrc-logo__link:link,
+.hmrc-logo__link:visited {
+  text-decoration: none;
+  font-size: 20px;
+  color: #000;
+  line-height: 32px;
+}
+
+.hmrc-logo__img {
+  visibility: hidden;
+  height: 0;
+  width: 0;
+}
+
+.hmrc-internal-header {
+  box-sizing: border-box;
+  padding: 20px 0;
+  border-bottom: 10px solid #008670;
+}
+@media (min-width:48.0625em) {
+  .hmrc-internal-header {
+    display: table;
+    width: 100%;
+    min-height: 35px;
+  }
+}
+
+.hmrc-internal-header .hmrc-logo {
+  min-width: 275px;
+  margin-bottom: 10px;
+}
+@media (min-width:48.0625em) {
+  .hmrc-internal-header .hmrc-logo {
+    display: table-cell;
+    width: 33.33%;
+    margin-bottom: 0;
+  }
+}
+
+.hmrc-internal-service-name {
+  margin-right: 70px;
+}
+@media (min-width:48.0625em) {
+  .hmrc-internal-service-name {
+    margin-right: 0;
+    width: 33.33%;
+    display: table-cell;
+  }
+}
+
+.hmrc-internal-service-name__link {
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.hmrc-internal-service-name__link:link,
+.hmrc-internal-service-name__link:visited {
+  color: #0b0c0c;
+}
+@media (min-width:48.0625em) {
+  .hmrc-internal-service-name__link {
+    font-size: 24px;
+  }
+}
+
+.app-pane.app-pane--enabled {
+  overflow: hidden;
+}
+@media (min-width:40.0625em) {
+  .app-pane.app-pane--enabled {
+    flex-direction: column;
+  }
+}
+@media (min-width:40.0625em) {
+  .app-pane.app-pane--enabled,
+  .app-pane__header {
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+  }
+
+  .app-pane__header {
+    flex-direction: column;
+  }
+
+  .app-pane__header,
+  .app-pane__header > * {
+    -webkit-box-flex: 1;
+    flex: 1 0 auto;
+  }
+}
+@media (min-width:48.0625em) {
+  .app-pane__body {
+    display: -webkit-box;
+    display: flex;
+    position: relative;
+    min-height: 0;
+    -webkit-box-flex: 1;
+    flex: 1 1 100%;
+  }
+}
+
+.app-pane__subnav {
+  padding: 20px 0;
+}
+@media (min-width:48.0625em) {
+  .app-pane__subnav {
+    padding: 30px 0;
+    -webkit-box-flex: 0;
+    flex: 0 0 auto;
+    width: 300px;
+  }
+}
+@media (min-width:40.0625em) {
+  .app-pane__content {
+    display: -webkit-box;
+    display: flex;
+    margin-left: auto;
+    -webkit-box-flex: 1;
+    flex: 1 1 auto;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+  }
+
+  .app-pane__content main {
+    display: block;
+    -webkit-box-flex: 1;
+    flex: 1 0 auto;
+  }
+}
+
+.no-flexbox .app-pane {
+  height: auto;
+  overflow: visible;
+}
+
+.no-flexbox .app-pane:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.no-flexbox .app-pane__body {
+  display: block;
+}
+
+.no-flexbox .app-pane__subnav {
+  width: 300px;
+  float: left;
+  overflow-x: hidden;
+  border-right: none;
+}
+
+.no-flexbox .app-pane__content {
+  overflow-x: hidden;
+  border-left: 1px solid #b1b4b6;
+  margin-left: -1px;
+}
+
+.app-subnav-toggle+input {
+  display: none;
+}
+
+.app-subnav-toggle+input:checked+.app-pane__subnav {
+  display: block;
+}
+@media (min-width:48.0625em) {
+  .app-subnav-toggle+input:checked+.app-pane__subnav {
+    display: none;
+  }
+}
+
+.app-subnav-toggle {
+  position: absolute;
+  top: 10px;
+  right: 0;
+  text-align: right;
+  padding: 15px;
+  float: right;
+}
+@media (min-width:48.0625em) {
+  .app-subnav-toggle {
+    display: none;
+    padding: 20px;
+  }
+}
+
+.app-subnav-toggle__label {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 16px;
+  font-size: 1rem;
+  line-height: 1.25;
+  cursor: pointer;
+  border: 0 solid #000;
+  margin-top: 22px;
+  padding: 20px 0;
+  font-size: 19px;
+  display: inline-block;
+}
+@media print {
+  .app-subnav-toggle__label {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .app-subnav-toggle__label {
+    font-size: 19px;
+    font-size: 1.1875rem;
+    line-height: 1.31579;
+  }
+}
+@media print {
+  .app-subnav-toggle__label {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
+}
+
+.app-subnav-toggle__label:after {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  -webkit-clip-path: polygon(0 0,50% 100%,100% 0);
+  clip-path: polygon(0 0,50% 100%,100% 0);
+  content: "";
+  border-color: #0b0c0c;
+  border-style: solid;
+  border-width: 8.66px 5px 0;
+  margin-left: 5px;
+}
+
+.app-subnav-toggle.active .app-subnav-toggle__label:after {
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
+.app-pane__subnav {
+  display: none;
+}
+
+.app-pane__subnav .govuk-heading-m > a:active,
+.app-pane__subnav .govuk-heading-m > a:hover,
+.app-pane__subnav .govuk-heading-m > a:visited {
+  color: #1d70b8;
+}
+
+.app-pane__subnav .govuk-heading-m > a:focus {
+  outline: 3px solid #fd0;
+  outline-offset: 0;
+  background-color: #fd0;
+}
+@media (min-width:48.0625em) {
+  .app-pane__subnav {
+    display: block;
+  }
+}
+
+.app-subnav {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 16px;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+@media print {
+  .app-subnav {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .app-subnav {
+    font-size: 19px;
+    font-size: 1.1875rem;
+    line-height: 1.31579;
+  }
+}
+@media print {
+  .app-subnav {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
+}
+
+.app-subnav__section {
+  margin: 0 0 20px;
+  list-style-type: none;
+  border-bottom: 1px solid #b1b4b6;
+  padding: 0 0 20px;
+}
+
+.app-subnav__section:last-child {
+  border-bottom: none;
+}
+@media (min-width:48.0625em) {
+  .app-subnav__section {
+    margin-left: -14px;
+  }
+}
+
+.app-subnav__link {
+  display: block;
+  padding: 15px 0;
+  text-decoration: none;
+}
+
+.app-subnav__link:focus {
+  background: inherit;
+}
+
+.app-subnav__link:active,
+.app-subnav__link:hover,
+.app-subnav__link:visited {
+  color: #1d70b8;
+}
+@media (min-width:48.0625em) {
+  .app-subnav__link {
+    padding: 10px 20px 10px 10px;
+    border-left: 4px solid transparent;
+  }
+
+  .app-subnav__link:hover {
+    border-left-color: #003078;
+  }
+}
+
+.app-subnav__section-item--current .app-subnav__link {
+  font-weight: 700;
+}
+@media (min-width:48.0625em) {
+  .app-subnav__section-item--current .app-subnav__link {
+    border-left-color: #1d70b8;
+  }
+}
+@media (min-width:40.0625em) {
+  .collapsible-subsections .call-to-action p {
+    margin: 0;
+  }
+}
+
+.collapsible-subsections .js-subsection-title {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 700;
+  font-size: 16px;
+  font-size: 1rem;
+  line-height: 1.25;
+  display: block;
+  border-top: 1px solid #00f;
+  padding: 10px 30px 10px 0;
+  margin: 30px 0;
+  position: relative;
+}
+@media print {
+  .collapsible-subsections .js-subsection-title {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .collapsible-subsections .js-subsection-title {
+    font-size: 19px;
+    font-size: 1.1875rem;
+    line-height: 1.31579;
+  }
+}
+@media print {
+  .collapsible-subsections .js-subsection-title {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
+}
+
+.collapsible-subsections .js-subsection-title a {
+  text-decoration: none;
+}
+
+.subsection-collection {
+  margin-top: 15px;
+}
+@media (min-width:40.0625em) {
+  .subsection-collection {
+    margin-top: 30px;
+  }
+}
+
+.subsection-collection .js-title-controls-wrap:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+@media (min-width:40.0625em) {
+  .subsection-collection .js-title-controls-wrap .section-title {
+    float: left;
+    width: 25%;
+  }
+}
+
+.subsection-collection .js-title-controls-wrap .js-collection-controls {
+  display: block;
+  margin-left: -5px;
+  margin-bottom: 15px;
+}
+@media (min-width:40.0625em) {
+  .subsection-collection .js-title-controls-wrap .js-collection-controls {
+    margin: 0 0 30px -5px;
+    float: right;
+    display: inline-block;
+  }
+}
+
+.subsection-collection .js-title-controls-wrap .js-collection-controls a {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 14px;
+  font-size: 0.875rem;
+  line-height: 1.14286;
+  padding: 0 5px;
+  display: inline-block;
+}
+@media print {
+  .subsection-collection .js-title-controls-wrap .js-collection-controls a {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .subsection-collection .js-title-controls-wrap .js-collection-controls a {
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+}
+@media print {
+  .subsection-collection .js-title-controls-wrap .js-collection-controls a {
+    font-size: 14pt;
+    line-height: 1.2;
+  }
+}
+
+.subsection-collection .js-title-controls-wrap .js-collection-controls a.disabled {
+  color: #6f777b;
+  text-decoration: none;
+  cursor: default;
+}
+
+.js-openable {
+  border-top: 1px solid #b1b4b6;
+  padding-bottom: 30px;
+}
+@media (min-width:40.0625em) {
+  .js-openable {
+    padding-bottom: 60px;
+  }
+}
+
+.js-openable .js-subsection-title {
+  cursor: pointer;
+  margin: 0;
+  border: none;
+}
+
+.js-openable .js-subsection-title .js-toggle {
+  height: 25px;
+  width: 25px;
+  display: block;
+  background: url("https://assets.publishing.service.gov.uk/manuals-frontend/arrows_sprite-22a9b88c738b2052e81ad3376ef8bb73bc3fc21fb2eb3182dd82b83c1c84bf4c.png") no-repeat;
+  position: absolute;
+  right: 0;
+  top: 10px;
+}
+@media only screen and (-webkit-min-device-pixel-ratio:2),only screen and (min-device-pixel-ratio:2),only screen and (min-resolution:2dppx),only screen and (min-resolution:192dpi) {
+  .js-openable .js-subsection-title .js-toggle {
+    background-image: url("https://assets.publishing.service.gov.uk/manuals-frontend/arrows_sprite-22a9b88c738b2052e81ad3376ef8bb73bc3fc21fb2eb3182dd82b83c1c84bf4c.png");
+    background-size: 32px 50px;
+  }
+}
+
+.js-openable .js-subsection-body {
+  margin-top: govuk-space(3);
+}
+@media (min-width:40.0625em) {
+  .js-openable .js-subsection-body {
+    margin-top: 30px;
+  }
+}
+
+.js-enabled .js-openable.closed {
+  padding: 0;
+}
+
+.js-enabled .js-openable.closed .js-toggle {
+  background: url("https://assets.publishing.service.gov.uk/manuals-frontend/arrows_sprite-22a9b88c738b2052e81ad3376ef8bb73bc3fc21fb2eb3182dd82b83c1c84bf4c.png") no-repeat 0 -32px;
+}
+@media only screen and (-webkit-min-device-pixel-ratio:2),only screen and (min-device-pixel-ratio:2),only screen and (min-resolution:2dppx),only screen and (min-resolution:192dpi) {
+  .js-enabled .js-openable.closed .js-toggle {
+    background-image: image-url(arrowSprite);
+    background-size: 32px 50px;
+  }
+}
+
+.js-enabled .js-openable.closed .js-subsection-body {
+  position: absolute;
+  left: -9999px;
+  width: 100px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.hmrc.section-list {
+  margin-top: 30px;
+  padding-bottom: 30px;
+}
+
+.hmrc.section-list a {
+  padding-right: 0;
+}
+@media (min-width:40.0625em) {
+  .hmrc.section-list .title-wrap {
+    display: table-row;
+  }
+
+  .hmrc.section-list .title-wrap div {
+    display: table-cell;
+  }
+}
+
+.subsection-id {
+  min-width: 135px;
+  color: #6f777b;
+  padding-right: 30px;
+}
+
+.print-page {
+  display: none;
+}
+
+.app-card,
+.js-enabled .print-page {
+  display: block;
+}
+
+.app-card {
+  text-decoration: none;
+  background-color: #f8f8f8;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+@media (min-width:48.0625em) {
+  .app-card {
+    min-height: 168px;
+  }
+}
+
+.app-card__heading {
+  color: #005ea5;
+}
+
+.app-card:hover {
+  background-color: #005ea5;
+  color: #fff;
+}
+
+.app-card:hover > * {
+  color: inherit;
+}
+
+.app-example-wrapper {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 16px;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+@media (min-width:40.0625em) {
+  .app-example-wrapper {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
+@media print {
+  .app-example-wrapper {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .app-example-wrapper {
+    font-size: 19px;
+    font-size: 1.1875rem;
+    line-height: 1.31579;
+  }
+}
+@media print {
+  .app-example-wrapper {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
+}
+
+.app-example {
+  position: relative;
+  border: 1px solid #b1b4b6;
+  background: #f3f2f1;
+}
+
+.app-example-page {
+  padding: 60px 30px 30px;
+}
+
+.app-example--tabs {
+  margin-bottom: 0;
+}
+@media (min-width:40.0625em) {
+  .app-example--tabs {
+    margin-bottom: 0;
+  }
+}
+@media (min-width:48.0625em) {
+  .app-example--tabs {
+    margin-bottom: -1px;
+  }
+}
+
+.app-example__link {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  padding: 5px 10px;
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 12px;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  background: #f3f2f1;
+}
+@media print {
+  .app-example__link {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .app-example__link {
+    font-size: 14px;
+    font-size: 0.875rem;
+    line-height: 1.42857;
+  }
+}
+@media print {
+  .app-example__link {
+    font-size: 12pt;
+    line-height: 1.2;
+  }
+}
+
+.app-example__link a {
+  color: #1d70b8;
+  text-decoration: none;
+}
+
+.app-example__new-window {
+  left: 0;
+}
+
+.app-example__language-switch {
+  right: 0;
+}
+
+.app-example__language-switch--current,
+.app-example__language-switch--cy-activated .app-example__language-switch--en-only-content,
+.app-example__language-switch--en-activated .app-example__language-switch--cy-only-content {
+  display: none;
+}
+
+.app-example__frame {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border: none;
+  border-right: 1px solid #b1b4b6;
+  background: #fff;
+}
+
+.app-example__frame--xs,
+.app-example__iframe {
+  height: 150px;
+}
+
+.app-example__frame--s {
+  height: 250px;
+}
+
+.app-example__frame--m {
+  height: 350px;
+}
+
+.app-example__frame--l {
+  height: 450px;
+}
+
+.app-example__frame--xl {
+  height: 550px;
+}
+
+.app-example__frame--resizable {
+  min-width: 230px;
+  min-height: 60px;
+  overflow: auto;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+@media (min-width:48.0625em) {
+  .app-example__frame--resizable {
+    resize: both;
+  }
+}
+
+.language-example-code {
+  background-color: #f8f8f8;
+  width: calc(135% - 100px);
+  border: 1px solid #bfc1c3;
+  white-space: normal;
+  padding: 20px;
+  display: block;
+}
+
+.app-tabs {
+  margin: -1px auto;
+  padding: 0;
+  overflow: visible;
+  list-style-type: none;
+  border: 1px solid #b1b4b6;
+}
+
+.app-prose-scope .app-tabs {
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.app-tabs__item {
+  display: inline-block;
+  position: relative;
+  z-index: 2;
+  margin: 0;
+}
+
+.app-tabs__item a {
+  display: block;
+  margin-top: -1px;
+  padding: 15px;
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.app-prose-scope .app-tabs__item a:focus,
+.app-tabs__item a {
+  color: #1d70b8;
+  background: inherit;
+}
+
+.app-prose-scope .app-tabs__item a:visited {
+  color: #1d70b8;
+}
+
+.app-prose-scope .app-tabs__item {
+  margin: 0;
+}
+
+.app-tabs__item--current a {
+  border-top-color: #1d70b8;
+  border-bottom-color: #1d70b8;
+  background-color: #eceae9;
+}
+
+.app-tabs__heading a {
+  display: none;
+  position: relative;
+  z-index: 2;
+  padding: 15px;
+  border: 1px solid #b1b4b6;
+  border-top: 0;
+  color: #1d70b8;
+  background: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.app-tabs__heading a:visited {
+  color: #1d70b8;
+}
+
+.app-tabs__heading a:focus {
+  color: #0b0c0c;
+}
+@media (max-width:48.0525em) {
+  .app-tabs__heading a {
+    display: block;
+  }
+}
+
+.app-tabs__heading--current {
+  background-color: #eceae9;
+}
+
+.app-tabs__container {
+  margin-top: -2px;
+  border: 1px solid #b1b4b6;
+}
+
+.app-tabs__container--hidden {
+  display: none;
+}
+
+.app-tabs__container pre {
+  position: relative;
+  max-width: inherit;
+  margin-bottom: 0;
+  border: 0;
+  font-size: inherit;
+}
+
+.app-tabs__container pre code {
+  display: block;
+  padding-right: 20px;
+  padding-bottom: 20px;
+  overflow-x: auto;
+}
+
+.app-tabs__container pre {
+  padding-right: 0;
+  padding-bottom: 0;
+}
+
+.app-tabs__container--with-close-button pre {
+  padding-bottom: 30px;
+}
+
+.app-tabs__text {
+  padding: 20px;
+}
+@media (min-width:67.5em) {
+  .app-tabs__text {
+    padding-bottom: 0;
+  }
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #999998;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #333;
+  font-weight: 700;
+}
+
+.hljs-literal,
+.hljs-number,
+.hljs-tag .hljs-attr,
+.hljs-template-variable,
+.hljs-variable {
+  color: #007f80;
+}
+
+.hljs-doctag,
+.hljs-string {
+  color: #d14;
+}
+
+.hljs-section,
+.hljs-selector-id,
+.hljs-title {
+  color: #900;
+  font-weight: 700;
+}
+
+.hljs-subst {
+  font-weight: 400;
+}
+
+.hljs-class .hljs-title,
+.hljs-type {
+  color: #458;
+  font-weight: 700;
+}
+
+.hljs-attribute,
+.hljs-name,
+.hljs-tag {
+  color: navy;
+  font-weight: 400;
+}
+
+.hljs-link,
+.hljs-regexp {
+  color: #008020;
+}
+
+.hljs-bullet,
+.hljs-symbol {
+  color: #990073;
+}
+
+.hljs-builtin,
+.hljs-builtin-name {
+  color: #017ba5;
+}
+
+.hljs-meta {
+  color: #999;
+  font-weight: 700;
+}
+
+.hljs-deletion {
+  background: #fdd;
+}
+
+.hljs-addition {
+  background: #dfd;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: 700;
+}
+
+.app-width-container--full {
+  max-width: 1100px;
+  padding: 0;
+}
+@media (min-width:48.0625em) {
+  .app-width-container--full {
+    margin: 0 auto;
+    padding: 0 30px;
+  }
+}
+
+.app-footer .govuk-footer__section-break {
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
+.app-footer .govuk-visually-hidden {
+  position: relative;
+}
+
+code:not(.hljs) {
+  padding: 0 5px;
+  overflow-x: auto;
+  color: #d14;
+  background: #f8f8f8;
+}
+
+.app-code-snippet {
+  max-width: 100%;
+}
+
+.app-code-snippet pre {
+  max-width: 100%;
+  padding: 15px code;
+  padding-color: #000;
+}
+
+.app-code-snippet.app-code-snippet--copy pre {
+  padding-top: 50px;
+  min-height: 25px;
+}
+
+.app-link--copy__container {
+  position: relative;
+  background: red;
+}
+
+.app-link--copy__container .app-link--copy:active,
+.app-link--copy__container .app-link--copy:hover,
+.app-link--copy__container .app-link--copy:link,
+.app-link--copy__container .app-link--copy:visited {
+  font-family: GDS Transport,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 14px;
+  font-size: 0.875rem;
+  line-height: 1.14286;
+  position: absolute;
+  z-index: 1;
+  top: 15px;
+  right: 15px;
+  min-width: 58px;
+  padding: 4px 10px 0;
+  border: 1px solid #009390;
+  color: #009390;
+  background-color: #fff;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+@media print {
+  .app-link--copy__container .app-link--copy:active,
+  .app-link--copy__container .app-link--copy:hover,
+  .app-link--copy__container .app-link--copy:link,
+  .app-link--copy__container .app-link--copy:visited {
+    font-family: sans-serif;
+  }
+}
+@media (min-width:40.0625em) {
+  .app-link--copy__container .app-link--copy:active,
+  .app-link--copy__container .app-link--copy:hover,
+  .app-link--copy__container .app-link--copy:link,
+  .app-link--copy__container .app-link--copy:visited {
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+}
+@media print {
+  .app-link--copy__container .app-link--copy:active,
+  .app-link--copy__container .app-link--copy:hover,
+  .app-link--copy__container .app-link--copy:link,
+  .app-link--copy__container .app-link--copy:visited {
+    font-size: 14pt;
+    line-height: 1.2;
+  }
+}
+
+.app-prose-scope .app-link--copy__container .app-link--copy:active,
+.app-prose-scope .app-link--copy__container .app-link--copy:hover,
+.app-prose-scope .app-link--copy__container .app-link--copy:link,
+.app-prose-scope .app-link--copy__container .app-link--copy:visited {
+  color: #009390;
+  background-color: #fff;
+}
+
+.hmrc-page-heading {
+  margin: 0;
+  padding-top: 0;
+}
+
+.hmrc-phase-banner {
+  margin-top: -50px;
+}
+
+.notification-banner-wrapper {
+  color: #fff;
+  background-color: #1d70b8;
+  padding: 15px 0 5px;
+}
+@media (min-width:40.0625em) {
+  .notification-banner-wrapper {
+    padding-bottom: 0;
+  }
+}
+
+.notification-banner-wrapper a.govuk-link,
+.notification-banner-wrapper p.govuk-body {
+  color: #fff;
+}
+
+.govuk-accordion .govuk-accordion__section-content {
+  float: none;
+}

@@ -2,6 +2,9 @@ service.name=Internal Exports Movements Service
 header.homepage.alt=Go to the HMRC homepage
 header.homepage.text=HM Revenue & Customs
 
+feedback=This is a new service - your {0} will help us to improve it.
+feedback.link=feedback
+
 site.continue = Continue
 site.back = Back
 site.save_and_continue = Save and continue

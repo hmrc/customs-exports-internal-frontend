@@ -15,16 +15,22 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukHeader
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 
 @this(govukHeader: GovukHeader)
 
 @()(implicit request: Request[_], messages: Messages)
 
-@govukHeader(Header(
-    homepageUrl = None,
-    serviceName = Some(messages("site.service_name")),
-    serviceUrl = None,
-    containerClasses = Some("govuk-width-container"),
-    navigation = None
-))
+<div class="hmrc-internal-header app-header">
+    <div class="govuk-width-container">
+        <div class="hmrc-logo app-header__title">
+            <a href="https://www.gov.uk/government/organisations/hm-revenue-customs" title="Go to the HMRC homepage" class="hmrc-logo__link">
+                HM Revenue &amp; Customs
+            </a>
+        </div>
+        <div class="hmrc-internal-service-name app-header__link">
+            <a href="/" title="Go to the Exports Declaration Service homepage" class="hmrc-internal-service-name__link">
+                Internal Exports Movements Service
+            </a>
+        </div>
+    </div>
+</div>

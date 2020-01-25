@@ -15,31 +15,35 @@
  *@
 
 @import forms.ConsignmentReferences
-@import models.cache.JourneyType
 @import models.cache.JourneyType.JourneyType
-@import forms.ConsignmentReferenceType
 @import views.Title
 @import components.gds.gds_main_template
-@import views.html.templates.main_template
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import components.gds.pageTitle
+@import uk.gov.hmrc.govukfrontend.views.html.components.govukInsetText
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import views.html.components.gds.link
 
-@* this(main_template: main_template) *@
 @this(
     govukLayout: gds_main_template,
-    govukPanel : GovukPanel,
-    formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+    pageTitle: pageTitle,
+    govukInsetText: govukInsetText
 )
 
 @* TODO remove consignmentReferences: ConsignmentReferences when all pages are done *@
 @(journeyType: JourneyType, consignmentReferences: ConsignmentReferences)(implicit request: Request[_], messages: Messages)
 
-@gotoTimelineLink = {<a class="govuk-link" href="@routes.ChoiceController.displayPage()">@messages("movement.confirmation.notification.timeline.link")</a>}
+@gotoTimelineLink = {<a class="govuk-link" href="@routes.ViewSubmissionsController.displayPage()">@messages("movement.confirmation.notification.timeline.link")</a>}
 
 @govukLayout(title = Title(s"movement.confirmation.title.${journeyType}")) {
 
-    @govukPanel(Panel(
-        title = Text(messages(s"movement.confirmation.title.${journeyType}"))
+    @pageTitle(text = messages(s"movement.confirmation.title.${journeyType}"), classes = "govuk-heading-xl")
+
+    @govukInsetText(InsetText(
+        content = HtmlContent(messages("movement.confirmation.header")+"<br>"+messages("movement.confirmation.header.check", gotoTimelineLink))
     ))
 
-    @components.button_link("site.backToStart", routes.ChoiceController.displayPage())
+    <p class="govuk-body">
+        @link(message = messages("movement.confirmation.redirect.link"), href = routes.ChoiceController.displayPage())
+    </p>
 }
