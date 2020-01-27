@@ -51,5 +51,5 @@ class AppConfig @Inject()(
   lazy val customsDeclarationsGoodsTakenOutOfEuUrl: String = loadConfig("urls.customsDeclarationsGoodsTakenOutOfEu")
   lazy val serviceAvailabilityUrl: String = loadConfig("urls.serviceAvailability")
 
-  lazy val cacheTimeToLive: FiniteDuration = servicesConfig.getDuration("mongodb.timeToLive").asInstanceOf[FiniteDuration]
+  lazy val ileQueryTTL: FiniteDuration = servicesConfig.getDuration("ileQuery.ttl").asInstanceOf[FiniteDuration]
 }

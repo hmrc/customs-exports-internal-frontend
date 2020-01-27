@@ -35,7 +35,7 @@ class IleQueryRepository @Inject()(mc: ReactiveMongoComponent, appConfig: AppCon
     Index(
       key = Seq("createdAt" -> IndexType.Ascending),
       name = Some("ttl"),
-      options = BSONDocument("expireAfterSeconds" -> appConfig.cacheTimeToLive.toSeconds)
+      options = BSONDocument("expireAfterSeconds" -> appConfig.ileQueryTTL.toSeconds)
     )
   )
 

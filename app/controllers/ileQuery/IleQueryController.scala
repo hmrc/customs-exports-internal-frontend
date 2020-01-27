@@ -26,6 +26,7 @@ import javax.inject.{Inject, Singleton}
 import models.UcrBlock
 import models.cache.{Answers, IleQuery}
 import models.notifications.queries.IleQueryResponse
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -51,6 +52,8 @@ class IleQueryController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
+  private val logger = Logger(this.getClass)
+
   def displayQueryForm(): Action[AnyContent] = authenticate { implicit request =>
     Ok(ileQueryPage(form))
   }
@@ -72,21 +75,22 @@ class IleQueryController @Inject()(
         connector.fetchQueryNotifications(query.conversationId, request.providerId).flatMap { response =>
           response.status match {
             case OK =>
-              ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
-                val queryResponse = Json.parse(response.body).as[IleQueryResponse]
+              val queryResponse = Json.parse(response.body).as[Seq[IleQueryResponse]]
+              queryResponse match {
+                case Seq() => Future.successful(loadingPageResult)
+                case queryResponse :: _ =>
+                  ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
+                    val ducrResult = queryResponse.queriedDucr.map(ducr => Ok(ileQueryDucrResponsePage(ducr)))
+                    val mucrResult = queryResponse.queriedMucr.map(mucr => Ok(ileQueryMucrResponsePage(mucr)))
 
-                val ducrResult = queryResponse.queriedDucr.map(ducr => Ok(ileQueryDucrResponsePage(ducr)))
-                val mucrResult = queryResponse.queriedMucr.map(mucr => Ok(ileQueryMucrResponsePage(mucr)))
-
-                ducrResult.orElse(mucrResult).getOrElse(loadingPageResult)
+                    ducrResult.orElse(mucrResult).getOrElse(loadingPageResult)
+                  }
               }
-            case NO_CONTENT =>
-              Future.successful(loadingPageResult)
-            case GATEWAY_TIMEOUT =>
+            case _ =>
+              logger.warn(s"Movements backend returned status: ${response.status}")
               ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
                 InternalServerError(errorHandler.standardErrorTemplate())
               }
-            case _ => Future.successful(BadRequest(errorHandler.standardErrorTemplate()))
           }
         }
 
