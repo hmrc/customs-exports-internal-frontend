@@ -31,24 +31,24 @@ class MovementConfirmationDepartureViewSpec extends ViewSpec with Injector {
 
   "View" should {
     "render title" in {
-      page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getTitle must containMessage("movement.confirmation.title.RETROSPECTIVE_ARRIVE")
+      page(JourneyType.DEPART, consignmentReferences).getTitle must containMessage("movement.confirmation.title.DEPART")
     }
 
     "render page title" in {
-      page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences)
+      page(JourneyType.DEPART, consignmentReferences)
         .getElementsByClass("govuk-heading-xl")
-        .first() must containMessage("movement.confirmation.title.RETROSPECTIVE_ARRIVE")
+        .first() must containMessage("movement.confirmation.title.DEPART")
     }
 
     "have 'notification timeline' link" in {
-      val inset = page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getElementsByClass("govuk-inset-text").first()
+      val inset = page(JourneyType.DEPART, consignmentReferences).getElementsByClass("govuk-inset-text").first()
       inset
         .getElementsByClass("govuk-link")
         .first() must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
     }
 
     "have 'find another consignment' link" in {
-      page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences)
+      page(JourneyType.DEPART, consignmentReferences)
         .getElementsByClass("govuk-link")
         .get(1) must haveHref(controllers.routes.ChoiceController.displayPage())
     }

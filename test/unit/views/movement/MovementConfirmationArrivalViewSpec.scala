@@ -42,18 +42,18 @@ class MovementConfirmationArrivalViewSpec extends ViewSpec with Injector {
 
         page(JourneyType.ARRIVE, consignmentReferences)
           .getElementsByClass("govuk-heading-xl")
-          .first() must containMessage("movement.confirmation.title.ARRIVE", "DUCR", "9GB12345678")
+          .first() must containMessage("movement.confirmation.title.ARRIVE")
       }
 
       "have 'notification timeline' link" in {
-        val inset = page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getElementsByClass("govuk-inset-text").first()
+        val inset = page(JourneyType.ARRIVE, consignmentReferences).getElementsByClass("govuk-inset-text").first()
         inset
           .getElementsByClass("govuk-link")
           .first() must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
       }
 
       "have 'find another consignment' link" in {
-        page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences)
+        page(JourneyType.ARRIVE, consignmentReferences)
           .getElementsByClass("govuk-link")
           .get(1) must haveHref(controllers.routes.ChoiceController.displayPage())
       }
