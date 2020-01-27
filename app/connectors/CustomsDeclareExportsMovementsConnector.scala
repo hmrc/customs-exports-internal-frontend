@@ -102,7 +102,8 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
         case Failure(exception) => logFailedExchange("All Notifications fetch", exception)
       }
 
-  def fetchQueryNotifications(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = ???
+  def fetchQueryNotifications(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    Future.successful(HttpResponse(play.api.http.Status.NO_CONTENT))
 
   private def providerIdQueryParam(providerId: String): Seq[(String, String)] = Seq("providerId" -> providerId)
 

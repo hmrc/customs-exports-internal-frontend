@@ -16,6 +16,7 @@
 
 package repositories
 
+import config.AppConfig
 import javax.inject.Inject
 import models.cache.IleQuery
 import play.api.libs.json.JsString
@@ -27,10 +28,16 @@ import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IleQueryRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: ExecutionContext)
+class IleQueryRepository @Inject()(mc: ReactiveMongoComponent, appConfig: AppConfig)(implicit ec: ExecutionContext)
     extends ReactiveRepository[IleQuery, BSONObjectID]("ileQueries", mc.mongoConnector.db, IleQuery.format, objectIdFormats) {
 
-  override def indexes: Seq[Index] = Seq(Index(key = Seq("sessionId" -> IndexType.Ascending), options = BSONDocument("expireAfterSeconds" -> 60)))
+  override def indexes: Seq[Index] = super.indexes ++ Seq(
+    Index(
+      key = Seq("createdAt" -> IndexType.Ascending),
+      name = Some("ttl"),
+      options = BSONDocument("expireAfterSeconds" -> appConfig.cacheTimeToLive.toSeconds)
+    )
+  )
 
   def findBySessionIdAndUcr(sessionId: String, ucr: String): Future[Option[IleQuery]] =
     find("sessionId" -> sessionId, "ucr" -> ucr).map(_.headOption)
