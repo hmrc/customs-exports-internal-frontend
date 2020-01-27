@@ -21,6 +21,7 @@ import connectors.exchanges.{ConsolidationExchange, IleQueryExchange, MovementEx
 import connectors.formats.Implicit.optionFormat
 import javax.inject.{Inject, Singleton}
 import models.notifications.NotificationFrontendModel
+import models.notifications.queries.IleQueryResponse
 import models.submissions.Submission
 import play.api.Logger
 import play.api.http.{ContentTypes, HeaderNames}
@@ -103,7 +104,12 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
       }
 
   def fetchQueryNotifications(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    Future.successful(HttpResponse(play.api.http.Status.NO_CONTENT))
+    httpClient
+      .GET[HttpResponse](s"${appConfig.customsDeclareExportsMovementsUrl}$IleQuery/$conversationId", providerIdQueryParam(providerId))
+      .andThen {
+        case Success(response)  => logSuccessfulExchange("Ile query response fetch", response.body)
+        case Failure(exception) => logFailedExchange("Ile query response fetch", exception)
+      }
 
   private def providerIdQueryParam(providerId: String): Seq[(String, String)] = Seq("providerId" -> providerId)
 
