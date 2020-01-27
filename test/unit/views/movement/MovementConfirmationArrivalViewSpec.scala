@@ -16,45 +16,47 @@
 
 package views.movement
 
+import base.Injector
 import forms.{ConsignmentReferenceType, ConsignmentReferences}
 import models.cache.{ArrivalAnswers, JourneyType}
 import views.ViewSpec
 import views.html.movement_confirmation_page
 
-class MovementConfirmationArrivalViewSpec extends ViewSpec {
+class MovementConfirmationArrivalViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(ArrivalAnswers())
 
   private val consignmentReferences = ConsignmentReferences(ConsignmentReferenceType.D, "9GB12345678")
-  private val page = new movement_confirmation_page(main_template)
+  private val page = instanceOf[movement_confirmation_page]
 
-  "View" should {
-    "render title" in {
-      page(JourneyType.ARRIVE, consignmentReferences).getTitle must containMessage("movement.confirmation.ARRIVE.tab.heading")
-    }
+  "MovementConfirmationArrivalView" when {
 
-    "render confirmation" in {
-      page(JourneyType.ARRIVE, consignmentReferences)
-        .getElementById("highlight-box-heading") must containMessage("movement.confirmation.ARRIVE.heading", "DUCR", "9GB12345678")
-    }
+    "View is rendered" should {
 
-    "have back to start button" in {
+      "render title" in {
 
-      val backButton = page(JourneyType.ARRIVE, consignmentReferences).getElementsByClass("button").first()
+        page(JourneyType.ARRIVE, consignmentReferences).getTitle must containMessage("movement.confirmation.title.ARRIVE")
+      }
 
-      backButton must containMessage("site.backToStart")
-      backButton must haveHref(controllers.routes.ChoiceController.displayPage())
-    }
+      "render header" in {
 
-    "have 'view requests' link" in {
-      val statusInfo = page(JourneyType.ARRIVE, consignmentReferences).getElementById("status-info")
-      statusInfo.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ViewSubmissions))
-    }
+        page(JourneyType.ARRIVE, consignmentReferences)
+          .getElementsByClass("govuk-heading-xl")
+          .first() must containMessage("movement.confirmation.title.ARRIVE")
+      }
 
-    "have 'next steps' link" in {
-      val nextSteps = page(JourneyType.ARRIVE, consignmentReferences).getElementById("next-steps")
-      nextSteps.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.AssociateUCR))
-      nextSteps.getElementsByTag("a").get(1) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.Departure))
+      "have 'notification timeline' link" in {
+        val inset = page(JourneyType.ARRIVE, consignmentReferences).getElementsByClass("govuk-inset-text").first()
+        inset
+          .getElementsByClass("govuk-link")
+          .first() must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
+      }
+
+      "have 'find another consignment' link" in {
+        page(JourneyType.ARRIVE, consignmentReferences)
+          .getElementsByClass("govuk-link")
+          .get(1) must haveHref(controllers.routes.ChoiceController.displayPage())
+      }
     }
   }
 

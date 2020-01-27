@@ -16,47 +16,41 @@
 
 package views.movement
 
+import base.Injector
 import forms.{ConsignmentReferenceType, ConsignmentReferences}
 import models.cache.{JourneyType, RetrospectiveArrivalAnswers}
 import views.ViewSpec
 import views.html.movement_confirmation_page
 
-class MovementConfirmationRetrospectiveArrivalViewSpec extends ViewSpec {
+class MovementConfirmationRetrospectiveArrivalViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
 
   private val consignmentReferences = ConsignmentReferences(ConsignmentReferenceType.D, "9GB12345678")
-  private val page = new movement_confirmation_page(main_template)
+  private val page = instanceOf[movement_confirmation_page]
 
   "View" should {
     "render title" in {
-      page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getTitle must containMessage(
-        "movement.confirmation.RETROSPECTIVE_ARRIVE.tab.heading"
-      )
+      page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getTitle must containMessage("movement.confirmation.title.RETROSPECTIVE_ARRIVE")
     }
 
-    "render confirmation" in {
+    "render page title" in {
       page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences)
-        .getElementById("highlight-box-heading") must containMessage("movement.confirmation.RETROSPECTIVE_ARRIVE.heading", "DUCR", "9GB12345678")
+        .getElementsByClass("govuk-heading-xl")
+        .first() must containMessage("movement.confirmation.title.RETROSPECTIVE_ARRIVE")
     }
 
-    "have back to start button" in {
-
-      val backButton = page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getElementsByClass("button").first()
-
-      backButton must containMessage("site.backToStart")
-      backButton must haveHref(controllers.routes.ChoiceController.displayPage())
+    "have 'notification timeline' link" in {
+      val inset = page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getElementsByClass("govuk-inset-text").first()
+      inset
+        .getElementsByClass("govuk-link")
+        .first() must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
     }
 
-    "have 'view requests' link" in {
-      val statusInfo = page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getElementById("status-info")
-      statusInfo.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ViewSubmissions))
-    }
-
-    "have 'next steps' link" in {
-      val nextSteps = page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getElementById("next-steps")
-      nextSteps.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.AssociateUCR))
-      nextSteps.getElementsByTag("a").get(1) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.Departure))
+    "have 'find another consignment' link" in {
+      page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences)
+        .getElementsByClass("govuk-link")
+        .get(1) must haveHref(controllers.routes.ChoiceController.displayPage())
     }
   }
 

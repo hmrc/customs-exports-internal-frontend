@@ -16,40 +16,47 @@
 
 package views
 
+import base.Injector
 import models.viewmodels.notificationspage.NotificationsPageSingleElement
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData
 import testdata.CommonTestData.exampleNotificationPageSingleElement
 import views.html.view_notifications
 
-class ViewNotificationsViewSpec extends ViewSpec {
+class ViewNotificationsViewSpec extends ViewSpec with Injector {
 
-  private implicit val implicitFakeRequest = FakeRequest().withCSRFToken
+  private implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
-  private def page(
-    submissionUcr: String = "",
-    submissionElement: NotificationsPageSingleElement,
-    elementsToDisplay: Seq[NotificationsPageSingleElement] = Seq.empty
-  ): Html =
-    new view_notifications(main_template)(submissionUcr, submissionElement, elementsToDisplay)(FakeRequest(), messages)
+  private val page = instanceOf[view_notifications]
 
   "Notification page" should {
 
-    "contain title" in {
-      val title =
-        page(submissionUcr = "TEST UCR", NotificationsPageSingleElement("title", "timestamp", Html("content")))
-          .getElementById("title")
+    val title = "REQUEST TITLE"
+    val timestamp = "TIMESTAMP"
+    val content = Html("<span>CONTENT</span>")
+    val pageWithoutNotifications = page(
+      submissionUcr = CommonTestData.correctUcr,
+      submissionElement = NotificationsPageSingleElement(title, timestamp, content),
+      elementsToDisplay = Seq.empty
+    )
 
-      title must containMessage("notifications.title", "TEST UCR")
+    "contain title" in {
+      pageWithoutNotifications.getTitle must containText(messages("notifications.title", CommonTestData.correctUcr))
+    }
+
+    "contain header" in {
+      pageWithoutNotifications.getElementById("title") must containText(messages("notifications.title", CommonTestData.correctUcr))
     }
 
     "contain only request element if no notifications are present" in {
-      val title = "REQUEST TITLE"
-      val timestamp = "TIMESTAMP"
-      val content = Html("<span>CONTENT</span>")
-      val pageWithData: Html =
-        page(CommonTestData.correctUcr, NotificationsPageSingleElement(title, timestamp, content))
+
+      val pageWithData: Html = page(
+        submissionUcr = CommonTestData.correctUcr,
+        submissionElement = NotificationsPageSingleElement(title, timestamp, content),
+        elementsToDisplay = Seq.empty
+      )
 
       pageWithData.getElementById("notifications-request-title") must containText(title)
       pageWithData.getElementById("notifications-request-timestamp") must containText(timestamp)
@@ -64,8 +71,11 @@ class ViewNotificationsViewSpec extends ViewSpec {
       val elementsToDisplay =
         Seq(exampleNotificationPageSingleElement(title = responseTitle_1), exampleNotificationPageSingleElement(title = responseTitle_2))
 
-      val pageWithData: Html =
-        page(CommonTestData.correctUcr, exampleNotificationPageSingleElement(title = requestTitle), elementsToDisplay)
+      val pageWithData: Html = page(
+        submissionUcr = CommonTestData.correctUcr,
+        submissionElement = exampleNotificationPageSingleElement(title = requestTitle),
+        elementsToDisplay = elementsToDisplay
+      )
 
       pageWithData.getElementById("notifications-request-title") must containText(requestTitle)
       pageWithData.getElementById("title-1") must containText(responseTitle_1)

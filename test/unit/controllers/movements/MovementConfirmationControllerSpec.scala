@@ -16,6 +16,7 @@
 
 package controllers.movements
 
+import base.Injector
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
@@ -29,9 +30,9 @@ import views.html.movement_confirmation_page
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class MovementConfirmationControllerSpec extends ControllerLayerSpec {
+class MovementConfirmationControllerSpec extends ControllerLayerSpec with Injector {
 
-  private val page = new movement_confirmation_page(main_template)
+  private val page = instanceOf[movement_confirmation_page]
 
   private def controller(auth: AuthenticatedAction) =
     new MovementConfirmationController(auth, stubMessagesControllerComponents(), page)
