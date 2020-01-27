@@ -30,16 +30,10 @@ class IleQueryDucrResponseViewSpec extends ViewSpec {
 
   private val page = new ile_query_ducr_response(main_template)
 
-  val arrival = MovementInfo(
-    messageCode = "EAL",
-    goodsLocation = "GBAUFXTFXTFXT",
-    movementDateTime = Some(ZonedDateTime.parse("2019-10-23T12:34:18Z").toInstant)
-  )
-  val retro = MovementInfo(
-    messageCode = "RET",
-    goodsLocation = "GBAUDFGFSHFKD",
-    movementDateTime = Some(ZonedDateTime.parse("2019-11-23T12:34:18Z").toInstant)
-  )
+  val arrival =
+    MovementInfo(messageCode = "EAL", goodsLocation = "GBAUFXTFXTFXT", movementDateTime = Some(ZonedDateTime.parse("2019-10-23T12:34:18Z").toInstant))
+  val retro =
+    MovementInfo(messageCode = "RET", goodsLocation = "GBAUDFGFSHFKD", movementDateTime = Some(ZonedDateTime.parse("2019-11-23T12:34:18Z").toInstant))
   val depart = MovementInfo(
     messageCode = "EDL",
     goodsLocation = "GBAUFDSASFDFDF",

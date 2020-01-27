@@ -16,8 +16,6 @@
 
 package controllers.ileQuery
 
-import java.time.ZonedDateTime
-
 import config.ErrorHandler
 import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.IleQueryExchange
@@ -27,8 +25,7 @@ import forms.IleQuery.form
 import javax.inject.{Inject, Singleton}
 import models.UcrBlock
 import models.cache.{Answers, IleQuery}
-import models.notifications.EntryStatus
-import models.notifications.queries.{DucrInfo, IleQueryResponse, MovementInfo, MucrInfo}
+import models.notifications.queries.IleQueryResponse
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -58,36 +55,13 @@ class IleQueryController @Inject()(
     Ok(ileQueryPage(form))
   }
 
-  def displayQueryResponse(): Action[AnyContent] = authenticate { implicit request =>
-    // TODO - get from response
-    val arrival = MovementInfo(
-      messageCode = "EAL",
-      goodsLocation = "GBAUFXTFXTFXT",
-      movementDateTime = Some(ZonedDateTime.parse("2019-10-23T12:34:18Z").toInstant)
-    )
-    val retro = MovementInfo(
-      messageCode = "RET",
-      goodsLocation = "GBAUDFGFSHFKD",
-      movementDateTime = Some(ZonedDateTime.parse("2019-11-23T12:34:18Z").toInstant)
-    )
-    val depart = MovementInfo(
-      messageCode = "EDL",
-      goodsLocation = "GBAUFDSASFDFDF",
-      movementDateTime = Some(ZonedDateTime.parse("2019-10-30T12:34:18Z").toInstant)
-    )
-    val status = EntryStatus(Some("3"), Some("1"), Some("8"))
-    val ducrInfo =
-      DucrInfo(ucr = "8GB123458302100-101SHIP1", declarationId = "121332435432", movements = Seq(arrival, depart, retro), entryStatus = Some(status))
-    val mucrInfo =
-      MucrInfo(ucr = "8GB123458302100-101SHIP1", movements = Seq(arrival, depart, retro), entryStatus = Some(status), isShut = Some(true))
-    Ok(ileQueryMucrResponsePage(mucrInfo))
-  }
-
   def submitQueryForm(): Action[AnyContent] = authenticate { implicit request =>
-    form.bindFromRequest().fold(
-      formWithErrors => BadRequest(ileQueryPage(formWithErrors)),
-      validUcr => Redirect(controllers.ileQuery.routes.IleQueryController.submitQuery(validUcr))
-    )
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => BadRequest(ileQueryPage(formWithErrors)),
+        validUcr => Redirect(controllers.ileQuery.routes.IleQueryController.submitQuery(validUcr))
+      )
   }
 
   def submitQuery(ucr: String): Action[AnyContent] = authenticate.async { implicit request =>
@@ -130,7 +104,6 @@ class IleQueryController @Inject()(
           val ileQueryRequest = buildIleQuery(request.providerId, validUcr)
 
           connector.submit(ileQueryRequest).flatMap { conversationId =>
-
             val ileQuery = IleQuery(retrieveSessionId, validUcr, conversationId)
 
             ileQueryRepository.insert(ileQuery).map { _ =>

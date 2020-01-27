@@ -21,17 +21,16 @@ import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.IleQueryExchange
 import controllers.ControllerLayerSpec
 import models.cache.IleQuery
-import models.notifications.NotificationFrontendModel
-import models.notifications.queries.IleQueryResponse
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import models.notifications.queries.{DucrInfo, IleQueryResponse, MucrInfo}
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.libs.json.{JsString, Json}
 import play.api.mvc.Headers
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.MockIleQueryCache
-import uk.gov.hmrc.http.HttpResponse
 import testdata.CommonTestData.correctUcr
+import uk.gov.hmrc.http.HttpResponse
 import views.html._
 
 import scala.concurrent.ExecutionContext.global
@@ -64,10 +63,12 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
     when(errorHandler.standardErrorTemplate()(any())).thenReturn(HtmlFormat.empty)
     when(ileQueryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(loadingScreenPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
+    when(ileQueryDucrResponsePage.apply(any[DucrInfo])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(ileQueryMucrResponsePage.apply(any[MucrInfo])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
-    reset(errorHandler, connector, ileQueryPage, loadingScreenPage)
+    reset(errorHandler, connector, ileQueryPage, loadingScreenPage, ileQueryDucrResponsePage, ileQueryMucrResponsePage)
 
     super.afterEach()
   }
@@ -83,20 +84,58 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         status(result) mustBe OK
       }
 
-      "submit query method is invoked and notifications are available" in {
+      "submit mucr query method is invoked and notifications are available" in {
 
+        val mucrInfo = MucrInfo("mucr")
         when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
-          .thenReturn(Future.successful(Some(IleQuery("sessionId", "ucr", "convId"))))
+          .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", "convId"))))
+        when(connector.fetchQueryNotifications(any(), any())(any()))
+          .thenReturn(Future.successful(HttpResponse(OK, Some(Json.toJson(IleQueryResponse(queriedMucr = Some(mucrInfo)))))))
+        when(ileQueryRepository.removeByConversationId(any()))
+          .thenReturn(Future.successful((): Unit))
+
+        implicit val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+
+        val result = controller.submitQuery("mucr")(request)
+
+        status(result) mustBe OK
+        verify(ileQueryMucrResponsePage).apply(meq(mucrInfo))(any(), any())
+      }
+
+      "submit ducr query method is invoked and notifications are available" in {
+
+        val ducrInfo = DucrInfo(ucr = "ducr", declarationId = "decId")
+        when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
+          .thenReturn(Future.successful(Some(IleQuery("sessionId", "ducr", "convId"))))
+        when(connector.fetchQueryNotifications(any(), any())(any()))
+          .thenReturn(Future.successful(HttpResponse(OK, Some(Json.toJson(IleQueryResponse(queriedDucr = Some(ducrInfo)))))))
+        when(ileQueryRepository.removeByConversationId(any()))
+          .thenReturn(Future.successful((): Unit))
+
+        implicit val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+
+        val result = controller.submitQuery("mucr")(request)
+
+        status(result) mustBe OK
+        verify(ileQueryDucrResponsePage).apply(meq(ducrInfo))(any(), any())
+      }
+
+      "submit query method is invoked and neither mucr or ducr info available" in {
+
+        val ducrInfo = DucrInfo(ucr = "ducr", declarationId = "decId")
+        when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
+          .thenReturn(Future.successful(Some(IleQuery("sessionId", "ducr", "convId"))))
         when(connector.fetchQueryNotifications(any(), any())(any()))
           .thenReturn(Future.successful(HttpResponse(OK, Some(Json.toJson(IleQueryResponse())))))
         when(ileQueryRepository.removeByConversationId(any()))
           .thenReturn(Future.successful((): Unit))
 
-        val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+        implicit val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
-        val result = controller.submitQuery("ucr")(request)
+        val result = controller.submitQuery("mucr")(request)
 
         status(result) mustBe OK
+        verify(loadingScreenPage).apply()(any(), any())
       }
 
       "submit query method is invoked and there is no notifications available yet" in {
@@ -111,6 +150,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         val result = controller.submitQuery("ucr")(request)
 
         status(result) mustBe OK
+        verify(loadingScreenPage).apply()(any(), any())
       }
     }
 
