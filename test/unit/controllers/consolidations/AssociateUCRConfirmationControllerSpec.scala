@@ -16,10 +16,10 @@
 
 package controllers.consolidations
 
+import base.Injector
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
-import models.ReturnToStartException
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -27,9 +27,9 @@ import views.html.associate_ucr_confirmation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class AssociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
+class AssociateUCRConfirmationControllerSpec extends ControllerLayerSpec with Injector {
 
-  private val page = new associate_ucr_confirmation(main_template)
+  private val page = instanceOf[associate_ucr_confirmation]
 
   private def controller(auth: AuthenticatedAction) =
     new AssociateUCRConfirmationController(auth, stubMessagesControllerComponents(), page)
@@ -41,13 +41,7 @@ class AssociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
       val result = controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.CONSOLIDATION_KIND -> "kind", FlashKeys.UCR -> "123"))
 
       status(result) mustBe Status.OK
-      contentAsHtml(result) mustBe page("kind", "123")
-    }
-
-    "return to start for missing params" in {
-      intercept[RuntimeException] {
-        await(controller(SuccessfulAuth()).display(get))
-      } mustBe ReturnToStartException
+      contentAsHtml(result) mustBe page()
     }
 
     "return 403 when unauthenticated" in {

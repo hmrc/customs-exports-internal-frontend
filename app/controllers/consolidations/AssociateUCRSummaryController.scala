@@ -24,9 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.{associate_ucr_confirmation, associate_ucr_summary}
-import play.api.mvc.Results.Redirect
-import controllers.storage.FlashKeys
+import views.html.associate_ucr_summary
 
 import scala.concurrent.ExecutionContext
 
@@ -48,11 +46,9 @@ class AssociateUCRSummaryController @Inject()(
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
     val answers = request.answersAs[AssociateUcrAnswers]
-    val associateUcr = answers.associateUcr.getOrElse(throw ReturnToStartException)
 
     submissionService.submit(request.providerId, answers).map { _ =>
       Redirect(controllers.consolidations.routes.AssociateUCRConfirmationController.display())
-        .flashing(FlashKeys.CONSOLIDATION_KIND -> associateUcr.kind.formValue, FlashKeys.UCR -> associateUcr.ucr)
     }
   }
 }
