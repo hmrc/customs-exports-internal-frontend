@@ -65,24 +65,23 @@ class IleQueryController @Inject()(
   }
 
   def submitQuery(ucr: String): Action[AnyContent] = authenticate.async { implicit request =>
+    def loadingPageResult = Ok(loadingScreenPage()).withHeaders("refresh" -> "5")
+
     ileQueryRepository.findBySessionIdAndUcr(retrieveSessionId, ucr).flatMap {
       case Some(query) =>
         connector.fetchQueryNotifications(query.conversationId, request.providerId).flatMap { response =>
           response.status match {
             case OK =>
               ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
-                val queryResponse = Json.parse(response.body).validate[IleQueryResponse].get
+                val queryResponse = Json.parse(response.body).as[IleQueryResponse]
 
-                if (queryResponse.queriedDucr.isDefined) {
-                  Ok(ileQueryDucrResponsePage(queryResponse.queriedDucr.get))
-                } else if (queryResponse.queriedMucr.isDefined) {
-                  Ok(ileQueryMucrResponsePage(queryResponse.queriedMucr.get))
-                } else {
-                  Ok(loadingScreenPage()).withHeaders("refresh" -> "5")
-                }
+                val ducrResult = queryResponse.queriedDucr.map(ducr => Ok(ileQueryDucrResponsePage(ducr)))
+                val mucrResult = queryResponse.queriedMucr.map(mucr => Ok(ileQueryMucrResponsePage(mucr)))
+
+                ducrResult.orElse(mucrResult).getOrElse(loadingPageResult)
               }
             case NO_CONTENT =>
-              Future.successful(Ok(loadingScreenPage()).withHeaders("refresh" -> "5"))
+              Future.successful(loadingPageResult)
             case GATEWAY_TIMEOUT =>
               ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
                 InternalServerError(errorHandler.standardErrorTemplate())
