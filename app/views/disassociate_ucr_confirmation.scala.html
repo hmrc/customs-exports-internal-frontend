@@ -14,31 +14,33 @@
  * limitations under the License.
  *@
 
-@import controllers.routes
 @import views.Title
-@import views.Title.NO_SECTION
-@import views.html.templates.main_template
+@import components.gds.gds_main_template
+@import components.gds.pageTitle
+@import uk.gov.hmrc.govukfrontend.views.html.components.govukInsetText
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import views.html.components.gds.link
 
-@this(main_template: main_template)
+@this(
+        govukLayout: gds_main_template,
+        pageTitle: pageTitle,
+        govukInsetText: govukInsetText
+)
 
-@(kind: String, ucr: String)(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[_], messages: Messages)
 
-    @associateLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.AssociateUCR)">@messages("disassociation.confirmation.associateOrShut.associate")</a>}
-    @shutMucrLink = {<a href="@routes.ChoiceController.startSpecificJourney(forms.Choice.ShutMUCR)">@messages("disassociation.confirmation.associateOrShut.shut")</a>}
+    @gotoTimelineLink = {<a class="govuk-link" href="@routes.ViewSubmissionsController.displayPage()">@messages("movement.confirmation.notification.timeline.link")</a>}
 
-    @main_template(title = Title("disassociate.ucr.confirmation.tab.heading", NO_SECTION, Seq(kind.toUpperCase))) {
+    @govukLayout(title = Title(s"movement.confirmation.title.DISSOCIATE_UCR")) {
 
-        @components.highlight_box_with_reference(
-            headingText = messages("disassociate.ucr.confirmation.heading", kind.toUpperCase, ucr)
-        )
+        @pageTitle(text = messages(s"movement.confirmation.title.DISSOCIATE_UCR"), classes = "govuk-heading-xl")
 
-        @components.confirmation_status_info()
+        @govukInsetText(InsetText(
+            content = HtmlContent(messages("movement.confirmation.header")+"<br>"+messages("movement.confirmation.header.check", gotoTimelineLink))
+        ))
 
-        <h2 id="what-next">@messages("movement.confirmation.whatNext")</h2>
-
-        <div id="next-steps">
-        @Html(messages("disassociation.confirmation.associateOrShut", associateLink, shutMucrLink))
-        </div>
-
-        @components.button_link("site.backToStart", controllers.routes.ChoiceController.displayPage())
+        <p class="govuk-body">
+        @link(message = messages("movement.confirmation.redirect.link"), href = routes.ChoiceController.displayPage())
+        </p>
     }

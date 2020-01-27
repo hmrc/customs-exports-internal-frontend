@@ -16,10 +16,10 @@
 
 package controllers.consolidations
 
+import base.Injector
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
-import models.ReturnToStartException
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -27,9 +27,9 @@ import views.html.disassociate_ucr_confirmation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class DisassociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
+class DisassociateUCRConfirmationControllerSpec extends ControllerLayerSpec with Injector {
 
-  private val page = new disassociate_ucr_confirmation(main_template)
+  private val page = instanceOf[disassociate_ucr_confirmation]
 
   private def controller(auth: AuthenticatedAction) =
     new DisassociateUCRConfirmationController(auth, stubMessagesControllerComponents(), page)
@@ -41,21 +41,7 @@ class DisassociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
       val result = controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.CONSOLIDATION_KIND -> "kind", FlashKeys.UCR -> "ucr"))
 
       status(result) mustBe Status.OK
-      contentAsHtml(result) mustBe page("kind", "ucr")
-    }
-
-    "return to start" when {
-      "missing ucr" in {
-        intercept[RuntimeException] {
-          await(controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.UCR -> "ucr")))
-        } mustBe ReturnToStartException
-      }
-
-      "missing kind" in {
-        intercept[RuntimeException] {
-          await(controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.CONSOLIDATION_KIND -> "kind")))
-        } mustBe ReturnToStartException
-      }
+      contentAsHtml(result) mustBe page()
     }
 
     "return 403 when unauthenticated" in {
