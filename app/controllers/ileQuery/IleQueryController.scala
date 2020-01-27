@@ -25,7 +25,7 @@ import forms.IleQuery.form
 import javax.inject.{Inject, Singleton}
 import models.UcrBlock
 import models.cache.{Answers, IleQuery}
-import models.notifications.NotificationFrontendModel
+import models.notifications.queries.IleQueryResponse
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -33,7 +33,7 @@ import repositories.IleQueryRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.FieldValidator.validDucr
-import views.html.{ile_query, loading_screen}
+import views.html._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +45,9 @@ class IleQueryController @Inject()(
   ileQueryRepository: IleQueryRepository,
   connector: CustomsDeclareExportsMovementsConnector,
   ileQueryPage: ile_query,
-  loadingScreenPage: loading_screen
+  loadingScreenPage: loading_screen,
+  ileQueryDucrResponsePage: ile_query_ducr_response,
+  ileQueryMucrResponsePage: ile_query_mucr_response
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -54,25 +56,32 @@ class IleQueryController @Inject()(
   }
 
   def submitQueryForm(): Action[AnyContent] = authenticate { implicit request =>
-    form.bindFromRequest().fold(
-      formWithErrors => BadRequest(ileQueryPage(formWithErrors)),
-      validUcr => Redirect(controllers.ileQuery.routes.IleQueryController.submitQuery(validUcr))
-    )
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => BadRequest(ileQueryPage(formWithErrors)),
+        validUcr => Redirect(controllers.ileQuery.routes.IleQueryController.submitQuery(validUcr))
+      )
   }
 
   def submitQuery(ucr: String): Action[AnyContent] = authenticate.async { implicit request =>
+    def loadingPageResult = Ok(loadingScreenPage()).withHeaders("refresh" -> "5")
+
     ileQueryRepository.findBySessionIdAndUcr(retrieveSessionId, ucr).flatMap {
       case Some(query) =>
         connector.fetchQueryNotifications(query.conversationId, request.providerId).flatMap { response =>
           response.status match {
             case OK =>
               ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
-                val notifications = Json.parse(response.body).validate[Seq[NotificationFrontendModel]]
+                val queryResponse = Json.parse(response.body).as[IleQueryResponse]
 
-                Ok("Result" + notifications)
+                val ducrResult = queryResponse.queriedDucr.map(ducr => Ok(ileQueryDucrResponsePage(ducr)))
+                val mucrResult = queryResponse.queriedMucr.map(mucr => Ok(ileQueryMucrResponsePage(mucr)))
+
+                ducrResult.orElse(mucrResult).getOrElse(loadingPageResult)
               }
             case NO_CONTENT =>
-              Future.successful(Ok(loadingScreenPage()).withHeaders("refresh" -> "5"))
+              Future.successful(loadingPageResult)
             case GATEWAY_TIMEOUT =>
               ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
                 InternalServerError(errorHandler.standardErrorTemplate())
@@ -89,13 +98,11 @@ class IleQueryController @Inject()(
     form
       .fillAndValidate(ucr)
       .fold(
-        formWithErrors =>
-          Future.successful(BadRequest(ileQueryPage(formWithErrors))),
+        formWithErrors => Future.successful(BadRequest(ileQueryPage(formWithErrors))),
         validUcr => {
           val ileQueryRequest = buildIleQuery(request.providerId, validUcr)
 
           connector.submit(ileQueryRequest).flatMap { conversationId =>
-
             val ileQuery = IleQuery(retrieveSessionId, validUcr, conversationId)
 
             ileQueryRepository.insert(ileQuery).map { _ =>
