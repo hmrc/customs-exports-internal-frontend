@@ -17,7 +17,6 @@
 package views.movement
 
 import base.Injector
-import forms.{ConsignmentReferenceType, ConsignmentReferences}
 import models.cache.{DepartureAnswers, JourneyType}
 import views.ViewSpec
 import views.html.movement_confirmation_page
@@ -26,29 +25,28 @@ class MovementConfirmationDepartureViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(DepartureAnswers())
 
-  private val consignmentReferences = ConsignmentReferences(ConsignmentReferenceType.D, "9GB12345678")
   private val page = instanceOf[movement_confirmation_page]
 
   "View" should {
     "render title" in {
-      page(JourneyType.DEPART, consignmentReferences).getTitle must containMessage("movement.confirmation.title.DEPART")
+      page(JourneyType.DEPART).getTitle must containMessage("movement.confirmation.title.DEPART")
     }
 
     "render page title" in {
-      page(JourneyType.DEPART, consignmentReferences)
+      page(JourneyType.DEPART)
         .getElementsByClass("govuk-heading-xl")
         .first() must containMessage("movement.confirmation.title.DEPART")
     }
 
     "have 'notification timeline' link" in {
-      val inset = page(JourneyType.DEPART, consignmentReferences).getElementsByClass("govuk-inset-text").first()
+      val inset = page(JourneyType.DEPART).getElementsByClass("govuk-inset-text").first()
       inset
         .getElementsByClass("govuk-link")
         .first() must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
     }
 
     "have 'find another consignment' link" in {
-      page(JourneyType.DEPART, consignmentReferences)
+      page(JourneyType.DEPART)
         .getElementsByClass("govuk-link")
         .get(1) must haveHref(controllers.routes.ChoiceController.displayPage())
     }
