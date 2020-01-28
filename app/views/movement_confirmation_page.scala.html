@@ -30,8 +30,7 @@
     govukInsetText: govukInsetText
 )
 
-@* TODO remove consignmentReferences: ConsignmentReferences when all pages are done *@
-@(journeyType: JourneyType, consignmentReferences: ConsignmentReferences)(implicit request: Request[_], messages: Messages)
+@(journeyType: JourneyType)(implicit request: Request[_], messages: Messages)
 
 @gotoTimelineLink = {<a class="govuk-link" href="@routes.ViewSubmissionsController.displayPage()">@messages("movement.confirmation.notification.timeline.link")</a>}
 

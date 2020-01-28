@@ -17,7 +17,6 @@
 package views.movement
 
 import base.Injector
-import forms.{ConsignmentReferenceType, ConsignmentReferences}
 import models.cache.{JourneyType, RetrospectiveArrivalAnswers}
 import views.ViewSpec
 import views.html.movement_confirmation_page
@@ -26,29 +25,28 @@ class MovementConfirmationRetrospectiveArrivalViewSpec extends ViewSpec with Inj
 
   private implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
 
-  private val consignmentReferences = ConsignmentReferences(ConsignmentReferenceType.D, "9GB12345678")
   private val page = instanceOf[movement_confirmation_page]
 
   "View" should {
     "render title" in {
-      page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getTitle must containMessage("movement.confirmation.title.RETROSPECTIVE_ARRIVE")
+      page(JourneyType.RETROSPECTIVE_ARRIVE).getTitle must containMessage("movement.confirmation.title.RETROSPECTIVE_ARRIVE")
     }
 
     "render page title" in {
-      page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences)
+      page(JourneyType.RETROSPECTIVE_ARRIVE)
         .getElementsByClass("govuk-heading-xl")
         .first() must containMessage("movement.confirmation.title.RETROSPECTIVE_ARRIVE")
     }
 
     "have 'notification timeline' link" in {
-      val inset = page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences).getElementsByClass("govuk-inset-text").first()
+      val inset = page(JourneyType.RETROSPECTIVE_ARRIVE).getElementsByClass("govuk-inset-text").first()
       inset
         .getElementsByClass("govuk-link")
         .first() must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
     }
 
     "have 'find another consignment' link" in {
-      page(JourneyType.RETROSPECTIVE_ARRIVE, consignmentReferences)
+      page(JourneyType.RETROSPECTIVE_ARRIVE)
         .getElementsByClass("govuk-link")
         .get(1) must haveHref(controllers.routes.ChoiceController.displayPage())
     }

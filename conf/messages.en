@@ -173,7 +173,6 @@ movement.confirmation.header.check = Go to the {0} to check the status.
 movement.confirmation.notification.timeline.link = consignment’s notification timeline
 movement.confirmation.redirect.link = Find another consignment
 
-
 associate.heading = Add to MUCR {0}
 mucrOptions.heading = Add to MUCR
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
@@ -203,10 +202,9 @@ associate.ucr.summary.kind.ducr = DUCR
 associate.ucr.summary.addConsignment = Add consignment
 associate.ucr.summary.masterConsignment = To master consignment
 
-# TODO clean up next 3 lines after last page is done
+
 movement.confirmation.statusInfo = To check the status of this consignment, {0}.
 movement.confirmation.statusInfo.submissions = view requests
-movement.confirmation.whatNext = What do you want to do next? 
 
 associate.ducr.confirmation.tab.heading = Add DUCR request submitted
 associate.ducr.confirmation.heading = Request to associate DUCR {0} has been submitted
