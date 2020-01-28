@@ -19,17 +19,20 @@ package controllers.consolidations
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
-import models.ReturnToStartException
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
 import views.html.disassociate_ucr_confirmation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class DisassociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
+class DisassociateUCRConfirmationControllerSpec extends ControllerLayerSpec with MockitoSugar {
 
-  private val page = new disassociate_ucr_confirmation(main_template)
+  private val page = mock[disassociate_ucr_confirmation]
 
   private def controller(auth: AuthenticatedAction) =
     new DisassociateUCRConfirmationController(auth, stubMessagesControllerComponents(), page)
@@ -38,24 +41,11 @@ class DisassociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
     implicit val get = FakeRequest("GET", "/")
 
     "return 200 when authenticated" in {
+      when(page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
       val result = controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.CONSOLIDATION_KIND -> "kind", FlashKeys.UCR -> "ucr"))
 
       status(result) mustBe Status.OK
-      contentAsHtml(result) mustBe page("kind", "ucr")
-    }
-
-    "return to start" when {
-      "missing ucr" in {
-        intercept[RuntimeException] {
-          await(controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.UCR -> "ucr")))
-        } mustBe ReturnToStartException
-      }
-
-      "missing kind" in {
-        intercept[RuntimeException] {
-          await(controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.CONSOLIDATION_KIND -> "kind")))
-        } mustBe ReturnToStartException
-      }
+      contentAsHtml(result) mustBe page()
     }
 
     "return 403 when unauthenticated" in {

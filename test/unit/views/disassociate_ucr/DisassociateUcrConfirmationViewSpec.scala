@@ -16,42 +16,44 @@
 
 package views.disassociate_ucr
 
-import play.api.mvc.{AnyContentAsEmpty, Request}
+import base.Injector
 import play.api.test.FakeRequest
 import views.ViewSpec
 import views.html.disassociate_ucr_confirmation
 
-class DisassociateUcrConfirmationViewSpec extends ViewSpec {
+class DisassociateUcrConfirmationViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
-  private def page = new disassociate_ucr_confirmation(main_template)
+  private implicit val request = FakeRequest()
+  private val page = instanceOf[disassociate_ucr_confirmation]
 
-  "View" should {
-    val view = page("mucr", "ucr")
+  "DisassociateUCRConfirmationView" when {
 
-    "render title" in {
-      view.getTitle must containMessage("disassociate.ucr.confirmation.tab.heading", "MUCR", "ucr")
-    }
+    "View is rendered" should {
 
-    "render confirmation dialogue" in {
-      view.getElementById("highlight-box-heading") must containMessage("disassociate.ucr.confirmation.heading", "MUCR", "ucr")
-    }
+      "render title" in {
 
-    "have 'view requests' link" in {
-      val statusInfo = view.getElementById("status-info")
-      statusInfo.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ViewSubmissions))
-    }
+        page().getTitle must containMessage("movement.confirmation.title.DISSOCIATE_UCR")
+      }
 
-    "have 'next steps' link" in {
-      val nextSteps = view.getElementById("next-steps")
+      "render header" in {
 
-      val associate = nextSteps.getElementsByTag("a").get(0)
-      associate must containMessage("disassociation.confirmation.associateOrShut.associate")
-      associate must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.AssociateUCR))
+        page()
+          .getElementsByClass("govuk-heading-xl")
+          .first() must containMessage("movement.confirmation.title.DISSOCIATE_UCR")
+      }
 
-      val shut = nextSteps.getElementsByTag("a").get(1)
-      shut must containMessage("disassociation.confirmation.associateOrShut.shut")
-      shut must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ShutMUCR))
+      "have 'notification timeline' link" in {
+        val inset = page().getElementsByClass("govuk-inset-text").first()
+        inset
+          .getElementsByClass("govuk-link")
+          .first() must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
+      }
+
+      "have 'find another consignment' link" in {
+        page()
+          .getElementsByClass("govuk-link")
+          .get(1) must haveHref(controllers.routes.ChoiceController.displayPage())
+      }
     }
   }
 
