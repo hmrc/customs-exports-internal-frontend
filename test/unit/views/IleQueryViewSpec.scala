@@ -16,7 +16,7 @@
 
 package views
 
-import forms.IleQuery
+import forms.IleQueryForm
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import views.html.ile_query
@@ -26,7 +26,7 @@ class IleQueryViewSpec extends ViewSpec {
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
   private val page = new ile_query(main_template)
-  private val view = page(IleQuery.form)
+  private val view = page(IleQueryForm.form)
 
   "Ile Query page" should {
 
@@ -48,7 +48,7 @@ class IleQueryViewSpec extends ViewSpec {
       }
 
       "some errors" in {
-        page(IleQuery.form.withError("error", "error.required")).getErrorSummary mustBe defined
+        page(IleQueryForm.form.withError("error", "error.required")).getErrorSummary mustBe defined
       }
     }
 

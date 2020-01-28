@@ -24,7 +24,7 @@ case class IleQuery(sessionId: String, ucr: String, conversationId: String, crea
 
 object IleQuery {
 
-  implicit val formatInstant: OFormat[Instant] = new OFormat[Instant] {
+  implicit private val formatInstant: OFormat[Instant] = new OFormat[Instant] {
     override def writes(datetime: Instant): JsObject =
       Json.obj("$date" -> datetime.toEpochMilli)
 

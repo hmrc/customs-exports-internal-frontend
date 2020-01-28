@@ -21,7 +21,7 @@ import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.IleQueryExchange
 import controllers.actions.AuthenticatedAction
 import controllers.exchanges.AuthenticatedRequest
-import forms.IleQuery.form
+import forms.IleQueryForm.form
 import javax.inject.{Inject, Singleton}
 import models.UcrBlock
 import models.cache.{Answers, IleQuery}
@@ -104,7 +104,7 @@ class IleQueryController @Inject()(
         val ducrResult = response.queriedDucr.map(ducr => Ok(ileQueryDucrResponsePage(ducr)))
         val mucrResult = response.queriedMucr.map(mucr => Ok(ileQueryMucrResponsePage(mucr)))
 
-        ducrResult.orElse(mucrResult).getOrElse(Ok(loadingScreenPage()))
+        ducrResult.orElse(mucrResult).getOrElse(loadingPageResult)
 
       case _: UcrNotFoundResponseExchangeData => Ok("UCR not found")
     }

@@ -20,7 +20,7 @@ import play.api.data.{Form, Forms}
 import play.api.data.Forms.text
 import utils.FieldValidator._
 
-object IleQuery {
+object IleQueryForm {
 
   val form: Form[String] = Form(
     Forms.single(
