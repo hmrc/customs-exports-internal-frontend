@@ -17,9 +17,7 @@
 package controllers.consolidations
 
 import controllers.actions.AuthenticatedAction
-import controllers.storage.FlashKeys
 import javax.inject.{Inject, Singleton}
-import models.ReturnToStartException
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -33,8 +31,7 @@ class ShutMUCRConfirmationController @Inject()(authenticate: AuthenticatedAction
 ) extends FrontendController(mcc) with I18nSupport {
 
   def display: Action[AnyContent] = authenticate { implicit request =>
-    val ucr = request.flash.get(FlashKeys.MUCR).getOrElse(throw ReturnToStartException)
-    Ok(page(ucr))
+    Ok(page())
   }
 
 }
