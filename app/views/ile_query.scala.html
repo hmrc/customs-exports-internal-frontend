@@ -14,15 +14,27 @@
  * limitations under the License.
  *@
 
-@(title: Option[String] = None, subtitle: Option[String] = None)(implicit messages: Messages)
+@import views.Title
 
-<fieldset>
-    <legend class="heading-large" role="heading" aria="" level="1">
-        @if(title.nonEmpty) {
-            <h1 id="title" style="margin:0">@(title.get)</h1>
-        }
-        @if(subtitle.nonEmpty) {
-            <span id="subtitle" class="form-hint">@(subtitle.get)</span>
-        }
-    </legend>
-</fieldset>
+@this(main_template: views.html.templates.main_template)
+
+@(form: Form[String])(implicit request: Request[_], messages: Messages)
+
+@main_template(title = Title("ileQuery.title")) {
+
+  @helper.form(controllers.ileQuery.routes.IleQueryController.submitQueryForm, 'autoComplete -> "off") {
+
+    @helper.CSRF.formField
+
+    @components.error_summary(form.errors)
+
+    @components.page_title(Some(messages("ileQuery.title")))
+
+    @components.input_text(
+      field = form("ucr"),
+      label = ""
+    )
+
+    @components.submit_button(messages("site.continue"))
+  }
+}

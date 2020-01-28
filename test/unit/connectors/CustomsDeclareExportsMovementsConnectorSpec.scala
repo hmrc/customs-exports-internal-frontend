@@ -22,9 +22,12 @@ import connectors.exchanges.{ArrivalExchange, DisassociateDUCRExchange, IleQuery
 import forms.{ArrivalReference, ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.UcrBlock
 import models.notifications.ResponseType.ControlResponse
+import models.notifications.queries.DucrInfo
+import models.notifications.queries.IleQueryResponseExchangeData.SuccessfulResponseExchangeData
 import org.mockito.BDDMockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmission
@@ -228,6 +231,42 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
       verify(getRequestedFor(urlEqualTo(expectedUrl)))
 
       response mustBe Seq(expectedNotification)
+    }
+  }
+
+  "fetch Query Notifications" should {
+
+    "send GET request to the backend" in {
+
+      val expectedDucrInfo = DucrInfo(ucr = correctUcr, declarationId = "declarationId")
+      val expectedNotification = SuccessfulResponseExchangeData(queriedDucr = Some(expectedDucrInfo))
+
+      val notificationJson =
+        s"""
+           |  {
+           |    "queriedDucr": {
+           |      "ucr":"$correctUcr",
+           |      "declarationId":"declarationId",
+           |      "movements":[],
+           |      "goodsItem":[]
+           |    },
+           |    "childDucrs":[],
+           |    "childMucrs":[]
+           |  }
+           |""".stripMargin
+
+      stubFor(
+        get(s"/consignment-query/$conversationId?providerId=$providerId")
+          .willReturn(aResponse().withStatus(OK).withBody(notificationJson))
+      )
+
+      val response = connector.fetchQueryNotifications(conversationId, providerId).futureValue
+
+      val expectedUrl = s"/consignment-query/$conversationId?providerId=$providerId"
+      verify(getRequestedFor(urlEqualTo(expectedUrl)))
+
+      response.status mustBe OK
+      Json.parse(response.body).as[SuccessfulResponseExchangeData] mustBe expectedNotification
     }
   }
 }

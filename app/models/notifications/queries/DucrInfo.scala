@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(title: Option[String] = None, subtitle: Option[String] = None)(implicit messages: Messages)
+package models.notifications.queries
 
-<fieldset>
-    <legend class="heading-large" role="heading" aria="" level="1">
-        @if(title.nonEmpty) {
-            <h1 id="title" style="margin:0">@(title.get)</h1>
-        }
-        @if(subtitle.nonEmpty) {
-            <span id="subtitle" class="form-hint">@(subtitle.get)</span>
-        }
-    </legend>
-</fieldset>
+import models.notifications.EntryStatus
+import play.api.libs.json.Json
+
+case class DucrInfo(
+  ucr: String,
+  parentMucr: Option[String] = None,
+  declarationId: String,
+  entryStatus: Option[EntryStatus] = None,
+  movements: Seq[MovementInfo] = Seq.empty,
+  goodsItem: Seq[GoodsItemInfo] = Seq.empty
+)
+
+object DucrInfo {
+  implicit val format = Json.format[DucrInfo]
+}

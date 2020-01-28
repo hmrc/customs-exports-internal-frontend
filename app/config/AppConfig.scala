@@ -20,6 +20,8 @@ import javax.inject.{Inject, Named, Singleton}
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import scala.concurrent.duration.FiniteDuration
+
 @Singleton
 class AppConfig @Inject()(
   runModeConfiguration: Configuration,
@@ -48,4 +50,6 @@ class AppConfig @Inject()(
 
   lazy val customsDeclarationsGoodsTakenOutOfEuUrl: String = loadConfig("urls.customsDeclarationsGoodsTakenOutOfEu")
   lazy val serviceAvailabilityUrl: String = loadConfig("urls.serviceAvailability")
+
+  lazy val ileQueryTTL: FiniteDuration = servicesConfig.getDuration("ileQuery.ttl").asInstanceOf[FiniteDuration]
 }

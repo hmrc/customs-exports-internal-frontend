@@ -102,6 +102,14 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
         case Failure(exception) => logFailedExchange("All Notifications fetch", exception)
       }
 
+  def fetchQueryNotifications(conversationId: String, providerId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient
+      .GET[HttpResponse](s"${appConfig.customsDeclareExportsMovementsUrl}$IleQuery/$conversationId", providerIdQueryParam(providerId))
+      .andThen {
+        case Success(response)  => logSuccessfulExchange("Ile query response fetch", response.body)
+        case Failure(exception) => logFailedExchange("Ile query response fetch", exception)
+      }
+
   private def providerIdQueryParam(providerId: String): Seq[(String, String)] = Seq("providerId" -> providerId)
 
   private def logSuccessfulExchange[T](`type`: String, payload: T)(implicit fmt: Format[T]): Unit =

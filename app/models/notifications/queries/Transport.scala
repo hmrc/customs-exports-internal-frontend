@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(title: Option[String] = None, subtitle: Option[String] = None)(implicit messages: Messages)
+package models.notifications.queries
+import play.api.libs.json.{Json, OFormat}
 
-<fieldset>
-    <legend class="heading-large" role="heading" aria="" level="1">
-        @if(title.nonEmpty) {
-            <h1 id="title" style="margin:0">@(title.get)</h1>
-        }
-        @if(subtitle.nonEmpty) {
-            <span id="subtitle" class="form-hint">@(subtitle.get)</span>
-        }
-    </legend>
-</fieldset>
+case class Transport(modeOfTransport: Option[String], nationality: Option[String], transportId: Option[String])
+
+object Transport {
+  implicit val format: OFormat[Transport] = Json.format[Transport]
+}
