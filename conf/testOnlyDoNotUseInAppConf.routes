@@ -16,4 +16,4 @@
 GET         /customs-exports-internal/consignment-query                     controllers.ileQuery.IleQueryController.displayQueryForm()
 POST        /customs-exports-internal/consignment-query                     controllers.ileQuery.IleQueryController.submitQueryForm()
 
-GET         /consignment-query/:ucr                                         controllers.ileQuery.IleQueryController.submitQuery(ucr: String)
+GET         /customs-exports-internal/consignment-query/:ucr                controllers.ileQuery.IleQueryController.submitQuery(ucr: String)
