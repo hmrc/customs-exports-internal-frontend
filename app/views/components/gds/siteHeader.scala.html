@@ -1,0 +1,36 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukHeader
+
+@this(govukHeader: GovukHeader)
+
+@()(implicit request: Request[_], messages: Messages)
+
+<div class="hmrc-internal-header app-header">
+    <div class="govuk-width-container">
+        <div class="hmrc-logo app-header__title">
+            <a href="https://www.gov.uk/government/organisations/hm-revenue-customs" title="Go to the HMRC homepage" class="hmrc-logo__link">
+                HM Revenue &amp; Customs
+            </a>
+        </div>
+        <div class="hmrc-internal-service-name app-header__link">
+            <a href="/" title="Go to the Exports Declaration Service homepage" class="hmrc-internal-service-name__link">
+                Internal Exports Movements Service
+            </a>
+        </div>
+    </div>
+</div>

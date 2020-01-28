@@ -1,6 +1,9 @@
-service.name=Internal Exports Movements Service
-header.homepage.alt=Go to the HMRC homepage
-header.homepage.text=HM Revenue & Customs
+service.name = Internal Exports Movements Service
+header.homepage.alt = Go to the HMRC homepage
+header.homepage.text = HM Revenue & Customs
+
+feedback = This is a new service - your {0} will help us to improve it.
+feedback.link = feedback
 
 site.continue = Continue
 site.back = Back
@@ -72,6 +75,11 @@ arrivalDetails.time.hint = Enter the time in 24 hour format. For example, 13 30
 
 arrival.details.error.overdue = Time of Arrival cannot be more than 60 days in the past
 arrival.details.error.future = Time of Arrival cannot be in the future
+
+arrivalConfirmation.title = Your arrival request has been submitted
+arrivalConfirmation.header = It might take a few minutes before a decision is made. Go to the {0} to check the status.
+arrivalConfirmation.notification.timeline = consignment’s notification timeline
+arrivalConfirmation.redirect.link = Find another consignment
 
 departureDetails.title = Departure date and time
 departureDetails.header = Enter departure details
@@ -154,6 +162,17 @@ movement.confirmation.departure.nextSteps = {0}. {1}
 movement.confirmation.departure.nextSteps.depart = Depart another consignment
 movement.confirmation.departure.nextSteps.arrive = Arrive a new consignment
 
+movement.confirmation.title.ARRIVE = Your arrival request has been submitted
+movement.confirmation.title.ASSOCIATE_UCR = Your association request has been submitted
+movement.confirmation.title.DISSOCIATE_UCR = Your dissociation request has been submitted
+movement.confirmation.title.SHUT_MUCR = Your shut MUCR request has been submitted
+movement.confirmation.title.DEPART = Your departure request has been submitted
+movement.confirmation.title.RETROSPECTIVE_ARRIVE = Your retrospective arrival request has been submitted
+movement.confirmation.header = It might take a few minutes before a decision is made.
+movement.confirmation.header.check = Go to the {0} to check the status.
+movement.confirmation.notification.timeline.link = consignment’s notification timeline
+movement.confirmation.redirect.link = Find another consignment
+
 associate.heading = Add to MUCR {0}
 mucrOptions.heading = Add to MUCR
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
@@ -183,9 +202,9 @@ associate.ucr.summary.kind.ducr = DUCR
 associate.ucr.summary.addConsignment = Add consignment
 associate.ucr.summary.masterConsignment = To master consignment
 
+
 movement.confirmation.statusInfo = To check the status of this consignment, {0}.
 movement.confirmation.statusInfo.submissions = view requests
-movement.confirmation.whatNext = What do you want to do next?
 
 associate.ducr.confirmation.tab.heading = Add DUCR request submitted
 associate.ducr.confirmation.heading = Request to associate DUCR {0} has been submitted

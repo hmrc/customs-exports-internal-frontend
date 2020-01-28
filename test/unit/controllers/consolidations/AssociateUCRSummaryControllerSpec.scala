@@ -17,7 +17,6 @@
 package controllers.consolidations
 
 import controllers.ControllerLayerSpec
-import controllers.storage.FlashKeys
 import forms.{AssociateKind, AssociateUcr, MucrOptions}
 import models.ReturnToStartException
 import models.cache.AssociateUcrAnswers
@@ -99,18 +98,7 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUCRConfirmationController.display().url)
-      flash(result).get(FlashKeys.CONSOLIDATION_KIND) mustBe Some("ducr")
-      flash(result).get(FlashKeys.UCR) mustBe Some("123")
     }
 
-    "return to start" when {
-      "ucr is missing" in {
-        val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")))
-
-        intercept[RuntimeException] {
-          await(controller(cachedData).submit()(postRequest))
-        } mustBe ReturnToStartException
-      }
-    }
   }
 }

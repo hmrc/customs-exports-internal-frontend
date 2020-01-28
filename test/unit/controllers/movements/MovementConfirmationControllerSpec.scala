@@ -19,54 +19,57 @@ package controllers.movements
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
-import forms.{ConsignmentReferenceType, ConsignmentReferences}
+import forms.ConsignmentReferenceType
 import models.ReturnToStartException
 import models.cache.JourneyType
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
+import services.MockCache
 import views.html.movement_confirmation_page
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class MovementConfirmationControllerSpec extends ControllerLayerSpec {
+class MovementConfirmationControllerSpec extends ControllerLayerSpec with MockCache {
 
-  private val page = new movement_confirmation_page(main_template)
+  private val page = mock[movement_confirmation_page]
 
   private def controller(auth: AuthenticatedAction) =
     new MovementConfirmationController(auth, stubMessagesControllerComponents(), page)
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+
+    when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+  }
+
+  override protected def afterEach(): Unit = {
+    reset(page)
+
+    super.afterEach()
+  }
 
   "GET" should {
     implicit val get = FakeRequest("GET", "/")
 
     "return 200 when authenticated" in {
       val result = controller(SuccessfulAuth())
-        .display(get.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString, FlashKeys.UCR_KIND -> "D", FlashKeys.UCR -> "123"))
+        .display(get.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString, FlashKeys.UCR_KIND -> "D"))
 
       status(result) mustBe Status.OK
-      contentAsHtml(result) mustBe page(JourneyType.ARRIVE, ConsignmentReferences(ConsignmentReferenceType.D, "123"))
+      contentAsHtml(result) mustBe page(JourneyType.ARRIVE)
     }
 
     "return to start" when {
       "journey type is missing" in {
         intercept[RuntimeException] {
-          await(controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.UCR_KIND -> "kind", FlashKeys.UCR -> "123")))
+          await(controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.UCR_KIND -> "kind")))
         } mustBe ReturnToStartException
       }
 
-      "ucr kind is missing" in {
-        intercept[RuntimeException] {
-          await(controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString, FlashKeys.UCR -> "123")))
-        } mustBe ReturnToStartException
-      }
-
-      "ucr is missing" in {
-        intercept[RuntimeException] {
-          await(
-            controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString, FlashKeys.UCR_KIND -> "D"))
-          )
-        } mustBe ReturnToStartException
-      }
     }
 
     "return 403 when unauthenticated" in {

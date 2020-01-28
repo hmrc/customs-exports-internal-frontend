@@ -19,17 +19,20 @@ package controllers.consolidations
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
-import models.ReturnToStartException
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
 import views.html.shut_mucr_confirmation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ShutMUCRConfirmationControllerSpec extends ControllerLayerSpec {
+class ShutMUCRConfirmationControllerSpec extends ControllerLayerSpec with MockitoSugar {
 
-  private val page = new shut_mucr_confirmation(main_template)
+  private val page = mock[shut_mucr_confirmation]
 
   private def controller(auth: AuthenticatedAction) =
     new ShutMUCRConfirmationController(auth, stubMessagesControllerComponents(), page)
@@ -38,16 +41,11 @@ class ShutMUCRConfirmationControllerSpec extends ControllerLayerSpec {
     implicit val get = FakeRequest("GET", "/")
 
     "return 200 when authenticated" in {
+      when(page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
       val result = controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.MUCR -> "123"))
 
       status(result) mustBe Status.OK
-      contentAsHtml(result) mustBe page("123")
-    }
-
-    "return to start for missing params" in {
-      intercept[RuntimeException] {
-        await(controller(SuccessfulAuth()).display(get))
-      } mustBe ReturnToStartException
+      contentAsHtml(result) mustBe page()
     }
 
     "return 403 when unauthenticated" in {

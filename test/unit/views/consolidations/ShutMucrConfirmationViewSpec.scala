@@ -16,53 +16,45 @@
 
 package views.consolidations
 
-import controllers.routes
-import models.cache.ShutMucrAnswers
+import base.Injector
+import play.api.test.FakeRequest
 import views.ViewSpec
 import views.html.shut_mucr_confirmation
 
-class ShutMucrConfirmationViewSpec extends ViewSpec {
+class ShutMucrConfirmationViewSpec extends ViewSpec with Injector {
 
-  private implicit val request = journeyRequest(ShutMucrAnswers())
+  private implicit val request = FakeRequest()
+  private val page = instanceOf[shut_mucr_confirmation]
 
-  private val page = new shut_mucr_confirmation(main_template)
-  private val mucr = "some-mucr"
+  "ShutMUCRConfirmationView" when {
 
-  "View" should {
+    "View is rendered" should {
 
-    "render title" in {
-      page(mucr).getTitle must containMessage("shutMucr.confirmation.tab.heading")
+      "render title" in {
+
+        page().getTitle must containMessage("movement.confirmation.title.SHUT_MUCR")
+      }
+
+      "render header" in {
+
+        page()
+          .getElementsByClass("govuk-heading-xl")
+          .first() must containMessage("movement.confirmation.title.SHUT_MUCR")
+      }
+
+      "have 'notification timeline' link" in {
+        val inset = page().getElementsByClass("govuk-inset-text").first()
+        inset
+          .getElementsByClass("govuk-link")
+          .first() must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
+      }
+
+      "have 'find another consignment' link" in {
+        page()
+          .getElementsByClass("govuk-link")
+          .get(1) must haveHref(controllers.routes.ChoiceController.displayPage())
+      }
     }
-
-    "display page reference" in {
-
-      page(mucr).getElementById("highlight-box-heading") must containMessage("shutMucr.confirmation.heading", mucr)
-    }
-
-    "have what next section" in {
-
-      page(mucr).getElementById("what-next") must containMessage("movement.confirmation.whatNext")
-    }
-
-    "display 'Back to start page' button on page" in {
-
-      val backButton = page(mucr).getElementsByClass("button").first()
-
-      backButton must containMessage("site.backToStart")
-      backButton must haveHref(routes.ChoiceController.displayPage())
-    }
-
-    "have 'view requests' link" in {
-      val statusInfo = page(mucr).getElementById("status-info")
-      statusInfo.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ViewSubmissions))
-    }
-
-    "have 'next steps' link" in {
-      val nextSteps = page(mucr).getElementById("next-steps")
-      nextSteps.getElementsByTag("a").get(0) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.ShutMUCR))
-      nextSteps.getElementsByTag("a").get(1) must haveHref(controllers.routes.ChoiceController.startSpecificJourney(forms.Choice.Departure))
-    }
-
   }
 
 }
