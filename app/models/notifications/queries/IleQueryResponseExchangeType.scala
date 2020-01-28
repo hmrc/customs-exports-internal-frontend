@@ -16,16 +16,9 @@
 
 package models.notifications.queries
 
-import play.api.libs.json.Json
+sealed trait IleQueryResponseExchangeType
 
-final case class IleQueryResponse(
-  queriedDucr: Option[DucrInfo] = None,
-  queriedMucr: Option[MucrInfo] = None,
-  parentMucr: Option[MucrInfo] = None,
-  childDucrs: Seq[DucrInfo] = Seq.empty,
-  childMucrs: Seq[MucrInfo] = Seq.empty
-)
-
-object IleQueryResponse {
-  implicit val format = Json.format[IleQueryResponse]
+object IleQueryResponseExchangeType {
+  case object SuccessfulResponseExchange extends IleQueryResponseExchangeType
+  case object UcrNotFoundResponseExchange extends IleQueryResponseExchangeType
 }

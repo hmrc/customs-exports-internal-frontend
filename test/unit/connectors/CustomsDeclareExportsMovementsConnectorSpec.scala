@@ -22,7 +22,8 @@ import connectors.exchanges.{ArrivalExchange, DisassociateDUCRExchange, IleQuery
 import forms.{ArrivalReference, ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.UcrBlock
 import models.notifications.ResponseType.ControlResponse
-import models.notifications.queries.{DucrInfo, IleQueryResponse}
+import models.notifications.queries.DucrInfo
+import models.notifications.queries.IleQueryResponseExchangeData.SuccessfulResponseExchangeData
 import org.mockito.BDDMockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
@@ -31,7 +32,6 @@ import play.api.test.Helpers._
 import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import uk.gov.hmrc.http.HttpResponse
 
 class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with MockitoSugar {
 
@@ -239,7 +239,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
     "send GET request to the backend" in {
 
       val expectedDucrInfo = DucrInfo(ucr = correctUcr, declarationId = "declarationId")
-      val expectedNotification = IleQueryResponse(queriedDucr = Some(expectedDucrInfo))
+      val expectedNotification = SuccessfulResponseExchangeData(queriedDucr = Some(expectedDucrInfo))
 
       val notificationJson =
         s"""
@@ -266,7 +266,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
       verify(getRequestedFor(urlEqualTo(expectedUrl)))
 
       response.status mustBe OK
-      Json.parse(response.body).as[IleQueryResponse] mustBe expectedNotification
+      Json.parse(response.body).as[SuccessfulResponseExchangeData] mustBe expectedNotification
     }
   }
 }

@@ -21,7 +21,6 @@ import connectors.exchanges.{ConsolidationExchange, IleQueryExchange, MovementEx
 import connectors.formats.Implicit.optionFormat
 import javax.inject.{Inject, Singleton}
 import models.notifications.NotificationFrontendModel
-import models.notifications.queries.IleQueryResponse
 import models.submissions.Submission
 import play.api.Logger
 import play.api.http.{ContentTypes, HeaderNames}

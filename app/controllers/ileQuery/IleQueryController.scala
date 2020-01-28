@@ -25,11 +25,12 @@ import forms.IleQuery.form
 import javax.inject.{Inject, Singleton}
 import models.UcrBlock
 import models.cache.{Answers, IleQuery}
-import models.notifications.queries.IleQueryResponse
+import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
+import models.notifications.queries.IleQueryResponseExchange
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import repositories.IleQueryRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -68,22 +69,18 @@ class IleQueryController @Inject()(
   }
 
   def submitQuery(ucr: String): Action[AnyContent] = authenticate.async { implicit request =>
-    def loadingPageResult = Ok(loadingScreenPage()).withHeaders("refresh" -> "5")
-
     ileQueryRepository.findBySessionIdAndUcr(retrieveSessionId, ucr).flatMap {
       case Some(query) =>
         connector.fetchQueryNotifications(query.conversationId, request.providerId).flatMap { response =>
           response.status match {
             case OK =>
-              val queryResponse = Json.parse(response.body).as[Seq[IleQueryResponse]]
+              val queryResponse = Json.parse(response.body).as[Seq[IleQueryResponseExchange]]
+
               queryResponse match {
                 case Seq() => Future.successful(loadingPageResult)
-                case queryResponse :: _ =>
+                case response +: _ =>
                   ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
-                    val ducrResult = queryResponse.queriedDucr.map(ducr => Ok(ileQueryDucrResponsePage(ducr)))
-                    val mucrResult = queryResponse.queriedMucr.map(mucr => Ok(ileQueryMucrResponsePage(mucr)))
-
-                    ducrResult.orElse(mucrResult).getOrElse(loadingPageResult)
+                    displayQueryResults(response)
                   }
               }
             case _ =>
@@ -97,6 +94,20 @@ class IleQueryController @Inject()(
       case None => sendIleQuery(ucr)
     }
   }
+
+  private def loadingPageResult()(implicit request: Request[AnyContent]) =
+    Ok(loadingScreenPage()).withHeaders("refresh" -> "5")
+
+  private def displayQueryResults(queryResponse: IleQueryResponseExchange)(implicit request: Request[AnyContent]): Result =
+    queryResponse.data match {
+      case response: SuccessfulResponseExchangeData =>
+        val ducrResult = response.queriedDucr.map(ducr => Ok(ileQueryDucrResponsePage(ducr)))
+        val mucrResult = response.queriedMucr.map(mucr => Ok(ileQueryMucrResponsePage(mucr)))
+
+        ducrResult.orElse(mucrResult).getOrElse(Ok(loadingScreenPage()))
+
+      case _: UcrNotFoundResponseExchangeData => Ok("UCR not found")
+    }
 
   private def sendIleQuery(ucr: String)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
     form

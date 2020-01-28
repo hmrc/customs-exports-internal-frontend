@@ -16,12 +16,15 @@
 
 package controllers.ileQuery
 
+import java.time.Instant
+
 import config.ErrorHandler
 import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.IleQueryExchange
 import controllers.ControllerLayerSpec
 import models.cache.IleQuery
-import models.notifications.queries.{DucrInfo, IleQueryResponse, MucrInfo}
+import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
+import models.notifications.queries.{DucrInfo, IleQueryResponseExchange, MucrInfo}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.libs.json.{JsString, Json}
@@ -87,14 +90,16 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
       "submit mucr query method is invoked and notifications are available" in {
 
         val mucrInfo = MucrInfo("mucr")
+        val responseData = SuccessfulResponseExchangeData(queriedMucr = Some(mucrInfo))
+        val responseExchange = Seq(IleQueryResponseExchange(Instant.now(), "convId", "inventoryLinkingQueryResponse", responseData))
         when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
           .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", "convId"))))
         when(connector.fetchQueryNotifications(any(), any())(any()))
-          .thenReturn(Future.successful(HttpResponse(OK, Some(Json.toJson(IleQueryResponse(queriedMucr = Some(mucrInfo)))))))
+          .thenReturn(Future.successful(HttpResponse(OK, Some(Json.toJson(responseExchange)))))
         when(ileQueryRepository.removeByConversationId(any()))
           .thenReturn(Future.successful((): Unit))
 
-        implicit val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+        val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
         val result = controller.submitQuery("mucr")(request)
 
@@ -105,14 +110,16 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
       "submit ducr query method is invoked and notifications are available" in {
 
         val ducrInfo = DucrInfo(ucr = "ducr", declarationId = "decId")
+        val responseData = SuccessfulResponseExchangeData(queriedDucr = Some(ducrInfo))
+        val responseExchange = Seq(IleQueryResponseExchange(Instant.now(), "convId", "inventoryLinkingQueryResponse", responseData))
         when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
           .thenReturn(Future.successful(Some(IleQuery("sessionId", "ducr", "convId"))))
         when(connector.fetchQueryNotifications(any(), any())(any()))
-          .thenReturn(Future.successful(HttpResponse(OK, Some(Json.toJson(IleQueryResponse(queriedDucr = Some(ducrInfo)))))))
+          .thenReturn(Future.successful(HttpResponse(OK, Some(Json.toJson(responseExchange)))))
         when(ileQueryRepository.removeByConversationId(any()))
           .thenReturn(Future.successful((): Unit))
 
-        implicit val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+        val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
         val result = controller.submitQuery("mucr")(request)
 
@@ -122,32 +129,16 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
       "submit query method is invoked and neither mucr or ducr info available" in {
 
-        val ducrInfo = DucrInfo(ucr = "ducr", declarationId = "decId")
         when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
           .thenReturn(Future.successful(Some(IleQuery("sessionId", "ducr", "convId"))))
         when(connector.fetchQueryNotifications(any(), any())(any()))
-          .thenReturn(Future.successful(HttpResponse(OK, Some(Json.toJson(IleQueryResponse())))))
+          .thenReturn(Future.successful(HttpResponse(OK, Some(Json.toJson(Seq.empty[IleQueryResponseExchange])))))
         when(ileQueryRepository.removeByConversationId(any()))
           .thenReturn(Future.successful((): Unit))
 
-        implicit val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+        val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
         val result = controller.submitQuery("mucr")(request)
-
-        status(result) mustBe OK
-        verify(loadingScreenPage).apply()(any(), any())
-      }
-
-      "submit query method is invoked and there is no notifications available yet" in {
-
-        when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
-          .thenReturn(Future.successful(Some(IleQuery("sessionId", "ucr", "convId"))))
-        when(connector.fetchQueryNotifications(any(), any())(any()))
-          .thenReturn(Future.successful(HttpResponse(NO_CONTENT)))
-
-        val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
-
-        val result = controller.submitQuery("ucr")(request)
 
         status(result) mustBe OK
         verify(loadingScreenPage).apply()(any(), any())
@@ -161,20 +152,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         val incorrectForm = JsString("1234")
 
         val result = controller.submitQueryForm()(postRequest(incorrectForm))
-
-        status(result) mustBe BAD_REQUEST
-      }
-
-      "connector returned different status than OK, NO_CONTENT, GATEWAY_TIMEOUT" in {
-
-        when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
-          .thenReturn(Future.successful(Some(IleQuery("sessionId", "ucr", "convId"))))
-        when(connector.fetchQueryNotifications(any(), any())(any()))
-          .thenReturn(Future.successful(HttpResponse(ACCEPTED)))
-
-        val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
-
-        val result = controller.submitQuery("ucr")(request)
 
         status(result) mustBe BAD_REQUEST
       }
@@ -200,6 +177,22 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           .thenReturn(Future.successful(Some(IleQuery("sessionId", "ucr", "convId"))))
         when(connector.fetchQueryNotifications(any(), any())(any()))
           .thenReturn(Future.successful(HttpResponse(GATEWAY_TIMEOUT)))
+        when(ileQueryRepository.removeByConversationId(any()))
+          .thenReturn(Future.successful((): Unit))
+
+        val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+
+        val result = controller.submitQuery("ucr")(request)
+
+        status(result) mustBe INTERNAL_SERVER_ERROR
+      }
+
+      "connector returned different status than OK" in {
+
+        when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
+          .thenReturn(Future.successful(Some(IleQuery("sessionId", "ucr", "convId"))))
+        when(connector.fetchQueryNotifications(any(), any())(any()))
+          .thenReturn(Future.successful(HttpResponse(ACCEPTED)))
         when(ileQueryRepository.removeByConversationId(any()))
           .thenReturn(Future.successful((): Unit))
 
