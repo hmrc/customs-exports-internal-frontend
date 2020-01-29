@@ -69,7 +69,7 @@ abstract class IntegrationSpec
     route(app, request).get
   }
 
-  protected def theCacheFor(pid: String): Option[Answers] = await(cacheRepository.find(Json.obj("providerId" -> pid)).one[Cache]).map(_.answers)
+  protected def theCacheFor(pid: String): Option[Answers] = await(cacheRepository.find(Json.obj("providerId" -> pid)).one[Cache]).flatMap(_.answers)
 
   protected def givenCacheFor(pid: String, answers: Answers): Unit = await(cacheRepository.insert(Cache.format.writes(Cache(pid, answers))))
 

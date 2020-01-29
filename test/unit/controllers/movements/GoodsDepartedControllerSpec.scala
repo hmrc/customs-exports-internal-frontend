@@ -111,7 +111,7 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
 
         await(controller().saveGoodsDeparted()(postRequest(correctForm)))
 
-        cachePassedToRepository.answers mustBe DepartureAnswers(goodsDeparted = Some(GoodsDeparted(BackIntoTheUk)))
+        cachePassedToRepository.answers mustBe Some(DepartureAnswers(goodsDeparted = Some(GoodsDeparted(BackIntoTheUk))))
       }
 
       "return 303 (SEE_OTHER) and redirect to Transport page" in {

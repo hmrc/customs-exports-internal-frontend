@@ -110,7 +110,7 @@ class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockC
 
         await(controller().saveConsignmentReferences()(postRequest(correctForm)))
 
-        theCacheUpserted.answers mustBe an[ArrivalAnswers]
+        theCacheUpserted.answers mustBe an[Option[ArrivalAnswers]]
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -136,7 +136,7 @@ class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockC
 
         await(controller(RetrospectiveArrivalAnswers()).saveConsignmentReferences()(postRequest(correctForm)))
 
-        theCacheUpserted.answers mustBe an[RetrospectiveArrivalAnswers]
+        theCacheUpserted.answers mustBe an[Option[RetrospectiveArrivalAnswers]]
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -162,7 +162,7 @@ class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockC
 
         await(controller(DepartureAnswers()).saveConsignmentReferences()(postRequest(correctForm)))
 
-        theCacheUpserted.answers mustBe an[DepartureAnswers]
+        theCacheUpserted.answers mustBe an[Option[DepartureAnswers]]
       }
 
       "return 303 (SEE_OTHER)" in {

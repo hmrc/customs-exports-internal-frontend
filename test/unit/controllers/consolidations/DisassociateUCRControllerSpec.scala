@@ -71,7 +71,7 @@ class DisassociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
 
       status(result) mustBe Status.SEE_OTHER
       redirectLocation(result) mustBe Some(routes.DisassociateUCRSummaryController.display().url)
-      theCacheUpserted.answers mustBe DisassociateUcrAnswers(ucr = Some(disassociation))
+      theCacheUpserted.answers mustBe Some(DisassociateUcrAnswers(ucr = Some(disassociation)))
     }
 
     "return 400 when invalid" in {
