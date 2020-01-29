@@ -36,7 +36,6 @@ class JourneyRefiner @Inject()(cacheRepository: CacheRepository)(implicit val ex
       case Some(answers: Answers) if types.isEmpty || types.contains(answers.`type`) =>
         Right(JourneyRequest(answers, request))
       case a =>
-        print(s"foud this " + a)
         Left(Results.Redirect(controllers.routes.ChoiceController.displayPage()))
     }
 
