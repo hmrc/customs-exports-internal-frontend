@@ -17,6 +17,7 @@
 package views
 
 import forms.Choice
+import models.UcrBlock
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import views.html.choice_page
@@ -53,6 +54,23 @@ class ChoicePageViewSpec extends ViewSpec {
 
       "some errors" in {
         page(Choice.form().withError("error", "error.required")).getErrorSummary mustBe defined
+      }
+    }
+
+    "render back link" when {
+      "form contains ucr block" in {
+        val backButton = page(Choice.form(), Some(UcrBlock("ucr", "D"))).getBackButton
+
+        backButton mustBe defined
+        backButton.get must haveHref(controllers.ileQuery.routes.IleQueryController.submitQuery("ucr"))
+      }
+    }
+
+    "not render back link" when {
+      "form does not contain ucr block" in {
+        val backButton = page(Choice.form(), None).getBackButton
+
+        backButton mustNot be(defined)
       }
     }
   }

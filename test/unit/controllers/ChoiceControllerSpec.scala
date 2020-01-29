@@ -20,6 +20,7 @@ import controllers.actions.AuthenticatedAction
 import controllers.consolidations.{routes => consolidationRoutes}
 import forms.Choice
 import forms.Choice._
+import models.UcrBlock
 import models.cache._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -44,13 +45,19 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
   private def theResponseForm: Form[Choice] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[Choice]])
-    verify(choicePage).apply(captor.capture())(any(), any())
+    verify(choicePage).apply(captor.capture(), any())(any(), any())
+    captor.getValue
+  }
+
+  private def theResponseUcrBlock: Option[UcrBlock] = {
+    val captor = ArgumentCaptor.forClass(classOf[Option[UcrBlock]])
+    verify(choicePage).apply(any(), captor.capture())(any(), any())
     captor.getValue
   }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    when(choicePage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(choicePage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override def afterEach(): Unit = {
@@ -71,13 +78,25 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         theResponseForm.value mustBe empty
       }
 
-      "existing answers" in {
+      "existing answers with no UcrBlock" in {
         givenTheCacheContains(Cache(providerId, ArrivalAnswers()))
 
         val result = controller().displayPage(getRequest)
 
         status(result) mustBe OK
         theResponseForm.value.get.value mustBe Arrival.value
+        theResponseUcrBlock mustBe None
+      }
+
+      "existing answers with UcrBlock" in {
+        val ucrBlock = UcrBlock("ucr", "M")
+        givenTheCacheContains(Cache(providerId, Some(ArrivalAnswers()), Some(ucrBlock)))
+
+        val result = controller().displayPage(getRequest)
+
+        status(result) mustBe OK
+        theResponseForm.value.get.value mustBe Arrival.value
+        theResponseUcrBlock mustBe Some(ucrBlock)
       }
     }
 
