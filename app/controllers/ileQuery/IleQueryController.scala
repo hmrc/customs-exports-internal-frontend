@@ -24,14 +24,14 @@ import controllers.exchanges.AuthenticatedRequest
 import forms.IleQueryForm.form
 import javax.inject.{Inject, Singleton}
 import models.UcrBlock
-import models.cache.{Answers, IleQuery}
-import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
+import models.cache.{Answers, Cache, IleQuery}
 import models.notifications.queries.IleQueryResponseExchange
+import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
-import repositories.IleQueryRepository
+import play.api.mvc._
+import repositories.{CacheRepository, IleQueryRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.FieldValidator.validDucr
@@ -44,6 +44,7 @@ class IleQueryController @Inject()(
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
   errorHandler: ErrorHandler,
+  cacheRepository: CacheRepository,
   ileQueryRepository: IleQueryRepository,
   connector: CustomsDeclareExportsMovementsConnector,
   ileQueryPage: ile_query,
@@ -80,7 +81,7 @@ class IleQueryController @Inject()(
                 case Seq() => Future.successful(loadingPageResult)
                 case response +: _ =>
                   ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
-                    displayQueryResults(response)
+                    processQueryResults(response)
                   }
               }
             case _ =>
@@ -98,9 +99,17 @@ class IleQueryController @Inject()(
   private def loadingPageResult()(implicit request: Request[AnyContent]) =
     Ok(loadingScreenPage()).withHeaders("refresh" -> "5")
 
-  private def displayQueryResults(queryResponse: IleQueryResponseExchange)(implicit request: Request[AnyContent]): Result =
+  private def processQueryResults(queryResponse: IleQueryResponseExchange)(implicit request: AuthenticatedRequest[AnyContent]): Result = {
+
+    def saveQueryUcrtoCache(response: SuccessfulResponseExchangeData) = {
+      val queriedUcr = response.queriedMucr.map(q => UcrBlock(q.ucr, "M")).orElse(response.queriedDucr.map(q => UcrBlock(q.ucr, "D")))
+      queriedUcr.foreach(ucr => cacheRepository.upsert(Cache(request.providerId, ucr)))
+    }
+
     queryResponse.data match {
       case response: SuccessfulResponseExchangeData =>
+        saveQueryUcrtoCache(response)
+
         val ducrResult = response.queriedDucr.map(ducr => Ok(ileQueryDucrResponsePage(ducr)))
         val mucrResult = response.queriedMucr.map(mucr => Ok(ileQueryMucrResponsePage(mucr)))
 
@@ -108,6 +117,7 @@ class IleQueryController @Inject()(
 
       case _: UcrNotFoundResponseExchangeData => Ok("UCR not found")
     }
+  }
 
   private def sendIleQuery(ucr: String)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
     form

@@ -32,7 +32,7 @@ class JourneyRefiner @Inject()(cacheRepository: CacheRepository)(implicit val ex
   override protected def executionContext: ExecutionContext = exc
 
   private def refiner[A](request: AuthenticatedRequest[A], types: JourneyType*): Future[Either[Result, JourneyRequest[A]]] =
-    cacheRepository.findByProviderId(request.operator.providerId).map(_.map(_.answers)).map {
+    cacheRepository.findByProviderId(request.operator.providerId).map(_.flatMap(_.answers)).map {
       case Some(answers: Answers) if types.isEmpty || types.contains(answers.`type`) =>
         Right(JourneyRequest(answers, request))
       case _ =>

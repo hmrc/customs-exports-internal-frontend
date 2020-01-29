@@ -40,8 +40,9 @@ class ChoiceController @Inject()(
 
   def displayPage: Action[AnyContent] = authenticate.async { implicit request =>
     cacheRepository.findByProviderId(request.providerId).map {
-      case Some(cache) => Ok(choicePage(Choice.form().fill(Choice(cache.answers.`type`))))
-      case None        => Ok(choicePage(Choice.form()))
+      case Some(cache) =>
+        cache.answers.map(answers => Ok(choicePage(Choice.form().fill(Choice(answers.`type`))))).getOrElse(Ok(choicePage(Choice.form())))
+      case None => Ok(choicePage(Choice.form()))
     }
   }
 

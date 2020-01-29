@@ -22,16 +22,17 @@ import config.ErrorHandler
 import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.IleQueryExchange
 import controllers.ControllerLayerSpec
+import models.UcrBlock
 import models.cache.IleQuery
-import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
+import models.notifications.queries.IleQueryResponseExchangeData.SuccessfulResponseExchangeData
 import models.notifications.queries.{DucrInfo, IleQueryResponseExchange, MucrInfo}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{never, reset, verify, when}
 import play.api.libs.json.{JsString, Json}
 import play.api.mvc.Headers
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import services.MockIleQueryCache
+import services.{MockCache, MockIleQueryCache}
 import testdata.CommonTestData.correctUcr
 import uk.gov.hmrc.http.HttpResponse
 import views.html._
@@ -39,7 +40,7 @@ import views.html._
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
-class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache {
+class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache with MockCache {
 
   private val errorHandler = mock[ErrorHandler]
   private val connector = mock[CustomsDeclareExportsMovementsConnector]
@@ -52,6 +53,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
     SuccessfulAuth(),
     stubMessagesControllerComponents(),
     errorHandler,
+    cacheRepository,
     ileQueryRepository,
     connector,
     ileQueryPage,
@@ -105,6 +107,8 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
         status(result) mustBe OK
         verify(ileQueryMucrResponsePage).apply(meq(mucrInfo))(any(), any())
+
+        theCacheUpserted.queryUcr mustBe Some(UcrBlock("mucr", "M"))
       }
 
       "submit ducr query method is invoked and notifications are available" in {
@@ -121,10 +125,12 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
         val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
-        val result = controller.submitQuery("mucr")(request)
+        val result = controller.submitQuery("ducr")(request)
 
         status(result) mustBe OK
         verify(ileQueryDucrResponsePage).apply(meq(ducrInfo))(any(), any())
+
+        theCacheUpserted.queryUcr mustBe Some(UcrBlock("ducr", "D"))
       }
 
       "submit query method is invoked and neither mucr or ducr info available" in {
@@ -142,6 +148,8 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
         status(result) mustBe OK
         verify(loadingScreenPage).apply()(any(), any())
+
+        verify(cacheRepository, never).upsert(any())
       }
     }
 

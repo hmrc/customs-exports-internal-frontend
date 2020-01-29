@@ -126,7 +126,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
         await(controller(ArrivalAnswers()).saveLocation()(postRequest(correctForm)))
 
-        theCacheUpserted.answers mustBe an[ArrivalAnswers]
+        theCacheUpserted.answers mustBe an[Option[ArrivalAnswers]]
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -152,7 +152,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
         await(controller(RetrospectiveArrivalAnswers()).saveLocation()(postRequest(correctForm)))
 
-        theCacheUpserted.answers mustBe an[RetrospectiveArrivalAnswers]
+        theCacheUpserted.answers mustBe an[Option[RetrospectiveArrivalAnswers]]
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -178,7 +178,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
         await(controller(DepartureAnswers()).saveLocation()(postRequest(correctForm)))
 
-        theCacheUpserted.answers mustBe an[DepartureAnswers]
+        theCacheUpserted.answers mustBe an[Option[DepartureAnswers]]
       }
 
       "return 303 (SEE_OTHER)" in {
