@@ -35,7 +35,7 @@ class JourneyRefiner @Inject()(cacheRepository: CacheRepository)(implicit val ex
     cacheRepository.findByProviderId(request.operator.providerId).map(_.flatMap(_.answers)).map {
       case Some(answers: Answers) if types.isEmpty || types.contains(answers.`type`) =>
         Right(JourneyRequest(answers, request))
-      case a =>
+      case _ =>
         Left(Results.Redirect(controllers.routes.ChoiceController.displayPage()))
     }
 
