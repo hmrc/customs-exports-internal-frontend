@@ -23,12 +23,14 @@
 
 @this(main_template: main_template)
 
-@(form: Form[Choice])(implicit request: Request[_], messages: Messages)
+@(form: Form[Choice], queryUcr: Option[UcrBlock] = None)(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Title("movement.choice.title")) {
 
     @helper.form(routes.ChoiceController.submit(), 'autoComplete -> "off") {
         @helper.CSRF.formField
+
+        @queryUcr.map(block => components.back_link(controllers.ileQuery.routes.IleQueryController.submitQuery(block.ucr)))
 
         @components.error_summary(form.errors)
 
