@@ -22,4 +22,7 @@ case class UcrBlock(ucr: String, ucrType: String)
 
 object UcrBlock {
   implicit val format = Json.format[UcrBlock]
+
+  val ducr = "D"
+  val mucr = "M"
 }
