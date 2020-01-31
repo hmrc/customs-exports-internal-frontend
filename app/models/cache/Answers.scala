@@ -17,6 +17,8 @@
 package models.cache
 
 import forms.{AssociateUcr, MucrOptions, _}
+import models.UcrBlock
+import models.UcrBlock.{ducrType, mucrType}
 import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
@@ -57,6 +59,15 @@ case class ArrivalAnswers(
 
 object ArrivalAnswers {
   implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
+
+  def fromQueryUcr(queryUcr: Option[UcrBlock]): ArrivalAnswers = queryUcr match {
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
+      ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, ucrBlock.ucr)))
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
+      ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))
+    case _ =>
+      ArrivalAnswers()
+  }
 }
 
 case class RetrospectiveArrivalAnswers(
@@ -69,6 +80,17 @@ case class RetrospectiveArrivalAnswers(
 
 object RetrospectiveArrivalAnswers {
   implicit val format: Format[RetrospectiveArrivalAnswers] = Json.format[RetrospectiveArrivalAnswers]
+
+  def fromQueryUcr(queryUcr: Option[UcrBlock]): RetrospectiveArrivalAnswers = queryUcr match {
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
+      RetrospectiveArrivalAnswers(
+        consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = ucrBlock.ucr))
+      )
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
+      RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))
+    case _ =>
+      RetrospectiveArrivalAnswers()
+  }
 }
 
 case class DepartureAnswers(
@@ -84,6 +106,15 @@ case class DepartureAnswers(
 
 object DepartureAnswers {
   implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
+
+  def fromQueryUcr(queryUcr: Option[UcrBlock]): DepartureAnswers = queryUcr match {
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
+      DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, ucrBlock.ucr)))
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
+      DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))
+    case _ =>
+      DepartureAnswers()
+  }
 }
 
 case class AssociateUcrAnswers(
@@ -96,6 +127,15 @@ case class AssociateUcrAnswers(
 
 object AssociateUcrAnswers {
   implicit val format: Format[AssociateUcrAnswers] = Json.format[AssociateUcrAnswers]
+
+  def fromQueryUcr(queryUcr: Option[UcrBlock]): AssociateUcrAnswers = queryUcr match {
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
+      AssociateUcrAnswers(associateUcr = Some(AssociateUcr(AssociateKind.Mucr, ucrBlock.ucr)))
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
+      AssociateUcrAnswers(associateUcr = Some(AssociateUcr(AssociateKind.Ducr, ucrBlock.ucr)))
+    case _ =>
+      AssociateUcrAnswers()
+  }
 }
 
 case class DisassociateUcrAnswers(override val eori: Option[String] = Answers.fakeEORI, ucr: Option[DisassociateUcr] = None) extends Answers {
@@ -104,6 +144,15 @@ case class DisassociateUcrAnswers(override val eori: Option[String] = Answers.fa
 
 object DisassociateUcrAnswers {
   implicit val format: Format[DisassociateUcrAnswers] = Json.format[DisassociateUcrAnswers]
+
+  def fromQueryUcr(queryUcr: Option[UcrBlock]): DisassociateUcrAnswers = queryUcr match {
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
+      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(DisassociateKind.Mucr, None, Some(ucrBlock.ucr))))
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
+      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(DisassociateKind.Ducr, Some(ucrBlock.ucr), None)))
+    case _ =>
+      DisassociateUcrAnswers()
+  }
 }
 
 case class ShutMucrAnswers(override val eori: Option[String] = Answers.fakeEORI, shutMucr: Option[ShutMucr] = None) extends Answers {
@@ -112,4 +161,11 @@ case class ShutMucrAnswers(override val eori: Option[String] = Answers.fakeEORI,
 
 object ShutMucrAnswers {
   implicit val format: Format[ShutMucrAnswers] = Json.format[ShutMucrAnswers]
+
+  def fromQueryUcr(queryUcr: Option[UcrBlock]): ShutMucrAnswers = queryUcr match {
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
+      ShutMucrAnswers(shutMucr = Some(ShutMucr(ucrBlock.ucr)))
+    case _ =>
+      ShutMucrAnswers()
+  }
 }

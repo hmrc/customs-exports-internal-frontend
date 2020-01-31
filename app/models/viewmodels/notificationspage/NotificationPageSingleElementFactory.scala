@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter
 
 import javax.inject.{Inject, Singleton}
 import models.UcrBlock
+import models.UcrBlock.ducrType
 import models.notifications.NotificationFrontendModel
 import models.submissions.ActionType._
 import models.submissions.Submission
@@ -57,7 +58,7 @@ class NotificationPageSingleElementFactory @Inject()(responseConverterProvider: 
   }
 
   private def buildForDucrAssociation(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement = {
-    val ducrs: List[UcrBlock] = submission.ucrBlocks.filter(_.ucrType == "D").toList
+    val ducrs: List[UcrBlock] = submission.ucrBlocks.filter(_.ucrType == ducrType).toList
     val content = HtmlFormat.fill(
       paragraph(messages(s"notifications.elem.content.${submission.actionType.value}")) +:
         ducrs.map(block => paragraph(block.ucr)) :+
