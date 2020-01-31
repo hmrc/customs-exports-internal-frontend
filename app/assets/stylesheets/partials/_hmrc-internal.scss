@@ -1133,7 +1133,8 @@ html.no-scroll {
 .hmrc-logo__link:before {
   content: "";
   display: table-cell;
-  background: url("https://design.tax.service.gov.uk/assets/images/hmrc-crown-logo_black.svg") no-repeat;
+  background: url("/customs-exports-internal/assets/images/hmrc-crown-logo_black.svg") no-repeat;
+  background: url("/customs-exports-internal/assets/images/hmrc-crown-logo_black.svg") no-repeat;
   background-size: 100% 100%;
   width: 52px;
   height: 32px;
