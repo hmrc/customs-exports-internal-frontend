@@ -17,7 +17,10 @@
 @import config.AppConfig
 @import views.html.components.gds.link
 
-@()(implicit messages: Messages, appConfig: AppConfig)
+@this(
+        appConfig: AppConfig
+)
+@()(implicit messages: Messages)
 
 <p class="govuk-body">
     @if(appConfig.featureIleQuery) {

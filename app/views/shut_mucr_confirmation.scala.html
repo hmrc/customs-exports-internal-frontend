@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import views.Title
 @import components.gds.gds_main_template
 @import components.gds.pageTitle
@@ -27,10 +26,11 @@
 @this(
         govukLayout: gds_main_template,
         pageTitle: pageTitle,
-        govukInsetText: govukInsetText
+        govukInsetText: govukInsetText,
+        confirmationLink: confirmation_link
 )
 
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@()(implicit request: Request[_], messages: Messages)
 
 @gotoTimelineLink = {<a class="govuk-link" href="@routes.ViewSubmissionsController.displayPage()">@messages("movement.confirmation.notification.timeline.link")</a>}
 
@@ -42,5 +42,5 @@
         content = HtmlContent(messages("movement.confirmation.header")+"<br>"+messages("movement.confirmation.header.check", gotoTimelineLink))
     ))
 
-    @confirmation_link()
+    @confirmationLink()
 }

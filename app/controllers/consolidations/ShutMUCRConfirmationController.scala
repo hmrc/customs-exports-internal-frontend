@@ -16,7 +16,6 @@
 
 package controllers.consolidations
 
-import config.AppConfig
 import controllers.actions.AuthenticatedAction
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
@@ -30,8 +29,7 @@ import scala.concurrent.ExecutionContext
 class ShutMUCRConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
-  page: shut_mucr_confirmation,
-  implicit val appConfig: AppConfig
+  page: shut_mucr_confirmation
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
