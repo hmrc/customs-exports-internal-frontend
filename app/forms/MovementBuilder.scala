@@ -40,8 +40,7 @@ class MovementBuilder @Inject()(zoneId: ZoneId) {
       providerId = providerId,
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
       movementDetails = movementDetails(answers).getOrElse(throw ReturnToStartException),
-      location = answers.location.getOrElse(throw ReturnToStartException),
-      arrivalReference = answers.arrivalReference.getOrElse(throw ReturnToStartException)
+      location = answers.location.getOrElse(throw ReturnToStartException)
     )
 
   private def createRetrospectiveArrivalExchange(providerId: String, answers: RetrospectiveArrivalAnswers) =

@@ -98,8 +98,7 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
           "pid" -> providerId,
           "ConsignmentReferences" -> answers.consignmentReferences,
           "Location" -> answers.location,
-          "MovementDetails" -> answers.arrivalDetails,
-          "ArrivalReference" -> answers.arrivalReference
+          "MovementDetails" -> answers.arrivalDetails
         )
         val expectedExtendedDataEvent =
           ExtendedDataEvent(auditSource = "appName", auditType = "arrival", tags = auditTags, detail = auditDetail)
@@ -211,14 +210,8 @@ class AuditServiceSpec extends UnitSpec with BeforeAndAfterEach {
       "used for Arrival" in {
 
         val auditTags = auditTagsResult("arrival")
-        val auditDetail = Map(
-          "movementReference" -> "arrivalReference",
-          "pid" -> providerId,
-          "messageCode" -> "EAL",
-          "ucr" -> CommonTestData.correctUcr,
-          "ucrType" -> "D",
-          "submissionResult" -> "Success"
-        )
+        val auditDetail =
+          Map("pid" -> providerId, "messageCode" -> "EAL", "ucr" -> CommonTestData.correctUcr, "ucrType" -> "D", "submissionResult" -> "Success")
         val expectedDataEvent =
           DataEvent(auditSource = "appName", auditType = "arrival", tags = auditTags, detail = auditDetail)
 

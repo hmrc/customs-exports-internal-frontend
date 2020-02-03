@@ -50,7 +50,6 @@ sealed trait MovementAnswers extends Answers {
 case class ArrivalAnswers(
   override val eori: Option[String] = Answers.fakeEORI,
   override val consignmentReferences: Option[ConsignmentReferences] = None,
-  arrivalReference: Option[ArrivalReference] = None,
   arrivalDetails: Option[ArrivalDetails] = None,
   override val location: Option[Location] = None
 ) extends MovementAnswers {

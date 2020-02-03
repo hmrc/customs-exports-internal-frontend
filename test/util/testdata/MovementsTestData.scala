@@ -39,7 +39,6 @@ object MovementsTestData {
     ArrivalAnswers(
       eori = Some(validEori),
       consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.D, referenceValue = correctUcr)),
-      arrivalReference = Some(ArrivalReference(Some("arrivalReference"))),
       arrivalDetails = Some(ArrivalDetails(Date(LocalDate.now().minusDays(1)), Time(LocalTime.of(1, 1)))),
       location = Some(Location("GBAUEMAEMAEMA"))
     )
@@ -66,7 +65,6 @@ object MovementsTestData {
     providerId = providerId,
     consignmentReference = ConsignmentReferences(reference = ConsignmentReferenceType.D, referenceValue = correctUcr),
     location = Location("GBAUEMAEMAEMA"),
-    arrivalReference = ArrivalReference(Some("arrivalReference")),
     movementDetails = MovementDetailsExchange(
       dateTimeFormatter.format(ArrivalDetails(Date(LocalDate.now().minusDays(1)), Time(LocalTime.of(1, 1))).goodsArrivalMoment(zoneId))
     )
