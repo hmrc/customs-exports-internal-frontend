@@ -36,10 +36,6 @@ GET         /dissociate-ucr-confirmation           controllers.consolidations.Di
 GET         /consignment-references                controllers.movements.ConsignmentReferencesController.displayPage()
 POST        /consignment-references                controllers.movements.ConsignmentReferencesController.saveConsignmentReferences()
 
-# Arrival Reference page
-GET         /arrival-reference                     controllers.movements.ArrivalReferenceController.displayPage()
-POST        /arrival-reference                     controllers.movements.ArrivalReferenceController.submit()
-
 # Movement details page
 GET         /movement-details                      controllers.movements.MovementDetailsController.displayPage()
 POST        /movement-details                      controllers.movements.MovementDetailsController.saveMovementDetails()

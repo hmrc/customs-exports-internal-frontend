@@ -19,7 +19,7 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.AppConfig
 import connectors.exchanges.{ArrivalExchange, DisassociateDUCRExchange, IleQueryExchange, MovementDetailsExchange}
-import forms.{ArrivalReference, ConsignmentReferenceType, ConsignmentReferences, Location}
+import forms.{ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.UcrBlock
 import models.notifications.ResponseType.ControlResponse
 import models.notifications.queries.DucrInfo
@@ -57,8 +57,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
           "provider-id",
           ConsignmentReferences(ConsignmentReferenceType.D, "value"),
           Location("code"),
-          MovementDetailsExchange("datetime"),
-          ArrivalReference(Some("reference"))
+          MovementDetailsExchange("datetime")
         )
       connector.submit(request).futureValue
 
@@ -70,7 +69,6 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
                  "consignmentReference":{"reference":"D","referenceValue":"value"},
                  "movementDetails":{"dateTime":"datetime"},
                  "location":{"code":"code"},
-                 "arrivalReference":{"reference":"reference"},
                  "choice":"EAL"
                  }"""))
       )

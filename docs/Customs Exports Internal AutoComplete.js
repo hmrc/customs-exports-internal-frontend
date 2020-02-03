@@ -75,10 +75,6 @@ function completePage() {
         document.getElementById('ducrValue').value = '8GB12345' + Math.floor(Math.random() * 8999) + 100 + '-101SHIP1';
         document.getElementsByClassName('button')[0].click()
     }
-    if(currentPageIs("/customs-exports-internal/arrival-reference")){
-        document.getElementById("reference").value = "REF" + Math.floor(Math.random() * 8999) + 100;
-        document.getElementsByClassName('button')[0].click()
-    }
     if(currentPageIs("/customs-exports-internal/movement-details")){
         let title = document.title.toLowerCase();
         const validDate = new Date();

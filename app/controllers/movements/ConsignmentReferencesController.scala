@@ -55,7 +55,7 @@ class ConsignmentReferencesController @Inject()(
             request.answers match {
               case arrivalAnswers: ArrivalAnswers =>
                 cacheRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
-                  Redirect(controllers.movements.routes.ArrivalReferenceController.displayPage())
+                  Redirect(controllers.movements.routes.MovementDetailsController.displayPage())
                 }
               case retroArrivalAnswers: RetrospectiveArrivalAnswers =>
                 cacheRepository.upsert(Cache(request.providerId, retroArrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>

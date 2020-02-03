@@ -67,13 +67,8 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
         EventData.ucrType.toString -> data.consignmentReference.reference.toString,
         EventData.ucr.toString -> data.consignmentReference.referenceValue,
         EventData.submissionResult.toString -> result
-      ).++(movementReference(data))
+      )
     )
-
-  private def movementReference(data: MovementExchange): Map[String, String] = data match {
-    case arrival: ArrivalExchange => Map(EventData.movementReference.toString -> arrival.arrivalReference.reference.getOrElse(""))
-    case _                        => Map()
-  }
 
   private def audit(auditType: AuditType.Audit, auditData: Map[String, String])(implicit hc: HeaderCarrier): Future[AuditResult] = {
     val event = createAuditEvent(auditType, auditData)
@@ -131,8 +126,7 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
           EventData.providerId.toString -> JsString(providerId),
           ConsignmentReferences.formId -> Json.toJson(arrivalAnswers.consignmentReferences),
           Location.formId -> Json.toJson(arrivalAnswers.location),
-          MovementDetails.formId -> Json.toJson(arrivalAnswers.arrivalDetails),
-          ArrivalReference.formId -> Json.toJson(arrivalAnswers.arrivalReference)
+          MovementDetails.formId -> Json.toJson(arrivalAnswers.arrivalDetails)
         )
       case retroArrivalAnswers: RetrospectiveArrivalAnswers =>
         Map(
