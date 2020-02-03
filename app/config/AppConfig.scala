@@ -56,5 +56,5 @@ class AppConfig @Inject()(
   private def featureSwitch(key: String): Boolean =
     runModeConfiguration.getOptional[Boolean](s"featureSwitches.$key").getOrElse(false)
 
-  lazy val featureIleQuery: Boolean = featureSwitch("ileQueryEnabled")
+  lazy val hasIleQueryFeature: Boolean = featureSwitch("ileQueryEnabled")
 }
