@@ -175,7 +175,8 @@ movement.confirmation.title.RETROSPECTIVE_ARRIVE = Your retrospective arrival re
 movement.confirmation.header = It might take a few minutes before a decision is made.
 movement.confirmation.header.check = Go to the {0} to check the status.
 movement.confirmation.notification.timeline.link = consignment’s notification timeline
-movement.confirmation.redirect.link = Find another consignment
+movement.confirmation.redirect.query.link = Find another consignment
+movement.confirmation.redirect.choice.link = Back to start
 
 associate.heading = Add to MUCR {0}
 mucrOptions.heading = Add to MUCR
