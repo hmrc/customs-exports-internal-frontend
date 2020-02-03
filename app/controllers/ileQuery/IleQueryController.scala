@@ -115,7 +115,11 @@ class IleQueryController @Inject()(
 
         ducrResult.orElse(mucrResult).getOrElse(loadingPageResult)
 
-      case _: UcrNotFoundResponseExchangeData => Ok("UCR not found")
+      case response: UcrNotFoundResponseExchangeData =>
+        response.ucrBlock match {
+          case Some(UcrBlock(ucr, _)) => Redirect(controllers.ileQuery.routes.ConsignmentNotFoundController.displayPage(ucr))
+          case _                      => InternalServerError(errorHandler.standardErrorTemplate())
+        }
     }
   }
 
