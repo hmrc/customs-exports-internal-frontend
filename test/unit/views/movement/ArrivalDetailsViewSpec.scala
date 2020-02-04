@@ -16,7 +16,6 @@
 
 package views.movement
 
-import forms.MovementDetails
 import models.cache.ArrivalAnswers
 import testdata.MovementsTestData
 import views.ViewSpec
@@ -49,7 +48,7 @@ class ArrivalDetailsViewSpec extends ViewSpec {
       val backButton = page(movementDetails.arrivalForm()).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.ArrivalReferenceController.displayPage())
+      backButton.get must haveHref(controllers.movements.routes.ConsignmentReferencesController.displayPage())
     }
 
     "render error summary" when {

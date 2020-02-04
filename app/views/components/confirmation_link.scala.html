@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,25 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms
+@import config.AppConfig
+@import views.html.components.gds.link
 
-import play.api.data.Forms.{optional, text}
-import play.api.data.{Form, Forms}
-import play.api.libs.json.Json
-import utils.FieldValidator._
+@this(
+        appConfig: AppConfig
+)
+@()(implicit messages: Messages)
 
-case class ArrivalReference(reference: Option[String])
-
-object ArrivalReference {
-  val formId: String = "ArrivalReference"
-
-  implicit val format = Json.format[ArrivalReference]
-
-  val mapping = Forms.mapping("reference" -> optional(text().verifying("arrivalReference.error", isAlphanumeric and noLongerThan(25))))(
-    ArrivalReference.apply
-  )(ArrivalReference.unapply)
-
-  val form: Form[ArrivalReference] = Form(mapping)
-}
+<p class="govuk-body">
+    @if(appConfig.hasIleQueryFeature) {
+        @link(message = messages("movement.confirmation.redirect.query.link"), href = ileQuery.routes.IleQueryController.displayQueryForm())
+    } else {
+        @link(message = messages("movement.confirmation.redirect.choice.link"), href = routes.ChoiceController.displayPage())
+    }
+</p>

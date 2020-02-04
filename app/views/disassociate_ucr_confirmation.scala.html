@@ -21,11 +21,13 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 @import views.html.components.gds.link
+@import views.html.components.confirmation_link
 
 @this(
         govukLayout: gds_main_template,
         pageTitle: pageTitle,
-        govukInsetText: govukInsetText
+        govukInsetText: govukInsetText,
+        confirmationLink: confirmation_link
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -40,7 +42,5 @@
             content = HtmlContent(messages("movement.confirmation.header")+"<br>"+messages("movement.confirmation.header.check", gotoTimelineLink))
         ))
 
-        <p class="govuk-body">
-        @link(message = messages("movement.confirmation.redirect.link"), href = routes.ChoiceController.displayPage())
-        </p>
+        @confirmationLink()
     }

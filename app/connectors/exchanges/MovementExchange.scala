@@ -25,8 +25,7 @@ case class ArrivalExchange(
   override val providerId: String,
   override val consignmentReference: ConsignmentReferences,
   override val location: Location,
-  movementDetails: MovementDetailsExchange,
-  arrivalReference: ArrivalReference
+  movementDetails: MovementDetailsExchange
 ) extends MovementExchange {
   override val choice: MovementType = MovementType.Arrival
 }

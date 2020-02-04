@@ -43,8 +43,7 @@ class MovementBuilderSpec extends UnitSpec {
           providerId = providerId,
           consignmentReference = answers.consignmentReferences.get,
           location = answers.location.get,
-          movementDetails = MovementDetailsExchange(movementDetailsFormatted),
-          arrivalReference = answers.arrivalReference.get
+          movementDetails = MovementDetailsExchange(movementDetailsFormatted)
         )
 
         val result = builder.createMovementExchange(providerId, answers)

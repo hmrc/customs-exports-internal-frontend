@@ -52,7 +52,7 @@ class AssociateUCRConfirmationViewSpec extends ViewSpec with Injector {
       "have 'find another consignment' link" in {
         page()
           .getElementsByClass("govuk-link")
-          .get(1) must haveHref(controllers.routes.ChoiceController.displayPage())
+          .get(1) must haveHref(controllers.ileQuery.routes.IleQueryController.displayQueryForm())
       }
     }
   }

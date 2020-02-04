@@ -122,7 +122,7 @@ class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockC
         val result = controller().saveConsignmentReferences()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.movements.routes.ArrivalReferenceController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.movements.routes.MovementDetailsController.displayPage().url)
       }
     }
 
