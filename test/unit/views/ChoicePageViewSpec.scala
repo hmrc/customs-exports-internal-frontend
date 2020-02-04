@@ -16,15 +16,14 @@
 
 package views
 
+import base.Injector
 import forms.Choice
 import models.UcrBlock
+import org.jsoup.nodes.Document
+import play.api.data.FormError
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import play.api.data.FormError
-import base.Injector
 import views.html.choice_page
-
-import org.jsoup.nodes.Document
 
 class ChoicePageViewSpec extends ViewSpec with Injector {
 
@@ -66,18 +65,51 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
 
     "render back link" when {
       "form contains ucr block" in {
-        val backButton = page(Choice.form(), Some(UcrBlock("ucr", "D"))).getBackButton
+        val backButton = page(Choice.form(), Some(UcrBlock("ucr", "D"))).getElementById("back-link")
 
-        backButton mustBe defined
-        backButton.get must haveHref(controllers.ileQuery.routes.IleQueryController.submitQuery("ucr"))
+        backButton must haveHref(controllers.ileQuery.routes.IleQueryController.submitQuery("ucr"))
       }
     }
 
     "not render back link" when {
       "form does not contain ucr block" in {
-        val backButton = page(Choice.form(), None).getBackButton
+        val backButton = Option(page(Choice.form(), None).getElementById("back-link"))
 
         backButton mustNot be(defined)
+      }
+    }
+
+    "not render 'Shut Mucr' option" when {
+      "ILE query was for a Ducr" in {
+        val choicePage = page(Choice.form(), Some(UcrBlock("ducr", UcrBlock.ducrType)))
+
+        choicePage.getElementsByClass("govuk-radios__input").size() mustBe 6
+
+        choicePage.getElementsByAttributeValue("value", "arrival").size() mustBe 1
+        choicePage.getElementsByAttributeValue("value", "associateUCR").size() must be(1)
+        choicePage.getElementsByAttributeValue("value", "disassociateUCR").size() must be(1)
+        choicePage.getElementsByAttributeValue("value", "departure").size() must be(1)
+        choicePage.getElementsByAttributeValue("value", "retrospectiveArrival").size() must be(1)
+        choicePage.getElementsByAttributeValue("value", "submissions").size() must be(1)
+
+        choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 0
+      }
+    }
+
+    "render 'Shut Mucr' option" when {
+      "ILE query was for a Mucr" in {
+        val choicePage = page(Choice.form(), Some(UcrBlock("mucr", UcrBlock.mucrType)))
+
+        choicePage.getElementsByClass("govuk-radios__input").size() mustBe 7
+
+        choicePage.getElementsByAttributeValue("value", "arrival").size() mustBe 1
+        choicePage.getElementsByAttributeValue("value", "associateUCR").size() must be(1)
+        choicePage.getElementsByAttributeValue("value", "disassociateUCR").size() must be(1)
+        choicePage.getElementsByAttributeValue("value", "departure").size() must be(1)
+        choicePage.getElementsByAttributeValue("value", "retrospectiveArrival").size() must be(1)
+        choicePage.getElementsByAttributeValue("value", "submissions").size() must be(1)
+
+        choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 1
       }
     }
   }
