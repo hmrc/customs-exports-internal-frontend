@@ -114,7 +114,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         theCacheUpserted.queryUcr mustBe Some(UcrBlock("mucr", "M"))
       }
 
-      "submit mucr query method is invoked and the ducr is not found " in {
+      "submit mucr query method is invoked and the mucr is not found " in {
 
         val responseData = UcrNotFoundResponseExchangeData(messageCode = "", actionCode = "", ucrBlock = Some(UcrBlock("mucr", "M")))
         val responseExchange = Seq(IleQueryResponseExchange(Instant.now(), "convId", "inventoryLinkingQueryResponse", responseData))
