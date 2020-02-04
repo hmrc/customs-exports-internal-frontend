@@ -20,13 +20,17 @@ import forms.Choice
 import models.UcrBlock
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
+import play.api.data.FormError
+import base.Injector
 import views.html.choice_page
 
-class ChoicePageViewSpec extends ViewSpec {
+import org.jsoup.nodes.Document
+
+class ChoicePageViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  private val page = new choice_page(main_template)
+  private val page = instanceOf[choice_page]
 
   "Choice page page" should {
 
@@ -38,13 +42,13 @@ class ChoicePageViewSpec extends ViewSpec {
 
       val choicePage = page(Choice.form())
 
-      choicePage.getElementById("arrival-label") must containMessage("movement.choice.arrival.label")
-      choicePage.getElementById("associate-label") must containMessage("movement.choice.associate.label")
-      choicePage.getElementById("disassociate-label") must containMessage("movement.choice.disassociateDucr.label")
-      choicePage.getElementById("shut_mucr-label") must containMessage("movement.choice.shutMucr.label")
-      choicePage.getElementById("departure-label") must containMessage("movement.choice.departure.label")
-      choicePage.getElementById("retrospectiveArrival-label") must containMessage("movement.choice.retrospectiveArrival.label")
-      choicePage.getElementById("submissions-label") must containMessage("movement.choice.submissions.label")
+      choicePage.getElementsByAttributeValue("for", "choice").text() must be(messages("movement.choice.arrival.label"))
+      choicePage.getElementsByAttributeValue("for", "choice-2").text() must be(messages("movement.choice.associate.label"))
+      choicePage.getElementsByAttributeValue("for", "choice-3").text() must be(messages("movement.choice.disassociateDucr.label"))
+      choicePage.getElementsByAttributeValue("for", "choice-4").text() must be(messages("movement.choice.shutMucr.label"))
+      choicePage.getElementsByAttributeValue("for", "choice-5").text() must be(messages("movement.choice.departure.label"))
+      choicePage.getElementsByAttributeValue("for", "choice-6").text() must be(messages("movement.choice.retrospectiveArrival.label"))
+      choicePage.getElementsByAttributeValue("for", "choice-7").text() must be(messages("movement.choice.submissions.label"))
     }
 
     "render error summary" when {
@@ -53,7 +57,10 @@ class ChoicePageViewSpec extends ViewSpec {
       }
 
       "some errors" in {
-        page(Choice.form().withError("error", "error.required")).getErrorSummary mustBe defined
+        val view: Document = page(Choice.form().withError(FormError("choice", "error.required")))
+
+        view must haveGovUkGlobalErrorSummary
+        view must haveGovUkFieldError("choice", messages("error.required"))
       }
     }
 
