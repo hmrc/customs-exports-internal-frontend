@@ -50,7 +50,8 @@ class IleQueryController @Inject()(
   ileQueryPage: ile_query,
   loadingScreenPage: loading_screen,
   ileQueryDucrResponsePage: ile_query_ducr_response,
-  ileQueryMucrResponsePage: ile_query_mucr_response
+  ileQueryMucrResponsePage: ile_query_mucr_response,
+  consignmentNotFound: consignment_not_found_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -117,7 +118,7 @@ class IleQueryController @Inject()(
 
       case response: UcrNotFoundResponseExchangeData =>
         response.ucrBlock match {
-          case Some(UcrBlock(ucr, _)) => Redirect(controllers.ileQuery.routes.ConsignmentNotFoundController.displayPage(ucr))
+          case Some(UcrBlock(ucr, _)) => Ok(consignmentNotFound(ucr))
           case _                      => InternalServerError(errorHandler.standardErrorTemplate())
         }
     }

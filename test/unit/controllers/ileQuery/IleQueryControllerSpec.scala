@@ -48,6 +48,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
   private val loadingScreenPage = mock[loading_screen]
   private val ileQueryDucrResponsePage = mock[ile_query_ducr_response]
   private val ileQueryMucrResponsePage = mock[ile_query_mucr_response]
+  private val consignmentNotFoundPage = mock[consignment_not_found_page]
 
   private val controller: IleQueryController = new IleQueryController(
     SuccessfulAuth(),
@@ -59,7 +60,8 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
     ileQueryPage,
     loadingScreenPage,
     ileQueryDucrResponsePage,
-    ileQueryMucrResponsePage
+    ileQueryMucrResponsePage,
+    consignmentNotFoundPage
   )(global)
 
   override protected def beforeEach(): Unit = {
@@ -70,10 +72,11 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
     when(loadingScreenPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
     when(ileQueryDucrResponsePage.apply(any[DucrInfo])(any(), any())).thenReturn(HtmlFormat.empty)
     when(ileQueryMucrResponsePage.apply(any[MucrInfo])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(consignmentNotFoundPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
-    reset(errorHandler, connector, ileQueryPage, loadingScreenPage, ileQueryDucrResponsePage, ileQueryMucrResponsePage)
+    reset(errorHandler, connector, ileQueryPage, loadingScreenPage, ileQueryDucrResponsePage, ileQueryMucrResponsePage, consignmentNotFoundPage)
 
     super.afterEach()
   }
