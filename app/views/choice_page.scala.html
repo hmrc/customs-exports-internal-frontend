@@ -18,6 +18,7 @@
 @import controllers.routes
 @import forms.Choice
 @import forms.Choice._
+@import views.components.BackButton
 @import views.Title
 @import components.gds.{errorSummary, gds_main_template, pageTitle}
 
@@ -33,11 +34,11 @@
 @(form: Form[Choice], queryUcr: Option[UcrBlock] = None)(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("movement.choice.title")) {
+    title = Title("movement.choice.title"),
+    backButton = queryUcr.map(block => BackButton(messages("site.back"), controllers.ileQuery.routes.IleQueryController.submitQuery(block.ucr)))) {
 
         @formHelper(action = routes.ChoiceController.submit(), 'autoComplete -> "off") {
 
-            @queryUcr.map(block => components.back_link(controllers.ileQuery.routes.IleQueryController.submitQuery(block.ucr)))
             @errorSummary(form.errors)
 
             @govukRadios(Radios(
@@ -85,7 +86,7 @@
                         content = Text(messages("movement.choice.submissions.label")),
                         checked = form("choice").value.contains(ViewSubmissions.value.toString)
                     )
-                ),
+                ).filterNot(item => item.value.contains(ShutMUCR.value) && queryUcr.exists(_.ucrType == UcrBlock.ducrType)),
                 errorMessage = form("choice").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
             ))
             @govukButton(Button(content = Text(messages("site.continue"))))
