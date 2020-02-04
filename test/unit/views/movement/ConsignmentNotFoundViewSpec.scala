@@ -50,7 +50,7 @@ class ConsignmentNotFoundViewSpec extends ViewSpec with Injector {
       val backButton = view.getElementsByClass("govuk-back-link").first()
 
       backButton.text() mustBe messages("site.back")
-      backButton.attr("href") mustBe controllers.routes.ViewSubmissionsController.displayPage().url
+      backButton.attr("href") mustBe controllers.ileQuery.routes.IleQueryController.displayQueryForm().url
     }
   }
 }

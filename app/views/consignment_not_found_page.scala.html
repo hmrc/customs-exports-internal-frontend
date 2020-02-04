@@ -25,7 +25,7 @@
 
 @govukLayout(
     title = Title("ileQueryResponse.ucrNotFound.title", NO_SECTION),
-    backButton = Some(BackButton(messages("site.back"), controllers.routes.ViewSubmissionsController.displayPage))) {
+    backButton = Some(BackButton(messages("site.back"), controllers.ileQuery.routes.IleQueryController.displayQueryForm()))) {
 
     @pageTitle(text = messages("ileQueryResponse.ucrNotFound.title"), classes = "govuk-heading-xl")
 
