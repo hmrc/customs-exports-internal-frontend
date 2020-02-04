@@ -86,7 +86,7 @@
                         content = Text(messages("movement.choice.submissions.label")),
                         checked = form("choice").value.contains(ViewSubmissions.value.toString)
                     )
-                ).filterNot(item => item.value.contains(ShutMUCR.value) && queryUcr.exists(_.ucrType.equals(UcrBlock.ducrType))),
+                ).filterNot(item => item.value.contains(ShutMUCR.value) && queryUcr.exists(_.ucrType == UcrBlock.ducrType)),
                 errorMessage = form("choice").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
             ))
             @govukButton(Button(content = Text(messages("site.continue"))))
