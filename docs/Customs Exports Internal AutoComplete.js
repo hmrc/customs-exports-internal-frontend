@@ -66,8 +66,8 @@ function completePage() {
         document.getElementsByClassName('button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/choice")){
-        selectRadioOption(document.getElementById("choice"), 0);
-        document.getElementsByClassName('button')[0].click()
+        document.getElementById("choice").checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
     }
 
     if(currentPageIs("/customs-exports-internal/consignment-references")){
