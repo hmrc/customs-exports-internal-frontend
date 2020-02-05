@@ -16,15 +16,16 @@
 
 package views.consolidations
 
+import base.Injector
 import models.cache.ShutMucrAnswers
 import views.ViewSpec
 import views.html.shut_mucr_summary
 
-class ShutMucrSummaryViewSpec extends ViewSpec {
+class ShutMucrSummaryViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(ShutMucrAnswers())
 
-  private val page = new shut_mucr_summary(main_template)
+  private val page = instanceOf[shut_mucr_summary]
   private val shutMucr = "some-mucr"
 
   "View" should {
@@ -32,29 +33,25 @@ class ShutMucrSummaryViewSpec extends ViewSpec {
       page(shutMucr).getTitle must containMessage("shutMucr.summary.title")
     }
 
-    "render page header" in {
-      page(shutMucr).getElementById("shutMucr-header") must containMessage("shutMucr.summary.header")
-    }
-
     "render MUCR type in table row" in {
-      page(shutMucr).getElementById("shutMucr-type") must containMessage("shutMucr.summary.type")
+      page(shutMucr).getElementsByClass("govuk-summary-list__key").text() mustBe messages("shutMucr.summary.type")
     }
 
     "render correct mucr" in {
-      page(shutMucr).getElementById("shutMucr-mucr").text() must include("some-mucr")
+      page(shutMucr).getElementsByClass("govuk-summary-list__value").text() mustBe shutMucr
     }
 
     "render correct change button" in {
-      val changeButton = page(shutMucr).getElementById("shutMucr-change")
+      val changeButton = page(shutMucr).getElementsByClass("govuk-link").first()
 
       changeButton must haveHref(controllers.consolidations.routes.ShutMucrController.displayPage())
-      changeButton must containMessage("site.edit")
+      changeButton.text() must include(messages("site.edit"))
     }
 
     "render correct submit button" in {
-      val submitButton = page(shutMucr).getElementById("submit")
+      val submitButton = page(shutMucr).getElementsByClass("govuk-button").first()
 
-      submitButton must containMessage("site.confirmAndSubmit")
+      submitButton.text() mustBe messages("site.confirmAndSubmit")
     }
   }
 
