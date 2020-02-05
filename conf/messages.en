@@ -240,7 +240,7 @@ shutMucr.title = Which MUCR do you want to shut?
 
 shutMucr.summary.title = Is the information provided for this shut request correct?
 shutMucr.summary.header = Shut master consignment
-shutMucr.summary.type = MUCR
+shutMucr.summary.type = Shut MUCR
 
 shutMucr.confirmation.tab.heading = Shut MUCR request submitted
 shutMucr.confirmation.heading = Request to shut MUCR {0} has been submitted
