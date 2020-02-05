@@ -336,6 +336,9 @@ ileQueryResponse.details.isShutMucr.false = Open
 ileQueryResponse.links.manageConsignment = Manage this consignment
 ileQueryResponse.links.findConsignment = Find another consignment
 
+ileQueryResponse.ucrNotFound.title = The requested UCR does not exist
+ileQueryResponse.ucrNotFound.message = {0} does not exist.
+
 ileQuery.mapping.roe.default = Unknown Route of Entry ({0})
 ileQuery.mapping.roe.1 = You need to provide additional documents before your goods can be released
 ileQuery.mapping.roe.2 = We're reviewing your declaration

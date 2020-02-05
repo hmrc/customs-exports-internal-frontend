@@ -24,7 +24,7 @@ import connectors.exchanges.IleQueryExchange
 import controllers.ControllerLayerSpec
 import models.UcrBlock
 import models.cache.IleQuery
-import models.notifications.queries.IleQueryResponseExchangeData.SuccessfulResponseExchangeData
+import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
 import models.notifications.queries.{DucrInfo, IleQueryResponseExchange, MucrInfo}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{never, reset, verify, when}
@@ -48,6 +48,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
   private val loadingScreenPage = mock[loading_screen]
   private val ileQueryDucrResponsePage = mock[ile_query_ducr_response]
   private val ileQueryMucrResponsePage = mock[ile_query_mucr_response]
+  private val consignmentNotFoundPage = mock[consignment_not_found_page]
 
   private val controller: IleQueryController = new IleQueryController(
     SuccessfulAuth(),
@@ -59,7 +60,8 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
     ileQueryPage,
     loadingScreenPage,
     ileQueryDucrResponsePage,
-    ileQueryMucrResponsePage
+    ileQueryMucrResponsePage,
+    consignmentNotFoundPage
   )(global)
 
   override protected def beforeEach(): Unit = {
@@ -70,10 +72,11 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
     when(loadingScreenPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
     when(ileQueryDucrResponsePage.apply(any[DucrInfo])(any(), any())).thenReturn(HtmlFormat.empty)
     when(ileQueryMucrResponsePage.apply(any[MucrInfo])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(consignmentNotFoundPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
-    reset(errorHandler, connector, ileQueryPage, loadingScreenPage, ileQueryDucrResponsePage, ileQueryMucrResponsePage)
+    reset(errorHandler, connector, ileQueryPage, loadingScreenPage, ileQueryDucrResponsePage, ileQueryMucrResponsePage, consignmentNotFoundPage)
 
     super.afterEach()
   }
@@ -111,6 +114,25 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         theCacheUpserted.queryUcr mustBe Some(UcrBlock("mucr", "M"))
       }
 
+      "submit mucr query method is invoked and the mucr is not found " in {
+
+        val responseData = UcrNotFoundResponseExchangeData(messageCode = "", actionCode = "", ucrBlock = Some(UcrBlock("mucr", "M")))
+        val responseExchange = Seq(IleQueryResponseExchange(Instant.now(), "convId", "inventoryLinkingQueryResponse", responseData))
+        when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
+          .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", "convId"))))
+        when(connector.fetchQueryNotifications(any(), any())(any()))
+          .thenReturn(Future.successful(HttpResponse(OK, Some(Json.toJson(responseExchange)))))
+        when(ileQueryRepository.removeByConversationId(any()))
+          .thenReturn(Future.successful((): Unit))
+
+        val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+
+        val result = controller.submitQuery("mucr")(request)
+
+        status(result) mustBe OK
+        verify(consignmentNotFoundPage).apply(any())(any(), any())
+      }
+
       "submit ducr query method is invoked and notifications are available" in {
 
         val ducrInfo = DucrInfo(ucr = "ducr", declarationId = "decId")
@@ -131,6 +153,25 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         verify(ileQueryDucrResponsePage).apply(meq(ducrInfo))(any(), any())
 
         theCacheUpserted.queryUcr mustBe Some(UcrBlock("ducr", "D"))
+      }
+
+      "submit ducr query method is invoked and the ducr is not found " in {
+
+        val responseData = UcrNotFoundResponseExchangeData(messageCode = "", actionCode = "", ucrBlock = Some(UcrBlock("ducr", "D")))
+        val responseExchange = Seq(IleQueryResponseExchange(Instant.now(), "convId", "inventoryLinkingQueryResponse", responseData))
+        when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
+          .thenReturn(Future.successful(Some(IleQuery("sessionId", "ducr", "convId"))))
+        when(connector.fetchQueryNotifications(any(), any())(any()))
+          .thenReturn(Future.successful(HttpResponse(OK, Some(Json.toJson(responseExchange)))))
+        when(ileQueryRepository.removeByConversationId(any()))
+          .thenReturn(Future.successful((): Unit))
+
+        val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
+
+        val result = controller.submitQuery("ducr")(request)
+
+        status(result) mustBe OK
+        verify(consignmentNotFoundPage).apply(any())(any(), any())
       }
 
       "submit query method is invoked and neither mucr or ducr info available" in {
