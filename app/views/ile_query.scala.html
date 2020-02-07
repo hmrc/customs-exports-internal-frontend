@@ -42,7 +42,7 @@
 @govukLayout(
     title = Title("ileQuery.title")) {
 
-    @formHelper(action = routes.ChoiceController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.ileQuery.routes.IleQueryController.submitQueryForm(), 'autoComplete -> "off") {
 
         @errorSummary(form.errors)
 
@@ -54,7 +54,6 @@
             )),
             html = html
         ))
-
 
         @govukButton(Button(content = Text(messages("site.continue"))))
 
