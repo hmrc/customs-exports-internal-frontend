@@ -2,6 +2,13 @@ service.name = Internal Exports Movements Service
 header.homepage.alt = Go to the HMRC homepage
 header.homepage.text = HM Revenue & Customs
 
+date.day = Day
+date.month = Month
+date.year = Year
+
+time.hour = Hour
+time.minute = Minute
+
 feedback = This is a new service - your {0} will help us to improve it.
 feedback.link = feedback
 
@@ -16,6 +23,8 @@ site.change.hint.shut.mucr = Change MUCR
 site.confirmAndSubmit = Confirm and submit
 site.backToStart = Back to start
 site.edit = Change
+site.inputText.ducr.label = Enter an existing DUCR
+site.inputText.mucr.label = Enter an existing MUCR
 
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
@@ -36,6 +45,7 @@ global.error.title = There is a problem
 global.error.heading = There is a problem with a service
 global.error.message = Please try again later.
 
+movement.sectionHeading = {0} consignment {1}
 movement.choice.title = What do you want to do?
 movement.choice.arrival.label = Arrive a consignment
 movement.choice.departure.label = Depart a consignment
@@ -48,6 +58,7 @@ movement.choice.submissions.label = View requests
 choicePage.input.error.empty = Please, choose what do you want to do
 choicePage.input.error.incorrectValue = Please, choose valid option
 
+consignmentReferences.arrive.title = What consignment do you want to arrive?
 consignmentReferences.arrive.heading = Arrive consignment
 consignmentReferences.retrospective_arrive.heading = Retrospectively arrive a consignment
 consignmentReferences.depart.heading = Depart consignment
@@ -76,6 +87,7 @@ arrivalDetails.date.question = Date of Arrival
 arrivalDetails.date.hint = For example, 01 08 2007
 arrivalDetails.time.question = Time of Arrival
 arrivalDetails.time.hint = Enter the time in 24 hour format. For example, 13 30
+arrivalDetails.sectionHeading = Arrive consignment {0}
 
 arrival.details.error.overdue = Time of Arrival cannot be more than 60 days in the past
 arrival.details.error.future = Time of Arrival cannot be in the future
