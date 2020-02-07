@@ -15,26 +15,53 @@
  *@
 
 @import views.Title
+@import views.html.components.gds.link
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import components.gds.{errorSummary, gds_main_template, pageTitle}
 
-@this(main_template: views.html.templates.main_template)
+@this(
+        govukLayout: gds_main_template,
+        govukButton: GovukButton,
+        govukFieldset: GovukFieldset,
+        govukInput: GovukInput,
+        errorSummary: errorSummary,
+        pageTitle: pageTitle,
+        formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+)
 
 @(form: Form[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title("ileQuery.title")) {
+@html = {
+@govukInput(Input(
+    id = "find-consignment",
+    name = "ucr",
+    classes = "govuk-!-width-two-thirds"
+))
+}
 
-  @helper.form(controllers.ileQuery.routes.IleQueryController.submitQueryForm, 'autoComplete -> "off") {
+@govukLayout(
+    title = Title("ileQuery.title")) {
 
-    @helper.CSRF.formField
+    @formHelper(action = routes.ChoiceController.submit(), 'autoComplete -> "off") {
 
-    @components.error_summary(form.errors)
+        @errorSummary(form.errors)
 
-    @components.page_title(Some(messages("ileQuery.title")))
+        @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("ileQuery.title")),
+                classes = "govuk-fieldset__legend--xl",
+                isPageHeading = true
+            )),
+            html = html
+        ))
 
-    @components.input_text(
-      field = form("ucr"),
-      label = ""
-    )
 
-    @components.submit_button(messages("site.continue"))
-  }
+        @govukButton(Button(content = Text(messages("site.continue"))))
+
+        <ul class="govuk-list">
+            <li>@link(message = messages("ileQuery.link.emptyMucr"), href = routes.ViewSubmissionsController.displayPage())</li>
+            <li>@link(message = messages("ileQuery.link.requests"), href = routes.ViewSubmissionsController.displayPage())</li>
+        </ul>
+
+    }
 }
