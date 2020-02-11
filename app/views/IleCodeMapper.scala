@@ -40,4 +40,7 @@ class IleCodeMapper @Inject()(decoder: Decoder) {
 
   def statusOfEntryMucr(code: String)(implicit messages: Messages): Content =
     decoder.mucrSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)
+
+  def statusOfEntryCombined(code: String)(implicit messages: Messages): Content =
+    decoder.soeCombined(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)
 }

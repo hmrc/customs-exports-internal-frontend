@@ -27,38 +27,40 @@
 @(parentMucr: Option[MucrInfo])(implicit request: Request[_], messages: Messages)
 
 @if(parentMucr.isDefined){
-    <h2 class="govuk-heading-m">@messages("ileQueryResponse.parent")</h2>
+    <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-m">@messages("ileQueryResponse.parent")</h2>
 
-    @parentMucr.map(parent => {
-        govukSummaryList(SummaryList(
-            attributes = Map("id" -> "parentConsignment"),
-            rows = Seq(
-                SummaryListRow(
-                    key = Key(
-                        content = Text(messages("ileQueryResponse.parent.reference"))
+        @parentMucr.map(parent => {
+            govukSummaryList(SummaryList(
+                attributes = Map("id" -> "parentConsignment"),
+                rows = Seq(
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("ileQueryResponse.parent.reference"))
+                        ),
+                        value = Value(
+                            content = HtmlContent(link(parent.ucr, controllers.ileQuery.routes.IleQueryController.submitQuery(parent.ucr)))
+                        )
                     ),
-                    value = Value(
-                        content = HtmlContent(link(parent.ucr, controllers.ileQuery.routes.IleQueryController.submitQuery(parent.ucr)))
-                    )
-                ),
-                SummaryListRow(
-                    key = Key(
-                        content = Text(messages("ileQueryResponse.details.route"))
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("ileQueryResponse.details.route"))
+                        ),
+                        value = Value(
+                            content = parent.entryStatus.flatMap(_.roe).map(ileCodeMapper.routeOfEntry(_)).getOrElse(Empty)
+                        )
                     ),
-                    value = Value(
-                        content = parent.entryStatus.flatMap(_.roe).map(ileCodeMapper.routeOfEntry(_)).getOrElse(Empty)
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("ileQueryResponse.details.entryStatus"))
+                        ),
+                        value = Value(
+                            content = parent.entryStatus.flatMap(_.soe).map(ileCodeMapper.statusOfEntryMucr(_)).getOrElse(Empty)
+                        )
                     )
-                ),
-                SummaryListRow(
-                    key = Key(
-                        content = Text(messages("ileQueryResponse.details.entryStatus"))
-                    ),
-                    value = Value(
-                        content = parent.entryStatus.flatMap(_.soe).map(ileCodeMapper.statusOfEntryMucr(_)).getOrElse(Empty)
-                    )
-                )
-            ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
-            classes = "govuk-!-margin-bottom-9"
-        ))
-    })
+                ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
+                classes = "govuk-!-margin-bottom-9"
+            ))
+        })
+    </div>
 }

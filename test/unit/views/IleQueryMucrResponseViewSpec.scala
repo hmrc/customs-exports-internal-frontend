@@ -144,7 +144,7 @@ class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
       parentConsignmentElement(viewWithParent, 0).getElementsByClass("govuk-link").first() must haveHref(
         controllers.ileQuery.routes.IleQueryController.submitQuery("parentUcr")
       )
-      parentConsignmentElement(viewWithParent, 0).text() must be("parentUcr")
+      parentConsignmentElement(viewWithParent, 0) must containText("parentUcr")
     }
 
     "render parent consignment route" in {
@@ -155,5 +155,24 @@ class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
       parentConsignmentElement(viewWithParent, 2) must containMessage(SOECode.ConsolidationOpen.messageKey)
     }
 
+    "not render associate consignments section if there aren't any " in {
+      view().getElementById("associatedUcrs") must be(null)
+    }
+
+    "render associate consignments section" in {
+      val viewWithChild = view(
+        associatedConsignments =
+          Seq(MucrInfo("childUcr", entryStatus = Some(EntryStatus(None, Some(ROECode.DocumentaryControl), Some(SOECode.Departed.code)))))
+      )
+      viewWithChild.getElementById("associatedUcrs") must containMessage("ileQueryResponse.associated")
+
+      val elmChild = viewWithChild.getElementById("associateUcr_0_ucr")
+      elmChild must containText("childUcr")
+      elmChild.getElementsByClass("govuk-link").first() must haveHref(controllers.ileQuery.routes.IleQueryController.submitQuery("childUcr"))
+
+      viewWithChild.getElementById("associateUcr_0_roe") must containMessage(ROECode.DocumentaryControl.messageKey)
+
+      viewWithChild.getElementById("associateUcr_0_soe") must containMessage(SOECode.Departed.messageKey)
+    }
   }
 }

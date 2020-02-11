@@ -15,7 +15,7 @@
  *@
 
 @import components.gds.gds_main_template
-@import components.ilequery.{response_buttons, response_parent, response_previous_movements}
+@import components.ilequery.{response_buttons, response_parent, response_previous_movements, response_associated_consignments}
 @import models.notifications.queries.{MucrInfo, UcrInfo}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.components.BackButton
@@ -27,6 +27,7 @@
         govukLayout: gds_main_template,
         parentSection: response_parent,
         previousMovementsSection: response_previous_movements,
+        associatedConsignmentsSection: response_associated_consignments,
         responseButtons: response_buttons,
         govukButton: GovukButton,
         govukSummaryList : GovukSummaryList,
@@ -37,87 +38,67 @@
 @(info: MucrInfo, parentMucr: Option[MucrInfo], associatedConsignments: Seq[UcrInfo])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
+    useCustomContentWidth = true,
     title = Title("ileQueryResponse.mucr.title"),
     backButton = Some(BackButton(messages("site.back"), controllers.ileQuery.routes.IleQueryController.displayQueryForm()))) {
 
-    <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">@messages("ileQueryResponse.mucr.title")</h1>
-    <span class="govuk-caption-xl">@info.ucr</span>
+    <div class="govuk-grid-row">
 
-    @if(parentMucr.isEmpty){
-        @info.isShut.map(isShut =>
-            govukTag(Tag(
-                attributes = Map("id" -> "isShutMucr"),
-                content = Text(messages(s"ileQueryResponse.details.isShutMucr.$isShut"))
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">@messages("ileQueryResponse.mucr.title")</h1>
+            <span class="govuk-caption-xl">@info.ucr</span>
+            @if(parentMucr.isEmpty){
+                @info.isShut.map(isShut =>
+                    govukTag(Tag(
+                        attributes = Map("id" -> "isShutMucr"),
+                        content = Text(messages(s"ileQueryResponse.details.isShutMucr.$isShut"))
+                    ))
+                )
+            }
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m govuk-!-margin-top-5">@messages("ileQueryResponse.details")</h2>
+
+            @govukSummaryList(SummaryList(
+                attributes = Map("id" -> "summary"),
+                rows = Seq(
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("ileQueryResponse.details.route"))
+                        ),
+                        value = Value(
+                            content = info.entryStatus.flatMap(_.roe).map(ileCodeMapper.routeOfEntry(_)).getOrElse(Empty)
+                        )
+                    ),
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("ileQueryResponse.details.entryStatus"))
+                        ),
+                        value = Value(
+                            content = info.entryStatus.flatMap(_.soe).map(ileCodeMapper.statusOfEntryMucr(_)).getOrElse(Empty)
+                        )
+                    ),
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("ileQueryResponse.details.transport"))
+                        ),
+                        value = Value(
+                            content = info.transport.map(transportMapper.transportHtml).getOrElse(Empty)
+                        )
+                    )
+                ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
+                classes = "govuk-!-margin-bottom-9"
             ))
-        )
-    }
+        </div>
 
-    <h2 class="govuk-heading-m govuk-!-margin-top-5">@messages("ileQueryResponse.details")</h2>
+        @previousMovementsSection(info.movements)
 
-    @govukSummaryList(SummaryList(
-        attributes = Map("id" -> "summary"),
-        rows = Seq(
-            SummaryListRow(
-                key = Key(
-                    content = Text(messages("ileQueryResponse.details.route"))
-                ),
-                value = Value(
-                    content = info.entryStatus.flatMap(_.roe).map(ileCodeMapper.routeOfEntry(_)).getOrElse(Empty)
-                )
-            ),
-            SummaryListRow(
-                key = Key(
-                    content = Text(messages("ileQueryResponse.details.entryStatus"))
-                ),
-                value = Value(
-                    content = info.entryStatus.flatMap(_.soe).map(ileCodeMapper.statusOfEntryMucr(_)).getOrElse(Empty)
-                )
-            ),
-            SummaryListRow(
-                key = Key(
-                    content = Text(messages("ileQueryResponse.details.transport"))
-                ),
-                value = Value(
-                    content = info.transport.map(transportMapper.transportHtml).getOrElse(Empty)
-                )
-            )
-        ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
-        classes = "govuk-!-margin-bottom-9"
-    ))
+        @parentSection(parentMucr)
 
-    @previousMovementsSection(info.movements)
+        @associatedConsignmentsSection(associatedConsignments)
 
-    @parentSection(parentMucr)
+        @responseButtons()
 
-    @if(associatedConsignments.size > 0){
-        <h2 class="govuk-heading-m">@messages("ileQueryResponse.associated")</h2>
-
-        @govukSummaryList(SummaryList(
-            attributes = Map("id" -> "associatedConsignments"),
-            rows = Seq(
-                SummaryListRow(
-                    key = Key(
-                        content = Text(messages("ileQueryResponse.associated.summary"))
-                    ),
-                    value = Value(
-                        content = Text(if(associatedConsignments.size == 1)
-                            messages("ileQueryResponse.associated.summary.singlar")
-                        else
-                            messages("ileQueryResponse.associated.summary.plural", associatedConsignments.size))
-                    )
-                ),
-                SummaryListRow(
-                    key = Key(
-                        content = Text(messages("ileQueryResponse.associated.combinedRoute"))
-                    ),
-                    value = Value(
-                        content = associatedConsignments.head.entryStatus.flatMap(_.roe).map(ileCodeMapper.routeOfEntry(_)).getOrElse(Empty)
-                    )
-                )
-            ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
-            classes = "govuk-!-margin-bottom-9"
-        ))
-    }
-
-    @responseButtons()
+    </div>
 }
