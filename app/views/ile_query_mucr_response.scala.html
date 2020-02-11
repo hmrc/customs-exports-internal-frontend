@@ -14,73 +14,181 @@
  * limitations under the License.
  *@
 
-@import java.time.format.DateTimeFormatter
-@import models.viewmodels.notificationspage.NotificationsPageSingleElement
-@import views.IleCodeMapper
-@import views.Title
-@import views.Title.NO_SECTION
-@import views.ViewDates
-@import models.notifications.queries.MucrInfo
+@import controllers.routes
+@import models.notifications.queries.{DucrInfo, MucrInfo, AssociatedConsignmentsInfo}
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.{IleCodeMapper, Title, TransportMapper, ViewDates}
+@import views.components.BackButton
+@import components.gds.{gds_main_template, link}
 
-@this(main_template: views.html.templates.main_template)
+@this(
+        ileCodeMapper: IleCodeMapper,
+        transportMapper: TransportMapper,
+        govukLayout: gds_main_template,
+        govukButton: GovukButton,
+        govukSummaryList : GovukSummaryList,
+        govukTable: GovukTable,
+        govukTag: GovukTag
+)
 
-@(info: MucrInfo)(implicit request: Request[_], messages: Messages)
+@(info: MucrInfo, parentMucr: Option[MucrInfo], associatedConsignments: AssociatedConsignmentsInfo)(implicit request: Request[_], messages: Messages)
 
+@govukLayout(
+    title = Title("ileQueryResponse.mucr.title"),
+    backButton = Some(BackButton(messages("site.back"), controllers.ileQuery.routes.IleQueryController.displayQueryForm()))) {
 
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">@messages("ileQueryResponse.mucr.title")</h1>
+    <span class="govuk-caption-xl">@info.ucr</span>
 
-@main_template(title = Title("ileQueryResponse.mucr.title")) {
+    @if(parentMucr.isEmpty){
+        @info.isShut.map(isShut =>
+            govukTag(Tag(
+                attributes = Map("id" -> "isShutMucr"),
+                content = Text(messages(s"ileQueryResponse.details.isShutMucr.$isShut"))
+            ))
+        )
+    }
 
-  @components.back_link(controllers.ileQuery.routes.IleQueryController.displayQueryForm())
+    <h2 class="govuk-heading-m govuk-!-margin-top-5">@messages("ileQueryResponse.details")</h2>
 
-    @components.page_title(
-        Some(messages("ileQueryResponse.mucr.title")),
-        Some(info.ucr)
-    )
+    @govukSummaryList(SummaryList(
+        attributes = Map("id" -> "summary"),
+        rows = Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text(messages("ileQueryResponse.details.route"))
+                ),
+                value = Value(
+                    content = info.entryStatus.flatMap(_.roe).map(code => ileCodeMapper.routeOfEntry(code)).getOrElse(Empty)
+                )
+            ),
+            SummaryListRow(
+                key = Key(
+                    content = Text(messages("ileQueryResponse.details.entryStatus"))
+                ),
+                value = Value(
+                    content = info.entryStatus.flatMap(_.soe).map(code => ileCodeMapper.statusOfEntryMucr(code)).getOrElse(Empty)
+                )
+            ),
+            SummaryListRow(
+                key = Key(
+                    content = Text(messages("ileQueryResponse.details.transport"))
+                ),
+                value = Value(
+                    content = info.transport.map(transport => transportMapper.transportHtml(transport)).getOrElse(Empty)
+                )
+            )
+        ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
+        classes = "govuk-!-margin-bottom-9"
+    ))
 
-    <h2>@messages("ileQueryResponse.previousMovements")</h2>
+    @govukTable(Table(
+        attributes = Map("id" -> "previousMovements"),
+        rows = info.movements.sortBy(_.movementDateTime).reverse.zipWithIndex.map(indexedMovement => {
+            Seq(
+                TableRow(
+                    content = Text(messages(s"ileQueryResponse.previousMovements.type.${indexedMovement._1.messageCode.toLowerCase}")),
+                    attributes = Map("id" -> s"movement_type_${indexedMovement._2}")
+                ),
+                TableRow(
+                    content = Text(indexedMovement._1.movementDateTime.map(date => ViewDates.movementFormatter.format(date)).getOrElse("")),
+                    attributes = Map("id" -> s"movement_date_${indexedMovement._2}")
+                ),
+                TableRow(
+                    content = Text(indexedMovement._1.goodsLocation),
+                    attributes = Map("id" -> s"goods_location_${indexedMovement._2}")
+                )
+            )
+        })
+        ,
+        head = Some(List(
+            HeadCell(
+                content = Text(messages("ileQueryResponse.previousMovements.type"))
+            ),
+            HeadCell(
+                content = Text(messages("ileQueryResponse.previousMovements.date"))
+            ),
+            HeadCell(
+                content = Text(messages("ileQueryResponse.previousMovements.goodsLocation"))
+            )
+        )),
+        classes = "govuk-table govuk-!-margin-bottom-9",
+        caption = Some(messages("ileQueryResponse.previousMovements")),
+        captionClasses = "govuk-table__caption govuk-heading-m",
+        firstCellIsHeader = true
+    ))
 
-    <table>
-        <thead>
-            <tr>
-                <th>@messages("ileQueryResponse.previousMovements.type")</th>
-                <th>@messages("ileQueryResponse.previousMovements.date")</th>
-                <th>@messages("ileQueryResponse.previousMovements.goodsLocation")</th>
-            </tr>
-        </thead>
-        <tbody>
-        @for( (movement, index) <- info.movements.sortBy(_.movementDateTime).reverse.zipWithIndex ){
-              <tr>
-                <td id="@{s"movement_type_$index"}" class="bold">@{messages(s"ileQueryResponse.previousMovements.type.${movement.messageCode.toLowerCase}")}</td>
-                  <td id="@{s"movement_date_$index"}">
-                      @movement.movementDateTime.map(date => ViewDates.movementFormatter.format(date))
-                  </td>
-                <td id="@{s"goods_location_$index"}">@movement.goodsLocation</td>
-              </tr>
-            }
-        </tbody>
-    </table>
+    @if(parentMucr.isDefined){
+        <h2 class="govuk-heading-m">@messages("ileQueryResponse.parent")</h2>
 
-    <h2>@messages("ileQueryResponse.details")</h2>
+      @parentMucr.map(parent => {
+          govukSummaryList(SummaryList(
+              attributes = Map("id" -> "parentConsignment"),
+              rows = Seq(
+                  SummaryListRow(
+                      key = Key(
+                          content = Text(messages("ileQueryResponse.parent.reference"))
+                      ),
+                      value = Value(
+                          content = HtmlContent(link(parent.ucr, controllers.ileQuery.routes.IleQueryController.submitQuery(parent.ucr)))
+                      )
+                  ),
+                  SummaryListRow(
+                      key = Key(
+                          content = Text(messages("ileQueryResponse.details.route"))
+                      ),
+                      value = Value(
+                          content = parent.entryStatus.flatMap(_.roe).map(code => ileCodeMapper.routeOfEntry(code)).getOrElse(Empty)
+                      )
+                  ),
+                  SummaryListRow(
+                      key = Key(
+                          content = Text(messages("ileQueryResponse.details.entryStatus"))
+                      ),
+                      value = Value(
+                          content = parent.entryStatus.flatMap(_.soe).map(code => ileCodeMapper.statusOfEntryMucr(code)).getOrElse(Empty)
+                      )
+                  )
+              ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
+              classes = "govuk-!-margin-bottom-9"
+          ))
+      })
+    }
 
-    <table>
-        <tbody>
-            <tr>
-                <td class="bold">@messages("ileQueryResponse.details.route")</td>
-                <td id="roe_code">@info.entryStatus.flatMap(_.roe).map(code => IleCodeMapper.routeOfEntry(code))</td>
-            </tr>
-            <tr>
-                <td class="bold">@messages("ileQueryResponse.details.entryStatus")</td>
-                <td id="soe_code">@info.entryStatus.flatMap(_.soe).map(code => IleCodeMapper.statusOfEntryDucr(code))</td>
-            </tr>
-            <tr>
-                <td class="bold">@messages("ileQueryResponse.details.isShutMucr")</td>
-                <td id="isShutMucr">@info.isShut.map(isShut => messages(s"ileQueryResponse.details.isShutMucr.$isShut"))</td>
-            </tr>
-        </tbody>
-    </table>
+    @if(associatedConsignments.size > 0){
+        <h2 class="govuk-heading-m">@messages("ileQueryResponse.associated")</h2>
 
-    @components.button_link("ileQueryResponse.links.manageConsignment", routes.ChoiceController.displayPage())
+        @govukSummaryList(SummaryList(
+            attributes = Map("id" -> "associatedConsignments"),
+            rows = Seq(
+                SummaryListRow(
+                    key = Key(
+                        content = Text(messages("ileQueryResponse.associated.summary"))
+                    ),
+                    value = Value(
+                        content = Text(if(associatedConsignments.size == 1)
+                            messages("ileQueryResponse.associated.summary.singlar")
+                        else
+                            messages("ileQueryResponse.associated.summary.plural", associatedConsignments.size))
+                    )
+                ),
+                SummaryListRow(
+                    key = Key(
+                        content = Text(messages("ileQueryResponse.associated.combinedRoute"))
+                    ),
+                    value = Value(
+                        content = associatedConsignments.mostSevereRoe.map(code => ileCodeMapper.routeOfEntry(code)).getOrElse(Empty)
+                    )
+                )
+            ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
+            classes = "govuk-!-margin-bottom-9"
+        ))
+    }
 
-    <a id="link-find" href="@{controllers.ileQuery.routes.IleQueryController.displayQueryForm.url}">@messages("ileQueryResponse.links.findConsignment")</a>
+    <div>
+    @govukButton(Button(content = Text(messages("ileQueryResponse.links.manageConsignment")), href = Some(routes.ChoiceController.displayPage().url)))
+    </div>
+    <div>
+    @link(messages("ileQueryResponse.links.findConsignment"), controllers.ileQuery.routes.IleQueryController.displayQueryForm)
+    </div>
 }
-

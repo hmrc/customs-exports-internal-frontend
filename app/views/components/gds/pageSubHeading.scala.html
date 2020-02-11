@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,25 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.notifications.queries
+@this()
 
-import models.notifications.EntryStatus
-import play.api.libs.json.Json
+@(text: String, classes: String = "govuk-caption-xl govuk-!-margin-bottom-9")
 
-case class MucrInfo(
-  ucr: String,
-  parentMucr: Option[String] = None,
-  entryStatus: Option[EntryStatus] = None,
-  isShut: Option[Boolean] = None,
-  movements: Seq[MovementInfo] = Seq.empty
-) {
-  def transport: Option[Transport] =
-    movements.find(movementInfo => movementInfo.transportDetails.isDefined).flatMap(movementWithTransport => movementWithTransport.transportDetails)
-
-}
-
-object MucrInfo {
-  implicit val format = Json.format[MucrInfo]
-}
+<span class="@{classes}">@text</span>

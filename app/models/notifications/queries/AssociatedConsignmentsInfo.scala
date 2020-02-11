@@ -16,21 +16,10 @@
 
 package models.notifications.queries
 
-import models.notifications.EntryStatus
-import play.api.libs.json.Json
+case class AssociatedConsignmentsInfo(childDucrs: Seq[DucrInfo] = Seq.empty, childMucrs: Seq[MucrInfo] = Seq.empty) {
 
-case class MucrInfo(
-  ucr: String,
-  parentMucr: Option[String] = None,
-  entryStatus: Option[EntryStatus] = None,
-  isShut: Option[Boolean] = None,
-  movements: Seq[MovementInfo] = Seq.empty
-) {
-  def transport: Option[Transport] =
-    movements.find(movementInfo => movementInfo.transportDetails.isDefined).flatMap(movementWithTransport => movementWithTransport.transportDetails)
+  def size: Int = childDucrs.size + childMucrs.size
 
-}
-
-object MucrInfo {
-  implicit val format = Json.format[MucrInfo]
+  def mostSevereRoe: Option[String] =
+    (childDucrs.flatMap(_.entryStatus.flatMap(_.roe)) ++ childMucrs.flatMap(_.entryStatus.flatMap(_.roe))).headOption
 }

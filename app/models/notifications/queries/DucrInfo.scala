@@ -26,7 +26,12 @@ case class DucrInfo(
   entryStatus: Option[EntryStatus] = None,
   movements: Seq[MovementInfo] = Seq.empty,
   goodsItem: Seq[GoodsItemInfo] = Seq.empty
-)
+) {
+
+  def transport: Option[Transport] =
+    movements.find(movementInfo => movementInfo.transportDetails.isDefined).flatMap(movementWithTransport => movementWithTransport.transportDetails)
+
+}
 
 object DucrInfo {
   implicit val format = Json.format[DucrInfo]
