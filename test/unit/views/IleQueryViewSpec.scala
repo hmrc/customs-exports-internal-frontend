@@ -18,11 +18,9 @@ package views
 
 import base.Injector
 import forms.IleQueryForm
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import play.twirl.api.Html
 import views.html.ile_query
 
 class IleQueryViewSpec extends ViewSpec with Injector {
@@ -48,7 +46,7 @@ class IleQueryViewSpec extends ViewSpec with Injector {
 
       "no errors" in {
 
-        val govukErrorSummary = view.getElementsByClass("govuk-error-summary__title").first()
+        val govukErrorSummary: Element = view.getElementsByClass("govuk-error-summary__title").first()
 
         Option(govukErrorSummary) mustBe None
       }
@@ -70,14 +68,18 @@ class IleQueryViewSpec extends ViewSpec with Injector {
       view.getElementsByClass("govuk-button").first().text() mustBe messages("site.continue")
     }
 
-    "contains link to create empty mucr" in {
-
-      govukListElement.getElementsByClass("govuk-link").get(0).text() mustBe messages("ileQuery.link.emptyMucr")
-    }
+//    TODO better way to signal pending tests
+//    "contains link to create empty mucr" in {
+//
+//      govukListElement.getElementsByClass("govuk-link").get(0).text() mustBe messages("ileQuery.link.emptyMucr")
+//    }
 
     "contains link to view previous requests" in {
 
-      govukListElement.getElementsByClass("govuk-link").get(1).text() mustBe messages("ileQuery.link.requests")
+      val previousRequests = govukListElement.getElementsByClass("govuk-link").get(0)
+
+      previousRequests.text() mustBe messages("ileQuery.link.requests")
+      previousRequests must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
     }
   }
 }

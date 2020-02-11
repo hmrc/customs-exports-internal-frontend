@@ -58,7 +58,8 @@
         @govukButton(Button(content = Text(messages("site.continue"))))
 
         <ul class="govuk-list">
-            <li>@link(message = messages("ileQuery.link.emptyMucr"), href = routes.ViewSubmissionsController.displayPage())</li>
+@*            TODO remove comments when CEDS-2156 is merged *@
+@*            <li>@link(message = messages("ileQuery.link.emptyMucr"), href = consolidations.routes.MucrOptionsController.displayPage())</li>*@
             <li>@link(message = messages("ileQuery.link.requests"), href = routes.ViewSubmissionsController.displayPage())</li>
         </ul>
 

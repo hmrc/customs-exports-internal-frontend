@@ -36,7 +36,7 @@ class DisassociateUcrViewSpec extends ViewSpec {
       val backButton = page(DisassociateUcr.form).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
+      backButton.get must haveHref(controllers.ileQuery.routes.IleQueryController.submitQueryForm())
     }
 
     "render form" in {

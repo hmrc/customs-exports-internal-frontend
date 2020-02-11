@@ -65,7 +65,7 @@ class ConsignmentReferenceViewSpec extends ViewSpec {
       val backButton = page(ConsignmentReferences.form()).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
+      backButton.get must haveHref(controllers.ileQuery.routes.IleQueryController.submitQueryForm())
     }
 
     "render error summary" when {

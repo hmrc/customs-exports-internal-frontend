@@ -1,6 +1,12 @@
 # microservice specific routes
 GET         /assets/*file                          controllers.Assets.versioned(path="/public", file: Asset)
 
+# ILE Query - entry point
+GET         /consignment-query                     controllers.ileQuery.IleQueryController.displayQueryForm()
+POST        /consignment-query                     controllers.ileQuery.IleQueryController.submitQueryForm()
+
+GET         /consignment-query/:ucr                controllers.ileQuery.IleQueryController.submitQuery(ucr: String)
+
 # Declaration choice page
 GET         /choice                                controllers.ChoiceController.displayPage()
 GET         /choice/:journey                       controllers.ChoiceController.startSpecificJourney(journey: forms.Choice)
@@ -75,3 +81,4 @@ GET         /submissions                           controllers.ViewSubmissionsCo
 
 # Notifications page
 GET         /notifications/:conversationId         controllers.ViewNotificationsController.listOfNotifications(conversationId)
+
