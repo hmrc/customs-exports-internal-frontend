@@ -62,7 +62,7 @@
                     content = Text(messages("ileQueryResponse.details.route"))
                 ),
                 value = Value(
-                    content = info.entryStatus.flatMap(_.roe).map(roe => ileCodeMapper.routeOfEntry(roe)).getOrElse(Empty)
+                    content = info.entryStatus.flatMap(_.roe).map(ileCodeMapper.routeOfEntry(_)).getOrElse(Empty)
                 )
             ),
             SummaryListRow(
@@ -70,7 +70,7 @@
                     content = Text(messages("ileQueryResponse.details.entryStatus"))
                 ),
                 value = Value(
-                    content = info.entryStatus.flatMap(_.soe).map(code => ileCodeMapper.statusOfEntryMucr(code)).getOrElse(Empty)
+                    content = info.entryStatus.flatMap(_.soe).map(ileCodeMapper.statusOfEntryMucr(_)).getOrElse(Empty)
                 )
             ),
             SummaryListRow(
@@ -78,7 +78,7 @@
                     content = Text(messages("ileQueryResponse.details.transport"))
                 ),
                 value = Value(
-                    content = info.transport.map(transport => transportMapper.transportHtml(transport)).getOrElse(Empty)
+                    content = info.transport.map(transportMapper.transportHtml).getOrElse(Empty)
                 )
             )
         ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
@@ -111,7 +111,7 @@
                         content = Text(messages("ileQueryResponse.associated.combinedRoute"))
                     ),
                     value = Value(
-                        content = associatedConsignments.head.entryStatus.flatMap(_.roe).map(roe => ileCodeMapper.routeOfEntry(roe)).getOrElse(Empty)
+                        content = associatedConsignments.head.entryStatus.flatMap(_.roe).map(ileCodeMapper.routeOfEntry(_)).getOrElse(Empty)
                     )
                 )
             ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
