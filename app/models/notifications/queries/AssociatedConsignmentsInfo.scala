@@ -16,10 +16,15 @@
 
 package models.notifications.queries
 
+import models.viewmodels.decoder.ROECode
+
 case class AssociatedConsignmentsInfo(childDucrs: Seq[DucrInfo] = Seq.empty, childMucrs: Seq[MucrInfo] = Seq.empty) {
 
   def size: Int = childDucrs.size + childMucrs.size
 
   def mostSevereRoe: Option[String] =
-    (childDucrs.flatMap(_.entryStatus.flatMap(_.roe)) ++ childMucrs.flatMap(_.entryStatus.flatMap(_.roe))).headOption
+    (childDucrs ++ childMucrs)
+      .sortBy(_.entryStatus.flatMap(_.roe).getOrElse(ROECode.UnknownRoe))
+      .headOption
+      .flatMap(_.entryStatus.flatMap(_.roe.map(_.code)))
 }

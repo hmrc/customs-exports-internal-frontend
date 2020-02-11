@@ -43,7 +43,7 @@ class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
     movementDateTime = Some(ZonedDateTime.parse("2019-10-30T10:22:18Z").toInstant)
   )
 
-  val status = EntryStatus(Some("ICS"), Some("ROE"), Some("SOE"))
+  val status = EntryStatus(Some("ICS"), Some(ROECode.DocumentaryControl), Some("SOE"))
   val mucrInfo =
     MucrInfo(ucr = "8GB123458302100-101SHIP1", movements = Seq.empty, entryStatus = Some(status), isShut = Some(true))
 
@@ -92,6 +92,8 @@ class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
     }
 
     "render default route of entry" in {
+      println(view())
+
       summaryElement(view(), 0).text must be("")
     }
 
@@ -101,7 +103,7 @@ class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
 
     "translate all routes of entry" in {
       ROECode.codes.foreach(
-        roe => summaryElement(view(mucrInfo.copy(entryStatus = Some(status.copy(roe = Some(roe.code))))), 0) must containMessage(roe.messageKey)
+        roe => summaryElement(view(mucrInfo.copy(entryStatus = Some(status.copy(roe = Some(roe))))), 0) must containMessage(roe.messageKey)
       )
     }
 
@@ -137,7 +139,7 @@ class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
 
     val viewWithParent = view(
       parent = Some(
-        MucrInfo("parentUcr", entryStatus = Some(EntryStatus(None, Some(ROECode.DocumentaryControl.code), Some(SOECode.ConsolidationOpen.code))))
+        MucrInfo("parentUcr", entryStatus = Some(EntryStatus(None, Some(ROECode.DocumentaryControl), Some(SOECode.ConsolidationOpen.code))))
       )
     )
 

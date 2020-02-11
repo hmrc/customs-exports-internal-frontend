@@ -17,20 +17,10 @@
 package models.notifications.queries
 
 import models.notifications.EntryStatus
-import play.api.libs.json.Json
 
-case class MucrInfo(
-  ucr: String,
-  parentMucr: Option[String] = None,
-  entryStatus: Option[EntryStatus] = None,
-  isShut: Option[Boolean] = None,
-  movements: Seq[MovementInfo] = Seq.empty
-) extends UcrInfo {
-  def transport: Option[Transport] =
-    movements.find(_.transportDetails.isDefined).flatMap(_.transportDetails)
-
-}
-
-object MucrInfo {
-  implicit val format = Json.format[MucrInfo]
+abstract class UcrInfo {
+  val ucr: String
+  val parentMucr: Option[String]
+  val entryStatus: Option[EntryStatus]
+  val movements: Seq[MovementInfo]
 }

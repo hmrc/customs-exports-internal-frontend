@@ -26,7 +26,7 @@ case class DucrInfo(
   entryStatus: Option[EntryStatus] = None,
   movements: Seq[MovementInfo] = Seq.empty,
   goodsItem: Seq[GoodsItemInfo] = Seq.empty
-) {
+) extends UcrInfo {
 
   def transport: Option[Transport] =
     movements.find(_.transportDetails.isDefined).flatMap(_.transportDetails)
