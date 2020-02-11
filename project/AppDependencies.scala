@@ -15,7 +15,8 @@ object AppDependencies {
     "uk.gov.hmrc"          %% "play-json-union-formatter"     % "1.7.0",
     "uk.gov.hmrc"          %% "simple-reactivemongo"          % "7.22.0-play-26",
     "ai.x"                 %% "play-json-extensions"          % "0.40.2",
-    "com.github.tototoshi" %% "scala-csv" % "1.3.6"
+    "com.github.tototoshi" %% "scala-csv"                     % "1.3.6",
+    "com.github.mongobee"  %  "mongobee"                      % "0.13"
   ).map(_.withSources())
 
   val test = Seq(
