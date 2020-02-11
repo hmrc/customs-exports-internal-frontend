@@ -14,17 +14,20 @@
  * limitations under the License.
  *@
 
-@import controllers.routes
-@import models.notifications.queries.{DucrInfo, MucrInfo, AssociatedConsignmentsInfo}
+@import components.gds.gds_main_template
+@import components.ilequery.{response_parent, response_previous_movements, response_buttons}
+@import models.notifications.queries.{AssociatedConsignmentsInfo, MucrInfo}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.{IleCodeMapper, Title, TransportMapper, ViewDates}
 @import views.components.BackButton
-@import components.gds.{gds_main_template, link}
+@import views.{IleCodeMapper, Title, TransportMapper}
 
 @this(
         ileCodeMapper: IleCodeMapper,
         transportMapper: TransportMapper,
         govukLayout: gds_main_template,
+        parentSection: response_parent,
+        previousMovementsSection: response_previous_movements,
+        responseButtons: response_buttons,
         govukButton: GovukButton,
         govukSummaryList : GovukSummaryList,
         govukTable: GovukTable,
@@ -82,78 +85,9 @@
         classes = "govuk-!-margin-bottom-9"
     ))
 
-    @govukTable(Table(
-        attributes = Map("id" -> "previousMovements"),
-        rows = info.movements.sortBy(_.movementDateTime).reverse.zipWithIndex.map(indexedMovement => {
-            Seq(
-                TableRow(
-                    content = Text(messages(s"ileQueryResponse.previousMovements.type.${indexedMovement._1.messageCode.toLowerCase}")),
-                    attributes = Map("id" -> s"movement_type_${indexedMovement._2}")
-                ),
-                TableRow(
-                    content = Text(indexedMovement._1.movementDateTime.map(date => ViewDates.movementFormatter.format(date)).getOrElse("")),
-                    attributes = Map("id" -> s"movement_date_${indexedMovement._2}")
-                ),
-                TableRow(
-                    content = Text(indexedMovement._1.goodsLocation),
-                    attributes = Map("id" -> s"goods_location_${indexedMovement._2}")
-                )
-            )
-        })
-        ,
-        head = Some(List(
-            HeadCell(
-                content = Text(messages("ileQueryResponse.previousMovements.type"))
-            ),
-            HeadCell(
-                content = Text(messages("ileQueryResponse.previousMovements.date"))
-            ),
-            HeadCell(
-                content = Text(messages("ileQueryResponse.previousMovements.goodsLocation"))
-            )
-        )),
-        classes = "govuk-table govuk-!-margin-bottom-9",
-        caption = Some(messages("ileQueryResponse.previousMovements")),
-        captionClasses = "govuk-table__caption govuk-heading-m",
-        firstCellIsHeader = true
-    ))
+    @previousMovementsSection(info.movements)
 
-    @if(parentMucr.isDefined){
-        <h2 class="govuk-heading-m">@messages("ileQueryResponse.parent")</h2>
-
-      @parentMucr.map(parent => {
-          govukSummaryList(SummaryList(
-              attributes = Map("id" -> "parentConsignment"),
-              rows = Seq(
-                  SummaryListRow(
-                      key = Key(
-                          content = Text(messages("ileQueryResponse.parent.reference"))
-                      ),
-                      value = Value(
-                          content = HtmlContent(link(parent.ucr, controllers.ileQuery.routes.IleQueryController.submitQuery(parent.ucr)))
-                      )
-                  ),
-                  SummaryListRow(
-                      key = Key(
-                          content = Text(messages("ileQueryResponse.details.route"))
-                      ),
-                      value = Value(
-                          content = parent.entryStatus.flatMap(_.roe).map(code => ileCodeMapper.routeOfEntry(code)).getOrElse(Empty)
-                      )
-                  ),
-                  SummaryListRow(
-                      key = Key(
-                          content = Text(messages("ileQueryResponse.details.entryStatus"))
-                      ),
-                      value = Value(
-                          content = parent.entryStatus.flatMap(_.soe).map(code => ileCodeMapper.statusOfEntryMucr(code)).getOrElse(Empty)
-                      )
-                  )
-              ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
-              classes = "govuk-!-margin-bottom-9"
-          ))
-      })
-    }
+    @parentSection(parentMucr)
 
     @if(associatedConsignments.size > 0){
         <h2 class="govuk-heading-m">@messages("ileQueryResponse.associated")</h2>
@@ -185,10 +119,5 @@
         ))
     }
 
-    <div>
-    @govukButton(Button(content = Text(messages("ileQueryResponse.links.manageConsignment")), href = Some(routes.ChoiceController.displayPage().url)))
-    </div>
-    <div>
-    @link(messages("ileQueryResponse.links.findConsignment"), controllers.ileQuery.routes.IleQueryController.displayQueryForm)
-    </div>
+    @responseButtons()
 }

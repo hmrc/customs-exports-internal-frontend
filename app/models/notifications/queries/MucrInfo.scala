@@ -27,7 +27,7 @@ case class MucrInfo(
   movements: Seq[MovementInfo] = Seq.empty
 ) {
   def transport: Option[Transport] =
-    movements.find(movementInfo => movementInfo.transportDetails.isDefined).flatMap(movementWithTransport => movementWithTransport.transportDetails)
+    movements.find(_.transportDetails.isDefined).flatMap(_.transportDetails)
 
 }
 

@@ -18,13 +18,11 @@ package views
 
 import javax.inject.Singleton
 import models.notifications.queries.Transport
-import services.Countries
+import services.Countries.countryName
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, Empty, Text}
 
 @Singleton
 class TransportMapper {
-
-  private def countryName(code: String) = Countries.allCountries.find(_.countryCode == code).map(_.countryName).getOrElse(code)
 
   def transportHtml(transport: Transport): Content =
     (transport.transportId, transport.nationality) match {
