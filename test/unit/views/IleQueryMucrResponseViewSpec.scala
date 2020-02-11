@@ -20,6 +20,7 @@ import java.time.ZonedDateTime
 
 import models.notifications.EntryStatus
 import models.notifications.queries.{MovementInfo, MucrInfo}
+import models.viewmodels.decoder.ROECode
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import views.html.ile_query_mucr_response
@@ -40,7 +41,7 @@ class IleQueryMucrResponseViewSpec extends ViewSpec {
     movementDateTime = Some(ZonedDateTime.parse("2019-10-30T12:34:18Z").toInstant)
   )
 
-  val status = EntryStatus(Some("ICS"), Some("ROE"), Some("SOE"))
+  val status = EntryStatus(Some("ICS"), Some(ROECode.DocumentaryControl), Some("SOE"))
   val mucrInfo =
     MucrInfo(ucr = "8GB123458302100-101SHIP1", movements = Seq.empty, entryStatus = Some(status), isShut = Some(true))
 
@@ -92,10 +93,10 @@ class IleQueryMucrResponseViewSpec extends ViewSpec {
     }
 
     "translate all routes of entry" in {
-      IleCodeMapper.definedRoeCodes.foreach(
-        code =>
-          view(mucrInfo.copy(entryStatus = Some(status.copy(roe = Some(code)))))
-            .getElementById("roe_code") must containMessage(s"ileQuery.mapping.roe.$code")
+      ROECode.codes.foreach(
+        roe =>
+          view(mucrInfo.copy(entryStatus = Some(status.copy(roe = Some(roe)))))
+            .getElementById("roe_code") must containMessage(s"ileQuery.mapping.roe.${roe.code}")
       )
     }
 

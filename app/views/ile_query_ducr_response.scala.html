@@ -66,7 +66,7 @@
         <tbody>
             <tr>
                 <td class="bold">@messages("ileQueryResponse.details.route")</td>
-                <td id="roe_code">@info.entryStatus.flatMap(_.roe).map(code => IleCodeMapper.routeOfEntry(code))</td>
+                <td id="roe_code">@info.entryStatus.flatMap(_.roe).map(roe => IleCodeMapper.routeOfEntry(roe.code))</td>
             </tr>
             <tr>
                 <td class="bold">@messages("ileQueryResponse.details.entryStatus")</td>

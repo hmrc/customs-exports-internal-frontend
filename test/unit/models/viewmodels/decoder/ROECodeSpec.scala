@@ -18,6 +18,7 @@ package models.viewmodels.decoder
 
 import base.UnitSpec
 import models.viewmodels.decoder.ROECode._
+import play.api.libs.json.{JsNumber, JsString, JsSuccess}
 
 class ROECodeSpec extends UnitSpec {
 
@@ -25,16 +26,64 @@ class ROECodeSpec extends UnitSpec {
 
     "have correct amount of codes" in {
 
-      val expectedCodesAmount = 6
+      val expectedCodesAmount = 7
       ROECode.codes.size mustBe expectedCodesAmount
     }
 
     "have correct list of codes" in {
 
       val expectedCodes =
-        Set(DocumentaryControl, PhysicalExternalPartyControl, NonBlockingDocumentaryControl, NoControlRequired, RiskingNotPerformed, PrelodgePrefix)
+        Set(
+          DocumentaryControl,
+          PhysicalExternalPartyControl,
+          NonBlockingDocumentaryControl,
+          NoControlRequired,
+          RiskingNotPerformed,
+          PrelodgePrefix,
+          UnknownRoe
+        )
 
       ROECode.codes mustBe expectedCodes
+    }
+
+    "have correct priority" in {
+
+      DocumentaryControl.priority mustBe 2
+      PhysicalExternalPartyControl.priority mustBe 1
+      NonBlockingDocumentaryControl.priority mustBe 3
+      NoControlRequired.priority mustBe 6
+      RiskingNotPerformed.priority mustBe 4
+      PrelodgePrefix.priority mustBe 5
+      UnknownRoe.priority mustBe 100
+    }
+
+    "parse ROE Code" when {
+
+      "code is correct" in {
+
+        ROECode.codes.map(roe => (roe, roe.code)).map {
+          case (roe, code) =>
+            ROECode.ROECodeFormat.reads(JsString(code)) mustBe JsSuccess(roe)
+        }
+      }
+
+      "code is incorrect" in {
+
+        ROECode.ROECodeFormat.reads(JsString("incorrect")) mustBe JsSuccess(UnknownRoe)
+      }
+
+      "type of the code is incorrect" in {
+
+        ROECode.ROECodeFormat.reads(JsNumber(1)) mustBe JsSuccess(UnknownRoe)
+      }
+    }
+
+    "write ROE to correct JsValue" in {
+
+      ROECode.codes.map(roe => (roe, roe.code)).map {
+        case (roe, code) =>
+          ROECode.ROECodeFormat.writes(roe) mustBe JsString(code)
+      }
     }
   }
 }

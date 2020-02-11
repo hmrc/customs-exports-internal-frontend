@@ -25,7 +25,7 @@ case class MucrInfo(
   entryStatus: Option[EntryStatus] = None,
   isShut: Option[Boolean] = None,
   movements: Seq[MovementInfo] = Seq.empty
-)
+) extends UcrInfo
 
 object MucrInfo {
   implicit val format = Json.format[MucrInfo]
