@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package views
+package models.notifications.queries
 
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import models.viewmodels.decoder.ROECode
 
-object ViewDates {
-  def timezone = ZoneId.of("Europe/London")
+case class AssociatedConsignmentsInfo(childDucrs: Seq[DucrInfo] = Seq.empty, childMucrs: Seq[MucrInfo] = Seq.empty) {
 
-  val movementFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM uuu 'at' HH:mm").withZone(timezone)
+  def size: Int = childDucrs.size + childMucrs.size
 
+  def mostSevereRoe: Option[String] =
+    (childDucrs ++ childMucrs)
+      .sortBy(_.entryStatus.flatMap(_.roe).getOrElse(ROECode.UnknownRoe))
+      .headOption
+      .flatMap(_.entryStatus.flatMap(_.roe.map(_.code)))
 }

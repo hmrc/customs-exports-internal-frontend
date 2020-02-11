@@ -18,34 +18,39 @@ package views
 
 import java.time.ZonedDateTime
 
+import base.Injector
 import models.notifications.EntryStatus
-import models.notifications.queries.{DucrInfo, MovementInfo}
-import models.viewmodels.decoder.ROECode
+import models.notifications.queries.{DucrInfo, MovementInfo, MucrInfo}
+import models.viewmodels.decoder.{ICSCode, ROECode, SOECode}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
+import play.twirl.api.Html
 import views.html.ile_query_ducr_response
 
-class IleQueryDucrResponseViewSpec extends ViewSpec {
+class IleQueryDucrResponseViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  private val page = new ile_query_ducr_response(main_template)
+  private val page = instanceOf[ile_query_ducr_response]
 
   val arrival =
     MovementInfo(messageCode = "EAL", goodsLocation = "GBAUFXTFXTFXT", movementDateTime = Some(ZonedDateTime.parse("2019-10-23T12:34:18Z").toInstant))
   val retro =
-    MovementInfo(messageCode = "RET", goodsLocation = "GBAUDFGFSHFKD", movementDateTime = Some(ZonedDateTime.parse("2019-11-23T12:34:18Z").toInstant))
+    MovementInfo(messageCode = "RET", goodsLocation = "GBAUDFGFSHFKD", movementDateTime = Some(ZonedDateTime.parse("2019-11-04T16:27:18Z").toInstant))
   val depart = MovementInfo(
     messageCode = "EDL",
     goodsLocation = "GBAUFDSASFDFDF",
-    movementDateTime = Some(ZonedDateTime.parse("2019-10-30T12:34:18Z").toInstant)
+    movementDateTime = Some(ZonedDateTime.parse("2019-10-30T09:17:18Z").toInstant)
   )
 
   val status = EntryStatus(Some("ICS"), Some(ROECode.DocumentaryControl), Some("SOE"))
   val ducrInfo =
     DucrInfo(ucr = "8GB123458302100-101SHIP1", declarationId = "121332435432", movements = Seq.empty, entryStatus = Some(status))
 
-  private def view(info: DucrInfo = ducrInfo) = page(info)
+  private def view(info: DucrInfo = ducrInfo, parent: Option[MucrInfo] = None) = page(info, parent)
+
+  private def summaryElement(html: Html, index: Int) = html.getElementById("summary").select(s"div:eq($index)>dd").get(0)
+  private def parentConsignmentElement(html: Html, index: Int) = html.getElementById("parentConsignment").select(s"div:eq($index)>dd").get(0)
 
   "Ile Query page" should {
 
@@ -57,84 +62,92 @@ class IleQueryDucrResponseViewSpec extends ViewSpec {
     "render arrival movement" in {
       val arrivalView = view(ducrInfo.copy(movements = Seq(arrival)))
       arrivalView.getElementById("movement_type_0") must containMessage("ileQueryResponse.previousMovements.type.eal")
-      arrivalView.getElementById("movement_date_0").text() must be("23/10/2019")
+      arrivalView.getElementById("movement_date_0").text() must be("23 October 2019 at 13:34")
       arrivalView.getElementById("goods_location_0").text() must be("GBAUFXTFXTFXT")
     }
 
     "render departure movement" in {
       val arrivalView = view(ducrInfo.copy(movements = Seq(depart)))
       arrivalView.getElementById("movement_type_0") must containMessage("ileQueryResponse.previousMovements.type.edl")
-      arrivalView.getElementById("movement_date_0").text() must be("30/10/2019")
+      arrivalView.getElementById("movement_date_0").text() must be("30 October 2019 at 09:17")
       arrivalView.getElementById("goods_location_0").text() must be("GBAUFDSASFDFDF")
     }
 
     "render retrospective arrival" in {
       val arrivalView = view(ducrInfo.copy(movements = Seq(retro)))
       arrivalView.getElementById("movement_type_0") must containMessage("ileQueryResponse.previousMovements.type.ret")
-      arrivalView.getElementById("movement_date_0").text() must be("23/11/2019")
+      arrivalView.getElementById("movement_date_0").text() must be("4 November 2019 at 16:27")
       arrivalView.getElementById("goods_location_0").text() must be("GBAUDFGFSHFKD")
     }
 
     "render movements by date order" in {
       val movementsView = view(ducrInfo.copy(movements = Seq(arrival, retro, depart)))
-      movementsView.getElementById("movement_date_0").text() must be("23/11/2019")
-      movementsView.getElementById("movement_date_1").text() must be("30/10/2019")
-      movementsView.getElementById("movement_date_2").text() must be("23/10/2019")
+      movementsView.getElementById("movement_date_0").text() must be("4 November 2019 at 16:27")
+      movementsView.getElementById("movement_date_1").text() must be("30 October 2019 at 09:17")
+      movementsView.getElementById("movement_date_2").text() must be("23 October 2019 at 13:34")
     }
 
     "render default route of entry" in {
-      view().getElementById("roe_code") must containMessage("ileQuery.mapping.roe.default", "ROE")
+      summaryElement(view(), 0).text must be("")
     }
 
     "render empty route of entry" in {
-      view(ducrInfo.copy(entryStatus = Some(status.copy(roe = None))))
-        .getElementById("roe_code")
-        .text must be("")
+      summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(roe = None)))), 0).text must be("")
     }
 
     "translate all routes of entry" in {
       ROECode.codes.foreach(
-        roe =>
-          view(ducrInfo.copy(entryStatus = Some(status.copy(roe = Some(roe)))))
-            .getElementById("roe_code") must containMessage(s"ileQuery.mapping.roe.${roe.code}")
+        roe => summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(roe = Some(roe))))), 0) must containMessage(roe.messageKey)
       )
     }
 
     "render default status of entry" in {
-      view().getElementById("soe_code") must containMessage("ileQuery.mapping.soe.ducr.default", "SOE")
+      summaryElement(view(), 1).text must be("")
     }
 
     "render empty status of entry" in {
-      view(ducrInfo.copy(entryStatus = Some(status.copy(soe = None))))
-        .getElementById("soe_code")
-        .text must be("")
+      summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(soe = None)))), 1).text must be("")
     }
 
-    "translate all status of entry" in {
-      IleCodeMapper.definedSoeDucrCodes.foreach(
-        code =>
-          view(ducrInfo.copy(entryStatus = Some(status.copy(soe = Some(code)))))
-            .getElementById("soe_code") must containMessage(s"ileQuery.mapping.soe.ducr.$code")
+    "translate all ducr status of entry" in {
+      SOECode.DucrCodes.foreach(
+        soe => summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(soe = Some(soe.code))))), 1) must containMessage(soe.messageKey)
       )
     }
 
     "render default input customs status" in {
-      view().getElementById("ics_code") must containMessage("ileQuery.mapping.ics.default", "ICS")
+      summaryElement(view(), 2).text must be("")
     }
 
     "render empty input customs status" in {
-      view(ducrInfo.copy(entryStatus = Some(status.copy(ics = None))))
-        .getElementById("ics_code")
-        .text must be("")
+      summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(ics = None)))), 2).text must be("")
     }
 
     "translate all input customs status" in {
-      IleCodeMapper.definedIcsCodes.foreach(
-        code =>
-          view(ducrInfo.copy(entryStatus = Some(status.copy(ics = Some(code)))))
-            .getElementById("ics_code") must containMessage(s"ileQuery.mapping.ics.$code")
+      ICSCode.codes.foreach(
+        ics => summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(ics = Some(ics.code))))), 2) must containMessage(ics.messageKey)
       )
     }
 
+    val viewWithParent = view(
+      parent = Some(
+        MucrInfo("parentUcr", entryStatus = Some(EntryStatus(None, Some(ROECode.DocumentaryControl), Some(SOECode.ConsolidationOpen.code))))
+      )
+    )
+
+    "render parent consignment link" in {
+      parentConsignmentElement(viewWithParent, 0).getElementsByClass("govuk-link").first() must haveHref(
+        controllers.ileQuery.routes.IleQueryController.submitQuery("parentUcr")
+      )
+      parentConsignmentElement(viewWithParent, 0).text() must be("parentUcr")
+    }
+
+    "render parent consignment route" in {
+      parentConsignmentElement(viewWithParent, 1) must containMessage(ROECode.DocumentaryControl.messageKey)
+    }
+
+    "render parent consignment status" in {
+      parentConsignmentElement(viewWithParent, 2) must containMessage(SOECode.ConsolidationOpen.messageKey)
+    }
   }
 }

@@ -14,73 +14,78 @@
  * limitations under the License.
  *@
 
-@import java.time.format.DateTimeFormatter
-@import models.viewmodels.notificationspage.NotificationsPageSingleElement
-@import views.IleCodeMapper
-@import views.Title
-@import views.Title.NO_SECTION
-@import views.ViewDates
-@import models.notifications.queries.DucrInfo
+@import components.gds.gds_main_template
+@import components.ilequery.{response_parent, response_previous_movements, response_buttons}
+@import models.notifications.queries.{DucrInfo, MucrInfo}
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.components.BackButton
+@import views.{IleCodeMapper, Title, TransportMapper}
 
-@this(main_template: views.html.templates.main_template)
+@this(
+        ileCodeMapper: IleCodeMapper,
+        transportMapper: TransportMapper,
+        govukLayout: gds_main_template,
+        parentSection: response_parent,
+        previousMovementsSection: response_previous_movements,
+        responseButtons: response_buttons,
+        govukButton: GovukButton,
+        govukSummaryList : GovukSummaryList,
+        govukTable: GovukTable
+)
 
-@(info: DucrInfo)(implicit request: Request[_], messages: Messages)
+@(info: DucrInfo, parentMucr: Option[MucrInfo])(implicit request: Request[_], messages: Messages)
 
+@govukLayout(
+    title = Title("ileQueryResponse.ducr.title"),
+    backButton = Some(BackButton(messages("site.back"), controllers.ileQuery.routes.IleQueryController.displayQueryForm()))) {
 
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">@messages("ileQueryResponse.ducr.title")</h1>
+    <span class="govuk-caption-xl govuk-!-margin-bottom-9">@info.ucr</span>
 
-@main_template(title = Title("ileQueryResponse.ducr.title")) {
+    <h2 class="govuk-heading-m">@messages("ileQueryResponse.details")</h2>
 
-  @components.back_link(controllers.ileQuery.routes.IleQueryController.displayQueryForm())
+    @govukSummaryList(SummaryList(
+        attributes = Map("id" -> "summary"),
+        rows = Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text(messages("ileQueryResponse.details.route"))
+                ),
+                value = Value(
+                    content = info.entryStatus.flatMap(_.roe).map(roe => ileCodeMapper.routeOfEntry(roe.code)).getOrElse(Empty)
+                )
+            ),
+            SummaryListRow(
+                key = Key(
+                    content = Text(messages("ileQueryResponse.details.entryStatus"))
+                ),
+                value = Value(
+                    content = info.entryStatus.flatMap(_.soe).map(code => ileCodeMapper.statusOfEntryDucr(code)).getOrElse(Empty)
+                )
+            ),
+            SummaryListRow(
+                key = Key(
+                    content = Text(messages("ileQueryResponse.details.transport"))
+                ),
+                value = Value(
+                    content = info.transport.map(transport => transportMapper.transportHtml(transport)).getOrElse(Empty)
+                )
+            ),
+            SummaryListRow(
+                key = Key(
+                    content = Text(messages("ileQueryResponse.details.inputCustomsStatus"))
+                ),
+                value = Value(
+                    content = info.entryStatus.flatMap(_.ics).map(code => ileCodeMapper.inputCustomsStatus(code)).getOrElse(Empty)
+                )
+            )
+        ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
+        classes = "govuk-!-margin-bottom-9"
+    ))
 
-    @components.page_title(
-        Some(messages("ileQueryResponse.ducr.title")),
-        Some(info.ucr)
-    )
+    @previousMovementsSection(info.movements)
 
-    <h2>@messages("ileQueryResponse.previousMovements")</h2>
+    @parentSection(parentMucr)
 
-    <table>
-        <thead>
-            <tr>
-                <th>@messages("ileQueryResponse.previousMovements.type")</th>
-                <th>@messages("ileQueryResponse.previousMovements.date")</th>
-                <th>@messages("ileQueryResponse.previousMovements.goodsLocation")</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for( (movement, index) <- info.movements.sortBy(_.movementDateTime).reverse.zipWithIndex ){
-              <tr>
-                <td id="@{s"movement_type_$index"}" class="bold">@{messages(s"ileQueryResponse.previousMovements.type.${movement.messageCode.toLowerCase}")}</td>
-                <td id="@{s"movement_date_$index"}">
-                    @movement.movementDateTime.map(date => ViewDates.movementFormatter.format(date))
-                </td>
-                <td id="@{s"goods_location_$index"}">@movement.goodsLocation</td>
-              </tr>
-            }
-        </tbody>
-    </table>
-
-    <h2>@messages("ileQueryResponse.details")</h2>
-
-    <table>
-        <tbody>
-            <tr>
-                <td class="bold">@messages("ileQueryResponse.details.route")</td>
-                <td id="roe_code">@info.entryStatus.flatMap(_.roe).map(roe => IleCodeMapper.routeOfEntry(roe.code))</td>
-            </tr>
-            <tr>
-                <td class="bold">@messages("ileQueryResponse.details.entryStatus")</td>
-                <td id="soe_code">@info.entryStatus.flatMap(_.soe).map(code => IleCodeMapper.statusOfEntryDucr(code))</td>
-            </tr>
-            <tr>
-                <td class="bold">@messages("ileQueryResponse.details.inputCustomsStatus")</td>
-                <td id="ics_code">@info.entryStatus.flatMap(_.ics).map(code => IleCodeMapper.inputCustomsStatus(code))</td>
-            </tr>
-        </tbody>
-    </table>
-
-    @components.button_link("ileQueryResponse.links.manageConsignment", routes.ChoiceController.displayPage())
-
-    <a id="link-find" href="@{controllers.ileQuery.routes.IleQueryController.displayQueryForm.url}">@messages("ileQueryResponse.links.findConsignment")</a>
+    @responseButtons()
 }
-
