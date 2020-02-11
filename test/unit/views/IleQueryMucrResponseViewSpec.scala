@@ -20,7 +20,8 @@ import java.time.ZonedDateTime
 
 import base.Injector
 import models.notifications.EntryStatus
-import models.notifications.queries.{AssociatedConsignmentsInfo, MovementInfo, MucrInfo}
+import models.notifications.queries.{MovementInfo, MucrInfo, UcrInfo}
+import models.viewmodels.decoder.ROECode.UnknownRoe
 import models.viewmodels.decoder.{ROECode, SOECode}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
@@ -43,15 +44,12 @@ class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
     movementDateTime = Some(ZonedDateTime.parse("2019-10-30T10:22:18Z").toInstant)
   )
 
-  val status = EntryStatus(Some("ICS"), Some(ROECode.DocumentaryControl), Some("SOE"))
+  val status = EntryStatus(Some("ICS"), None, Some("SOE"))
   val mucrInfo =
     MucrInfo(ucr = "8GB123458302100-101SHIP1", movements = Seq.empty, entryStatus = Some(status), isShut = Some(true))
 
-  private def view(
-    info: MucrInfo = mucrInfo,
-    parent: Option[MucrInfo] = None,
-    associatedConsignments: AssociatedConsignmentsInfo = AssociatedConsignmentsInfo(Seq.empty, Seq.empty)
-  ) = page(info, parent, associatedConsignments)
+  private def view(info: MucrInfo = mucrInfo, parent: Option[MucrInfo] = None, associatedConsignments: Seq[UcrInfo] = Seq.empty) =
+    page(info, parent, associatedConsignments)
 
   private def summaryElement(html: Html, index: Int) = html.getElementById("summary").select(s"div:eq($index)>dd").get(0)
   private def parentConsignmentElement(html: Html, index: Int) = html.getElementById("parentConsignment").select(s"div:eq($index)>dd").get(0)
@@ -91,20 +89,20 @@ class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
       movementsView.getElementById("movement_date_2").text() must be("23 October 2019 at 13:34")
     }
 
-    "render default route of entry" in {
-      println(view())
-
+    "render no route of entry" in {
       summaryElement(view(), 0).text must be("")
     }
 
-    "render empty route of entry" in {
-      summaryElement(view(mucrInfo.copy(entryStatus = Some(status.copy(roe = None)))), 0).text must be("")
+    "render unknown route of entry" in {
+      summaryElement(view(mucrInfo.copy(entryStatus = Some(status.copy(roe = Some(UnknownRoe))))), 0) must containMessage(
+        "ileQueryResponse.route.unknown"
+      )
     }
 
     "translate all routes of entry" in {
-      ROECode.codes.foreach(
-        roe => summaryElement(view(mucrInfo.copy(entryStatus = Some(status.copy(roe = Some(roe))))), 0) must containMessage(roe.messageKey)
-      )
+      ROECode.codes
+        .filterNot(_ == UnknownRoe)
+        .foreach(roe => summaryElement(view(mucrInfo.copy(entryStatus = Some(status.copy(roe = Some(roe))))), 0) must containMessage(roe.messageKey))
     }
 
     "render default status of entry" in {
@@ -138,9 +136,8 @@ class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
     }
 
     val viewWithParent = view(
-      parent = Some(
-        MucrInfo("parentUcr", entryStatus = Some(EntryStatus(None, Some(ROECode.DocumentaryControl), Some(SOECode.ConsolidationOpen.code))))
-      )
+      parent =
+        Some(MucrInfo("parentUcr", entryStatus = Some(EntryStatus(None, Some(ROECode.DocumentaryControl), Some(SOECode.ConsolidationOpen.code)))))
     )
 
     "render parent consignment link" in {

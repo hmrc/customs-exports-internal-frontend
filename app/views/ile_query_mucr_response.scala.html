@@ -15,8 +15,8 @@
  *@
 
 @import components.gds.gds_main_template
-@import components.ilequery.{response_parent, response_previous_movements, response_buttons}
-@import models.notifications.queries.{AssociatedConsignmentsInfo, MucrInfo}
+@import components.ilequery.{response_buttons, response_parent, response_previous_movements}
+@import models.notifications.queries.{MucrInfo, UcrInfo}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.components.BackButton
 @import views.{IleCodeMapper, Title, TransportMapper}
@@ -34,7 +34,7 @@
         govukTag: GovukTag
 )
 
-@(info: MucrInfo, parentMucr: Option[MucrInfo], associatedConsignments: AssociatedConsignmentsInfo)(implicit request: Request[_], messages: Messages)
+@(info: MucrInfo, parentMucr: Option[MucrInfo], associatedConsignments: Seq[UcrInfo])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
     title = Title("ileQueryResponse.mucr.title"),
@@ -62,7 +62,7 @@
                     content = Text(messages("ileQueryResponse.details.route"))
                 ),
                 value = Value(
-                    content = info.entryStatus.flatMap(_.roe).map(roe => ileCodeMapper.routeOfEntry(roe.code)).getOrElse(Empty)
+                    content = info.entryStatus.flatMap(_.roe).map(roe => ileCodeMapper.routeOfEntry(roe)).getOrElse(Empty)
                 )
             ),
             SummaryListRow(
@@ -111,7 +111,7 @@
                         content = Text(messages("ileQueryResponse.associated.combinedRoute"))
                     ),
                     value = Value(
-                        content = associatedConsignments.mostSevereRoe.map(code => ileCodeMapper.routeOfEntry(code)).getOrElse(Empty)
+                        content = associatedConsignments.head.entryStatus.flatMap(_.roe).map(roe => ileCodeMapper.routeOfEntry(roe)).getOrElse(Empty)
                     )
                 )
             ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),

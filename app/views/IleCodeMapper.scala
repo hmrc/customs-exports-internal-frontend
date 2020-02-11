@@ -17,9 +17,9 @@
 package views
 
 import javax.inject.{Inject, Singleton}
-import models.viewmodels.decoder.{CodeWithMessageKey, Decoder}
+import models.viewmodels.decoder.{CodeWithMessageKey, Decoder, ROECode}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, Empty, HtmlContent}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, Empty, HtmlContent, Text}
 
 @Singleton
 class IleCodeMapper @Inject()(decoder: Decoder) {
@@ -30,8 +30,10 @@ class IleCodeMapper @Inject()(decoder: Decoder) {
   def inputCustomsStatus(code: String)(implicit messages: Messages): Content =
     decoder.ics(code).map(icsCode => HtmlContent(htmlString(icsCode))).getOrElse(Empty)
 
-  def routeOfEntry(code: String)(implicit messages: Messages): Content =
-    decoder.roe(code).map(roeCode => HtmlContent(htmlString(roeCode))).getOrElse(Empty)
+  def routeOfEntry(roe: ROECode)(implicit messages: Messages): Content = roe match {
+    case ROECode.UnknownRoe => Text(messages("ileQueryResponse.route.unknown"))
+    case _                  => HtmlContent(htmlString(roe))
+  }
 
   def statusOfEntryDucr(code: String)(implicit messages: Messages): Content =
     decoder.ducrSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)

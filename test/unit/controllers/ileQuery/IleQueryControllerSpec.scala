@@ -25,7 +25,7 @@ import controllers.ControllerLayerSpec
 import models.UcrBlock
 import models.cache.IleQuery
 import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
-import models.notifications.queries.{AssociatedConsignmentsInfo, DucrInfo, IleQueryResponseExchange, MucrInfo}
+import models.notifications.queries._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{never, reset, verify, when}
 import play.api.libs.json.{JsString, Json}
@@ -71,7 +71,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
     when(ileQueryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(loadingScreenPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
     when(ileQueryDucrResponsePage.apply(any[DucrInfo], any[Option[MucrInfo]])(any(), any())).thenReturn(HtmlFormat.empty)
-    when(ileQueryMucrResponsePage.apply(any[MucrInfo], any[Option[MucrInfo]], any[AssociatedConsignmentsInfo])(any(), any()))
+    when(ileQueryMucrResponsePage.apply(any[MucrInfo], any[Option[MucrInfo]], any[Seq[UcrInfo]])(any(), any()))
       .thenReturn(HtmlFormat.empty)
     when(consignmentNotFoundPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
@@ -111,10 +111,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         val result = controller.submitQuery("mucr")(request)
 
         status(result) mustBe OK
-        verify(ileQueryMucrResponsePage).apply(meq(mucrInfo), meq(parentMucrInfo), meq(AssociatedConsignmentsInfo(Seq.empty, Seq.empty)))(
-          any(),
-          any()
-        )
+        verify(ileQueryMucrResponsePage).apply(meq(mucrInfo), meq(parentMucrInfo), meq(Seq.empty))(any(), any())
 
         theCacheUpserted.queryUcr mustBe Some(UcrBlock("mucr", "M"))
       }

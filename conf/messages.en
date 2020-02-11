@@ -345,3 +345,5 @@ ileQueryResponse.links.findConsignment = Find another consignment
 
 ileQueryResponse.ucrNotFound.title = The requested UCR does not exist
 ileQueryResponse.ucrNotFound.message = {0} does not exist.
+
+ileQueryResponse.route.unknown = Unknown

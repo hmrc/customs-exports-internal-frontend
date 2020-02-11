@@ -25,8 +25,8 @@ import forms.IleQueryForm.form
 import javax.inject.{Inject, Singleton}
 import models.UcrBlock
 import models.cache.{Answers, Cache, IleQuery}
+import models.notifications.queries.IleQueryResponseExchange
 import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
-import models.notifications.queries.{AssociatedConsignmentsInfo, IleQueryResponseExchange}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -112,9 +112,7 @@ class IleQueryController @Inject()(
         saveQueryUcrtoCache(response)
 
         val ducrResult = response.queriedDucr.map(ducr => Ok(ileQueryDucrResponsePage(ducr, response.parentMucr)))
-        val mucrResult = response.queriedMucr.map(
-          mucr => Ok(ileQueryMucrResponsePage(mucr, response.parentMucr, AssociatedConsignmentsInfo(response.childDucrs, response.childMucrs)))
-        )
+        val mucrResult = response.queriedMucr.map(mucr => Ok(ileQueryMucrResponsePage(mucr, response.parentMucr, response.sortedChildrenUcrs)))
 
         ducrResult.orElse(mucrResult).getOrElse(loadingPageResult)
 

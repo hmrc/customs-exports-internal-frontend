@@ -19,12 +19,7 @@ package models.notifications.queries
 import base.UnitSpec
 import models.notifications.EntryStatus
 import models.notifications.queries.IleQueryResponseExchangeData.SuccessfulResponseExchangeData
-import models.viewmodels.decoder.ROECode.{
-  DocumentaryControl,
-  NoControlRequired,
-  NonBlockingDocumentaryControl,
-  PhysicalExternalPartyControl
-}
+import models.viewmodels.decoder.ROECode.{DocumentaryControl, NoControlRequired, NonBlockingDocumentaryControl, PhysicalExternalPartyControl}
 
 class IleQueryResponseExchangeDataSpec extends UnitSpec {
 

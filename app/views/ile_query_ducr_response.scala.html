@@ -52,7 +52,7 @@
                     content = Text(messages("ileQueryResponse.details.route"))
                 ),
                 value = Value(
-                    content = info.entryStatus.flatMap(_.roe).map(roe => ileCodeMapper.routeOfEntry(roe.code)).getOrElse(Empty)
+                    content = info.entryStatus.flatMap(_.roe).map(ileCodeMapper.routeOfEntry(_)).getOrElse(Empty)
                 )
             ),
             SummaryListRow(
@@ -60,7 +60,7 @@
                     content = Text(messages("ileQueryResponse.details.entryStatus"))
                 ),
                 value = Value(
-                    content = info.entryStatus.flatMap(_.soe).map(code => ileCodeMapper.statusOfEntryDucr(code)).getOrElse(Empty)
+                    content = info.entryStatus.flatMap(_.soe).map(ileCodeMapper.statusOfEntryDucr(_)).getOrElse(Empty)
                 )
             ),
             SummaryListRow(
@@ -68,7 +68,7 @@
                     content = Text(messages("ileQueryResponse.details.transport"))
                 ),
                 value = Value(
-                    content = info.transport.map(transport => transportMapper.transportHtml(transport)).getOrElse(Empty)
+                    content = info.transport.map(transportMapper.transportHtml).getOrElse(Empty)
                 )
             ),
             SummaryListRow(
@@ -76,7 +76,7 @@
                     content = Text(messages("ileQueryResponse.details.inputCustomsStatus"))
                 ),
                 value = Value(
-                    content = info.entryStatus.flatMap(_.ics).map(code => ileCodeMapper.inputCustomsStatus(code)).getOrElse(Empty)
+                    content = info.entryStatus.flatMap(_.ics).map(ileCodeMapper.inputCustomsStatus(_)).getOrElse(Empty)
                 )
             )
         ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),

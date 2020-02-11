@@ -46,7 +46,7 @@
                         content = Text(messages("ileQueryResponse.details.route"))
                     ),
                     value = Value(
-                        content = parent.entryStatus.flatMap(_.roe).map(roe => ileCodeMapper.routeOfEntry(roe.code)).getOrElse(Empty)
+                        content = parent.entryStatus.flatMap(_.roe).map(roe => ileCodeMapper.routeOfEntry(roe)).getOrElse(Empty)
                     )
                 ),
                 SummaryListRow(
