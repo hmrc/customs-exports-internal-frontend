@@ -21,8 +21,8 @@ import com.github.mongobee.changeset.ChangeSet;
 import com.mongodb.DB;
 
 @ChangeLog
-public class DeclarationsChangelog {
-    private String collection = "declarations";
+public class CacheChangelog {
+    private String collection = "cache";
 
     @ChangeSet(order = "001", id = "Internal Movements DB Baseline", author = "Paulo Monteiro")
     public void dbBaseline(DB db) {
