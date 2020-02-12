@@ -93,7 +93,7 @@ class DissociateUcrSpec extends IntegrationSpec {
         verify(
           postRequestedForConsolidation()
             .withRequestBody(
-              equalToJson("""{"providerId":"pid","eori":"GB1234567890","ucr":"GB/321-54321","consolidationType":"DISASSOCIATE_MUCR"}""")
+              equalToJson("""{"providerId":"pid","eori":"GB1234567890","ucr":"GB/321-54321","consolidationType":"MucrDisassociation"}""")
             )
         )
         verifyEventually(

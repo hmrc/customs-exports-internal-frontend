@@ -118,7 +118,7 @@ class AssociateUcrSpec extends IntegrationSpec {
           postRequestedForConsolidation()
             .withRequestBody(
               equalToJson(
-                """{"providerId":"pid","eori":"GB1234567890","mucr":"GB/123-12345","ucr":"GB/321-54321","consolidationType":"ASSOCIATE_MUCR"}"""
+                """{"providerId":"pid","eori":"GB1234567890","mucr":"GB/123-12345","ucr":"GB/321-54321","consolidationType":"MucrAssociation"}"""
               )
             )
         )

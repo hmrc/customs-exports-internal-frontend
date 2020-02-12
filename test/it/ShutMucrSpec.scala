@@ -84,7 +84,7 @@ class ShutMucrSpec extends IntegrationSpec {
         theCacheFor("pid") mustBe None
         verify(
           postRequestedForConsolidation()
-            .withRequestBody(equalToJson("""{"providerId":"pid","eori":"GB1234567890","mucr":"GB/123-12345","consolidationType":"SHUT_MUCR"}"""))
+            .withRequestBody(equalToJson("""{"providerId":"pid","eori":"GB1234567890","mucr":"GB/123-12345","consolidationType":"ShutMucr"}"""))
         )
         verifyEventually(
           postRequestedForAudit()
