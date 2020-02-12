@@ -23,7 +23,7 @@ import testdata.MovementsTestData
 import views.ViewSpec
 import views.html.arrival_details
 
-class ArrivalDetailsViewSpec extends ViewSpec with Injector{
+class ArrivalDetailsViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(ArrivalAnswers())
   private val movementDetails = MovementsTestData.movementDetails
@@ -32,15 +32,15 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector{
 
   "Arrival View" should {
     "render title" in {
-      page(movementDetails.arrivalForm(),None).getTitle must containMessage("arrivalDetails.header")
+      page(movementDetails.arrivalForm(), None).getTitle must containMessage("arrivalDetails.header")
     }
 
     "render heading input with hint for date" in {
-      page(movementDetails.arrivalForm(),None).getElementById("dateOfArrival-hint") must containMessage("arrivalDetails.date.hint")
+      page(movementDetails.arrivalForm(), None).getElementById("dateOfArrival-hint") must containMessage("arrivalDetails.date.hint")
     }
 
     "render heading input with hint for time" in {
-      page(movementDetails.arrivalForm(),None).getElementById("timeOfArrival-hint") must containMessage("arrivalDetails.time.hint")
+      page(movementDetails.arrivalForm(), None).getElementById("timeOfArrival-hint") must containMessage("arrivalDetails.time.hint")
     }
 
     "render back button" in {
@@ -57,8 +57,9 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector{
 
       "some errors" in {
         implicit val request = journeyRequest(ArrivalAnswers())
-        page(movementDetails.arrivalForm().withError("error", "error.required"), None).getElementById("error-summary-title").
-          text() mustBe messages("error.summary.title")
+        page(movementDetails.arrivalForm().withError("error", "error.required"), None).getElementById("error-summary-title").text() mustBe messages(
+          "error.summary.title"
+        )
       }
     }
   }

@@ -24,7 +24,7 @@ import views.ViewSpec
 import play.api.data.FormError
 import views.html.shut_mucr
 
-class ShutMucrViewSpec extends ViewSpec with Injector{
+class ShutMucrViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(ShutMucrAnswers())
 
