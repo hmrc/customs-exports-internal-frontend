@@ -36,7 +36,7 @@
 
         @pageTitle(messages("shutMucr.summary.title"))
 
-        @components.summary_list() {
+        @components.summary_list(messages("shutMucr.summary.header")) {
             @govukSummaryList(SummaryList(
                 rows = Seq(
                     SummaryListRow(
