@@ -111,8 +111,8 @@ class IleQueryController @Inject()(
       case response: SuccessfulResponseExchangeData =>
         saveQueryUcrtoCache(response)
 
-        val ducrResult = response.queriedDucr.map(ducr => Ok(ileQueryDucrResponsePage(ducr)))
-        val mucrResult = response.queriedMucr.map(mucr => Ok(ileQueryMucrResponsePage(mucr)))
+        val ducrResult = response.queriedDucr.map(ducr => Ok(ileQueryDucrResponsePage(ducr, response.parentMucr)))
+        val mucrResult = response.queriedMucr.map(mucr => Ok(ileQueryMucrResponsePage(mucr, response.parentMucr, response.sortedChildrenUcrs)))
 
         ducrResult.orElse(mucrResult).getOrElse(loadingPageResult)
 

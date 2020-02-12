@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package views
+package models.notifications.queries
 
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import models.notifications.EntryStatus
 
-object ViewDates {
-  def timezone = ZoneId.of("Europe/London")
-
-  val movementFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM uuu 'at' HH:mm").withZone(timezone)
-
+abstract class UcrInfo {
+  val ucr: String
+  val parentMucr: Option[String]
+  val entryStatus: Option[EntryStatus]
+  val movements: Seq[MovementInfo]
 }

@@ -28,6 +28,7 @@ trait ViewTemplates {
   private val minimalConfiguration: Configuration = Configuration(
     "assets.url" -> "localhost",
     "assets.version" -> "0",
+    "mongodb.uri" -> "mongodb://localhost:27017/customs-declare-exports",
     "google-analytics.token" -> "0",
     "google-analytics.host" -> "localhost:8080",
     "metrics.name" -> "",

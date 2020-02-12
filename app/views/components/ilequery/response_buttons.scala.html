@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package views
+@import components.gds.link
+@import controllers.routes
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+@this(
+        govukButton: GovukButton
+)
 
-object ViewDates {
-  def timezone = ZoneId.of("Europe/London")
+@()(implicit request: Request[_], messages: Messages)
 
-  val movementFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM uuu 'at' HH:mm").withZone(timezone)
-
-}
+<div class="govuk-grid-column-two-thirds">
+  <div>
+      @govukButton(Button(content = Text(messages("ileQueryResponse.links.manageConsignment")), href = Some(routes.ChoiceController.displayPage().url)))
+  </div>
+  <div>
+      @link(messages("ileQueryResponse.links.findConsignment"), controllers.ileQuery.routes.IleQueryController.displayQueryForm)
+  </div>
+</div>

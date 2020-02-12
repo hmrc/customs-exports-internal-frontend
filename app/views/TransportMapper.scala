@@ -16,12 +16,20 @@
 
 package views
 
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import javax.inject.Singleton
+import models.notifications.queries.Transport
+import services.Countries.countryName
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, Empty, Text}
 
-object ViewDates {
-  def timezone = ZoneId.of("Europe/London")
+@Singleton
+class TransportMapper {
 
-  val movementFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM uuu 'at' HH:mm").withZone(timezone)
+  def transportHtml(transport: Transport): Content =
+    (transport.transportId, transport.nationality) match {
+      case (Some(id), Some(nationality)) => Text(s"$id, ${countryName(nationality)}")
+      case (Some(id), None)              => Text(s"$id")
+      case (None, Some(nationality))     => Text(s"${countryName(nationality)}")
+      case _                             => Empty
+    }
 
 }

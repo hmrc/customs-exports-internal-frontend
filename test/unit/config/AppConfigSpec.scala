@@ -28,6 +28,8 @@ class AppConfigSpec extends UnitSpec {
     |google-analytics.token=N/A
     |google-analytics.host=localhostGoogle
     |
+    |mongodb.uri="mongodb://localhost:27017/customs-exports-internal"
+    |
     |microservice.services.auth.host=authHost
     |microservice.services.auth.port=9988
     """.stripMargin)
@@ -35,6 +37,8 @@ class AppConfigSpec extends UnitSpec {
     ConfigFactory.parseString("""
         |urls.login="http://localhost:9949/auth-login-stub/gg-sign-in"
         |urls.loginContinue="http://localhost:9000/customs-declare-exports-frontend"
+        |
+        |mongodb.uri="mongodb://localhost:27017/customs-exports-internal"
         |
         |google-analytics.token=N/A
         |google-analytics.host=GoogleHost
@@ -49,8 +53,12 @@ class AppConfigSpec extends UnitSpec {
         |urls.serviceAvailability=serviceAvailabilityURL
       """.stripMargin)
 
+  private val invalidAppConfig: Config = ConfigFactory.parseString("""
+      |mongodb.uri="mongodb://localhost:27017/customs-exports-internal"
+      |""".stripMargin)
   private val emptyConfiguration = Configuration(emptyConfig)
   private val validConfiguration = Configuration(validConfig)
+  private val invalidServicesConfiguration = Configuration(invalidAppConfig)
 
   private val environment = Environment.simple()
   private def appConfig(conf: Configuration) = {
