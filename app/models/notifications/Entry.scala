@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 case class Entry(ucrBlock: Option[UcrBlock] = None, goodsItem: Seq[GoodsItem] = Seq.empty, entryStatus: Option[EntryStatus] = None) {
   val ucrType: Option[String] = ucrBlock.map(_.ucrType)
   val ics: Option[String] = entryStatus.flatMap(_.ics)
-  val roe: Option[String] = entryStatus.flatMap(_.roe)
+  val roe: Option[String] = entryStatus.flatMap(_.roe.map(_.code))
   val soe: Option[String] = entryStatus.flatMap(_.soe)
 }
 

@@ -25,7 +25,7 @@ import controllers.ControllerLayerSpec
 import models.UcrBlock
 import models.cache.IleQuery
 import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
-import models.notifications.queries.{DucrInfo, IleQueryResponseExchange, MucrInfo}
+import models.notifications.queries._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{never, reset, verify, when}
 import play.api.libs.json.{JsString, Json}
@@ -70,8 +70,9 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
     when(errorHandler.standardErrorTemplate()(any())).thenReturn(HtmlFormat.empty)
     when(ileQueryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(loadingScreenPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
-    when(ileQueryDucrResponsePage.apply(any[DucrInfo])(any(), any())).thenReturn(HtmlFormat.empty)
-    when(ileQueryMucrResponsePage.apply(any[MucrInfo])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(ileQueryDucrResponsePage.apply(any[DucrInfo], any[Option[MucrInfo]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(ileQueryMucrResponsePage.apply(any[MucrInfo], any[Option[MucrInfo]], any[Seq[UcrInfo]])(any(), any()))
+      .thenReturn(HtmlFormat.empty)
     when(consignmentNotFoundPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
@@ -95,7 +96,8 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
       "submit mucr query method is invoked and notifications are available" in {
 
         val mucrInfo = MucrInfo("mucr")
-        val responseData = SuccessfulResponseExchangeData(queriedMucr = Some(mucrInfo))
+        val parentMucrInfo = Some(MucrInfo("parentMucr"))
+        val responseData = SuccessfulResponseExchangeData(queriedMucr = Some(mucrInfo), parentMucr = parentMucrInfo)
         val responseExchange = Seq(IleQueryResponseExchange(Instant.now(), "convId", "inventoryLinkingQueryResponse", responseData))
         when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
           .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", "convId"))))
@@ -109,7 +111,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         val result = controller.submitQuery("mucr")(request)
 
         status(result) mustBe OK
-        verify(ileQueryMucrResponsePage).apply(meq(mucrInfo))(any(), any())
+        verify(ileQueryMucrResponsePage).apply(meq(mucrInfo), meq(parentMucrInfo), meq(Seq.empty))(any(), any())
 
         theCacheUpserted.queryUcr mustBe Some(UcrBlock("mucr", "M"))
       }
@@ -136,7 +138,8 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
       "submit ducr query method is invoked and notifications are available" in {
 
         val ducrInfo = DucrInfo(ucr = "ducr", declarationId = "decId")
-        val responseData = SuccessfulResponseExchangeData(queriedDucr = Some(ducrInfo))
+        val parentMucrInfo = Some(MucrInfo("parentMucr"))
+        val responseData = SuccessfulResponseExchangeData(queriedDucr = Some(ducrInfo), parentMucr = parentMucrInfo)
         val responseExchange = Seq(IleQueryResponseExchange(Instant.now(), "convId", "inventoryLinkingQueryResponse", responseData))
         when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
           .thenReturn(Future.successful(Some(IleQuery("sessionId", "ducr", "convId"))))
@@ -150,7 +153,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         val result = controller.submitQuery("ducr")(request)
 
         status(result) mustBe OK
-        verify(ileQueryDucrResponsePage).apply(meq(ducrInfo))(any(), any())
+        verify(ileQueryDucrResponsePage).apply(meq(ducrInfo), meq(parentMucrInfo))(any(), any())
 
         theCacheUpserted.queryUcr mustBe Some(UcrBlock("ducr", "D"))
       }
