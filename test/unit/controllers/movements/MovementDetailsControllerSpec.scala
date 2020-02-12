@@ -53,7 +53,7 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -64,8 +64,8 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
 
   private def theResponseForm: Form[ArrivalDetails] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[ArrivalDetails]])
-    verify(page).apply(captor.capture())(any(), any())
-    captor.getValue()
+    verify(page).apply(captor.capture(), any())(any(), any())
+    captor.getValue
   }
 
   "Movement Details Controller" should {
