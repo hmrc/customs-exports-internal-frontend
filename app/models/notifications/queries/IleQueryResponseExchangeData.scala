@@ -18,6 +18,7 @@ package models.notifications.queries
 
 import models.UcrBlock
 import models.notifications.queries.IleQueryResponseExchangeType.{SuccessfulResponseExchange, UcrNotFoundResponseExchange}
+import models.viewmodels.decoder.ROECode
 import play.api.libs.json.{Format, Json, OFormat}
 import uk.gov.hmrc.play.json.Union
 
@@ -41,6 +42,8 @@ object IleQueryResponseExchangeData {
     childMucrs: Seq[MucrInfo] = Seq.empty
   ) extends IleQueryResponseExchangeData {
     override val typ = IleQueryResponseExchangeType.SuccessfulResponseExchange
+
+    val sortedChildrenUcrs: Seq[UcrInfo] = (childDucrs ++ childMucrs).sortBy(_.entryStatus.flatMap(_.roe).getOrElse(ROECode.UnknownRoe))
   }
 
   object SuccessfulResponseExchangeData {

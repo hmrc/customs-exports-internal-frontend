@@ -18,33 +18,41 @@ package views
 
 import java.time.ZonedDateTime
 
+import base.Injector
 import models.notifications.EntryStatus
-import models.notifications.queries.{MovementInfo, MucrInfo}
+import models.notifications.queries.{MovementInfo, MucrInfo, UcrInfo}
+import models.viewmodels.decoder.ROECode.UnknownRoe
+import models.viewmodels.decoder.{ROECode, SOECode}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
+import play.twirl.api.Html
 import views.html.ile_query_mucr_response
 
-class IleQueryMucrResponseViewSpec extends ViewSpec {
+class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  private val page = new ile_query_mucr_response(main_template)
+  private val page = instanceOf[ile_query_mucr_response]
 
   val arrival =
     MovementInfo(messageCode = "EAL", goodsLocation = "GBAUFXTFXTFXT", movementDateTime = Some(ZonedDateTime.parse("2019-10-23T12:34:18Z").toInstant))
   val retro =
-    MovementInfo(messageCode = "RET", goodsLocation = "GBAUDFGFSHFKD", movementDateTime = Some(ZonedDateTime.parse("2019-11-23T12:34:18Z").toInstant))
+    MovementInfo(messageCode = "RET", goodsLocation = "GBAUDFGFSHFKD", movementDateTime = Some(ZonedDateTime.parse("2019-11-01T02:34:18Z").toInstant))
   val depart = MovementInfo(
     messageCode = "EDL",
     goodsLocation = "GBAUFDSASFDFDF",
-    movementDateTime = Some(ZonedDateTime.parse("2019-10-30T12:34:18Z").toInstant)
+    movementDateTime = Some(ZonedDateTime.parse("2019-10-30T10:22:18Z").toInstant)
   )
 
-  val status = EntryStatus(Some("ICS"), Some("ROE"), Some("SOE"))
+  val status = EntryStatus(Some("ICS"), None, Some("SOE"))
   val mucrInfo =
     MucrInfo(ucr = "8GB123458302100-101SHIP1", movements = Seq.empty, entryStatus = Some(status), isShut = Some(true))
 
-  private def view(info: MucrInfo = mucrInfo) = page(info)
+  private def view(info: MucrInfo = mucrInfo, parent: Option[MucrInfo] = None, associatedConsignments: Seq[UcrInfo] = Seq.empty) =
+    page(info, parent, associatedConsignments)
+
+  private def summaryElement(html: Html, index: Int) = html.getElementById("summary").select(s"div:eq($index)>dd").get(0)
+  private def parentConsignmentElement(html: Html, index: Int) = html.getElementById("parentConsignment").select(s"div:eq($index)>dd").get(0)
 
   "Ile Query page" should {
 
@@ -56,85 +64,115 @@ class IleQueryMucrResponseViewSpec extends ViewSpec {
     "render arrival movement" in {
       val arrivalView = view(mucrInfo.copy(movements = Seq(arrival)))
       arrivalView.getElementById("movement_type_0") must containMessage("ileQueryResponse.previousMovements.type.eal")
-      arrivalView.getElementById("movement_date_0").text() must be("23/10/2019")
+      arrivalView.getElementById("movement_date_0").text() must be("23 October 2019 at 13:34")
       arrivalView.getElementById("goods_location_0").text() must be("GBAUFXTFXTFXT")
     }
 
     "render departure movement" in {
       val arrivalView = view(mucrInfo.copy(movements = Seq(depart)))
       arrivalView.getElementById("movement_type_0") must containMessage("ileQueryResponse.previousMovements.type.edl")
-      arrivalView.getElementById("movement_date_0").text() must be("30/10/2019")
+      arrivalView.getElementById("movement_date_0").text() must be("30 October 2019 at 10:22")
       arrivalView.getElementById("goods_location_0").text() must be("GBAUFDSASFDFDF")
     }
 
     "render retrospective arrival" in {
       val arrivalView = view(mucrInfo.copy(movements = Seq(retro)))
       arrivalView.getElementById("movement_type_0") must containMessage("ileQueryResponse.previousMovements.type.ret")
-      arrivalView.getElementById("movement_date_0").text() must be("23/11/2019")
+      arrivalView.getElementById("movement_date_0").text() must be("1 November 2019 at 02:34")
       arrivalView.getElementById("goods_location_0").text() must be("GBAUDFGFSHFKD")
     }
 
     "render movements by date order" in {
       val movementsView = view(mucrInfo.copy(movements = Seq(arrival, retro, depart)))
-      movementsView.getElementById("movement_date_0").text() must be("23/11/2019")
-      movementsView.getElementById("movement_date_1").text() must be("30/10/2019")
-      movementsView.getElementById("movement_date_2").text() must be("23/10/2019")
+      movementsView.getElementById("movement_date_0").text() must be("1 November 2019 at 02:34")
+      movementsView.getElementById("movement_date_1").text() must be("30 October 2019 at 10:22")
+      movementsView.getElementById("movement_date_2").text() must be("23 October 2019 at 13:34")
     }
 
-    "render default route of entry" in {
-      view().getElementById("roe_code") must containMessage("ileQuery.mapping.roe.default", "ROE")
+    "render no route of entry" in {
+      summaryElement(view(), 0).text must be("")
     }
 
-    "render empty route of entry" in {
-      view(mucrInfo.copy(entryStatus = Some(status.copy(roe = None))))
-        .getElementById("roe_code")
-        .text must be("")
+    "render unknown route of entry" in {
+      summaryElement(view(mucrInfo.copy(entryStatus = Some(status.copy(roe = Some(UnknownRoe))))), 0) must containMessage(
+        "ileQueryResponse.route.unknown"
+      )
     }
 
     "translate all routes of entry" in {
-      IleCodeMapper.definedRoeCodes.foreach(
-        code =>
-          view(mucrInfo.copy(entryStatus = Some(status.copy(roe = Some(code)))))
-            .getElementById("roe_code") must containMessage(s"ileQuery.mapping.roe.$code")
-      )
+      ROECode.codes
+        .filterNot(_ == UnknownRoe)
+        .foreach(roe => summaryElement(view(mucrInfo.copy(entryStatus = Some(status.copy(roe = Some(roe))))), 0) must containMessage(roe.messageKey))
     }
 
     "render default status of entry" in {
-      view().getElementById("soe_code") must containMessage("ileQuery.mapping.soe.ducr.default", "SOE")
+      summaryElement(view(), 1).text must be("")
     }
 
     "render empty status of entry" in {
-      view(mucrInfo.copy(entryStatus = Some(status.copy(soe = None))))
-        .getElementById("soe_code")
-        .text must be("")
+      summaryElement(view(mucrInfo.copy(entryStatus = Some(status.copy(soe = None)))), 1).text must be("")
     }
 
     "translate all status of entry" in {
-      IleCodeMapper.definedSoeDucrCodes.foreach(
-        code =>
-          view(mucrInfo.copy(entryStatus = Some(status.copy(soe = Some(code)))))
-            .getElementById("soe_code") must containMessage(s"ileQuery.mapping.soe.ducr.$code")
+      SOECode.MucrCodes.foreach(
+        soe => summaryElement(view(mucrInfo.copy(entryStatus = Some(status.copy(soe = Some(soe.code))))), 1) must containMessage(soe.messageKey)
       )
-    }
-
-    "not render default input customs status" in {
-      view().getElementById("ics_code") must be(null)
     }
 
     "render isShut when mucr shut" in {
       view(mucrInfo.copy(isShut = Some(true))).getElementById("isShutMucr") must containMessage("ileQueryResponse.details.isShutMucr.true")
-
     }
 
     "render isShut when mucr not shut" in {
       view(mucrInfo.copy(isShut = Some(false))).getElementById("isShutMucr") must containMessage("ileQueryResponse.details.isShutMucr.false")
-
     }
 
-    "render isShut when missing" in {
-      view(mucrInfo.copy(isShut = None)).getElementById("isShutMucr").text must be("")
-
+    "not render isShut when missing" in {
+      view(mucrInfo.copy(isShut = None)).getElementById("isShutMucr") must be(null)
     }
 
+    "not render isShut when mucr has parent" in {
+      view(info = mucrInfo.copy(isShut = Some(true)), parent = Some(MucrInfo("mucr"))).getElementById("isShutMucr") must be(null)
+    }
+
+    val viewWithParent = view(
+      parent =
+        Some(MucrInfo("parentUcr", entryStatus = Some(EntryStatus(None, Some(ROECode.DocumentaryControl), Some(SOECode.ConsolidationOpen.code)))))
+    )
+
+    "render parent consignment link" in {
+      parentConsignmentElement(viewWithParent, 0).getElementsByClass("govuk-link").first() must haveHref(
+        controllers.ileQuery.routes.IleQueryController.submitQuery("parentUcr")
+      )
+      parentConsignmentElement(viewWithParent, 0) must containText("parentUcr")
+    }
+
+    "render parent consignment route" in {
+      parentConsignmentElement(viewWithParent, 1) must containMessage(ROECode.DocumentaryControl.messageKey)
+    }
+
+    "render parent consignment status" in {
+      parentConsignmentElement(viewWithParent, 2) must containMessage(SOECode.ConsolidationOpen.messageKey)
+    }
+
+    "not render associate consignments section if there aren't any " in {
+      view().getElementById("associatedUcrs") must be(null)
+    }
+
+    "render associate consignments section" in {
+      val viewWithChild = view(
+        associatedConsignments =
+          Seq(MucrInfo("childUcr", entryStatus = Some(EntryStatus(None, Some(ROECode.DocumentaryControl), Some(SOECode.Departed.code)))))
+      )
+      viewWithChild.getElementById("associatedUcrs") must containMessage("ileQueryResponse.associated")
+
+      val elmChild = viewWithChild.getElementById("associateUcr_0_ucr")
+      elmChild must containText("childUcr")
+      elmChild.getElementsByClass("govuk-link").first() must haveHref(controllers.ileQuery.routes.IleQueryController.submitQuery("childUcr"))
+
+      viewWithChild.getElementById("associateUcr_0_roe") must containMessage(ROECode.DocumentaryControl.messageKey)
+
+      viewWithChild.getElementById("associateUcr_0_soe") must containMessage(SOECode.Departed.messageKey)
+    }
   }
 }
