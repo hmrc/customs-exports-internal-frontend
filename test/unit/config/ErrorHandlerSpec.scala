@@ -69,7 +69,7 @@ class ErrorHandlerSpec extends UnitSpec with BeforeAndAfterEach with CSRFSupport
       val result = Future.successful(handler.resolveError(fakeRequest, ReturnToStartException))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.ileQuery.routes.IleQueryController.submitQueryForm().url)
+      redirectLocation(result) mustBe Some(controllers.ileQuery.routes.IleQueryController.displayQueryForm().url)
     }
 
     "handle ApplicationException" in {

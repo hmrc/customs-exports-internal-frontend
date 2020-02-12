@@ -32,7 +32,7 @@
     @helper.form(controllers.movements.routes.ConsignmentReferencesController.saveConsignmentReferences(), 'autoComplete -> "off") {
         @helper.CSRF.formField
 
-        @components.back_link(controllers.ileQuery.routes.IleQueryController.submitQueryForm())
+        @components.back_link(controllers.routes.ChoiceController.displayPage())
 
         @components.error_summary(form.errors)
 

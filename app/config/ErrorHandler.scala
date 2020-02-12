@@ -36,7 +36,7 @@ class ErrorHandler @Inject()(val messagesApi: MessagesApi, errorTemplate: error)
   override def resolveError(request: RequestHeader, exception: Throwable): Result = exception match {
     case ReturnToStartException =>
       logger.warn(s"User Answers was in an invalid state, returning them to the Start Page from [${request.uri}]")
-      Results.Redirect(controllers.ileQuery.routes.IleQueryController.submitQueryForm())
+      Results.Redirect(controllers.ileQuery.routes.IleQueryController.displayQueryForm())
     case _ =>
       logger.warn(s"Unexpected Exception was thrown accessing [${request.uri}]", exception)
       super.resolveError(request, exception)
