@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package views
+package mongobee
 
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import com.github.mongobee.Mongobee
+import com.google.inject.Singleton
 
-object ViewDates {
-  def timezone = ZoneId.of("Europe/London")
+@Singleton
+case class MongobeeConfig(mongoURI: String) {
+  val runner = new Mongobee(mongoURI)
 
-  val movementFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM uuu 'at' HH:mm").withZone(timezone)
+  runner.setDbName("customs-exports-internal")
+  runner.setChangeLogsScanPackage("mongobee.changesets")
 
+  runner.execute()
+  runner.close()
 }

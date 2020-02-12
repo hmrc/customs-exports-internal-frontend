@@ -15,31 +15,32 @@
  */
 
 package views
+
+import javax.inject.{Inject, Singleton}
+import models.viewmodels.decoder.{CodeWithMessageKey, Decoder, ROECode}
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, Empty, HtmlContent, Text}
 
-object IleCodeMapper {
+@Singleton
+class IleCodeMapper @Inject()(decoder: Decoder) {
 
-  val definedIcsCodes: Set[String] = Set("3", "6")
-  val definedRoeCodes: Set[String] = Set("1", "2", "3", "6", "0", "H")
-  val definedSoeDucrCodes: Set[String] = Set("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "D", "F")
-  val definedSoeMucrCodes: Set[String] = Set("0", "3", "C")
+  private def htmlString(codeWithMessageKey: CodeWithMessageKey)(implicit messages: Messages) =
+    s"<strong>${codeWithMessageKey.code}</strong> - ${messages(codeWithMessageKey.messageKey)}"
 
-  def inputCustomsStatus(code: String)(implicit messages: Messages): String =
-    translate(definedIcsCodes, "ileQuery.mapping.ics", code)
+  def inputCustomsStatus(code: String)(implicit messages: Messages): Content =
+    decoder.ics(code).map(icsCode => HtmlContent(htmlString(icsCode))).getOrElse(Empty)
 
-  def routeOfEntry(code: String)(implicit messages: Messages): String =
-    translate(definedRoeCodes, "ileQuery.mapping.roe", code)
+  def routeOfEntry(roe: ROECode)(implicit messages: Messages): Content = roe match {
+    case ROECode.UnknownRoe => Text(messages("ileQueryResponse.route.unknown"))
+    case _                  => HtmlContent(htmlString(roe))
+  }
 
-  def statusOfEntryDucr(code: String)(implicit messages: Messages): String =
-    translate(definedSoeDucrCodes, "ileQuery.mapping.soe.ducr", code)
+  def statusOfEntryDucr(code: String)(implicit messages: Messages): Content =
+    decoder.ducrSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)
 
-  def statusOfEntryMucr(code: String)(implicit messages: Messages): String =
-    translate(definedSoeMucrCodes, "ileQuery.mapping.soe.mucr", code)
+  def statusOfEntryMucr(code: String)(implicit messages: Messages): Content =
+    decoder.mucrSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)
 
-  private def translate(defined: Set[String], messageKeyPrefix: String, code: String)(implicit messages: Messages) =
-    if (defined.contains(code)) {
-      messages(s"$messageKeyPrefix.$code")
-    } else {
-      messages(s"$messageKeyPrefix.default", code)
-    }
+  def statusOfEntryCombined(code: String)(implicit messages: Messages): Content =
+    decoder.soeCombined(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)
 }

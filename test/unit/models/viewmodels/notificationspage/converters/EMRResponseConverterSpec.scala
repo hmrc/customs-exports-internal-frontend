@@ -142,14 +142,14 @@ class EMRResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
         contentBuilder.convert(input)
 
         verify(decoder).crc(meq(UnknownCrcCode))
-        verify(decoder).roe(meq(UnknownRoeCode))
+        verify(decoder).roe(meq(UnknownRoeCode.code))
         verify(decoder).mucrSoe(meq(UnknownMucrSoeCode))
       }
 
       "return NotificationsPageSingleElement without content for unknown codes" in {
 
         when(decoder.crc(meq(UnknownCrcCode))).thenReturn(None)
-        when(decoder.roe(meq(UnknownRoeCode))).thenReturn(None)
+        when(decoder.roe(meq(UnknownRoeCode.code))).thenReturn(None)
         when(decoder.mucrSoe(meq(UnknownMucrSoeCode))).thenReturn(None)
 
         val input = emrResponseUnknownCodes
@@ -182,7 +182,7 @@ object EMRResponseConverterSpec {
     entries = Seq(
       Entry(
         ucrBlock = Some(UcrBlock(ucr = correctUcr, ucrType = "M")),
-        entryStatus = Some(EntryStatus(roe = Some(roeKeyFromDecoder.code), soe = Some(mucrSoeKeyFromDecoder.code)))
+        entryStatus = Some(EntryStatus(roe = Some(roeKeyFromDecoder), soe = Some(mucrSoeKeyFromDecoder.code)))
       )
     )
   )
@@ -191,12 +191,11 @@ object EMRResponseConverterSpec {
     responseType = ResponseType.MovementTotalsResponse,
     messageCode = EMR.code,
     timestampReceived = testTimestamp,
-    entries =
-      Seq(Entry(ucrBlock = Some(UcrBlock(ucr = correctUcr, ucrType = "M")), entryStatus = Some(EntryStatus(roe = Some(roeKeyFromDecoder.code)))))
+    entries = Seq(Entry(ucrBlock = Some(UcrBlock(ucr = correctUcr, ucrType = "M")), entryStatus = Some(EntryStatus(roe = Some(roeKeyFromDecoder)))))
   )
 
   val UnknownCrcCode = "1234"
-  val UnknownRoeCode = "456"
+  val UnknownRoeCode = ROECode.UnknownRoe
   val UnknownMucrSoeCode = "7890"
 
   val emrResponseUnknownCodes = exampleNotificationFrontendModel(

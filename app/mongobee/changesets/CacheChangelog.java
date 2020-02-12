@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package views
+package mongobee.changesets;
 
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import com.github.mongobee.changeset.ChangeLog;
+import com.github.mongobee.changeset.ChangeSet;
+import com.mongodb.DB;
 
-object ViewDates {
-  def timezone = ZoneId.of("Europe/London")
+@ChangeLog
+public class CacheChangelog {
+    private String collection = "cache";
 
-  val movementFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM uuu 'at' HH:mm").withZone(timezone)
-
+    @ChangeSet(order = "001", id = "Internal Movements DB Baseline", author = "Paulo Monteiro")
+    public void dbBaseline(DB db) {
+    }
 }
