@@ -40,7 +40,7 @@ class ShutMucrViewSpec extends ViewSpec with Injector{
     }
 
     "render back button" in {
-      val backButton = page(ShutMucr.form).getBackButton
+      val backButton = page(ShutMucr.form).getGovUkBackButton
 
       backButton mustBe defined
       backButton.foreach(button => {
