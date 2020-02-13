@@ -30,10 +30,12 @@ case class MongobeeConfig(mongoURI: String) {
     val reactiveMongo = Uri(mongoURI)
     val query = reactiveMongo.query()
     val newQuery = {
-      query.foldLeft(Query.newBuilder){
-        case (builder, (key, value)) if key == "sslEnabled" => builder += (("ssl", "true"))
-        case (builder, entry) => builder += entry
-      }.result()
+      query
+        .foldLeft(Query.newBuilder) {
+          case (builder, (key, value)) if key == "sslEnabled" => builder += (("ssl", "true"))
+          case (builder, entry)                               => builder += entry
+        }
+        .result()
     }
     reactiveMongo.withQuery(newQuery)
   }
