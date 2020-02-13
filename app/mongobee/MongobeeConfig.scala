@@ -16,12 +16,29 @@
 
 package mongobee
 
+import java.net.URI
+
+import akka.http.scaladsl.model.Uri
+import akka.http.scaladsl.model.Uri.Query
 import com.github.mongobee.Mongobee
 import com.google.inject.Singleton
 
 @Singleton
 case class MongobeeConfig(mongoURI: String) {
-  val runner = new Mongobee(mongoURI)
+
+  val uri = {
+    val reactiveMongo = Uri(mongoURI)
+    val query = reactiveMongo.query()
+    val newQuery = {
+      query.foldLeft(Query.newBuilder){
+        case (builder, (key, value)) if key == "sslEnabled" => builder += (("ssl", "true"))
+        case (builder, entry) => builder += entry
+      }.result()
+    }
+    reactiveMongo.withQuery(newQuery)
+  }
+
+  val runner = new Mongobee(uri.toString)
 
   runner.setDbName("customs-exports-internal")
   runner.setChangeLogsScanPackage("mongobee.changesets")
