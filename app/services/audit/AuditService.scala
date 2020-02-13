@@ -17,7 +17,7 @@
 package services.audit
 
 import com.google.inject.Inject
-import connectors.exchanges.{ArrivalExchange, MovementExchange}
+import connectors.exchanges.MovementExchange
 import forms._
 import javax.inject.Named
 import models.cache._
@@ -63,7 +63,7 @@ class AuditService @Inject()(connector: AuditConnector, @Named("appName") appNam
       movementAuditType,
       Map(
         EventData.providerId.toString -> data.providerId,
-        EventData.messageCode.toString -> data.choice.toString,
+        EventData.messageCode.toString -> data.choice.ileCode,
         EventData.ucrType.toString -> data.consignmentReference.reference.toString,
         EventData.ucr.toString -> data.consignmentReference.referenceValue,
         EventData.submissionResult.toString -> result

@@ -16,9 +16,27 @@
 
 package connectors.exchanges
 
+import connectors.exchanges.ActionType.MovementType
 import forms._
 import play.api.libs.json.{Format, Json, OFormat}
 import uk.gov.hmrc.play.json.Union
+
+trait MovementExchange {
+  val eori: String
+  val providerId: String
+  val choice: MovementType
+  val consignmentReference: ConsignmentReferences
+  val location: Location
+}
+
+object MovementExchange {
+  implicit val format: Format[MovementExchange] = Union
+    .from[MovementExchange]("choice")
+    .and[ArrivalExchange](MovementType.Arrival.toString)
+    .and[RetrospectiveArrivalExchange](MovementType.RetrospectiveArrival.toString)
+    .and[DepartureExchange](MovementType.Departure.toString)
+    .format
+}
 
 case class ArrivalExchange(
   override val eori: String,
@@ -57,21 +75,4 @@ case class DepartureExchange(
 }
 object DepartureExchange {
   implicit val format: OFormat[DepartureExchange] = Json.format[DepartureExchange]
-}
-
-trait MovementExchange {
-  val eori: String
-  val providerId: String
-  val choice: MovementType
-  val consignmentReference: ConsignmentReferences
-  val location: Location
-}
-
-object MovementExchange {
-  implicit val format: Format[MovementExchange] = Union
-    .from[MovementExchange]("choice")
-    .and[ArrivalExchange](MovementType.Arrival.toString)
-    .and[RetrospectiveArrivalExchange](MovementType.RetrospectiveArrival.toString)
-    .and[DepartureExchange](MovementType.Departure.toString)
-    .format
 }
