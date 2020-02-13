@@ -18,11 +18,9 @@ package mongobee.changesets;
 
 import com.github.mongobee.changeset.ChangeLog;
 import com.github.mongobee.changeset.ChangeSet;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
-import org.bson.Document;
 
 import java.util.concurrent.TimeUnit;
 
@@ -34,19 +32,16 @@ public class IleQueriesChangelog {
     public void addIleQueryTTL(MongoDatabase db) {
 
         /*
-        Note:  Have to check for existence of index as it was previously created by the IleQueryRepository class
+        Note:  Index may not exist if db has been dropped as it was previously created by the IleQueryRepository class
          */
-        dropIndexIfExists("ttl", db.getCollection(collection));
+        try {
+            db.getCollection(collection).dropIndex("ttl");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
         IndexOptions options = new IndexOptions().expireAfter(1L, TimeUnit.MINUTES).name("ttl");
         db.getCollection(collection).createIndex(Indexes.ascending("createdAt"), options);
     }
 
-    private void dropIndexIfExists(String key, MongoCollection<Document> collection) {
-        for (Document index : collection.listIndexes()) {
-            if (index.containsKey(key)) {
-                collection.dropIndex(key);
-            }
-        }
-    }
 }
