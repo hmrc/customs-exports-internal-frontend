@@ -29,12 +29,12 @@ class ChoiceSpec extends IntegrationSpec {
       status(response) mustBe FORBIDDEN
     }
 
-    "return 200" in {
+    "return 303" in {
       givenAuthSuccess()
 
       val response = get(controllers.routes.ChoiceController.displayPage())
 
-      status(response) mustBe OK
+      status(response) mustBe SEE_OTHER
     }
   }
 
