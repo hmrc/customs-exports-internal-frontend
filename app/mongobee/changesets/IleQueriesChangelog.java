@@ -18,14 +18,11 @@ package mongobee.changesets;
 
 import com.github.mongobee.changeset.ChangeLog;
 import com.github.mongobee.changeset.ChangeSet;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
-import org.bson.Document;
 
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 @ChangeLog
 public class IleQueriesChangelog {
