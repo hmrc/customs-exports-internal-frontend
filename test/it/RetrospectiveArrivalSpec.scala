@@ -161,7 +161,7 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
             .withRequestBody(equalToJson(s"""{
                    |"eori":"GB1234567890",
                    |"providerId":"pid",
-                   |"choice":"RET",
+                   |"choice":"RetrospectiveArrival",
                    |"consignmentReference":{"reference":"M","referenceValue":"GB/123-12345"},
                    |"location":{"code":"GBAUEMAEMAEMA"}
                    |}""".stripMargin))

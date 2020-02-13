@@ -329,7 +329,7 @@ class DepartureSpec extends IntegrationSpec {
             .withRequestBody(equalToJson(s"""{
                    |"eori":"GB1234567890",
                    |"providerId":"pid",
-                   |"choice":"EDL",
+                   |"choice":"Departure",
                    |"consignmentReference":{"reference":"M","referenceValue":"GB/123-12345"},
                    |"movementDetails":{"dateTime":"$datetime"},
                    |"location":{"code":"GBAUEMAEMAEMA"},

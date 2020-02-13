@@ -69,7 +69,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
                  "consignmentReference":{"reference":"D","referenceValue":"value"},
                  "movementDetails":{"dateTime":"datetime"},
                  "location":{"code":"code"},
-                 "choice":"EAL"
+                 "choice":"Arrival"
                  }"""))
       )
     }
@@ -91,7 +91,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
 
       verify(
         postRequestedFor(urlEqualTo("/consolidation"))
-          .withRequestBody(equalToJson("""{"ucr":"ucr","providerId":"provider-id","consolidationType":"DISASSOCIATE_DUCR", "eori":"eori"}"""))
+          .withRequestBody(equalToJson("""{"ucr":"ucr","providerId":"provider-id","consolidationType":"DucrDisassociation", "eori":"eori"}"""))
       )
     }
   }

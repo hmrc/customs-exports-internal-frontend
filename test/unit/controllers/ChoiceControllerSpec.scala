@@ -183,7 +183,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
-        theCacheUpserted mustBe Cache(providerId, ArrivalAnswers(Answers.fakeEORI))
+        theCacheUpserted.answers mustBe Some(ArrivalAnswers(Answers.fakeEORI))
       }
 
       "user chooses departure" in {
@@ -192,7 +192,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
-        theCacheUpserted mustBe Cache(providerId, DepartureAnswers(Answers.fakeEORI))
+        theCacheUpserted.answers mustBe Some(DepartureAnswers(Answers.fakeEORI))
       }
 
       "user chooses associate UCR" in {
@@ -201,7 +201,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
-        theCacheUpserted mustBe Cache(providerId, AssociateUcrAnswers())
+        theCacheUpserted.answers mustBe Some(AssociateUcrAnswers())
       }
 
       "user chooses disassociate UCR" in {
@@ -210,7 +210,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateUCRController.display().url)
-        theCacheUpserted mustBe Cache(providerId, DisassociateUcrAnswers())
+        theCacheUpserted.answers mustBe Some(DisassociateUcrAnswers())
       }
 
       "user chooses shut MUCR" in {
@@ -219,7 +219,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(consolidationRoutes.ShutMucrController.displayPage().url)
-        theCacheUpserted mustBe Cache(providerId, ShutMucrAnswers())
+        theCacheUpserted.answers mustBe Some(ShutMucrAnswers())
       }
 
       "user chooses retrospective arrival" in {
@@ -228,7 +228,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(movements.routes.ConsignmentReferencesController.displayPage().url)
-        theCacheUpserted mustBe Cache(providerId, RetrospectiveArrivalAnswers())
+        theCacheUpserted.answers mustBe Some(RetrospectiveArrivalAnswers())
       }
 
       "user chooses view submissions" in {
@@ -269,11 +269,10 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(Arrival))
 
         status(result) mustBe SEE_OTHER
-        theCacheUpserted mustBe Cache(
-          providerId,
-          Some(ArrivalAnswers(Answers.fakeEORI, consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))),
-          Some(queryResult)
+        theCacheUpserted.answers mustBe Some(
+          ArrivalAnswers(Answers.fakeEORI, consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))
         )
+        theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
 
       "user chooses departure following ILE query results" in {
@@ -283,11 +282,10 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(Departure))
 
         status(result) mustBe SEE_OTHER
-        theCacheUpserted mustBe Cache(
-          providerId,
-          Some(DepartureAnswers(Answers.fakeEORI, consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))),
-          Some(queryResult)
+        theCacheUpserted.answers mustBe Some(
+          DepartureAnswers(Answers.fakeEORI, consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))
         )
+        theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
 
       "user chooses associate UCR following ILE query results" in {
@@ -297,11 +295,8 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(AssociateUCR))
 
         status(result) mustBe SEE_OTHER
-        theCacheUpserted mustBe Cache(
-          providerId,
-          Some(AssociateUcrAnswers(Answers.fakeEORI, associateUcr = Some(AssociateUcr(AssociateKind.Mucr, "mucr")))),
-          Some(queryResult)
-        )
+        theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(Answers.fakeEORI, associateUcr = Some(AssociateUcr(AssociateKind.Mucr, "mucr"))))
+        theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
 
       "user chooses disassociate UCR following ILE query results" in {
@@ -311,11 +306,10 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(DisassociateUCR))
 
         status(result) mustBe SEE_OTHER
-        theCacheUpserted mustBe Cache(
-          providerId,
-          Some(DisassociateUcrAnswers(Answers.fakeEORI, ucr = Some(DisassociateUcr(DisassociateKind.Mucr, None, Some("mucr"))))),
-          Some(queryResult)
+        theCacheUpserted.answers mustBe Some(
+          DisassociateUcrAnswers(Answers.fakeEORI, ucr = Some(DisassociateUcr(DisassociateKind.Mucr, None, Some("mucr"))))
         )
+        theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
 
       "user chooses shut MUCR following ILE query results" in {
@@ -325,7 +319,8 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(ShutMUCR))
 
         status(result) mustBe SEE_OTHER
-        theCacheUpserted mustBe Cache(providerId, Some(ShutMucrAnswers(Answers.fakeEORI, shutMucr = Some(ShutMucr("mucr")))), Some(queryResult))
+        theCacheUpserted.answers mustBe Some(ShutMucrAnswers(Answers.fakeEORI, shutMucr = Some(ShutMucr("mucr"))))
+        theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
 
       "user chooses retrospective arrival following ILE query results" in {
@@ -335,13 +330,10 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(RetrospectiveArrival))
 
         status(result) mustBe SEE_OTHER
-        theCacheUpserted mustBe Cache(
-          providerId,
-          Some(
-            RetrospectiveArrivalAnswers(Answers.fakeEORI, consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))
-          ),
-          Some(queryResult)
+        theCacheUpserted.answers mustBe Some(
+          RetrospectiveArrivalAnswers(Answers.fakeEORI, consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))
         )
+        theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
 
     }
