@@ -27,17 +27,11 @@ import com.google.inject.Singleton
 case class MongobeeConfig(mongoURI: String) {
 
   val uri = {
-    val reactiveMongo = Uri(mongoURI)
-    val query = reactiveMongo.query()
-    val newQuery = {
-      query
-        .foldLeft(Query.newBuilder) {
-          case (builder, (key, value)) if key == "sslEnabled" => builder += (("ssl", "true"))
-          case (builder, entry)                               => builder += entry
-        }
-        .result()
+    if (mongoURI.contains("sslEnabled")) {
+      s"${mongoURI}&ssl=true"
+    } else {
+      mongoURI
     }
-    reactiveMongo.withQuery(newQuery)
   }
 
   val runner = new Mongobee(uri.toString)
