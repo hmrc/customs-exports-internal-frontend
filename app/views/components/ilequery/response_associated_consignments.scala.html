@@ -15,12 +15,12 @@
  *@
 
 @import models.notifications.queries.UcrInfo
-@import models.viewmodels.ilequery.IleQueryConverter
+@import models.viewmodels.ilequery.IleQueryCodeConverter
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.ViewDates
 @import components.gds.link
 
-@this(converter: IleQueryConverter,govukTable: GovukTable)
+@this(converter: IleQueryCodeConverter,govukTable: GovukTable)
 
 @(associatedUcrs: Seq[UcrInfo])(implicit request: Request[_], messages: Messages)
 

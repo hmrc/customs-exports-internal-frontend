@@ -24,7 +24,7 @@ import services.Countries.countryName
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, Empty, HtmlContent, Text}
 
 @Singleton
-class IleQueryConverter @Inject()(decoder: Decoder) {
+class IleQueryCodeConverter @Inject()(decoder: Decoder) {
 
   private def htmlString(codeWithMessageKey: CodeWithMessageKey)(implicit messages: Messages) =
     s"<strong>${codeWithMessageKey.code}</strong> - ${messages(codeWithMessageKey.messageKey)}"
@@ -47,5 +47,5 @@ class IleQueryConverter @Inject()(decoder: Decoder) {
     decoder.allSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)
 
   def transport(transport: Transport): Content =
-    Text((transport.transportId.toSeq ++ transport.nationality.map(countryName).toSeq).mkString(", "))
+    Text((transport.transportId ++ transport.nationality.map(countryName)).mkString(", "))
 }

@@ -17,13 +17,13 @@
 @import components.gds.gds_main_template
 @import components.ilequery.{response_buttons, response_parent, response_previous_movements, response_associated_consignments}
 @import models.notifications.queries.{MucrInfo, UcrInfo}
-@import models.viewmodels.ilequery.IleQueryConverter
+@import models.viewmodels.ilequery.IleQueryCodeConverter
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.components.BackButton
 @import views.Title
 
 @this(
-        converter: IleQueryConverter,
+        converter: IleQueryCodeConverter,
         govukLayout: gds_main_template,
         parentSection: response_parent,
         previousMovementsSection: response_previous_movements,
