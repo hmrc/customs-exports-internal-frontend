@@ -25,11 +25,7 @@ case class MucrInfo(
   entryStatus: Option[EntryStatus] = None,
   isShut: Option[Boolean] = None,
   movements: Seq[MovementInfo] = Seq.empty
-) extends UcrInfo {
-  def transport: Option[Transport] =
-    movements.find(_.transportDetails.isDefined).flatMap(_.transportDetails)
-
-}
+) extends UcrInfo
 
 object MucrInfo {
   implicit val format = Json.format[MucrInfo]

@@ -15,16 +15,17 @@
  *@
 
 @import components.gds.gds_main_template
-@import components.ilequery.{response_parent, response_previous_movements, response_buttons}
+@import components.ilequery.{response_parent, response_previous_movements, response_buttons, response_ducr_summary}
 @import models.notifications.queries.{DucrInfo, MucrInfo}
+@import models.viewmodels.ilequery.IleQueryCodeConverter
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.components.BackButton
-@import views.{IleCodeMapper, Title, TransportMapper}
+@import views.Title
 
 @this(
-        ileCodeMapper: IleCodeMapper,
-        transportMapper: TransportMapper,
+        converter: IleQueryCodeConverter,
         govukLayout: gds_main_template,
+        summarySection: response_ducr_summary,
         parentSection: response_parent,
         previousMovementsSection: response_previous_movements,
         responseButtons: response_buttons,
@@ -46,48 +47,8 @@
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">@messages("ileQueryResponse.ducr.title")</h1>
             <span class="govuk-caption-xl govuk-!-margin-bottom-9">@info.ucr</span>
         </div>
-        <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">@messages("ileQueryResponse.details")</h2>
 
-            @govukSummaryList(SummaryList(
-                attributes = Map("id" -> "summary"),
-                rows = Seq(
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(messages("ileQueryResponse.details.route"))
-                        ),
-                        value = Value(
-                            content = info.entryStatus.flatMap(_.roe).map(ileCodeMapper.routeOfEntry(_)).getOrElse(Empty)
-                        )
-                    ),
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(messages("ileQueryResponse.details.entryStatus"))
-                        ),
-                        value = Value(
-                            content = info.entryStatus.flatMap(_.soe).map(ileCodeMapper.statusOfEntryDucr(_)).getOrElse(Empty)
-                        )
-                    ),
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(messages("ileQueryResponse.details.transport"))
-                        ),
-                        value = Value(
-                            content = info.transport.map(transportMapper.transportHtml).getOrElse(Empty)
-                        )
-                    ),
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(messages("ileQueryResponse.details.inputCustomsStatus"))
-                        ),
-                        value = Value(
-                            content = info.entryStatus.flatMap(_.ics).map(ileCodeMapper.inputCustomsStatus(_)).getOrElse(Empty)
-                        )
-                    )
-                ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
-                classes = "govuk-!-margin-bottom-9"
-            ))
-        </div>
+        @summarySection(info)
 
         @previousMovementsSection(info.movements)
 

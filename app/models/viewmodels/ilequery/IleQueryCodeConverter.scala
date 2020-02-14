@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package views
+package models.viewmodels.ilequery
 
 import javax.inject.{Inject, Singleton}
+import models.notifications.queries.Transport
 import models.viewmodels.decoder.{CodeWithMessageKey, Decoder, ROECode}
 import play.api.i18n.Messages
+import services.Countries.countryName
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, Empty, HtmlContent, Text}
 
 @Singleton
-class IleCodeMapper @Inject()(decoder: Decoder) {
+class IleQueryCodeConverter @Inject()(decoder: Decoder) {
 
   private def htmlString(codeWithMessageKey: CodeWithMessageKey)(implicit messages: Messages) =
     s"<strong>${codeWithMessageKey.code}</strong> - ${messages(codeWithMessageKey.messageKey)}"
@@ -41,6 +43,9 @@ class IleCodeMapper @Inject()(decoder: Decoder) {
   def statusOfEntryMucr(code: String)(implicit messages: Messages): Content =
     decoder.mucrSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)
 
-  def statusOfEntryCombined(code: String)(implicit messages: Messages): Content =
-    decoder.soeCombined(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)
+  def statusOfEntryAll(code: String)(implicit messages: Messages): Content =
+    decoder.allSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)
+
+  def transport(transport: Transport): Content =
+    Text((transport.transportId ++ transport.nationality.map(countryName)).mkString(", "))
 }

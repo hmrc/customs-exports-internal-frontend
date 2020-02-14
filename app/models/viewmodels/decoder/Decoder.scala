@@ -31,7 +31,7 @@ class Decoder {
 
   def mucrSoe(code: String): Option[SOECode] = SOECode.MucrCodes.find(_.code == code)
 
-  def soeCombined(code: String): Option[SOECode] = SOECode.CombinedCodes.find(_.code == code)
+  def allSoe(code: String): Option[SOECode] = SOECode.AllCodes.find(_.code == code)
 
   def error(code: String): Option[CodeWithMessageKey] = {
     val chiefErrorOpt = CHIEFError.allErrors.find(_.code == code)
