@@ -28,7 +28,7 @@ import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResp
 import models.notifications.queries._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{never, reset, verify, when}
-import play.api.libs.json.{JsString, Json}
+import play.api.libs.json.Json
 import play.api.mvc.Headers
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -86,13 +86,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
     "return 200 (OK)" when {
 
-      "display query form method is invoked" in {
-
-        val result = controller.displayQueryForm()(getRequest)
-
-        status(result) mustBe OK
-      }
-
       "submit mucr query method is invoked and notifications are available" in {
 
         val mucrInfo = MucrInfo("mucr")
@@ -108,7 +101,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
         val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
-        val result = controller.submitQuery("mucr")(request)
+        val result = controller.getConsignmentInformation("mucr")(request)
 
         status(result) mustBe OK
         verify(ileQueryMucrResponsePage).apply(meq(mucrInfo), meq(parentMucrInfo), meq(Seq.empty))(any(), any())
@@ -129,7 +122,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
         val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
-        val result = controller.submitQuery("mucr")(request)
+        val result = controller.getConsignmentInformation("mucr")(request)
 
         status(result) mustBe OK
         verify(consignmentNotFoundPage).apply(any())(any(), any())
@@ -150,7 +143,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
         val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
-        val result = controller.submitQuery("ducr")(request)
+        val result = controller.getConsignmentInformation("ducr")(request)
 
         status(result) mustBe OK
         verify(ileQueryDucrResponsePage).apply(meq(ducrInfo), meq(parentMucrInfo))(any(), any())
@@ -171,7 +164,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
         val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
-        val result = controller.submitQuery("ducr")(request)
+        val result = controller.getConsignmentInformation("ducr")(request)
 
         status(result) mustBe OK
         verify(consignmentNotFoundPage).apply(any())(any(), any())
@@ -188,7 +181,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
         val request = postRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
-        val result = controller.submitQuery("mucr")(request)
+        val result = controller.getConsignmentInformation("mucr")(request)
 
         status(result) mustBe OK
         verify(loadingScreenPage).apply()(any(), any())
@@ -199,15 +192,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
     "return 400 (BAD_REQUEST)" when {
 
-      "query form is incorrect" in {
-
-        val incorrectForm = JsString("1234")
-
-        val result = controller.submitQueryForm()(postRequest(incorrectForm))
-
-        status(result) mustBe BAD_REQUEST
-      }
-
       "ucr is incorrect during submitting ile query" in {
 
         when(ileQueryRepository.findBySessionIdAndUcr(any(), any()))
@@ -215,7 +199,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
         val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
-        val result = controller.submitQuery("ucr")(request)
+        val result = controller.getConsignmentInformation("ucr")(request)
 
         status(result) mustBe BAD_REQUEST
       }
@@ -234,7 +218,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
         val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
-        val result = controller.submitQuery("ucr")(request)
+        val result = controller.getConsignmentInformation("ucr")(request)
 
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
@@ -250,22 +234,13 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
         val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
-        val result = controller.submitQuery("ucr")(request)
+        val result = controller.getConsignmentInformation("ucr")(request)
 
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
 
     "return 303 (SEE_OTHER)" when {
-
-      "correct form has been submitted" in {
-
-        val correctForm = Json.obj(("ucr", JsString(correctUcr)))
-
-        val result = controller.submitQueryForm()(postRequest(correctForm))
-
-        status(result) mustBe SEE_OTHER
-      }
 
       "correct ucr has been submitted" in {
 
@@ -278,7 +253,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
         val request = getRequest.withHeaders(Headers(("X-Session-ID", "123456")))
 
-        val result = controller.submitQuery(correctUcr)(request)
+        val result = controller.getConsignmentInformation(correctUcr)(request)
 
         status(result) mustBe SEE_OTHER
       }

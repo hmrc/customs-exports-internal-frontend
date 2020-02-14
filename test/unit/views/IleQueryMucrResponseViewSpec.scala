@@ -17,9 +17,12 @@
 package views
 
 import base.Injector
+import models.notifications.EntryStatus
 import models.notifications.queries.{MovementInfo, MucrInfo, UcrInfo}
+import models.viewmodels.decoder.{ROECode, SOECode}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
+import play.twirl.api.Html
 import views.html.ile_query_mucr_response
 
 class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
@@ -35,6 +38,9 @@ class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
 
   private def view(info: MucrInfo = mucrInfo, parent: Option[MucrInfo] = None, associatedConsignments: Seq[UcrInfo] = Seq.empty) =
     page(info, parent, associatedConsignments)
+
+  private def summaryElement(html: Html, index: Int) = html.getElementById("summary").select(s"div:eq($index)>dd").get(0)
+  private def parentConsignmentElement(html: Html, index: Int) = html.getElementById("parentConsignment").select(s"div:eq($index)>dd").get(0)
 
   "Ile Query page" should {
 
@@ -74,5 +80,46 @@ class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
       view(info = mucrInfo.copy(isShut = Some(true)), parent = Some(MucrInfo("mucr"))).getElementById("isShutMucr") must be(null)
     }
 
+    val viewWithParent = view(
+      parent =
+        Some(MucrInfo("parentUcr", entryStatus = Some(EntryStatus(None, Some(ROECode.DocumentaryControl), Some(SOECode.ConsolidationOpen.code)))))
+    )
+
+    "render parent consignment link" in {
+      parentConsignmentElement(viewWithParent, 0).getElementsByClass("govuk-link").first() must haveHref(
+        controllers.ileQuery.routes.IleQueryController.getConsignmentInformation("parentUcr")
+      )
+      parentConsignmentElement(viewWithParent, 0) must containText("parentUcr")
+    }
+
+    "render parent consignment route" in {
+      parentConsignmentElement(viewWithParent, 1) must containMessage(ROECode.DocumentaryControl.messageKey)
+    }
+
+    "render parent consignment status" in {
+      parentConsignmentElement(viewWithParent, 2) must containMessage(SOECode.ConsolidationOpen.messageKey)
+    }
+
+    "not render associate consignments section if there aren't any " in {
+      view().getElementById("associatedUcrs") must be(null)
+    }
+
+    "render associate consignments section" in {
+      val viewWithChild = view(
+        associatedConsignments =
+          Seq(MucrInfo("childUcr", entryStatus = Some(EntryStatus(None, Some(ROECode.DocumentaryControl), Some(SOECode.Departed.code)))))
+      )
+      viewWithChild.getElementById("associatedUcrs") must containMessage("ileQueryResponse.associated")
+
+      val elmChild = viewWithChild.getElementById("associateUcr_0_ucr")
+      elmChild must containText("childUcr")
+      elmChild.getElementsByClass("govuk-link").first() must haveHref(
+        controllers.ileQuery.routes.IleQueryController.getConsignmentInformation("childUcr")
+      )
+
+      viewWithChild.getElementById("associateUcr_0_roe") must containMessage(ROECode.DocumentaryControl.messageKey)
+
+      viewWithChild.getElementById("associateUcr_0_soe") must containMessage(SOECode.Departed.messageKey)
+    }
   }
 }

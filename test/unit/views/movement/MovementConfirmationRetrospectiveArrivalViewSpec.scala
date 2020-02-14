@@ -48,7 +48,7 @@ class MovementConfirmationRetrospectiveArrivalViewSpec extends ViewSpec with Inj
     "have 'find another consignment' link" in {
       page(JourneyType.RETROSPECTIVE_ARRIVE)
         .getElementsByClass("govuk-link")
-        .get(1) must haveHref(controllers.ileQuery.routes.IleQueryController.displayQueryForm())
+        .get(1) must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
     }
   }
 

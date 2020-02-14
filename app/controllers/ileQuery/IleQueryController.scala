@@ -57,20 +57,7 @@ class IleQueryController @Inject()(
 
   private val logger = Logger(this.getClass)
 
-  def displayQueryForm(): Action[AnyContent] = authenticate { implicit request =>
-    Ok(ileQueryPage(form))
-  }
-
-  def submitQueryForm(): Action[AnyContent] = authenticate { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => BadRequest(ileQueryPage(formWithErrors)),
-        validUcr => Redirect(controllers.ileQuery.routes.IleQueryController.submitQuery(validUcr))
-      )
-  }
-
-  def submitQuery(ucr: String): Action[AnyContent] = authenticate.async { implicit request =>
+  def getConsignmentInformation(ucr: String): Action[AnyContent] = authenticate.async { implicit request =>
     ileQueryRepository.findBySessionIdAndUcr(retrieveSessionId, ucr).flatMap {
       case Some(query) =>
         connector.fetchQueryNotifications(query.conversationId, request.providerId).flatMap { response =>
@@ -136,7 +123,7 @@ class IleQueryController @Inject()(
             val ileQuery = IleQuery(retrieveSessionId, validUcr, conversationId)
 
             ileQueryRepository.insert(ileQuery).map { _ =>
-              Redirect(controllers.ileQuery.routes.IleQueryController.submitQuery(ucr))
+              Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr))
             }
           }
         }
