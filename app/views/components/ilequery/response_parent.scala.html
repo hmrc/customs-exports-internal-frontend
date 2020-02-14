@@ -16,11 +16,11 @@
 
 @import components.gds.link
 @import models.notifications.queries.MucrInfo
+@import models.viewmodels.ilequery.IleQueryCodeConverter
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.IleCodeMapper
 
 @this(
-        ileCodeMapper: IleCodeMapper,
+        converter: IleQueryCodeConverter,
         govukSummaryList : GovukSummaryList
 )
 
@@ -47,7 +47,7 @@
                             content = Text(messages("ileQueryResponse.details.route"))
                         ),
                         value = Value(
-                            content = parent.entryStatus.flatMap(_.roe).map(ileCodeMapper.routeOfEntry(_)).getOrElse(Empty)
+                            content = parent.entryStatus.flatMap(_.roe).map(converter.routeOfEntry(_)).getOrElse(Empty)
                         )
                     ),
                     SummaryListRow(
@@ -55,7 +55,7 @@
                             content = Text(messages("ileQueryResponse.details.entryStatus"))
                         ),
                         value = Value(
-                            content = parent.entryStatus.flatMap(_.soe).map(ileCodeMapper.statusOfEntryMucr(_)).getOrElse(Empty)
+                            content = parent.entryStatus.flatMap(_.soe).map(converter.statusOfEntryMucr(_)).getOrElse(Empty)
                         )
                     )
                 ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),

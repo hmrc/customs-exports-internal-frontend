@@ -50,7 +50,7 @@ object SOECode {
 
   val MucrCodes: Set[SOECode] = Set(ConsolidationOpen, ConsolidationClosedWithoutP2P, ConsolidationHasP2P)
 
-  val CombinedCodes: Set[SOECode] = MucrCodes ++ DucrCodes
+  val AllCodes: Set[SOECode] = MucrCodes ++ DucrCodes
 
   case object DeclarationValidation extends SOECode(code = "1", messageKey = "decoder.soe.DeclarationValidation")
 
