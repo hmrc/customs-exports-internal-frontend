@@ -31,7 +31,7 @@ class AppConfig @Inject()(
   @Named("appName") serviceIdentifier: String
 ) {
 
-  MongobeeConfig(loadConfig("mongodb.uri"))
+//  MongobeeConfig(loadConfig("mongodb.uri"))
 
   val runningAsDev: Boolean = {
     runModeConfiguration
