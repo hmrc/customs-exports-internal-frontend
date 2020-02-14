@@ -26,13 +26,7 @@ import com.google.inject.Singleton
 @Singleton
 case class MongobeeConfig(mongoURI: String) {
 
-  val uri = {
-    if (mongoURI.contains("sslEnabled")) {
-      s"${mongoURI}&ssl=true"
-    } else {
-      mongoURI
-    }
-  }
+  val uri = mongoURI.replaceAllLiterally("sslEnabled", "ssl")
 
   val runner = new Mongobee(uri.toString)
 
