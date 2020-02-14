@@ -23,4 +23,6 @@ abstract class UcrInfo {
   val parentMucr: Option[String]
   val entryStatus: Option[EntryStatus]
   val movements: Seq[MovementInfo]
+
+  def transport: Option[Transport] = movements.find(_.transportDetails.isDefined).flatMap(_.transportDetails)
 }
