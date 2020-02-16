@@ -74,7 +74,7 @@ formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 }
 
 @govukLayout(
-    title = Title("consignmentReferences.arrive.title"),
+    title = Title(headerKey, sectionHeaderKey),
     backButton = Some(BackButton(messages("site.back"), controllers.routes.ChoiceController.displayPage()))) {
 
         @formHelper(action = controllers.movements.routes.ConsignmentReferencesController.saveConsignmentReferences(), 'autoComplete -> "off") {
