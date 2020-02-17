@@ -17,7 +17,6 @@
 package views.components
 
 import config.AppConfig
-import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
@@ -34,42 +33,13 @@ class ConfirmationLinkViewSpec extends ViewSpec with ViewMatchers with MockitoSu
 
   "Confirmation link component" should {
 
-    "render link to 'choice' page" when {
+    "render link to 'find consignment' page" in {
 
-      "config does not contain feature switch" in {
-
-        val linkView = linkComponent()
-          .getElementsByClass("govuk-link")
-          .first()
-        linkView must haveHref(controllers.routes.ChoiceController.displayPage())
-        linkView must containMessage("movement.confirmation.redirect.choice.link")
-      }
-
-      "config contains 'ileQuery' feature switch OFF" in {
-
-        when(appConfig.hasIleQueryFeature).thenReturn(false)
-
-        val linkView = linkComponent()
-          .getElementsByClass("govuk-link")
-          .first()
-        linkView must haveHref(controllers.routes.ChoiceController.displayPage())
-        linkView must containMessage("movement.confirmation.redirect.choice.link")
-      }
-
-    }
-
-    "render link to 'find consignment' page" when {
-
-      "config contains 'ileQuery' feature switch ON" in {
-
-        when(appConfig.hasIleQueryFeature).thenReturn(true)
-
-        val linkView = linkComponent()
-          .getElementsByClass("govuk-link")
-          .first()
-        linkView must haveHref(controllers.ileQuery.routes.IleQueryController.displayQueryForm())
-        linkView must containMessage("movement.confirmation.redirect.query.link")
-      }
+      val linkView = linkComponent()
+        .getElementsByClass("govuk-link")
+        .first()
+      linkView must haveHref(controllers.ileQuery.routes.IleQueryController.displayQueryForm())
+      linkView must containMessage("movement.confirmation.redirect.query.link")
 
     }
 

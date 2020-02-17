@@ -45,7 +45,7 @@ class ChoiceController @Inject()(
         cache.answers
           .map(answers => Ok(choicePage(Choice.form().fill(Choice(answers.`type`)), cache.queryUcr)))
           .getOrElse(Ok(choicePage(Choice.form(), cache.queryUcr)))
-      case None => Ok(choicePage(Choice.form(), None))
+      case None => Redirect(controllers.ileQuery.routes.IleQueryController.displayQueryForm())
     }
   }
 

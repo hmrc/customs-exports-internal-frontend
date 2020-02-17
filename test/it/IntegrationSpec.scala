@@ -17,6 +17,7 @@
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import connectors.{AuditWiremockTestServer, AuthWiremockTestServer, MovementsBackendWiremockTestServer}
+import models.UcrBlock
 import models.cache.{Answers, Cache}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
@@ -69,9 +70,12 @@ abstract class IntegrationSpec
     route(app, request).get
   }
 
-  protected def theCacheFor(pid: String): Option[Answers] = await(cacheRepository.find(Json.obj("providerId" -> pid)).one[Cache]).flatMap(_.answers)
+  protected def theCacheFor(pid: String): Option[Cache] = await(cacheRepository.find(Json.obj("providerId" -> pid)).one[Cache])
+  protected def theAnswersFor(pid: String): Option[Answers] = await(cacheRepository.find(Json.obj("providerId" -> pid)).one[Cache]).flatMap(_.answers)
 
   protected def givenCacheFor(pid: String, answers: Answers): Unit = await(cacheRepository.insert(Cache.format.writes(Cache(pid, answers))))
+
+  protected def givenCacheFor(pid: String, queryUcr: UcrBlock): Unit = await(cacheRepository.insert(Cache.format.writes(Cache(pid, queryUcr))))
 
   protected def verifyEventually(requestPatternBuilder: RequestPatternBuilder): Unit = eventually(WireMock.verify(requestPatternBuilder))
 
