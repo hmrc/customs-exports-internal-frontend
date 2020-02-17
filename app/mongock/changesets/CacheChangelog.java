@@ -19,7 +19,6 @@ package mongock.changesets;
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
@@ -31,14 +30,10 @@ public class CacheChangelog {
     private String collection = "cache";
 
     @ChangeSet(order = "001", id = "Internal Movements DB Baseline", author = "Steve Sugden")
-    public void dbBaseline(DB db) {
-    }
-
-    @ChangeSet(order = "002", id = "Add 'test' field to cache", author = "Steve Sugden")
-    public void addCacheUpdateField(MongoDatabase db) {
-
+    public void dbBaseline(MongoDatabase db) {
         Document query = new Document();
         Document update = new Document("$set", new Document("testUpdate", Date.from(Instant.now())));
         db.getCollection(collection).updateMany(new BasicDBObject(query), new BasicDBObject(update));
     }
+
 }
