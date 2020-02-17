@@ -21,7 +21,7 @@ import java.time.{Instant, ZoneOffset}
 import models.UcrBlock
 import play.api.libs.json._
 
-case class Cache(providerId: String, answers: Option[Answers], queryUcr: Option[UcrBlock], updated: Instant = Instant.now())
+case class Cache(providerId: String, answers: Option[Answers], queryUcr: Option[UcrBlock], updated: Option[Instant] = Some(Instant.now()))
 
 object Cache {
   implicit private val formatInstant: OFormat[Instant] = new OFormat[Instant] {
