@@ -31,7 +31,7 @@
 
     @components.page_title(Some(messages("summary.retrospectiveArrival.title")))
 
-    @components.summary_list(Some(messages("summary.consignmentDetails"))){
+    @components.summary_list(messages("summary.consignmentDetails")){
         @components.table_row_no_change_link(HtmlTableRow(
             label = messages("summary.referenceType"),
             value = data.consignmentReferences.map(ref =>
@@ -48,7 +48,7 @@
         ))
     }
 
-    @components.summary_list(Some(messages("location.title"))){
+    @components.summary_list(messages("location.title")){
         @components.table_row_no_change_link(HtmlTableRow(
             label = messages("summary.goodsLocation"),
             value = data.location.map(_.code)

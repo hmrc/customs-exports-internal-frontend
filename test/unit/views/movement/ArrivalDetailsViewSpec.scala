@@ -16,48 +16,50 @@
 
 package views.movement
 
+import base.Injector
+import forms.ConsignmentReferences
 import models.cache.ArrivalAnswers
 import testdata.MovementsTestData
 import views.ViewSpec
 import views.html.arrival_details
 
-class ArrivalDetailsViewSpec extends ViewSpec {
+class ArrivalDetailsViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(ArrivalAnswers())
-
   private val movementDetails = MovementsTestData.movementDetails
 
-  private val page = new arrival_details(main_template)
+  private val page = instanceOf[arrival_details]
 
   "Arrival View" should {
     "render title" in {
-      page(movementDetails.arrivalForm()).getTitle must containMessage("arrivalDetails.header")
+      page(movementDetails.arrivalForm(), None).getTitle must containMessage("arrivalDetails.header")
     }
 
     "render heading input with hint for date" in {
-      page(movementDetails.arrivalForm()).getElementById("dateOfArrival-label") must containMessage("arrivalDetails.date.question")
-      page(movementDetails.arrivalForm()).getElementById("dateOfArrival-hint") must containMessage("arrivalDetails.date.hint")
+      page(movementDetails.arrivalForm(), None).getElementById("dateOfArrival-hint") must containMessage("arrivalDetails.date.hint")
     }
 
     "render heading input with hint for time" in {
-      page(movementDetails.arrivalForm()).getElementById("timeOfArrival-label") must containMessage("arrivalDetails.time.question")
-      page(movementDetails.arrivalForm()).getElementById("timeOfArrival-hint") must containMessage("arrivalDetails.time.hint")
+      page(movementDetails.arrivalForm(), None).getElementById("timeOfArrival-hint") must containMessage("arrivalDetails.time.hint")
     }
 
     "render back button" in {
-      val backButton = page(movementDetails.arrivalForm()).getBackButton
+      val backButton = page(movementDetails.arrivalForm(), None).getElementById("back-link")
 
-      backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.ConsignmentReferencesController.displayPage())
+      backButton.text() mustBe messages("site.back")
+      backButton.attr("href") mustBe controllers.movements.routes.ConsignmentReferencesController.displayPage().toString()
     }
 
     "render error summary" when {
       "no errors" in {
-        page(movementDetails.arrivalForm()).getErrorSummary mustBe empty
+        page(movementDetails.arrivalForm(), None).getErrorSummary mustBe empty
       }
 
       "some errors" in {
-        page(movementDetails.arrivalForm().withError("error", "error.required")).getErrorSummary mustBe defined
+        implicit val request = journeyRequest(ArrivalAnswers())
+        page(movementDetails.arrivalForm().withError("error", "error.required"), None).getElementById("error-summary-title").text() mustBe messages(
+          "error.summary.title"
+        )
       }
     }
   }

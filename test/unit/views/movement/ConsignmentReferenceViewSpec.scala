@@ -16,16 +16,17 @@
 
 package views.movement
 
+import base.Injector
 import forms.ConsignmentReferences
 import models.cache.{ArrivalAnswers, DepartureAnswers, RetrospectiveArrivalAnswers}
 import views.ViewSpec
 import views.html.consignment_references
 
-class ConsignmentReferenceViewSpec extends ViewSpec {
+class ConsignmentReferenceViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(ArrivalAnswers())
 
-  private val page = new consignment_references(main_template)
+  private val page = instanceOf[consignment_references]
 
   "View" should {
 
@@ -55,17 +56,19 @@ class ConsignmentReferenceViewSpec extends ViewSpec {
     }
 
     "render options" in {
-
-      page(ConsignmentReferences.form()).getElementById("Ducr-label") must containMessage("consignmentReferences.reference.ducr")
-      page(ConsignmentReferences.form()).getElementById("Mucr-label") must containMessage("consignmentReferences.reference.mucr")
+      page(ConsignmentReferences.form).getElementsByAttributeValue("for", "reference").first() must containMessage(
+        "consignmentReferences.reference.ducr"
+      )
+      page(ConsignmentReferences.form).getElementsByAttributeValue("for", "reference-2").first() must containMessage(
+        "consignmentReferences.reference.mucr"
+      )
     }
-
     "render back button" in {
 
-      val backButton = page(ConsignmentReferences.form()).getBackButton
+      val backButton = page(ConsignmentReferences.form()).getElementById("back-link")
 
-      backButton mustBe defined
-      backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
+      backButton.text() mustBe messages("site.back")
+      backButton.attr("href") mustBe controllers.routes.ChoiceController.displayPage().toString()
     }
 
     "render error summary" when {
@@ -76,8 +79,10 @@ class ConsignmentReferenceViewSpec extends ViewSpec {
       }
 
       "some errors" in {
-
-        page(ConsignmentReferences.form().withError("error", "error.required")).getErrorSummary mustBe defined
+        implicit val request = journeyRequest(ArrivalAnswers())
+        page(ConsignmentReferences.form().withError("reference", "error.required")).getElementById("error-summary-title").text() mustBe messages(
+          "error.summary.title"
+        )
       }
     }
   }

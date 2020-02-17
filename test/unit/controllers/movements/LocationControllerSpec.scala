@@ -17,7 +17,7 @@
 package controllers.movements
 
 import controllers.ControllerLayerSpec
-import forms.Location
+import forms.{ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.cache._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -32,7 +32,7 @@ import views.html.location
 import scala.concurrent.ExecutionContext.global
 
 class LocationControllerSpec extends ControllerLayerSpec with MockCache {
-
+  private val consignmentRefereces = Some(ConsignmentReferences(ConsignmentReferenceType.D, "referenceValue"))
   private val page = mock[location]
 
   private def controller(answers: Answers = ArrivalAnswers()) =
@@ -41,7 +41,8 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    reset(page)
+    when(page.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -52,7 +53,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
   private def theResponseForm: Form[Location] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[Location]])
-    verify(page).apply(captor.capture())(any(), any())
+    verify(page).apply(captor.capture(), any())(any(), any())
     captor.getValue
   }
 
@@ -62,7 +63,8 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
       "GET displayPage is invoked without data in cache" in {
 
-        val result = controller().displayPage()(getRequest)
+        val answers = ArrivalAnswers(consignmentReferences = consignmentRefereces)
+        val result = controller(answers).displayPage()(getRequest)
 
         status(result) mustBe OK
         theResponseForm.value mustBe empty
@@ -72,7 +74,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
         val cachedForm = Some(Location("GBAUEMAEMAEMA"))
 
-        val result = controller(ArrivalAnswers(location = cachedForm)).displayPage()(getRequest)
+        val result = controller(ArrivalAnswers(location = cachedForm, consignmentReferences = consignmentRefereces)).displayPage()(getRequest)
 
         status(result) mustBe OK
         theResponseForm.value mustBe cachedForm
@@ -82,7 +84,8 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
         val cachedForm = Some(Location("GBAUEMAEMAEMA"))
 
-        val result = controller(RetrospectiveArrivalAnswers(location = cachedForm)).displayPage()(getRequest)
+        val result =
+          controller(RetrospectiveArrivalAnswers(location = cachedForm, consignmentReferences = consignmentRefereces)).displayPage()(getRequest)
 
         status(result) mustBe OK
         theResponseForm.value mustBe cachedForm
@@ -92,7 +95,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
         val cachedForm = Some(Location("GBAUEMAEMAEMA"))
 
-        val result = controller(DepartureAnswers(location = cachedForm)).displayPage()(getRequest)
+        val result = controller(DepartureAnswers(location = cachedForm, consignmentReferences = consignmentRefereces)).displayPage()(getRequest)
 
         status(result) mustBe OK
         theResponseForm.value mustBe cachedForm
@@ -104,10 +107,10 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
       "POST submit is invoked with incorrect form" in {
 
         givenTheCacheIsEmpty()
-
+        val answers = ArrivalAnswers(consignmentReferences = consignmentRefereces)
         val invalidForm = Json.toJson(Location("Invalid"))
 
-        val result = controller().saveLocation()(postRequest(invalidForm))
+        val result = controller(answers).saveLocation()(postRequest(invalidForm))
 
         status(result) mustBe BAD_REQUEST
       }

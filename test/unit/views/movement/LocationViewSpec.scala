@@ -16,16 +16,17 @@
 
 package views.movement
 
+import base.Injector
 import forms.Location
 import models.cache.{ArrivalAnswers, DepartureAnswers, RetrospectiveArrivalAnswers}
 import views.ViewSpec
 import views.html.location
 
-class LocationViewSpec extends ViewSpec {
+class LocationViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(ArrivalAnswers())
 
-  private val page = new location(main_template)
+  private val page = instanceOf[location]
 
   "View" should {
 
@@ -33,19 +34,19 @@ class LocationViewSpec extends ViewSpec {
 
       "used for Arrival journey" in {
 
-        page(Location.form()).getTitle must containMessage("location.question")
+        page(Location.form(), "D").getTitle must containMessage("location.question")
       }
 
       "used for Retrospective Arrival journey" in {
 
         implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
-        page(Location.form()).getTitle must containMessage("location.question.retrospectiveArrival")
+        page(Location.form(), "D").getTitle must containMessage("location.question")
       }
 
       "used for Departure journey" in {
 
         implicit val request = journeyRequest(DepartureAnswers())
-        page(Location.form()).getTitle must containMessage("location.question")
+        page(Location.form(), "D").getTitle must containMessage("location.question")
       }
     }
 
@@ -53,29 +54,29 @@ class LocationViewSpec extends ViewSpec {
 
       "used for Arrival journey" in {
 
-        val locationPage = page(Location.form())
+        val locationPage = page(Location.form(), "D")
 
-        locationPage.getElementById("title") must containMessage("location.question")
-        locationPage.getElementById("hint") must containMessage("location.hint")
+        locationPage.getTitle must containMessage("location.question")
+        locationPage.getElementById("code-hint").text() mustBe messages("location.hint")
       }
 
       "used for Retrospective Arrival journey" in {
 
         implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
-        val locationPage = page(Location.form())
+        val locationPage = page(Location.form(), "D")
 
-        locationPage.getElementById("section-header") must containMessage("location.sectionHeader.retrospectiveArrival")
-        locationPage.getElementById("title") must containMessage("location.question.retrospectiveArrival")
-        locationPage.getElementById("hint") must containMessage("location.hint")
+        locationPage.getElementById("section-header") must containMessage("movement.sectionHeading", "Retrospective_arrive", "D")
+        locationPage.getTitle must containMessage("location.question")
+        locationPage.getElementById("code-hint") must containMessage("location.hint")
       }
 
       "used for Departure journey" in {
 
         implicit val request = journeyRequest(DepartureAnswers())
-        val locationPage = page(Location.form())
+        val locationPage = page(Location.form(), "D")
 
-        locationPage.getElementById("title") must containMessage("location.question")
-        locationPage.getElementById("hint") must containMessage("location.hint")
+        locationPage.getTitle must containMessage("location.question")
+        locationPage.getElementById("code-hint") must containMessage("location.hint")
       }
     }
 
@@ -87,20 +88,20 @@ class LocationViewSpec extends ViewSpec {
 
           implicit val request = journeyRequest(ArrivalAnswers())
 
-          val backButton = page(Location.form()).getBackButton
+          val backButton = page(Location.form(), "D").getElementById("back-link")
 
-          backButton mustBe defined
-          backButton.get must haveHref(controllers.movements.routes.MovementDetailsController.displayPage())
+          backButton.text() mustBe messages("site.back")
+          backButton.attr("href") mustBe controllers.movements.routes.MovementDetailsController.displayPage().toString()
         }
 
         "user is on Departure journey" in {
 
           implicit val request = journeyRequest(DepartureAnswers())
 
-          val backButton = page(Location.form()).getBackButton
+          val backButton = page(Location.form(), "D").getElementById("back-link")
 
-          backButton mustBe defined
-          backButton.get must haveHref(controllers.movements.routes.MovementDetailsController.displayPage())
+          backButton.text() mustBe messages("site.back")
+          backButton.attr("href") mustBe controllers.movements.routes.MovementDetailsController.displayPage().toString()
         }
       }
 
@@ -110,10 +111,10 @@ class LocationViewSpec extends ViewSpec {
 
           implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
 
-          val backButton = page(Location.form()).getBackButton
+          val backButton = page(Location.form(), "D").getElementById("back-link")
 
-          backButton mustBe defined
-          backButton.get must haveHref(controllers.movements.routes.ConsignmentReferencesController.displayPage())
+          backButton.text() mustBe messages("site.back")
+          backButton.attr("href") mustBe controllers.movements.routes.MovementDetailsController.displayPage().toString()
 
         }
       }
@@ -123,12 +124,14 @@ class LocationViewSpec extends ViewSpec {
 
       "no errors" in {
 
-        page(Location.form()).getErrorSummary mustBe empty
+        page(Location.form(), "D").getErrorSummary mustBe empty
       }
 
       "some errors" in {
-
-        page(Location.form().withError("error", "error.required")).getErrorSummary mustBe defined
+        implicit val request = journeyRequest(ArrivalAnswers())
+        page(Location.form().withError("code", "error.required"), "D").getElementById("error-summary-title").text() mustBe messages(
+          "error.summary.title"
+        )
       }
     }
   }
