@@ -48,7 +48,7 @@ class DissociateUcrSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.DisassociateUCRSummaryController.display().url)
-        theCacheFor("pid") mustBe Some(
+        theAnswersFor("pid") mustBe Some(
           DisassociateUcrAnswers(ucr = Some(DisassociateUcr(kind = DisassociateKind.Mucr, mucr = Some("GB/321-54321"), ducr = None)))
         )
       }
@@ -89,7 +89,7 @@ class DissociateUcrSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.DisassociateUCRConfirmationController.display().url)
-        theCacheFor("pid") mustBe None
+        theAnswersFor("pid") mustBe None
         verify(
           postRequestedForConsolidation()
             .withRequestBody(

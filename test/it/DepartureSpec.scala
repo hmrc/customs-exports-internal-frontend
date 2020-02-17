@@ -62,7 +62,7 @@ class DepartureSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementDetailsController.displayPage().url)
-        theCacheFor("pid") mustBe Some(
+        theAnswersFor("pid") mustBe Some(
           DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")))
         )
       }
@@ -103,7 +103,7 @@ class DepartureSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.LocationController.displayPage().url)
-        theCacheFor("pid") mustBe Some(
+        theAnswersFor("pid") mustBe Some(
           DepartureAnswers(
             consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time)))
@@ -152,7 +152,7 @@ class DepartureSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.GoodsDepartedController.displayPage().url)
-        theCacheFor("pid") mustBe Some(
+        theAnswersFor("pid") mustBe Some(
           DepartureAnswers(
             consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time))),
@@ -204,7 +204,7 @@ class DepartureSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.TransportController.displayPage().url)
-        theCacheFor("pid") mustBe Some(
+        theAnswersFor("pid") mustBe Some(
           DepartureAnswers(
             consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time))),
@@ -264,7 +264,7 @@ class DepartureSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementSummaryController.displayPage().url)
-        theCacheFor("pid") mustBe Some(
+        theAnswersFor("pid") mustBe Some(
           DepartureAnswers(
             consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             departureDetails = Some(DepartureDetails(Date(date), Time(time))),
@@ -323,7 +323,7 @@ class DepartureSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementConfirmationController.display().url)
-        theCacheFor("pid") mustBe None
+        theAnswersFor("pid") mustBe None
         verify(
           postRequestedForMovement()
             .withRequestBody(equalToJson(s"""{

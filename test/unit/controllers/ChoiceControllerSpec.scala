@@ -98,12 +98,12 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "existing answers with UcrBlock" in {
         val ucrBlock = UcrBlock("ucr", mucrType)
-        givenTheCacheContains(Cache(providerId, Some(ArrivalAnswers()), Some(ucrBlock)))
+        givenTheCacheContains(Cache(providerId, None, Some(ucrBlock)))
 
         val result = controller().displayPage(getRequest)
 
         status(result) mustBe OK
-        theResponseForm.value.get.value mustBe Arrival.value
+        theResponseForm.value mustBe None
         theResponseUcrBlock mustBe Some(ucrBlock)
       }
     }

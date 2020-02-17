@@ -59,7 +59,7 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.LocationController.displayPage().url)
-        theCacheFor("pid") mustBe Some(
+        theAnswersFor("pid") mustBe Some(
           RetrospectiveArrivalAnswers(
             consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345"))
           )
@@ -105,7 +105,7 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementSummaryController.displayPage().url)
-        theCacheFor("pid") mustBe Some(
+        theAnswersFor("pid") mustBe Some(
           RetrospectiveArrivalAnswers(
             consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345")),
             location = Some(Location("GBAUEMAEMAEMA"))
@@ -155,7 +155,7 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementConfirmationController.display().url)
-        theCacheFor("pid") mustBe None
+        theAnswersFor("pid") mustBe None
         verify(
           postRequestedForMovement()
             .withRequestBody(equalToJson(s"""{

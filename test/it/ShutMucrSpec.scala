@@ -48,7 +48,7 @@ class ShutMucrSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.ShutMucrSummaryController.displayPage().url)
-        theCacheFor("pid") mustBe Some(ShutMucrAnswers(shutMucr = Some(ShutMucr("GB/123-12345"))))
+        theAnswersFor("pid") mustBe Some(ShutMucrAnswers(shutMucr = Some(ShutMucr("GB/123-12345"))))
       }
     }
   }
@@ -81,7 +81,7 @@ class ShutMucrSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.ShutMUCRConfirmationController.display().url)
-        theCacheFor("pid") mustBe None
+        theAnswersFor("pid") mustBe None
         verify(
           postRequestedForConsolidation()
             .withRequestBody(equalToJson("""{"providerId":"pid","eori":"GB1234567890","mucr":"GB/123-12345","consolidationType":"SHUT_MUCR"}"""))
