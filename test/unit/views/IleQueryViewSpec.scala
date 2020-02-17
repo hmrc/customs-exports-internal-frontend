@@ -19,12 +19,11 @@ package views
 import base.Injector
 import forms.IleQueryForm
 import org.jsoup.nodes.Element
-import org.scalatest.words.MatcherWords
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import views.html.ile_query
 
-class IleQueryViewSpec extends ViewSpec with MatcherWords with Injector {
+class IleQueryViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
@@ -62,11 +61,9 @@ class IleQueryViewSpec extends ViewSpec with MatcherWords with Injector {
       }
     }
 
-    val govukListElement = view.getElementsByClass("govuk-list").first()
-
     "contains input field" in {
 
-//      view.getElementById("ucr") mustBe defined
+      Option(view.getElementById("ucr")) mustBe defined
     }
 
     "contains submit button" in {
@@ -75,6 +72,7 @@ class IleQueryViewSpec extends ViewSpec with MatcherWords with Injector {
     }
 
     "contains link to view previous requests" in {
+      val govukListElement = view.getElementsByClass("govuk-list").first()
 
       val previousRequests = govukListElement.getElementsByClass("govuk-link").get(0)
 
