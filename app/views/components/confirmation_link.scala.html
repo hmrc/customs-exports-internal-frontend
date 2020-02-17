@@ -23,9 +23,5 @@
 @()(implicit messages: Messages)
 
 <p class="govuk-body">
-    @if(appConfig.hasIleQueryFeature) {
-        @link(message = messages("movement.confirmation.redirect.query.link"), href = ileQuery.routes.IleQueryController.displayQueryForm())
-    } else {
-        @link(message = messages("movement.confirmation.redirect.choice.link"), href = routes.ChoiceController.displayPage())
-    }
+    @link(message = messages("movement.confirmation.redirect.query.link"), href = ileQuery.routes.IleQueryController.displayQueryForm())
 </p>

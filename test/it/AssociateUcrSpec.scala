@@ -43,7 +43,7 @@ class AssociateUcrSpec extends IntegrationSpec {
 
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUCRController.displayPage().url)
-        theCacheFor("pid") mustBe Some(AssociateUcrAnswers(mucrOptions = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345"))))
+        theAnswersFor("pid") mustBe Some(AssociateUcrAnswers(mucrOptions = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345"))))
       }
     }
   }
@@ -69,7 +69,7 @@ class AssociateUcrSpec extends IntegrationSpec {
 
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUCRSummaryController.displayPage().url)
-        theCacheFor("pid") mustBe Some(
+        theAnswersFor("pid") mustBe Some(
           AssociateUcrAnswers(
             mucrOptions = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
             associateUcr = Some(AssociateUcr(AssociateKind.Mucr, "GB/321-54321"))
@@ -113,7 +113,7 @@ class AssociateUcrSpec extends IntegrationSpec {
 
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUCRConfirmationController.display().url)
-        theCacheFor("pid") mustBe None
+        theAnswersFor("pid") mustBe None
         verify(
           postRequestedForConsolidation()
             .withRequestBody(
