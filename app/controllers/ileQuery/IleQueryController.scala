@@ -59,44 +59,40 @@ class IleQueryController @Inject()(
 
   def getConsignmentInformation(ucr: String): Action[AnyContent] = authenticate.async { implicit request =>
     ileQueryRepository.findBySessionIdAndUcr(retrieveSessionId, ucr).flatMap {
-      case Some(query) =>
-        connector.fetchQueryNotifications(query.conversationId, request.providerId).flatMap { response =>
-          response.status match {
-            case OK =>
-              val queryResponse = Json.parse(response.body).as[Seq[IleQueryResponseExchange]]
-
-              queryResponse match {
-                case Seq() => Future.successful(loadingPageResult)
-                case response +: _ =>
-                  ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
-                    processQueryResults(response)
-                  }
-              }
-            case _ =>
-              logger.warn(s"Movements backend returned status: ${response.status}")
-              ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
-                InternalServerError(errorHandler.standardErrorTemplate())
-              }
-          }
-        }
-
-      case None => sendIleQuery(ucr)
+      case Some(query) => checkForNotifications(query)
+      case None        => sendIleQuery(ucr)
     }
   }
+
+  private def checkForNotifications(query: IleQuery)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
+    connector.fetchQueryNotifications(query.conversationId, request.providerId).flatMap { response =>
+      response.status match {
+        case OK =>
+          val queryResponse = Json.parse(response.body).as[Seq[IleQueryResponseExchange]]
+
+          queryResponse match {
+            case Seq() => Future.successful(loadingPageResult)
+            case response +: _ =>
+              ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
+                processQueryResults(response)
+              }
+          }
+        case _ =>
+          logger.warn(s"Movements backend returned status: ${response.status}")
+          ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
+            InternalServerError(errorHandler.standardErrorTemplate())
+          }
+      }
+    }
 
   private def loadingPageResult()(implicit request: Request[AnyContent]) =
     Ok(loadingScreenPage()).withHeaders("refresh" -> "5")
 
-  private def processQueryResults(queryResponse: IleQueryResponseExchange)(implicit request: AuthenticatedRequest[AnyContent]): Result = {
-
-    def saveQueryUcrtoCache(response: SuccessfulResponseExchangeData) = {
-      val queriedUcr = response.queriedMucr.map(q => UcrBlock(q.ucr, "M")).orElse(response.queriedDucr.map(q => UcrBlock(q.ucr, "D")))
-      queriedUcr.foreach(ucr => cacheRepository.upsert(Cache(request.providerId, ucr)))
-    }
-
+  private def processQueryResults(queryResponse: IleQueryResponseExchange)(implicit request: AuthenticatedRequest[AnyContent]): Result =
     queryResponse.data match {
       case response: SuccessfulResponseExchangeData =>
-        saveQueryUcrtoCache(response)
+        val queriedUcr = response.queriedMucr.map(q => UcrBlock(q.ucr, "M")).orElse(response.queriedDucr.map(q => UcrBlock(q.ucr, "D")))
+        queriedUcr.foreach(ucr => cacheRepository.upsert(Cache(request.providerId, ucr)))
 
         val ducrResult = response.queriedDucr.map(ducr => Ok(ileQueryDucrResponsePage(ducr, response.parentMucr)))
         val mucrResult = response.queriedMucr.map(mucr => Ok(ileQueryMucrResponsePage(mucr, response.parentMucr, response.sortedChildrenUcrs)))
@@ -109,7 +105,6 @@ class IleQueryController @Inject()(
           case _                      => InternalServerError(errorHandler.standardErrorTemplate())
         }
     }
-  }
 
   private def sendIleQuery(ucr: String)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
     form
