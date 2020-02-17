@@ -23,6 +23,7 @@ import forms._
 import models.UcrBlock
 import models.UcrBlock.mucrType
 import models.cache._
+import org.apache.http.impl.client.RedirectLocations
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -34,6 +35,7 @@ import play.twirl.api.HtmlFormat
 import services.MockCache
 import testdata.CommonTestData.providerId
 import views.html.choice_page
+import play.api.test.Helpers._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -69,16 +71,20 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
   "GET" should {
 
-    "return 200 when authenticated" when {
+    "redirect to query page" when {
 
-      "empty answers" in {
+      "an UCR is not available" in {
         givenTheCacheIsEmpty()
 
         val result = controller().displayPage(getRequest)
 
-        status(result) mustBe OK
-        theResponseForm.value mustBe empty
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.ileQuery.routes.IleQueryController.displayQueryForm().url)
       }
+
+    }
+
+    "return 200 when authenticated" when {
 
       "existing answers with no UcrBlock" in {
         givenTheCacheContains(Cache(providerId, ArrivalAnswers()))
@@ -92,12 +98,12 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "existing answers with UcrBlock" in {
         val ucrBlock = UcrBlock("ucr", mucrType)
-        givenTheCacheContains(Cache(providerId, Some(ArrivalAnswers()), Some(ucrBlock)))
+        givenTheCacheContains(Cache(providerId, None, Some(ucrBlock)))
 
         val result = controller().displayPage(getRequest)
 
         status(result) mustBe OK
-        theResponseForm.value.get.value mustBe Arrival.value
+        theResponseForm.value mustBe None
         theResponseUcrBlock mustBe Some(ucrBlock)
       }
     }

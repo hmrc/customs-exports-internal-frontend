@@ -326,6 +326,10 @@ ileQuery.title = Find a consignment
 ileQuery.ucr.empty = Enter a Unique Consignment Reference
 ileQuery.ucr.incorrect = Unique Consignment Reference is incorrect
 
+ileQuery.link.emptyMucr = Create an empty Master Consignment Reference (MUCR)
+ileQuery.link.requests = View previous requests
+
+
 ileQuery.loading.title = Looking for consignment
 ileQuery.loading.hint = This should only take a few seconds, do not refresh the page
 
