@@ -23,7 +23,7 @@ import com.mongodb.{MongoClient, MongoClientURI}
 @Singleton
 case class MongockConfig(mongoURI: String) {
 
-  val uri = new MongoClientURI(mongoURI)
+  val uri = new MongoClientURI(mongoURI.replaceAllLiterally("sslEnabled", "ssl"))
 
   val client = new MongoClient(uri)
 
