@@ -29,9 +29,9 @@ class AppConfig @Inject()(
   @Named("appName") serviceIdentifier: String
 ) {
 
-  runModeConfiguration
-    .getOptional[String]("mongodb.uri")
-    .map(uri => MongockConfig(uri))
+//  runModeConfiguration
+//    .getOptional[String]("mongodb.uri")
+//    .map(uri => MongockConfig(uri))
 
   val runningAsDev: Boolean = {
     runModeConfiguration
