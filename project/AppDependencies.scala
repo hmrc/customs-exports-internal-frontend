@@ -16,8 +16,7 @@ object AppDependencies {
     "uk.gov.hmrc"          %% "simple-reactivemongo"          % "7.22.0-play-26",
     "ai.x"                 %% "play-json-extensions"          % "0.40.2",
     "com.github.tototoshi" %% "scala-csv"                     % "1.3.6",
-    "com.github.mongobee"  %  "mongobee"                      % "0.13",
-    "org.mongodb"          %  "mongo-java-driver"             % "3.12.1"
+    "com.github.mongobee"  %  "mongobee"                      % "0.13"
   ).map(_.withSources())
 
   val test = Seq(

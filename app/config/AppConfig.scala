@@ -17,11 +17,8 @@
 package config
 
 import javax.inject.{Inject, Named, Singleton}
-import mongobee.MongobeeConfig
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
-import scala.concurrent.duration.FiniteDuration
 
 @Singleton
 class AppConfig @Inject()(
@@ -30,8 +27,6 @@ class AppConfig @Inject()(
   environment: Environment,
   @Named("appName") serviceIdentifier: String
 ) {
-
-//  MongobeeConfig(loadConfig("mongodb.uri"))
 
   val runningAsDev: Boolean = {
     runModeConfiguration

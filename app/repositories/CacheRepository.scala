@@ -16,12 +16,14 @@
 
 package repositories
 
+import java.time.Duration
+
 import javax.inject.Inject
 import models.cache.Cache
 import play.api.libs.json.{JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONObjectID
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 
@@ -30,7 +32,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class CacheRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: ExecutionContext)
     extends ReactiveRepository[Cache, BSONObjectID]("cache", mc.mongoConnector.db, Cache.format, objectIdFormats) {
 
-  override def indexes: Seq[Index] = Seq(Index(Seq("providerId" -> IndexType.Ascending), name = Some("providerIdIdx")))
+  override def indexes: Seq[Index] = super.indexes ++ Seq(
+    Index(Seq("providerId" -> IndexType.Ascending), name = Some("providerIdIdx")),
+    Index(
+      key = Seq("updated" -> IndexType.Ascending),
+      name = Some("ttl"),
+      options = BSONDocument("expireAfterSeconds" -> Duration.ofMinutes(60).getSeconds)
+    )
+  )
 
   def findByProviderId(providerId: String): Future[Option[Cache]] = find("providerId" -> providerId).map(_.headOption)
 
