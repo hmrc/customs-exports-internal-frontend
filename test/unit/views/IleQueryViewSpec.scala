@@ -16,16 +16,18 @@
 
 package views
 
+import base.Injector
 import forms.IleQueryForm
+import org.jsoup.nodes.Element
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import views.html.ile_query
 
-class IleQueryViewSpec extends ViewSpec {
+class IleQueryViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  private val page = new ile_query(main_template)
+  private val page = instanceOf[ile_query]
   private val view = page(IleQueryForm.form)
 
   "Ile Query page" should {
@@ -37,24 +39,45 @@ class IleQueryViewSpec extends ViewSpec {
 
     "render page header" in {
 
-      view.getElementById("title").text() mustBe messages("ileQuery.title")
+      view.getElementsByClass("govuk-label--xl").first().text() mustBe messages("ileQuery.title")
     }
 
     "render error summary" when {
 
       "no errors" in {
 
-        view.getErrorSummary mustBe empty
+        val govukErrorSummary: Element = view.getElementsByClass("govuk-error-summary__title").first()
+
+        Option(govukErrorSummary) mustBe None
       }
 
       "some errors" in {
-        page(IleQueryForm.form.withError("error", "error.required")).getErrorSummary mustBe defined
+
+        val errorView = page(IleQueryForm.form.withError("error", "error.required"))
+
+        val govukErrorSummary = errorView.getElementsByClass("govuk-error-summary__title").first()
+
+        govukErrorSummary.text() mustBe messages("error.summary.title")
       }
+    }
+
+    "contains input field" in {
+
+      Option(view.getElementById("ucr")) mustBe defined
     }
 
     "contains submit button" in {
 
-      view.getElementById("submit").text() mustBe messages("site.continue")
+      view.getElementsByClass("govuk-button").first().text() mustBe messages("site.continue")
+    }
+
+    "contains link to view previous requests" in {
+      val govukListElement = view.getElementsByClass("govuk-list").first()
+
+      val previousRequests = govukListElement.getElementsByClass("govuk-link").get(0)
+
+      previousRequests.text() mustBe messages("ileQuery.link.requests")
+      previousRequests must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
     }
   }
 }

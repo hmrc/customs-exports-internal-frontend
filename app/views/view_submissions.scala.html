@@ -27,7 +27,7 @@
 
 @main_template(title = Title("submissions.title"), fullWidth = true) {
 
-  @components.back_link(routes.ChoiceController.displayPage())
+  @components.back_link(controllers.ileQuery.routes.IleQueryController.submitQueryForm())
 
   @components.page_title(Some(messages("submissions.title")))
 
