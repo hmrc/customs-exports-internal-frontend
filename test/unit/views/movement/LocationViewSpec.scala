@@ -114,7 +114,7 @@ class LocationViewSpec extends ViewSpec with Injector {
           val backButton = page(Location.form(), "D").getElementById("back-link")
 
           backButton.text() mustBe messages("site.back")
-          backButton.attr("href") mustBe controllers.movements.routes.MovementDetailsController.displayPage().toString()
+          backButton.attr("href") mustBe controllers.movements.routes.ConsignmentReferencesController.displayPage().toString()
 
         }
       }
