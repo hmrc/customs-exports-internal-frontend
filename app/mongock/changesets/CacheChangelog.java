@@ -14,37 +14,26 @@
  * limitations under the License.
  */
 
-package mongobee.changesets;
+package mongock.changesets;
 
-import com.github.mongobee.changeset.ChangeLog;
-import com.github.mongobee.changeset.ChangeSet;
+import com.github.cloudyrock.mongock.ChangeLog;
+import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.Indexes;
 import org.bson.Document;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @ChangeLog
 public class CacheChangelog {
     private String collection = "cache";
 
-    @ChangeSet(order = "001", id = "Internal Movements DB Baseline", author = "Paulo Monteiro")
-    public void dbBaseline(DB db) {
-    }
-
-    @ChangeSet(order = "002", id = "Add 'updated' field to cache and ttl of 60 mins", author = "Steve Sugden")
-    public void addCacheUpdateField(MongoDatabase db) {
-
+    @ChangeSet(order = "001", id = "Internal Movements DB Baseline", author = "Steve Sugden")
+    public void dbBaseline(MongoDatabase db) {
         Document query = new Document();
-        Document update = new Document("$set", new Document("updated", Date.from(Instant.now())));
+        Document update = new Document("$set", new Document("testUpdate", Date.from(Instant.now())));
         db.getCollection(collection).updateMany(new BasicDBObject(query), new BasicDBObject(update));
-
-        IndexOptions options = new IndexOptions().expireAfter(60L, TimeUnit.MINUTES).name("ttl");
-        db.getCollection(collection).createIndex(Indexes.ascending("updated"), options);
     }
+
 }

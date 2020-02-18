@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package mongobee
+package mongock
 
-import java.net.URI
-
-import akka.http.scaladsl.model.Uri
-import akka.http.scaladsl.model.Uri.Query
-import com.github.mongobee.Mongobee
+import com.github.cloudyrock.mongock.MongockBuilder
 import com.google.inject.Singleton
+import com.mongodb.{MongoClient, MongoClientURI}
 
 @Singleton
-case class MongobeeConfig(mongoURI: String) {
+case class MongockConfig(mongoURI: String) {
 
-  val uri = mongoURI.replaceAllLiterally("sslEnabled", "ssl")
+  val uri = new MongoClientURI(mongoURI.replaceAllLiterally("sslEnabled", "ssl"))
 
-  val runner = new Mongobee(uri.toString)
+  val client = new MongoClient(uri)
 
-  runner.setDbName("customs-exports-internal")
-  runner.setChangeLogsScanPackage("mongobee.changesets")
+  val runner = new MongockBuilder(client, "customs-exports-internal", "mongock.changesets")
+    .setLockQuickConfig()
+    .build();
 
   runner.execute()
   runner.close()
+
 }
