@@ -12,8 +12,3 @@
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes
 
-# ILE Query
-GET         /customs-exports-internal/consignment-query                     controllers.ileQuery.IleQueryController.displayQueryForm()
-POST        /customs-exports-internal/consignment-query                     controllers.ileQuery.IleQueryController.submitQueryForm()
-
-GET         /customs-exports-internal/consignment-query/:ucr                controllers.ileQuery.IleQueryController.submitQuery(ucr: String)

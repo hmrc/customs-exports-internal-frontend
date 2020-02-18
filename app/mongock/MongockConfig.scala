@@ -27,7 +27,7 @@ case class MongockConfig(mongoURI: String) {
 
   val client = new MongoClient(uri)
 
-  val runner = new MongockBuilder(client, "customs-exports-internal", "mongock.changesets")
+  val runner = new MongockBuilder(client, uri.getDatabase, "mongock.changesets")
     .setLockQuickConfig()
     .build();
 
