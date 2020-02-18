@@ -61,7 +61,7 @@ class ArrivalSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementDetailsController.displayPage().url)
-        theCacheFor("pid") mustBe Some(
+        theAnswersFor("pid") mustBe Some(
           ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")))
         )
       }
@@ -102,7 +102,7 @@ class ArrivalSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.LocationController.displayPage().url)
-        theCacheFor("pid") mustBe Some(
+        theAnswersFor("pid") mustBe Some(
           ArrivalAnswers(
             consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             arrivalDetails = Some(ArrivalDetails(Date(date), Time(time)))
@@ -151,7 +151,7 @@ class ArrivalSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementSummaryController.displayPage().url)
-        theCacheFor("pid") mustBe Some(
+        theAnswersFor("pid") mustBe Some(
           ArrivalAnswers(
             consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
             arrivalDetails = Some(ArrivalDetails(Date(date), Time(time))),
@@ -204,7 +204,7 @@ class ArrivalSpec extends IntegrationSpec {
         // Then
         status(response) mustBe SEE_OTHER
         redirectLocation(response) mustBe Some(controllers.movements.routes.MovementConfirmationController.display().url)
-        theCacheFor("pid") mustBe None
+        theAnswersFor("pid") mustBe None
         verify(
           postRequestedForMovement()
             .withRequestBody(equalToJson(s"""{
