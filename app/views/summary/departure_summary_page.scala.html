@@ -31,7 +31,7 @@
 
     @components.page_title(Some(messages("summary.departure.title")))
 
-    @components.summary_list(messages("summary.consignmentDetails")) {
+    @components.summary_list_original(Some(messages("summary.consignmentDetails"))) {
       @components.table_row_no_change_link(HtmlTableRow(
         label = messages("summary.referenceType"),
         value = data.consignmentReferences.map(ref =>
@@ -48,14 +48,14 @@
       ))
     }
 
-    @components.summary_list(messages("location.title")) {
+    @components.summary_list_original(Some(messages("location.title"))) {
       @components.table_row_no_change_link(HtmlTableRow(
         label = messages("summary.goodsLocation"),
         value = data.location.map(_.code)
       ))
     }
 
-    @components.summary_list(messages("departureDetails.title")) {
+    @components.summary_list_original(Some(messages("departureDetails.title"))) {
       @components.table_row_no_change_link(HtmlTableRow(
         label = messages("summary.departure.date"),
         value = data.departureDetails.map(_.dateOfDeparture.toString)
@@ -66,14 +66,14 @@
       ))
     }
 
-    @components.summary_list(messages("goodsDeparted.title")) {
+    @components.summary_list_original(Some(messages("goodsDeparted.title"))) {
       @components.table_row_no_change_link(HtmlTableRow(
         label = messages("goodsDeparted.header"),
         value = data.goodsDeparted.map(goodsDeparted => messages(s"goodsDeparted.departureLocation.${goodsDeparted.departureLocation.value}"))
       ))
     }
 
-    @components.summary_list(messages("transport.title")) {
+    @components.summary_list_original(Some(messages("transport.title"))) {
       @components.table_row_no_change_link(HtmlTableRow(
         label = messages("summary.modeOfTransport"),
         value = data.transport.flatMap(_.modeOfTransport).map(modeOfTransport => messages(s"transport.modeOfTransport.$modeOfTransport"))
