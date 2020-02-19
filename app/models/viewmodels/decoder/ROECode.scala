@@ -43,7 +43,7 @@ object ROECode {
       NoControlRequired,
       RiskingNotPerformed,
       PrelodgePrefix,
-      UnknownRoe
+      UnknownRoe()
     )
 
   case object DocumentaryControl extends ROECode(code = "1", messageKey = "decoder.roe.DocumentaryControl", priority = 2)
@@ -52,7 +52,8 @@ object ROECode {
   case object NoControlRequired extends ROECode(code = "6", messageKey = "decoder.roe.NoControlRequired", priority = 6)
   case object RiskingNotPerformed extends ROECode(code = "0", messageKey = "decoder.roe.RiskingNotPerformed", priority = 4)
   case object PrelodgePrefix extends ROECode(code = "H", messageKey = "decoder.roe.PrelodgePrefix", priority = 5)
-  case object UnknownRoe extends ROECode(code = "", messageKey = "", priority = 100)
+  case class UnknownRoe(override val code: String = "") extends ROECode(code = code, messageKey = "ileCode.unknown", priority = 100)
+  case object NoneRoe extends ROECode(code = "", messageKey = "", priority = 101)
 
   implicit object ROECodeFormat extends Format[ROECode] {
     def reads(value: JsValue): JsResult[ROECode] = value match {
@@ -61,11 +62,10 @@ object ROECode {
           case Some(result) => JsSuccess(result)
           case None =>
             logger.warn(s"Unknown ROE code: $code")
-            JsSuccess(UnknownRoe)
+            JsSuccess(UnknownRoe(code))
         }
       case _ =>
-        logger.warn("Incorrect type")
-        JsSuccess(UnknownRoe)
+        JsSuccess(NoneRoe)
     }
 
     def writes(value: ROECode): JsString = JsString(value.code)

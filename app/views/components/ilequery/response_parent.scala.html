@@ -27,12 +27,11 @@
 @(parentMucr: Option[MucrInfo])(implicit request: Request[_], messages: Messages)
 
 @if(parentMucr.isDefined){
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-two-thirds" id="parentConsignment">
         <h2 class="govuk-heading-m">@messages("ileQueryResponse.parent")</h2>
 
         @parentMucr.map(parent => {
             govukSummaryList(SummaryList(
-                attributes = Map("id" -> "parentConsignment"),
                 rows = Seq(
                     SummaryListRow(
                         key = Key(
@@ -58,7 +57,7 @@
                             content = parent.entryStatus.flatMap(_.soe).map(converter.statusOfEntryMucr(_)).getOrElse(Empty)
                         )
                     )
-                ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
+                ).filterNot(_.value.content == Empty),
                 classes = "govuk-!-margin-bottom-9"
             ))
         })

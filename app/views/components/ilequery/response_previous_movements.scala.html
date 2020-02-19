@@ -22,40 +22,41 @@
 
 @(movements: Seq[MovementInfo])(implicit request: Request[_], messages: Messages)
 
-<div class="govuk-grid-column-full">
-    @govukTable(Table(
-        attributes = Map("id" -> "previousMovements"),
-        rows = movements.sortBy(_.movementDateTime).reverse.zipWithIndex.map(indexedMovement => {
-            Seq(
-                TableRow(
-                    content = Text(messages(s"ileQueryResponse.previousMovements.type.${indexedMovement._1.messageCode.toLowerCase}")),
-                    attributes = Map("id" -> s"movement_type_${indexedMovement._2}")
-                ),
-                TableRow(
-                    content = Text(indexedMovement._1.movementDateTime.map(date => ViewDates.movementFormatter.format(date)).getOrElse("")),
-                    attributes = Map("id" -> s"movement_date_${indexedMovement._2}")
-                ),
-                TableRow(
-                    content = Text(indexedMovement._1.goodsLocation),
-                    attributes = Map("id" -> s"goods_location_${indexedMovement._2}")
+    @if(movements.nonEmpty) {
+        <div class="govuk-grid-column-full" id="previousMovements">
+        @govukTable(Table(
+            rows = movements.sortBy(_.movementDateTime).reverse.zipWithIndex.map(indexedMovement => {
+                Seq(
+                    TableRow(
+                        content = Text(messages(s"ileQueryResponse.previousMovements.type.${indexedMovement._1.messageCode.toLowerCase}")),
+                        attributes = Map("id" -> s"movement_type_${indexedMovement._2}")
+                    ),
+                    TableRow(
+                        content = Text(indexedMovement._1.movementDateTime.map(date => ViewDates.movementFormatter.format(date)).getOrElse("")),
+                        attributes = Map("id" -> s"movement_date_${indexedMovement._2}")
+                    ),
+                    TableRow(
+                        content = Text(indexedMovement._1.goodsLocation),
+                        attributes = Map("id" -> s"goods_location_${indexedMovement._2}")
+                    )
                 )
-            )
-        })
-        ,
-        head = Some(List(
-            HeadCell(
-                content = Text(messages("ileQueryResponse.previousMovements.type"))
-            ),
-            HeadCell(
-                content = Text(messages("ileQueryResponse.previousMovements.date"))
-            ),
-            HeadCell(
-                content = Text(messages("ileQueryResponse.previousMovements.goodsLocation"))
-            )
-        )),
-        classes = "govuk-table govuk-!-margin-bottom-9",
-        caption = Some(messages("ileQueryResponse.previousMovements")),
-        captionClasses = "govuk-table__caption govuk-heading-m",
-        firstCellIsHeader = true
-    ))
-</div>
+            })
+            ,
+            head = Some(List(
+                HeadCell(
+                    content = Text(messages("ileQueryResponse.previousMovements.type"))
+                ),
+                HeadCell(
+                    content = Text(messages("ileQueryResponse.previousMovements.date"))
+                ),
+                HeadCell(
+                    content = Text(messages("ileQueryResponse.previousMovements.goodsLocation"))
+                )
+            )),
+            classes = "govuk-table govuk-!-margin-bottom-9",
+            caption = Some(messages("ileQueryResponse.previousMovements")),
+            captionClasses = "govuk-table__caption govuk-heading-m",
+            firstCellIsHeader = true
+        ))
+        </div>
+    }

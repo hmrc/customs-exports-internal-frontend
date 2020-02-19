@@ -26,11 +26,10 @@
 
 @(info: DucrInfo)(implicit request: Request[_], messages: Messages)
 
-<div class="govuk-grid-column-two-thirds">
+<div class="govuk-grid-column-two-thirds" id="ducrSummary">
     <h2 class="govuk-heading-m">@messages("ileQueryResponse.details")</h2>
 
     @govukSummaryList(SummaryList(
-        attributes = Map("id" -> "summary"),
         rows = Seq(
             SummaryListRow(
                 key = Key(
@@ -64,7 +63,7 @@
                     content = info.entryStatus.flatMap(_.ics).map(converter.inputCustomsStatus(_)).getOrElse(Empty)
                 )
             )
-        ).filterNot(row => row.key.content == Text(messages("ileQueryResponse.details.transport")) && row.value.content == Empty),
+        ).filterNot(_.value.content == Empty),
         classes = "govuk-!-margin-bottom-9"
     ))
 </div>
