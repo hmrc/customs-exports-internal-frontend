@@ -74,7 +74,7 @@ class MovementDetailsController @Inject()(
       .fold(
         (formWithErrors: Form[ArrivalDetails]) => Future.successful(Left(arrivalDetailsPage(formWithErrors, arrivalAnswers.consignmentReferences))),
         validForm =>
-          cacheRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(arrivalDetails = Some(validForm)))).map { _ =>
+          cacheRepository.upsert(request.cache.update(arrivalAnswers.copy(arrivalDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
         }
       )
@@ -86,7 +86,7 @@ class MovementDetailsController @Inject()(
       .fold(
         (formWithErrors: Form[DepartureDetails]) => Future.successful(Left(departureDetailsPage(formWithErrors))),
         validForm =>
-          cacheRepository.upsert(Cache(request.providerId, departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
+          cacheRepository.upsert(request.cache.update(departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
         }
       )

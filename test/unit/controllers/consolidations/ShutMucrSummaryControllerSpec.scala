@@ -56,7 +56,7 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with MockCache {
       "answers are present" in {
 
         val cachedForm = Some(ShutMucr("123"))
-        givenTheCacheContains(Cache("12345", ShutMucrAnswers(shutMucr = cachedForm)))
+        givenTheCacheContains(Cache("12345", Some(ShutMucrAnswers(shutMucr = cachedForm)), None))
 
         val result = controller(ShutMucrAnswers(shutMucr = cachedForm)).displayPage()(getRequest)
 

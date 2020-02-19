@@ -21,7 +21,10 @@ import java.time.{Instant, ZoneOffset}
 import models.UcrBlock
 import play.api.libs.json._
 
-case class Cache(providerId: String, answers: Option[Answers], queryUcr: Option[UcrBlock], updated: Option[Instant] = Some(Instant.now()))
+case class Cache(providerId: String, answers: Option[Answers], queryUcr: Option[UcrBlock], updated: Option[Instant] = Some(Instant.now())) {
+
+  def update(answers: Answers) = this.copy(answers = Some(answers), updated = Some(Instant.now()))
+}
 
 object Cache {
   implicit private val formatInstant: OFormat[Instant] = new OFormat[Instant] {
@@ -40,6 +43,6 @@ object Cache {
   }
   implicit val format: OFormat[Cache] = Json.format[Cache]
 
-  def apply(providerId: String, answers: Answers): Cache = new Cache(providerId, Some(answers), None)
+//  def apply(providerId: String, answers: Answers): Cache = new Cache(providerId, Some(answers), None)
   def apply(providerId: String, queryUcr: UcrBlock): Cache = new Cache(providerId, None, Some(queryUcr))
 }

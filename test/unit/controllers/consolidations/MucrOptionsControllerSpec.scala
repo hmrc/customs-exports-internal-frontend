@@ -74,7 +74,7 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache {
       "GET displayPage is invoked with data in cache" in {
 
         val cachedForm = Some(MucrOptions("123"))
-        givenTheCacheContains(Cache("12345", AssociateUcrAnswers(mucrOptions = cachedForm)))
+        givenTheCacheContains(Cache("12345", Some(AssociateUcrAnswers(mucrOptions = cachedForm)), None))
 
         val result = controller(AssociateUcrAnswers(mucrOptions = cachedForm)).displayPage()(getRequest)
 

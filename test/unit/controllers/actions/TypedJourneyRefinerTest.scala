@@ -40,7 +40,7 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
   private val operator = Operator(providerId)
   private val request = AuthenticatedRequest(operator, FakeRequest())
   private val answers = ArrivalAnswers()
-  private val cache = Cache(providerId, answers)
+  private val cache = Cache(providerId, Some(answers), None)
 
   private val refiner = new JourneyRefiner(repository)
 
@@ -58,7 +58,7 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
 
           await(refiner(JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Ok
 
-          theRequestBuilt mustBe JourneyRequest(answers, request)
+          theRequestBuilt mustBe JourneyRequest(cache, request)
         }
 
         "on shared journey" in {
@@ -67,7 +67,7 @@ class TypedJourneyRefinerTest extends WordSpec with MustMatchers with MockitoSug
 
           await(refiner(JourneyType.DEPART, JourneyType.ARRIVE).invokeBlock(request, block)) mustBe Results.Ok
 
-          theRequestBuilt mustBe JourneyRequest(answers, request)
+          theRequestBuilt mustBe JourneyRequest(cache, request)
         }
       }
 

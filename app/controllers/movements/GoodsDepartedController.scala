@@ -52,9 +52,9 @@ class GoodsDepartedController @Inject()(
       .fold(
         (formWithErrors: Form[GoodsDeparted]) => Future.successful(BadRequest(goodsDepartedPage(formWithErrors))),
         validGoodsDeparted => {
-          val updatedCache = request.answersAs[DepartureAnswers].copy(goodsDeparted = Some(validGoodsDeparted))
+          val updatedAnswers = request.answersAs[DepartureAnswers].copy(goodsDeparted = Some(validGoodsDeparted))
 
-          cacheRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
+          cacheRepository.upsert(request.cache.update(updatedAnswers)).map { _ =>
             Redirect(controllers.movements.routes.TransportController.displayPage())
           }
         }
