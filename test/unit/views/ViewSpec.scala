@@ -16,9 +16,9 @@
 
 package views
 
-import controllers.{CSRFSupport, MessagesStub}
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
-import models.cache.Answers
+import controllers.{CSRFSupport, MessagesStub}
+import models.cache.{Answers, Cache}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.{MustMatchers, WordSpec}
@@ -30,7 +30,8 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
 
   implicit protected def htmlBodyOf(html: Html): Document = Jsoup.parse(html.toString())
 
-  protected def journeyRequest(answers: Answers) = JourneyRequest(answers, AuthenticatedRequest(Operator(providerId), FakeRequest().withCSRFToken))
+  protected def journeyRequest(answers: Answers) =
+    JourneyRequest(Cache(providerId, Some(answers), None), AuthenticatedRequest(Operator(providerId), FakeRequest().withCSRFToken))
 
   /*
     Implicit Utility class for retrieving common elements which are on the vast majority of pages
