@@ -39,7 +39,7 @@ class MucrSummaryViewSpec extends ViewSpec with Injector {
   val mucrInfo =
     MucrInfo(ucr = "mucr", movements = Seq(movement), entryStatus = Some(status), isShut = Some(true))
 
-  private def summaryElement(html: Html, index: Int) = html.getElementById("mucrSummary").select(s"dl>div:eq($index)>dd").get(0)
+  private def summaryElement(html: Html, index: Int) = html.getElementById("summary").select(s"dl>div:eq($index)>dd").get(0)
 
   private def view(mucr: MucrInfo = mucrInfo) = page(mucr)
 

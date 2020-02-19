@@ -43,7 +43,7 @@ class IleQueryDucrResponseViewSpec extends ViewSpec with Injector {
     }
 
     "render queried ucr summary" in {
-      view().getElementById("ducrSummary") must containMessage("ileQueryResponse.details")
+      view().getElementById("summary") must containMessage("ileQueryResponse.details")
     }
 
     "render previous movements" in {

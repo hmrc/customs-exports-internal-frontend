@@ -39,7 +39,7 @@ class DucrSummaryViewSpec extends ViewSpec with Injector {
   val ducrInfo =
     DucrInfo(ucr = "ducr", declarationId = "121332435432", movements = Seq(movement), entryStatus = Some(status))
 
-  private def summaryElement(html: Html, index: Int) = html.getElementById("ducrSummary").select(s"dl>div:eq($index)>dd").get(0)
+  private def summaryElement(html: Html, index: Int) = html.getElementById("summary").select(s"dl>div:eq($index)>dd").get(0)
 
   private def view(ducr: DucrInfo = ducrInfo) = page(ducr)
 
