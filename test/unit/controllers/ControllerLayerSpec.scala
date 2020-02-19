@@ -21,16 +21,15 @@ import config.AppConfig
 import connectors.StrideAuthConnector
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
-import models.cache.Answers
 import models.cache.JourneyType.JourneyType
+import models.cache.{Answers, Cache}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{DefaultFileMimeTypes, FileMimeTypes, FileMimeTypesConfiguration}
 import play.api.i18n.{Langs, Messages, MessagesApi}
 import play.api.libs.json.Writes
 import play.api.mvc._
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.test.NoMaterializer
+import play.api.test.{FakeRequest, NoMaterializer}
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import repositories.CacheRepository
@@ -83,7 +82,7 @@ abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with Befo
 
   case class ValidJourney(answers: Answers) extends JourneyRefiner(mock[CacheRepository]) {
     override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
-      Future.successful(Right(JourneyRequest(answers, request)))
+      Future.successful(Right(JourneyRequest(Cache(request.providerId, Some(answers), None), request)))
 
     override def apply(types: JourneyType*): ActionRefiner[AuthenticatedRequest, JourneyRequest] =
       if (types.contains(answers.`type`)) ValidJourney(answers) else InValidJourney

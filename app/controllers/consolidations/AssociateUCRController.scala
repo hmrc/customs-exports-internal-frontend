@@ -56,7 +56,7 @@ class AssociateUCRController @Inject()(
         formWithErrors => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions))),
         formData => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(associateUcr = Some(formData))
-          cacheRepository.upsert(Cache(request.providerId, updatedCache)).map { _ =>
+          cacheRepository.upsert(request.cache.update(updatedCache)).map { _ =>
             Redirect(consolidationRoutes.AssociateUCRSummaryController.displayPage())
           }
         }

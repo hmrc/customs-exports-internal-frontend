@@ -85,7 +85,7 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
       "GET displayPage is invoked with data in cache" in {
 
         val cachedForm = Some(ArrivalDetails(Date(LocalDate.now()), Time(LocalTime.now())))
-        givenTheCacheContains(Cache("12345", ArrivalAnswers(arrivalDetails = cachedForm)))
+        givenTheCacheContains(Cache("12345", Some(ArrivalAnswers(arrivalDetails = cachedForm)), None))
 
         val result = controller(ArrivalAnswers(arrivalDetails = cachedForm)).displayPage()(getRequest)
 

@@ -54,15 +54,15 @@ class ConsignmentReferencesController @Inject()(
           validForm => {
             request.answers match {
               case arrivalAnswers: ArrivalAnswers =>
-                cacheRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
+                cacheRepository.upsert(request.cache.update(arrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
                   Redirect(controllers.movements.routes.MovementDetailsController.displayPage())
                 }
               case retroArrivalAnswers: RetrospectiveArrivalAnswers =>
-                cacheRepository.upsert(Cache(request.providerId, retroArrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
+                cacheRepository.upsert(request.cache.update(retroArrivalAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
                   Redirect(controllers.movements.routes.LocationController.displayPage())
                 }
               case departureAnswers: DepartureAnswers =>
-                cacheRepository.upsert(Cache(request.providerId, departureAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
+                cacheRepository.upsert(request.cache.update(departureAnswers.copy(consignmentReferences = Some(validForm)))).map { _ =>
                   Redirect(controllers.movements.routes.MovementDetailsController.displayPage())
                 }
             }

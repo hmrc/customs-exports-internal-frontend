@@ -60,15 +60,15 @@ class LocationController @Inject()(
           validLocation => {
             request.answers match {
               case arrivalAnswers: ArrivalAnswers =>
-                cacheRepository.upsert(Cache(request.providerId, arrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
+                cacheRepository.upsert(request.cache.update(arrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
                   Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
                 }
               case retroArrivalAnswers: RetrospectiveArrivalAnswers =>
-                cacheRepository.upsert(Cache(request.providerId, retroArrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
+                cacheRepository.upsert(request.cache.update(retroArrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
                   Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
                 }
               case departureAnswers: DepartureAnswers =>
-                cacheRepository.upsert(Cache(request.providerId, departureAnswers.copy(location = Some(validLocation)))).map { _ =>
+                cacheRepository.upsert(request.cache.update(departureAnswers.copy(location = Some(validLocation)))).map { _ =>
                   Redirect(controllers.movements.routes.GoodsDepartedController.displayPage())
                 }
             }
