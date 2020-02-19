@@ -142,14 +142,14 @@ class EMRResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
         contentBuilder.convert(input)
 
         verify(decoder).crc(meq(UnknownCrcCode))
-        verify(decoder).roe(meq(UnknownRoeCode.code))
+        verify(decoder).roe(meq(UnknownRoeCode().code))
         verify(decoder).mucrSoe(meq(UnknownMucrSoeCode))
       }
 
       "return NotificationsPageSingleElement without content for unknown codes" in {
 
         when(decoder.crc(meq(UnknownCrcCode))).thenReturn(None)
-        when(decoder.roe(meq(UnknownRoeCode.code))).thenReturn(None)
+        when(decoder.roe(meq(UnknownRoeCode().code))).thenReturn(None)
         when(decoder.mucrSoe(meq(UnknownMucrSoeCode))).thenReturn(None)
 
         val input = emrResponseUnknownCodes
@@ -206,7 +206,7 @@ object EMRResponseConverterSpec {
     entries = Seq(
       Entry(
         ucrBlock = Some(UcrBlock(ucr = correctUcr, ucrType = "M")),
-        entryStatus = Some(EntryStatus(roe = Some(UnknownRoeCode), soe = Some(UnknownMucrSoeCode)))
+        entryStatus = Some(EntryStatus(roe = Some(UnknownRoeCode()), soe = Some(UnknownMucrSoeCode)))
       )
     )
   )

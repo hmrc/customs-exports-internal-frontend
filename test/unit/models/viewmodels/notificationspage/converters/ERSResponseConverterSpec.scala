@@ -142,14 +142,14 @@ class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
         contentBuilder.convert(input)
 
         verify(decoder).ics(meq(UnknownIcsCode))
-        verify(decoder).roe(meq(UnknownRoeCode.code))
+        verify(decoder).roe(meq(UnknownRoeCode().code))
         verify(decoder).ducrSoe(meq(UnknownSoeCode))
       }
 
       "return NotificationsPageSingleElement without content for unknown codes" in {
 
         when(decoder.ics(meq(UnknownIcsCode))).thenReturn(None)
-        when(decoder.roe(meq(UnknownRoeCode.code))).thenReturn(None)
+        when(decoder.roe(meq(UnknownRoeCode().code))).thenReturn(None)
         when(decoder.ducrSoe(meq(UnknownSoeCode))).thenReturn(None)
 
         val input = ersResponseUnknownCodes
@@ -205,7 +205,7 @@ object ERSResponseConverterSpec {
     entries = Seq(
       Entry(
         ucrBlock = Some(UcrBlock(ucr = correctUcr, ucrType = "D")),
-        entryStatus = Some(EntryStatus(ics = Some(UnknownIcsCode), roe = Some(UnknownRoeCode), soe = Some(UnknownSoeCode)))
+        entryStatus = Some(EntryStatus(ics = Some(UnknownIcsCode), roe = Some(UnknownRoeCode()), soe = Some(UnknownSoeCode)))
       )
     )
   )

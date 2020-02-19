@@ -40,7 +40,7 @@ class ROECodeSpec extends UnitSpec {
           NoControlRequired,
           RiskingNotPerformed,
           PrelodgePrefix,
-          UnknownRoe
+          UnknownRoe()
         )
 
       ROECode.codes mustBe expectedCodes
@@ -54,7 +54,8 @@ class ROECodeSpec extends UnitSpec {
       NoControlRequired.priority mustBe 6
       RiskingNotPerformed.priority mustBe 4
       PrelodgePrefix.priority mustBe 5
-      UnknownRoe.priority mustBe 100
+      UnknownRoe().priority mustBe 100
+      NoneRoe.priority mustBe 101
     }
 
     "parse ROE Code" when {
@@ -69,12 +70,12 @@ class ROECodeSpec extends UnitSpec {
 
       "code is incorrect" in {
 
-        ROECode.ROECodeFormat.reads(JsString("incorrect")) mustBe JsSuccess(UnknownRoe)
+        ROECode.ROECodeFormat.reads(JsString("incorrect")) mustBe JsSuccess(UnknownRoe("incorrect"))
       }
 
       "type of the code is incorrect" in {
 
-        ROECode.ROECodeFormat.reads(JsNumber(1)) mustBe JsSuccess(UnknownRoe)
+        ROECode.ROECodeFormat.reads(JsNumber(1)) mustBe JsSuccess(NoneRoe)
       }
     }
 
