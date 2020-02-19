@@ -32,6 +32,7 @@ import play.api.test.Helpers._
 import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
+import uk.gov.hmrc.http.Upstream5xxResponse
 
 class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with MockitoSugar {
 
@@ -232,15 +233,12 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
     }
   }
 
-  "fetch Query Notifications" should {
+  "fetch Query Notifications" when {
 
-    "send GET request to the backend" in {
-
-      val expectedDucrInfo = DucrInfo(ucr = correctUcr, declarationId = "declarationId")
-      val expectedNotification = SuccessfulResponseExchangeData(queriedDucr = Some(expectedDucrInfo))
-
-      val notificationJson =
-        s"""
+    val expectedDucrInfo = DucrInfo(ucr = correctUcr, declarationId = "declarationId")
+    val expectedNotification = SuccessfulResponseExchangeData(queriedDucr = Some(expectedDucrInfo))
+    val notificationJson =
+      s"""
            |  {
            |    "queriedDucr": {
            |      "ucr":"$correctUcr",
@@ -253,18 +251,63 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
            |  }
            |""".stripMargin
 
-      stubFor(
-        get(s"/consignment-query/$conversationId?providerId=$providerId")
-          .willReturn(aResponse().withStatus(OK).withBody(notificationJson))
-      )
+    "everything works correctly" should {
 
-      val response = connector.fetchQueryNotifications(conversationId, providerId).futureValue
+      "send GET request to the backend" in {
 
-      val expectedUrl = s"/consignment-query/$conversationId?providerId=$providerId"
-      verify(getRequestedFor(urlEqualTo(expectedUrl)))
+        stubFor(
+          get(s"/consignment-query/$conversationId?providerId=$providerId")
+            .willReturn(aResponse().withStatus(OK).withBody(notificationJson))
+        )
 
-      response.status mustBe OK
-      Json.parse(response.body).as[SuccessfulResponseExchangeData] mustBe expectedNotification
+        connector.fetchQueryNotifications(conversationId, providerId).futureValue
+
+        val expectedUrl = s"/consignment-query/$conversationId?providerId=$providerId"
+        verify(getRequestedFor(urlEqualTo(expectedUrl)))
+      }
+
+      "return HttpResponse with Ok (200) status and Notification in body" in {
+
+        stubFor(
+          get(s"/consignment-query/$conversationId?providerId=$providerId")
+            .willReturn(aResponse().withStatus(OK).withBody(notificationJson))
+        )
+
+        val response = connector.fetchQueryNotifications(conversationId, providerId).futureValue
+
+        response.status mustBe OK
+        Json.parse(response.body).as[SuccessfulResponseExchangeData] mustBe expectedNotification
+      }
+    }
+
+    "received FailedDependency (424) response" should {
+
+      "return HttpResponse with FailedDependency status" in {
+
+        stubFor(
+          get(s"/consignment-query/$conversationId?providerId=$providerId")
+            .willReturn(aResponse().withStatus(FAILED_DEPENDENCY))
+        )
+
+        val response = connector.fetchQueryNotifications(conversationId, providerId).futureValue
+
+        response.status mustBe FAILED_DEPENDENCY
+      }
+    }
+
+    "received InternalServerError (500) response" should {
+
+      "return failed Future" in {
+
+        stubFor(
+          get(s"/consignment-query/$conversationId?providerId=$providerId")
+            .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR))
+        )
+
+        intercept[Upstream5xxResponse] {
+          await(connector.fetchQueryNotifications(conversationId, providerId))
+        }
+      }
     }
   }
 }
