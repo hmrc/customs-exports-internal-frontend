@@ -17,7 +17,7 @@
 package models.viewmodels.decoder
 
 import base.UnitSpec
-import models.viewmodels.decoder.CRCCode.{DeclarationNotArrived, PrelodgedDeclarationNotArrived, Success}
+import models.viewmodels.decoder.CRCCode.{PrelodgedDeclarationNotArrived, Success, UCRDoesNotExist}
 
 class CRCCodeSpec extends UnitSpec {
 
@@ -31,7 +31,7 @@ class CRCCodeSpec extends UnitSpec {
 
     "have correct list of codes" in {
 
-      val expectedCodes = Set(Success, PrelodgedDeclarationNotArrived, DeclarationNotArrived)
+      val expectedCodes = Set(Success, PrelodgedDeclarationNotArrived, UCRDoesNotExist)
 
       CRCCode.codes mustBe expectedCodes
     }
