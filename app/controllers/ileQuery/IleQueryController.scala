@@ -51,7 +51,8 @@ class IleQueryController @Inject()(
   loadingScreenPage: loading_screen,
   ileQueryDucrResponsePage: ile_query_ducr_response,
   ileQueryMucrResponsePage: ile_query_mucr_response,
-  consignmentNotFound: consignment_not_found_page
+  consignmentNotFound: consignment_not_found_page,
+  timeoutPage: ile_query_timeout
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -67,6 +68,7 @@ class IleQueryController @Inject()(
   private def checkForNotifications(query: IleQuery)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
     connector.fetchQueryNotifications(query.conversationId, request.providerId).flatMap { response =>
       response.status match {
+
         case OK =>
           val queryResponse = Json.parse(response.body).as[Seq[IleQueryResponseExchange]]
 
@@ -77,6 +79,13 @@ class IleQueryController @Inject()(
                 processQueryResults(response)
               }
           }
+
+        case FAILED_DEPENDENCY =>
+          logger.warn(s"ILE Query for Conversation ID: [${query.conversationId}] timed out")
+          ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>
+            Ok(timeoutPage(query.ucr))
+          }
+
         case _ =>
           logger.warn(s"Movements backend returned status: ${response.status}")
           ileQueryRepository.removeByConversationId(query.conversationId).map { _ =>

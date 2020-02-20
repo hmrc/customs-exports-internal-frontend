@@ -329,7 +329,6 @@ ileQuery.ucr.incorrect = Unique Consignment Reference is incorrect
 ileQuery.link.emptyMucr = Create an empty Master Consignment Reference (MUCR)
 ileQuery.link.requests = View previous requests
 
-
 ileQuery.loading.title = Looking for consignment
 ileQuery.loading.hint = This should only take a few seconds, do not refresh the page
 
@@ -362,3 +361,7 @@ ileQueryResponse.ucrNotFound.title = The requested UCR does not exist
 ileQueryResponse.ucrNotFound.message = {0} does not exist.
 
 ileCode.unknown = Unknown
+
+ileQueryResponse.timeout.title = There is a problem
+ileQueryResponse.timeout.heading = Sorry, there is a problem with the service
+ileQueryResponse.timeout.message = Try again later.
