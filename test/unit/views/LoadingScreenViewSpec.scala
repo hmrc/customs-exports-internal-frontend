@@ -16,15 +16,16 @@
 
 package views
 
+import base.Injector
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import views.html.loading_screen
 
-class LoadingScreenViewSpec extends ViewSpec {
+class LoadingScreenViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  private val page = new loading_screen(main_template)
+  private val page = instanceOf[loading_screen]
   private val view = page()
 
   "Loading screen" should {
@@ -36,12 +37,12 @@ class LoadingScreenViewSpec extends ViewSpec {
 
     "render page header" in {
 
-      view.getElementById("title").text() mustBe messages("ileQuery.loading.title")
+      view.getElementById("title") must containMessage("ileQuery.loading.title")
     }
 
     "render page hint" in {
 
-      view.getElementById("subtitle").text() mustBe messages("ileQuery.loading.hint")
+      view.getElementById("main-content") must containMessage("ileQuery.loading.hint")
     }
   }
 }
