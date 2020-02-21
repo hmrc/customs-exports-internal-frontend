@@ -38,9 +38,6 @@ class IleQueryDucrResponseViewSpec extends ViewSpec with Injector {
 
   private def view(info: DucrInfo = ducrInfo, parent: Option[MucrInfo] = None) = page(info, parent)
 
-  private def summaryElement(html: Html, index: Int) = html.getElementById("summary").select(s"div:eq($index)>dd").get(0)
-  private def parentConsignmentElement(html: Html, index: Int) = html.getElementById("parentConsignment").select(s"div:eq($index)>dd").get(0)
-
   "Ile Query page" should {
 
     "render title" in {
@@ -55,52 +52,8 @@ class IleQueryDucrResponseViewSpec extends ViewSpec with Injector {
       view().getElementById("previousMovements") must containMessage("ileQueryResponse.previousMovements")
     }
 
-    "render default status of entry" in {
-      summaryElement(view(), 1).text must be("")
-    }
-
-    "render empty status of entry" in {
-      summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(soe = None)))), 1).text must be("")
-    }
-
-    "translate all ducr status of entry" in {
-      SOECode.DucrCodes.foreach(
-        soe => summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(soe = Some(soe.code))))), 1) must containMessage(soe.messageKey)
-      )
-    }
-
-    "render default input customs status" in {
-      summaryElement(view(), 2).text must be("")
-    }
-
-    "render empty input customs status" in {
-      summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(ics = None)))), 2).text must be("")
-    }
-
-    "translate all input customs status" in {
-      ICSCode.codes.foreach(
-        ics => summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(ics = Some(ics.code))))), 2) must containMessage(ics.messageKey)
-      )
-    }
-
-    val viewWithParent = view(
-      parent =
-        Some(MucrInfo("parentUcr", entryStatus = Some(EntryStatus(None, Some(ROECode.DocumentaryControl), Some(SOECode.ConsolidationOpen.code)))))
-    )
-
-    "render parent consignment link" in {
-      parentConsignmentElement(viewWithParent, 0).getElementsByClass("govuk-link").first() must haveHref(
-        controllers.ileQuery.routes.IleQueryController.getConsignmentInformation("parentUcr")
-      )
-      parentConsignmentElement(viewWithParent, 0).text() must be("parentUcr")
-    }
-
-    "render parent consignment route" in {
-      parentConsignmentElement(viewWithParent, 1) must containMessage(ROECode.DocumentaryControl.messageKey)
-    }
-
-    "render parent consignment status" in {
-      parentConsignmentElement(viewWithParent, 2) must containMessage(SOECode.ConsolidationOpen.messageKey)
+    "render parent" in {
+      view(parent = Some(parentInfo)).getElementById("parentConsignment") must containMessage("ileQueryResponse.parent")
     }
   }
 }

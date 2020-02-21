@@ -71,7 +71,6 @@ class IleQueryController @Inject()(
 
         case OK =>
           val queryResponse = Json.parse(response.body).as[Seq[IleQueryResponseExchange]]
-
           queryResponse match {
             case Seq() => Future.successful(loadingPageResult)
             case response +: _ =>
