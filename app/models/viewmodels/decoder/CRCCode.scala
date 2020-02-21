@@ -26,10 +26,10 @@ sealed abstract class CRCCode(override val code: String, override val messageKey
 
 object CRCCode {
 
-  val codes: Set[CRCCode] = Set(Success, PrelodgedDeclarationNotArrived, DeclarationNotArrived)
+  val codes: Set[CRCCode] = Set(Success, PrelodgedDeclarationNotArrived, UCRDoesNotExist)
 
   case object Success extends CRCCode(code = "000", messageKey = "decoder.crc.Success")
   case object PrelodgedDeclarationNotArrived extends CRCCode(code = "101", messageKey = "decoder.crc.PrelodgedDeclarationNotArrived")
-  case object DeclarationNotArrived extends CRCCode(code = "102", messageKey = "decoder.crc.DeclarationNotArrived")
+  case object UCRDoesNotExist extends CRCCode(code = "102", messageKey = "decoder.crc.UCRDoesNotExist")
 
 }

@@ -82,10 +82,13 @@ class EMRResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
         val expectedTimestampInfo = "31 Oct 2019 at 00:00"
         val expectedContentElements = Seq(
           messages(crcKeyFromDecoder.messageKey),
+          crcKeyFromDecoder.code,
           messages("notifications.elem.content.inventoryLinkingMovementTotalsResponse.roe"),
           messages(roeKeyFromDecoder.messageKey),
+          roeKeyFromDecoder.code,
           messages("notifications.elem.content.inventoryLinkingMovementTotalsResponse.soe"),
-          messages(mucrSoeKeyFromDecoder.messageKey)
+          messages(mucrSoeKeyFromDecoder.messageKey),
+          mucrSoeKeyFromDecoder.code
         )
 
         val result = contentBuilder.convert(input)
