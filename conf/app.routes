@@ -2,10 +2,10 @@
 GET         /assets/*file                          controllers.Assets.versioned(path="/public", file: Asset)
 
 # ILE Query - entry point
-GET         /consignment-query                     controllers.ileQuery.IleQueryController.displayQueryForm()
-POST        /consignment-query                     controllers.ileQuery.IleQueryController.submitQueryForm()
+GET         /consignment-query                     controllers.ileQuery.FindConsignmentController.displayQueryForm()
+POST        /consignment-query                     controllers.ileQuery.FindConsignmentController.submitQueryForm()
 
-GET         /consignment-query/:ucr                controllers.ileQuery.IleQueryController.submitQuery(ucr: String)
+GET         /consignment-query/:ucr                controllers.ileQuery.IleQueryController.getConsignmentInformation(ucr: String)
 
 # Declaration choice page
 GET         /choice                                controllers.ChoiceController.displayPage()

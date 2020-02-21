@@ -67,7 +67,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
       "form contains ucr block" in {
         val backButton = page(Choice.form(), Some(UcrBlock("ucr", "D"))).getElementById("back-link")
 
-        backButton must haveHref(controllers.ileQuery.routes.IleQueryController.submitQuery("ucr"))
+        backButton must haveHref(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation("ucr"))
       }
     }
 

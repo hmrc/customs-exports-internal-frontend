@@ -15,12 +15,12 @@
  *@
 
 @import components.gds.gds_main_template
-@import components.ilequery.{response_parent, response_previous_movements, response_buttons, response_ducr_summary}
+@import components.ilequery.{response_buttons, response_ducr_summary, response_parent, response_previous_movements}
 @import models.notifications.queries.{DucrInfo, MucrInfo}
 @import models.viewmodels.ilequery.IleQueryCodeConverter
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.components.BackButton
 @import views.Title
+@import views.components.BackButton
 
 @this(
         converter: IleQueryCodeConverter,
@@ -39,7 +39,7 @@
 @govukLayout(
     useCustomContentWidth = true,
     title = Title("ileQueryResponse.ducr.title"),
-    backButton = Some(BackButton(messages("site.back"), controllers.ileQuery.routes.IleQueryController.displayQueryForm()))) {
+    backButton = Some(BackButton(messages("site.back"), controllers.ileQuery.routes.FindConsignmentController.displayQueryForm()))) {
 
     <div class="govuk-grid-row">
 

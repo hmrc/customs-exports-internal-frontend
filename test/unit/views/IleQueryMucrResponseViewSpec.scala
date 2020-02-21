@@ -73,6 +73,6 @@ class IleQueryMucrResponseViewSpec extends ViewSpec with Injector {
     "not render isShut when mucr has parent" in {
       view(info = mucrInfo.copy(isShut = Some(true)), parent = Some(MucrInfo("mucr"))).getElementById("isShutMucr") must be(null)
     }
-
   }
+
 }

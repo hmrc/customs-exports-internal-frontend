@@ -19,8 +19,10 @@ package views
 import base.Injector
 import models.notifications.EntryStatus
 import models.notifications.queries.{DucrInfo, MovementInfo, MucrInfo}
+import models.viewmodels.decoder.{ICSCode, ROECode, SOECode}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
+import play.twirl.api.Html
 import views.html.ile_query_ducr_response
 
 class IleQueryDucrResponseViewSpec extends ViewSpec with Injector {

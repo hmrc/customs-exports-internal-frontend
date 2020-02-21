@@ -77,7 +77,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().displayPage(getRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.ileQuery.routes.IleQueryController.displayQueryForm().url)
+        redirectLocation(result) mustBe Some(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm().url)
       }
 
     }
