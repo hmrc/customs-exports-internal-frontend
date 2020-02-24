@@ -23,7 +23,7 @@ import models.viewmodels.decoder.ROECode.{DocumentaryControl, NoControlRequired,
 
 class IleQueryResponseExchangeDataSpec extends UnitSpec {
 
-  "Query response data" should {
+  "SuccessfulResponseExchangeData on sortedChildrenUcrs" should {
 
     "sort children ucrs base on the ROE status" in {
 
@@ -43,4 +43,52 @@ class IleQueryResponseExchangeDataSpec extends UnitSpec {
       response.sortedChildrenUcrs.map(_.entryStatus.flatMap(_.roe).get) mustBe expectedStatusOrder
     }
   }
+
+  "SuccessfulResponseExchangeData on queriedUcr" when {
+
+    "queried UCR was a DUCR" should {
+      "return queriedDucr element" in {
+
+        val queriedDucrInfo = DucrInfo(ucr = "ducr", parentMucr = Some("parent-mucr"), declarationId = "declaration-id")
+        val response = SuccessfulResponseExchangeData(queriedDucr = Some(queriedDucrInfo))
+
+        val queriedUcr = response.queriedUcr
+
+        queriedUcr mustBe queriedDucrInfo
+      }
+    }
+
+    "queried UCR was a MUCR" should {
+      "return queriedMucr element" in {
+
+        val queriedMucrInfo = MucrInfo(ucr = "mucr", parentMucr = Some("parent-mucr"))
+        val response = SuccessfulResponseExchangeData(queriedMucr = Some(queriedMucrInfo))
+
+        val queriedUcr = response.queriedUcr
+
+        queriedUcr mustBe queriedMucrInfo
+      }
+    }
+
+    "both queriedDucr and queriedMucr are present" should {
+      "throw IllegalStateException" in {
+
+        val queriedDucrInfo = DucrInfo(ucr = "ducr", parentMucr = Some("parent-mucr"), declarationId = "declaration-id")
+        val queriedMucrInfo = MucrInfo(ucr = "mucr", parentMucr = Some("parent-mucr"))
+        val response = SuccessfulResponseExchangeData(queriedDucr = Some(queriedDucrInfo), queriedMucr = Some(queriedMucrInfo))
+
+        intercept[IllegalStateException] { response.queriedUcr }
+      }
+    }
+
+    "both queriedDucr and queriedMucr are empty" should {
+      "throw IllegalStateException" in {
+
+        val response = SuccessfulResponseExchangeData(queriedDucr = None, queriedMucr = None)
+
+        intercept[IllegalStateException] { response.queriedUcr }
+      }
+    }
+  }
+
 }
