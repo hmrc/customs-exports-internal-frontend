@@ -51,7 +51,7 @@ class DisassociateUCRController @Inject()(
       .fold(
         formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
         answers =>
-          cacheRepository.upsert(Cache(request.providerId, request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
+          cacheRepository.upsert(request.cache.update(request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
             Redirect(controllers.consolidations.routes.DisassociateUCRSummaryController.display())
         }
       )

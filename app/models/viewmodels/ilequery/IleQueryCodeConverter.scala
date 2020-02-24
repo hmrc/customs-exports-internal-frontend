@@ -21,30 +21,33 @@ import models.notifications.queries.Transport
 import models.viewmodels.decoder.{CodeWithMessageKey, Decoder, ROECode}
 import play.api.i18n.Messages
 import services.Countries.countryName
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, Empty, HtmlContent, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, HtmlContent, Text}
 
 @Singleton
 class IleQueryCodeConverter @Inject()(decoder: Decoder) {
 
-  private def htmlString(codeWithMessageKey: CodeWithMessageKey)(implicit messages: Messages) =
-    s"<strong>${codeWithMessageKey.code}</strong> - ${messages(codeWithMessageKey.messageKey)}"
+  private def htmlString(codeWithMessageKey: CodeWithMessageKey)(implicit messages: Messages): String =
+    htmlString(codeWithMessageKey.code, codeWithMessageKey.messageKey)
+
+  private def htmlString(code: String, messageKey: String)(implicit messages: Messages): String =
+    s"<strong>$code</strong> - ${messages(messageKey)}"
+
+  private def unknown(code: String)(implicit messages: Messages): Content =
+    HtmlContent(htmlString(code, "ileCode.unknown"))
 
   def inputCustomsStatus(code: String)(implicit messages: Messages): Content =
-    decoder.ics(code).map(icsCode => HtmlContent(htmlString(icsCode))).getOrElse(Empty)
+    decoder.ics(code).map(icsCode => HtmlContent(htmlString(icsCode))).getOrElse(unknown(code))
 
-  def routeOfEntry(roe: ROECode)(implicit messages: Messages): Content = roe match {
-    case ROECode.UnknownRoe => Text(messages("ileQueryResponse.route.unknown"))
-    case _                  => HtmlContent(htmlString(roe))
-  }
+  def routeOfEntry(roe: ROECode)(implicit messages: Messages): Content = HtmlContent(htmlString(roe))
 
   def statusOfEntryDucr(code: String)(implicit messages: Messages): Content =
-    decoder.ducrSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)
+    decoder.ducrSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(unknown(code))
 
   def statusOfEntryMucr(code: String)(implicit messages: Messages): Content =
-    decoder.mucrSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)
+    decoder.mucrSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(unknown(code))
 
   def statusOfEntryAll(code: String)(implicit messages: Messages): Content =
-    decoder.allSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(Empty)
+    decoder.allSoe(code).map(soeCode => HtmlContent(htmlString(soeCode))).getOrElse(unknown(code))
 
   def transport(transport: Transport): Content =
     Text((transport.transportId ++ transport.nationality.map(countryName)).mkString(", "))

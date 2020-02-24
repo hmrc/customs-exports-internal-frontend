@@ -31,9 +31,12 @@ public class CacheChangelog {
 
     @ChangeSet(order = "001", id = "Internal Movements DB Baseline", author = "Steve Sugden")
     public void dbBaseline(MongoDatabase db) {
-        Document query = new Document();
-        Document update = new Document("$set", new Document("testUpdate", Date.from(Instant.now())));
-        db.getCollection(collection).updateMany(new BasicDBObject(query), new BasicDBObject(update));
     }
 
+    @ChangeSet(order = "002", id = "Add updated timestamp for existing cache objects", author = "Steve Sugden")
+    public void addUpdatedField(MongoDatabase db) {
+        Document query = new Document();
+        Document update = new Document("$set", new Document("updated", Date.from(Instant.now())));
+        db.getCollection(collection).updateMany(new BasicDBObject(query), new BasicDBObject(update));
+    }
 }

@@ -14,20 +14,20 @@
  * limitations under the License.
  *@
 
+@import components.gds.{gds_main_template, pageSubHeading, pageTitle}
 @import views.Title
 
-@this(main_template: views.html.templates.main_template)
+@this(govukLayout: gds_main_template, pageTitle: pageTitle, pageSubHeading: pageSubHeading)
 
 @()(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title("ileQuery.loading.title")) {
+@govukLayout(
+    title = Title("ileQuery.loading.title")) {
 
-    @components.page_title(
-        Some(messages("ileQuery.loading.title")),
-        Some(messages("ileQuery.loading.hint"))
-    )
+    @pageTitle(messages("ileQuery.loading.title"))
+    @pageSubHeading(messages("ileQuery.loading.hint"))
 
-    <div id="spinner" style="text-align:left">
+    <div id="spinner" style="text-align: left">
         <img src="@routes.Assets.versioned("/spinner.gif")" alt="waiting">
     </div>
 }

@@ -73,7 +73,7 @@ class ConsignmentReferencesControllerSpec extends ControllerLayerSpec with MockC
       "GET displayPage is invoked with data in cache" in {
 
         val cachedForm = Some(ConsignmentReferences(ConsignmentReferenceType.D, "value"))
-        givenTheCacheContains(Cache("12345", ArrivalAnswers(consignmentReferences = cachedForm)))
+        givenTheCacheContains(Cache("12345", Some(ArrivalAnswers(consignmentReferences = cachedForm)), None))
 
         val result = controller(ArrivalAnswers(consignmentReferences = cachedForm)).displayPage()(getRequest)
 

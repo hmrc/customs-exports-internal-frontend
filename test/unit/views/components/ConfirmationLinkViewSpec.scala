@@ -38,7 +38,7 @@ class ConfirmationLinkViewSpec extends ViewSpec with ViewMatchers with MockitoSu
       val linkView = linkComponent()
         .getElementsByClass("govuk-link")
         .first()
-      linkView must haveHref(controllers.ileQuery.routes.IleQueryController.displayQueryForm())
+      linkView must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
       linkView must containMessage("movement.confirmation.redirect.query.link")
 
     }

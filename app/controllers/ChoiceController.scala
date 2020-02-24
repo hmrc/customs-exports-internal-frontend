@@ -45,7 +45,7 @@ class ChoiceController @Inject()(
         cache.answers
           .map(answers => Ok(choicePage(Choice.form().fill(Choice(answers.`type`)), cache.queryUcr)))
           .getOrElse(Ok(choicePage(Choice.form(), cache.queryUcr)))
-      case None => Redirect(controllers.ileQuery.routes.IleQueryController.displayQueryForm())
+      case None => Redirect(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
     }
   }
 
@@ -83,7 +83,7 @@ class ChoiceController @Inject()(
     for {
       updatedCache: Cache <- cacheRepository.findByProviderId(request.providerId).map {
         case Some(cache) => cache.copy(answers = Some(answerProvider.apply(cache.queryUcr)))
-        case None        => Cache(request.providerId, answerProvider.apply(None))
+        case None        => Cache(request.providerId, Some(answerProvider.apply(None)), None)
       }
       result <- cacheRepository.upsert(updatedCache).map(_ => Redirect(call))
     } yield (result)
