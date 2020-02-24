@@ -25,7 +25,7 @@ import controllers.ControllerLayerSpec
 import controllers.exchanges.Operator
 import forms.IleQueryForm
 import models.UcrBlock
-import models.cache.{Answers, IleQuery}
+import models.cache.{Answers, Cache, IleQuery}
 import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
 import models.notifications.queries._
 import org.mockito.ArgumentCaptor
@@ -101,6 +101,8 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
     super.afterEach()
   }
 
+  private val request = getRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
+
   private val mucrInfo = MucrInfo(ucr = "mucr")
   private val parentMucrInfo = MucrInfo("parentMucr")
   private val successfulMucrResponseData = SuccessfulResponseExchangeData(queriedMucr = Some(mucrInfo), parentMucr = Some(parentMucrInfo))
@@ -125,8 +127,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
       val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulMucrResponseExchange))))
       when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
-      val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
-
       controller.getConsignmentInformation("mucr")(request).futureValue
 
       verify(ileQueryRepository) findBySessionIdAndUcr (meq("sessionId"), meq("mucr"))
@@ -147,8 +147,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.insert(any[IleQuery])(any())).thenReturn(Future.successful(dummyWriteResultSuccess))
           when(connector.submit(any[IleQueryExchange])(any())).thenReturn(Future.successful(conversationId))
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
-
           controller.getConsignmentInformation(correctDucr)(request).futureValue
 
           val constructedIleQueryCaptor = newIleQueryExchangeCaptor
@@ -165,8 +163,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString())).thenReturn(Future.successful(None))
           when(ileQueryRepository.insert(any[IleQuery])(any())).thenReturn(Future.successful(dummyWriteResultSuccess))
           when(connector.submit(any[IleQueryExchange])(any())).thenReturn(Future.successful(conversationId))
-
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
 
           controller.getConsignmentInformation(correctDucr)(request).futureValue
 
@@ -185,8 +181,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.insert(any[IleQuery])(any())).thenReturn(Future.successful(dummyWriteResultSuccess))
           when(connector.submit(any[IleQueryExchange])(any())).thenReturn(Future.successful(conversationId))
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
-
           val result = controller.getConsignmentInformation(correctDucr)(request)
 
           status(result) mustBe SEE_OTHER
@@ -203,8 +197,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString())).thenReturn(Future.successful(None))
           when(ileQueryRepository.insert(any[IleQuery])(any())).thenReturn(Future.successful(dummyWriteResultSuccess))
           when(connector.submit(any[IleQueryExchange])(any())).thenReturn(Future.successful(conversationId))
-
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
 
           controller.getConsignmentInformation(correctMucr)(request).futureValue
 
@@ -223,8 +215,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.insert(any[IleQuery])(any())).thenReturn(Future.successful(dummyWriteResultSuccess))
           when(connector.submit(any[IleQueryExchange])(any())).thenReturn(Future.successful(conversationId))
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
-
           controller.getConsignmentInformation(correctMucr)(request).futureValue
 
           val ileQueryCaptor = newIleQueryCaptor
@@ -242,8 +232,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.insert(any[IleQuery])(any())).thenReturn(Future.successful(dummyWriteResultSuccess))
           when(connector.submit(any[IleQueryExchange])(any())).thenReturn(Future.successful(conversationId))
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
-
           val result = controller.getConsignmentInformation(correctMucr)(request)
 
           status(result) mustBe SEE_OTHER
@@ -259,8 +247,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString())).thenReturn(Future.successful(None))
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
-
           val result = controller.getConsignmentInformation(incorrectUCR)(request)
 
           status(result) mustBe BAD_REQUEST
@@ -269,8 +255,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         "return Find Consignment page, passing form with errors" in {
 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString())).thenReturn(Future.successful(None))
-
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
 
           controller.getConsignmentInformation(incorrectUCR)(request).futureValue
 
@@ -288,8 +272,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
         val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulMucrResponseExchange))))
         when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
-
-        val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
 
         controller.getConsignmentInformation("mucr")(request).futureValue
 
@@ -309,8 +291,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq.empty[IleQueryResponseExchange])))
           when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
-
           val result = controller.getConsignmentInformation("mucr")(request)
 
           status(result) mustBe OK
@@ -328,66 +308,107 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulMucrResponseExchange))))
           when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
-
           val result = controller.getConsignmentInformation("mucr")(request)
 
           status(result) mustBe OK
           verify(ileQueryRepository).removeByConversationId(meq(conversationId))
         }
+      }
 
-        "return ConsignmentNotFound page, if Notification has UcrNotFoundResponseExchangeData" in {
+      "Backend Connector returns OK (200) response with Notifications in body" when {
 
-          when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
-            .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
-          when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-          val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(ucrNotFoundResponseExchange))))
-          when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
+        "Notification has UcrNotFoundResponseExchangeData" should {
+          "return ConsignmentNotFound page" in {
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
+            when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
+              .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
+            when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
+            val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(ucrNotFoundResponseExchange))))
+            when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
-          val result = controller.getConsignmentInformation("mucr")(request)
+            val result = controller.getConsignmentInformation("mucr")(request)
 
-          status(result) mustBe OK
-          verify(consignmentNotFoundPage).apply(meq("mucr"))(any(), any())
+            status(result) mustBe OK
+            verify(consignmentNotFoundPage).apply(meq("mucr"))(any(), any())
+          }
         }
 
-        "return DUCR query response page, if Notification has SuccessfulResponseExchangeData with 'queriedDucr'" in {
+        "Notification has SuccessfulResponseExchangeData with 'queriedDucr'" should {
 
-          when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
-            .thenReturn(Future.successful(Some(IleQuery("sessionId", "ducr", conversationId))))
-          when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-          val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulDucrResponseExchange))))
-          when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
+          "call CacheRepository to upsert queried DUCR" in {
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
+            when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
+              .thenReturn(Future.successful(Some(IleQuery("sessionId", "ducr", conversationId))))
+            when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
+            val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulDucrResponseExchange))))
+            when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
-          val result = controller.getConsignmentInformation("ducr")(request)
+            controller.getConsignmentInformation("ducr")(request).futureValue
 
-          status(result) mustBe OK
-          val optMucrInfoCaptor = newOptionalMucrInfoCaptor
-          verify(ileQueryDucrResponsePage).apply(meq(ducrInfo), optMucrInfoCaptor.capture())(any(), any())
-          optMucrInfoCaptor.getValue mustBe Some(parentMucrInfo)
-          verifyZeroInteractions(ileQueryMucrResponsePage)
+            val cacheCaptor = newCacheCaptor
+            verify(cacheRepository).upsert(cacheCaptor.capture())
+            val cacheUpserted = cacheCaptor.getValue
+
+            cacheUpserted.providerId mustBe providerId
+            cacheUpserted.queryUcr.get mustBe UcrBlock(ucr = "ducr", ucrType = "D")
+            cacheUpserted.answers mustBe None
+          }
+
+          "return DUCR query response page" in {
+
+            when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
+              .thenReturn(Future.successful(Some(IleQuery("sessionId", "ducr", conversationId))))
+            when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
+            val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulDucrResponseExchange))))
+            when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
+
+            val result = controller.getConsignmentInformation("ducr")(request)
+
+            status(result) mustBe OK
+            val optMucrInfoCaptor = newOptionalMucrInfoCaptor
+            verify(ileQueryDucrResponsePage).apply(meq(ducrInfo), optMucrInfoCaptor.capture())(any(), any())
+            optMucrInfoCaptor.getValue mustBe Some(parentMucrInfo)
+            verifyZeroInteractions(ileQueryMucrResponsePage)
+          }
         }
 
-        "return MUCR query response page, if Notification has SuccessfulResponseExchangeData with 'queriedMucr'" in {
+        "Notification has SuccessfulResponseExchangeData with 'queriedMucr'" should {
 
-          when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
-            .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
-          when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-          val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulMucrResponseExchange))))
-          when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
+          "call CacheRepository to upsert queried MUCR" in {
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
+            when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
+              .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
+            when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
+            val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulMucrResponseExchange))))
+            when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
-          val result = controller.getConsignmentInformation("mucr")(request)
+            controller.getConsignmentInformation("mucr")(request).futureValue
 
-          status(result) mustBe OK
-          val optMucrInfoCaptor = newOptionalMucrInfoCaptor
-          verify(ileQueryMucrResponsePage).apply(meq(mucrInfo), optMucrInfoCaptor.capture(), meq(Seq.empty))(any(), any())
-          optMucrInfoCaptor.getValue mustBe Some(parentMucrInfo)
-          verifyZeroInteractions(ileQueryDucrResponsePage)
+            val cacheCaptor = newCacheCaptor
+            verify(cacheRepository).upsert(cacheCaptor.capture())
+            val cacheUpserted = cacheCaptor.getValue
+
+            cacheUpserted.providerId mustBe providerId
+            cacheUpserted.queryUcr.get mustBe UcrBlock(ucr = "mucr", ucrType = "M")
+            cacheUpserted.answers mustBe None
+          }
+
+          "return MUCR query response page" in {
+
+            when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
+              .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
+            when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
+            val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulMucrResponseExchange))))
+            when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
+
+            val result = controller.getConsignmentInformation("mucr")(request)
+
+            status(result) mustBe OK
+            val optMucrInfoCaptor = newOptionalMucrInfoCaptor
+            verify(ileQueryMucrResponsePage).apply(meq(mucrInfo), optMucrInfoCaptor.capture(), meq(Seq.empty))(any(), any())
+            optMucrInfoCaptor.getValue mustBe Some(parentMucrInfo)
+            verifyZeroInteractions(ileQueryDucrResponsePage)
+          }
         }
       }
 
@@ -401,8 +422,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           val backendResponse = HttpResponse(responseStatus = SERVICE_UNAVAILABLE)
           when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
-
           controller.getConsignmentInformation("mucr")(request).futureValue
 
           verify(ileQueryRepository).removeByConversationId(meq(conversationId))
@@ -415,8 +434,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
           val backendResponse = HttpResponse(responseStatus = SERVICE_UNAVAILABLE)
           when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
-
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
 
           val result = controller.getConsignmentInformation("mucr")(request)
 
@@ -434,8 +451,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           val backendResponse = HttpResponse(responseStatus = FAILED_DEPENDENCY)
           when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
-
           controller.getConsignmentInformation("mucr")(request).futureValue
 
           verify(ileQueryRepository).removeByConversationId(meq(conversationId))
@@ -449,8 +464,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           val backendResponse = HttpResponse(responseStatus = FAILED_DEPENDENCY)
           when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
-          val request = postRequest.withHeaders(Headers(("X-Session-ID", "sessionId")))
-
           val result = controller.getConsignmentInformation("mucr")(request)
 
           status(result) mustBe OK
@@ -463,5 +476,6 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
   private def newOptionalMucrInfoCaptor: ArgumentCaptor[Option[MucrInfo]] = ArgumentCaptor.forClass(classOf[Option[MucrInfo]])
   private def newIleQueryExchangeCaptor: ArgumentCaptor[IleQueryExchange] = ArgumentCaptor.forClass(classOf[IleQueryExchange])
   private def newIleQueryCaptor: ArgumentCaptor[IleQuery] = ArgumentCaptor.forClass(classOf[IleQuery])
+  private def newCacheCaptor: ArgumentCaptor[Cache] = ArgumentCaptor.forClass(classOf[Cache])
 
 }

@@ -23,7 +23,7 @@ import javax.inject.{Inject, Singleton}
 import models.notifications.NotificationFrontendModel
 import models.submissions.Submission
 import play.api.Logger
-import play.api.http.{ContentTypes, HeaderNames}
+import play.api.http.{ContentTypes, HeaderNames, Status}
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, Upstream4xxResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -37,8 +37,6 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
   import CustomsDeclareExportsMovementsConnector._
 
   private val logger = Logger(this.getClass)
-
-  private val FailedDependencyStatus: Int = 424
 
   private val JsonHeaders = Seq(HeaderNames.CONTENT_TYPE -> ContentTypes.JSON, HeaderNames.ACCEPT -> ContentTypes.JSON)
 
@@ -108,8 +106,8 @@ class CustomsDeclareExportsMovementsConnector @Inject()(appConfig: AppConfig, ht
     httpClient
       .GET[HttpResponse](s"${appConfig.customsDeclareExportsMovementsUrl}$IleQuery/$conversationId", providerIdQueryParam(providerId))
       .recoverWith {
-        case exception: Upstream4xxResponse if exception.upstreamResponseCode == FailedDependencyStatus =>
-          Future.successful(HttpResponse(responseStatus = FailedDependencyStatus))
+        case exception: Upstream4xxResponse if exception.upstreamResponseCode == Status.FAILED_DEPENDENCY =>
+          Future.successful(HttpResponse(responseStatus = Status.FAILED_DEPENDENCY))
       }
       .andThen {
         case Success(response)  => logSuccessfulExchange("Ile query response fetch", response.body)
