@@ -26,7 +26,7 @@ abstract class UcrInfo {
   val entryStatus: Option[EntryStatus]
   val movements: Seq[MovementInfo]
 
-  def transport: Option[Transport] =
+  lazy val transport: Option[Transport] =
     movements
       .filter(_.transportDetails.isDefined)
       .sortBy(_.movementDateTime)(Ordering.Option[Instant].reverse)
