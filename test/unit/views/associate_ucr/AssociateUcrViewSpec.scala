@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package views.consolidations
+package views.associate_ucr
 
 import base.Injector
 import forms.AssociateKind.{Ducr, Mucr}
 import forms.{AssociateUcr, MucrOptions}
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html

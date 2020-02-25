@@ -21,7 +21,7 @@ import controllers.consolidations.{routes => consolidationRoutes}
 import forms.AssociateUcr.form
 import javax.inject.Inject
 import models.ReturnToStartException
-import models.cache.{AssociateUcrAnswers, Cache}
+import models.cache.AssociateUcrAnswers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository

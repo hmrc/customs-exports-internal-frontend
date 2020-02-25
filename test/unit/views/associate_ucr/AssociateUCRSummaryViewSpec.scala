@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.consolidations
+package views.associate_ucr
 
 import base.Injector
 import forms.AssociateKind.Ducr
