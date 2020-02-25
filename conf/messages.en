@@ -25,6 +25,8 @@ site.backToStart = Back to start
 site.edit = Change
 site.inputText.ducr.label = Enter an existing DUCR
 site.inputText.mucr.label = Enter an existing MUCR
+site.inputText.newMucr.label = Enter a new MUCR
+site.inputText.newMucr.label.hint = For example ‘GB/123456789100-AB123’
 
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
