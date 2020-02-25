@@ -40,7 +40,7 @@ class IleQueryTimeoutViewSpec extends ViewSpec with Injector {
       val backButton = page(correctUcr).getGovUkBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(correctUcr))
+      backButton.get must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
     }
 
     "display heading" in {
