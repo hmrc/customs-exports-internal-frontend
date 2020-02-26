@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package views.consolidations
+package views.associate_ucr
 
+import base.Injector
 import forms.AssociateKind.{Ducr, Mucr}
 import forms.{AssociateUcr, MucrOptions}
-import org.jsoup.nodes.Document
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
+import views.html.associate_ucr
 import views.{ViewMatchers, ViewSpec}
 
-class AssociateUcrViewSpec extends ViewSpec with ViewMatchers {
+class AssociateUcrViewSpec extends ViewSpec with ViewMatchers with Injector {
 
   implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
-  private val page = new views.html.associate_ucr(main_template)
+  private val page = instanceOf[associate_ucr]
 
   val mucrOptions = MucrOptions("MUCR")
 
@@ -44,11 +45,11 @@ class AssociateUcrViewSpec extends ViewSpec with ViewMatchers {
       "have 'DUCR' section" which {
 
         "have radio button" in {
-          emptyView.getElementById("associate.ucr.ducr") mustBe unchecked
+          emptyView.getElementById("kind") mustBe unchecked
         }
 
         "display label" in {
-          emptyView.getElementsByAttributeValue("for", "associate.ucr.ducr").text() mustBe messages("associate.ucr.ducr")
+          emptyView.getElementsByAttributeValue("for", "kind").text() mustBe messages("associate.ucr.ducr")
         }
 
         "have input for value" in {
@@ -59,11 +60,11 @@ class AssociateUcrViewSpec extends ViewSpec with ViewMatchers {
       "have 'MUCR' section" which {
 
         "have radio button" in {
-          emptyView.getElementById("associate.ucr.mucr") mustBe unchecked
+          emptyView.getElementById("kind-2") mustBe unchecked
         }
 
         "display label" in {
-          emptyView.getElementsByAttributeValue("for", "associate.ucr.mucr").text() mustBe messages("associate.ucr.mucr")
+          emptyView.getElementsByAttributeValue("for", "kind-2").text() mustBe messages("associate.ucr.mucr")
         }
 
         "have input" in {
@@ -72,7 +73,7 @@ class AssociateUcrViewSpec extends ViewSpec with ViewMatchers {
       }
 
       "display 'Continue' button on page" in {
-        emptyView.getElementsByClass("button").text() mustBe messages("site.continue")
+        emptyView.getElementsByClass("govuk-button").text() mustBe messages("site.continue")
       }
     }
 

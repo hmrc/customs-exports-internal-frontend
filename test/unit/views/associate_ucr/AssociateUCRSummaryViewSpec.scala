@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package views.consolidations
+package views.associate_ucr
 
+import base.Injector
 import forms.AssociateKind.Ducr
 import forms.AssociateUcr
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import views.ViewSpec
+import views.html.associate_ucr_summary
 
-class AssociateUCRSummaryViewSpec extends ViewSpec {
+class AssociateUCRSummaryViewSpec extends ViewSpec with Injector {
 
   implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
-  private val page = new views.html.associate_ucr_summary(main_template)
+  private val page = instanceOf[associate_ucr_summary]
 
   private def createView(mucr: String, ducr: String): Html =
     page(AssociateUcr(Ducr, ducr), mucr)
@@ -36,27 +38,27 @@ class AssociateUCRSummaryViewSpec extends ViewSpec {
     val view = createView("MUCR", "DUCR")
 
     "display 'Confirm and submit' button on page" in {
-      view.getElementsByClass("button").text() mustBe messages("site.confirmAndSubmit")
+      view.getElementsByClass("govuk-button").text() mustBe messages("site.confirmAndSubmit")
     }
 
     "display 'Change' link on page for associate ucr" in {
-      view.getElementById("associate_ducr-change") must containText(messages("site.change"))
-      view.getElementById("associate_ducr-change") must haveHref(controllers.consolidations.routes.AssociateUCRController.displayPage())
+      view.getElementsByClass("govuk-link").first() must containMessage("site.change")
+      view.getElementsByClass("govuk-link").first() must haveHref(controllers.consolidations.routes.AssociateUCRController.displayPage())
     }
 
     "display 'Change' link on the page for mucr" in {
 
-      view.getElementById("associate_mucr-change") must containText(messages("site.change"))
-      view.getElementById("associate_mucr-change") must haveHref(controllers.consolidations.routes.MucrOptionsController.displayPage())
+      view.getElementsByClass("govuk-link").last() must containMessage("site.change")
+      view.getElementsByClass("govuk-link").last() must haveHref(controllers.consolidations.routes.MucrOptionsController.displayPage())
     }
 
     "display 'Reference' link on page" in {
-      view.getElementById("associate_ucr-reference") must containText("DUCR")
+      view.getElementsByClass("govuk-summary-list__value").first() must containText("DUCR")
     }
 
     "display mucr type on the page" in {
 
-      view.getElementById("mucr-type") must containText(messages("associate.ucr.summary.kind.mucr"))
+      view.getElementsByClass("govuk-summary-list__key").last() must containText(messages("associate.ucr.summary.kind.mucr"))
     }
   }
 }
