@@ -27,7 +27,7 @@ import play.api.libs.json.{JsString, Json}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.MockCache
-import views.html.shut_mucr
+import views.html.shutmucr.shut_mucr
 
 import scala.concurrent.ExecutionContext.global
 

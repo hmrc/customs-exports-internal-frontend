@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.associate_ucr_confirmation
+import views.html.associateucr.associate_ucr_confirmation
 
 import scala.concurrent.ExecutionContext
 

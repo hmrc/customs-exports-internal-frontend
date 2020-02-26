@@ -21,12 +21,12 @@ import controllers.consolidations.{routes => consolidationsRoutes}
 import forms.ShutMucr
 import forms.ShutMucr.form
 import javax.inject.{Inject, Singleton}
-import models.cache.{Cache, JourneyType, ShutMucrAnswers}
+import models.cache.{JourneyType, ShutMucrAnswers}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.shut_mucr
+import views.html.shutmucr.shut_mucr
 
 import scala.concurrent.{ExecutionContext, Future}
 

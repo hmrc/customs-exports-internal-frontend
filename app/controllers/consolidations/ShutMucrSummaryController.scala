@@ -17,7 +17,6 @@
 package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashKeys
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
 import models.cache.{JourneyType, ShutMucrAnswers}
@@ -25,7 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.shut_mucr_summary
+import views.html.shutmucr.shut_mucr_summary
 
 import scala.concurrent.ExecutionContext
 

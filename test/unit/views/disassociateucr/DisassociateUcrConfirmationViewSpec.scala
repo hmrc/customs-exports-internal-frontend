@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package views.associate_ucr
+package views.disassociateucr
 
 import base.Injector
 import play.api.test.FakeRequest
 import views.ViewSpec
-import views.html.associate_ucr_confirmation
+import views.html.disassociateucr.disassociate_ucr_confirmation
 
-class AssociateUCRConfirmationViewSpec extends ViewSpec with Injector {
+class DisassociateUcrConfirmationViewSpec extends ViewSpec with Injector {
 
   private implicit val request = FakeRequest()
-  private val page = instanceOf[associate_ucr_confirmation]
+  private val page = instanceOf[disassociate_ucr_confirmation]
 
-  "AssociateUCRConfirmationView" when {
+  "DisassociateUCRConfirmationView" when {
 
     "View is rendered" should {
 
       "render title" in {
 
-        page().getTitle must containMessage("movement.confirmation.title.ASSOCIATE_UCR")
+        page().getTitle must containMessage("movement.confirmation.title.DISSOCIATE_UCR")
       }
 
       "render header" in {
 
         page()
           .getElementsByClass("govuk-heading-xl")
-          .first() must containMessage("movement.confirmation.title.ASSOCIATE_UCR")
+          .first() must containMessage("movement.confirmation.title.DISSOCIATE_UCR")
       }
 
       "have 'notification timeline' link" in {

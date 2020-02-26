@@ -17,13 +17,11 @@
 package controllers.consolidations
 
 import controllers.actions.AuthenticatedAction
-import controllers.storage.FlashKeys
 import javax.inject.{Inject, Singleton}
-import models.ReturnToStartException
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.disassociate_ucr_confirmation
+import views.html.disassociateucr.disassociate_ucr_confirmation
 
 import scala.concurrent.ExecutionContext
 

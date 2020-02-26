@@ -24,7 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.associate_ucr_summary
+import views.html.associateucr.associate_ucr_summary
 
 import scala.concurrent.ExecutionContext
 

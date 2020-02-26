@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.disassociate_ucr
+package views.disassociateucr
 
 import base.Injector
 import forms.DisassociateUcr
@@ -23,7 +23,7 @@ import play.api.data.FormError
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import views.ViewSpec
-import views.html.disassociate_ucr
+import views.html.disassociateucr.disassociate_ucr
 
 class DisassociateUcrViewSpec extends ViewSpec with Injector {
 

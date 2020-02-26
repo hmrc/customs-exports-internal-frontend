@@ -27,7 +27,7 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.{MockCache, SubmissionService}
-import views.html.shut_mucr_summary
+import views.html.shutmucr.shut_mucr_summary
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future

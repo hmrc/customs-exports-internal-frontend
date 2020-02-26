@@ -26,7 +26,7 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import views.html.disassociate_ucr_confirmation
+import views.html.disassociateucr.disassociate_ucr_confirmation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

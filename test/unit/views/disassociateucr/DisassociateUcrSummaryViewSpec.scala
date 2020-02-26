@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.disassociate_ucr
+package views.disassociateucr
 
 import base.Injector
 import forms.{DisassociateKind, DisassociateUcr}
@@ -22,7 +22,7 @@ import org.jsoup.nodes.Element
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import views.ViewSpec
-import views.html.disassociate_ucr_summary
+import views.html.disassociateucr.disassociate_ucr_summary
 
 class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
 
