@@ -1,4 +1,4 @@
-service.name = Internal Exports Movements Service
+service.name = CDS Exports Service
 header.homepage.alt = Go to the HMRC homepage
 header.homepage.text = HM Revenue & Customs
 
