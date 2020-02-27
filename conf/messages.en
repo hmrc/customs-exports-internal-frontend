@@ -99,11 +99,12 @@ arrivalConfirmation.notification.timeline = consignment’s notification timelin
 arrivalConfirmation.redirect.link = Find another consignment
 
 departureDetails.title = Departure date and time
-departureDetails.header = Enter departure details
+departureDetails.sectionHeading = Depart consignment {0}
+departureDetails.header = Enter date and time of departure
 departureDetails.date.question = Date of departure
 departureDetails.date.hint = For example, 01 08 2007
 departureDetails.time.question = Time of departure
-departureDetails.time.hint = For example, 21 37
+departureDetails.time.hint = Enter the time in 24 hour format. For example, 13 30
 
 departure.details.error.overdue = Time of Departure cannot be more than 60 days in the past
 departure.details.error.future = Time of Departure cannot be in the future

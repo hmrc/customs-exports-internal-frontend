@@ -20,6 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.JourneyRequest
 import forms.{ArrivalDetails, DepartureDetails, MovementDetails}
 import javax.inject.{Inject, Singleton}
+import models.ReturnToStartException
 import models.cache._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -46,15 +47,18 @@ class MovementDetailsController @Inject()(
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)) { implicit request =>
     request.answers match {
       case arrivalAnswers: ArrivalAnswers     => Ok(arrivalPage(arrivalAnswers))
-      case departureAnswers: DepartureAnswers => Ok(departurePage(departureAnswers.departureDetails))
+      case departureAnswers: DepartureAnswers => Ok(departurePage(departureAnswers))
     }
   }
 
   private def arrivalPage(arrivalAnswers: ArrivalAnswers)(implicit request: JourneyRequest[AnyContent]): Html =
     arrivalDetailsPage(arrivalAnswers.arrivalDetails.fold(details.arrivalForm)(details.arrivalForm.fill(_)), arrivalAnswers.consignmentReferences)
 
-  private def departurePage(departureDetails: Option[DepartureDetails])(implicit request: JourneyRequest[AnyContent]): Html =
-    departureDetailsPage(departureDetails.fold(details.departureForm())(details.departureForm().fill(_)))
+  private def departurePage(departureAnswers: DepartureAnswers)(implicit request: JourneyRequest[AnyContent]): Html =
+    departureDetailsPage(
+      departureAnswers.departureDetails.fold(details.departureForm())(details.departureForm().fill(_)),
+      departureAnswers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
+    )
 
   def saveMovementDetails(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
     implicit request =>
@@ -79,15 +83,17 @@ class MovementDetailsController @Inject()(
         }
       )
 
-  private def handleSavingDeparture(departureAnswers: DepartureAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
+  private def handleSavingDeparture(departureAnswers: DepartureAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] = {
+    def consignmentReference = departureAnswers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
     details
       .departureForm()
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[DepartureDetails]) => Future.successful(Left(departureDetailsPage(formWithErrors))),
+        (formWithErrors: Form[DepartureDetails]) => Future.successful(Left(departureDetailsPage(formWithErrors, consignmentReference))),
         validForm =>
           cacheRepository.upsert(request.cache.update(departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
-        }
+          }
       )
+  }
 }
