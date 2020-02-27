@@ -16,16 +16,19 @@
 
 package views.disassociate_ucr
 
+import base.Injector
 import forms.DisassociateUcr
+import org.jsoup.nodes.Document
+import play.api.data.FormError
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import views.ViewSpec
 import views.html.disassociate_ucr
 
-class DisassociateUcrViewSpec extends ViewSpec {
+class DisassociateUcrViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
-  private val page = new disassociate_ucr(main_template)
+  private val page = instanceOf[disassociate_ucr]
 
   "View" should {
     "render title" in {
@@ -33,7 +36,7 @@ class DisassociateUcrViewSpec extends ViewSpec {
     }
 
     "render back button" in {
-      val backButton = page(DisassociateUcr.form).getBackButton
+      val backButton = page(DisassociateUcr.form).getGovUkBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
@@ -51,7 +54,10 @@ class DisassociateUcrViewSpec extends ViewSpec {
       }
 
       "some errors" in {
-        page(DisassociateUcr.form.withError("error", "error.required")).getErrorSummary mustBe defined
+        val view: Document = page(DisassociateUcr.form.withError(FormError("ducr", "error.required")))
+
+        view must haveGovUkGlobalErrorSummary
+        view must haveGovUkFieldError("ducr", messages("error.required"))
       }
     }
   }

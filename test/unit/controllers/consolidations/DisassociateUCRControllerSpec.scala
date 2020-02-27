@@ -16,6 +16,7 @@
 
 package controllers.consolidations
 
+import base.Injector
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
 import forms.{DisassociateKind, DisassociateUcr}
@@ -29,11 +30,11 @@ import views.html.disassociate_ucr
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class DisassociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
+class DisassociateUCRControllerSpec extends ControllerLayerSpec with MockCache with Injector {
 
   private val ucr = "9AB123456"
   private val disassociation = DisassociateUcr(DisassociateKind.Ducr, Some(ucr), None)
-  private val page = new disassociate_ucr(main_template)
+  private val page = instanceOf[disassociate_ucr]
 
   private def controller(auth: AuthenticatedAction, existingAnswers: Answers) =
     new DisassociateUCRController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), cacheRepository, page)

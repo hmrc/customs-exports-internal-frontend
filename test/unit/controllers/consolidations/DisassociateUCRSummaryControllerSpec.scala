@@ -16,6 +16,7 @@
 
 package controllers.consolidations
 
+import base.Injector
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
@@ -35,13 +36,13 @@ import views.html.disassociate_ucr_summary
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DisassociateUCRSummaryControllerSpec extends ControllerLayerSpec {
+class DisassociateUCRSummaryControllerSpec extends ControllerLayerSpec with Injector {
 
   private val ucr = "9AB123456"
   private val disassociation = DisassociateUcr(DisassociateKind.Ducr, Some(ucr), None)
   private val answers = DisassociateUcrAnswers(Answers.fakeEORI, Some(DisassociateUcr(DisassociateKind.Ducr, Some(ucr), None)))
   private val submissionService = mock[SubmissionService]
-  private val page = new disassociate_ucr_summary(main_template)
+  private val page = instanceOf[disassociate_ucr_summary]
 
   private def controller(auth: AuthenticatedAction, existingAnswers: Answers) =
     new DisassociateUCRSummaryController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), submissionService, page)

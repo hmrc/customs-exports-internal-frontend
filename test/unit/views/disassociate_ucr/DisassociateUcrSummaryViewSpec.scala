@@ -16,6 +16,7 @@
 
 package views.disassociate_ucr
 
+import base.Injector
 import forms.{DisassociateKind, DisassociateUcr}
 import org.jsoup.nodes.Element
 import play.api.mvc.{AnyContentAsEmpty, Request}
@@ -23,12 +24,12 @@ import play.api.test.FakeRequest
 import views.ViewSpec
 import views.html.disassociate_ucr_summary
 
-class DisassociateUcrSummaryViewSpec extends ViewSpec {
+class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
   private val answersDUCR = DisassociateUcr(DisassociateKind.Ducr, Some("ducr-reference"), None)
   private val answersMUCR = DisassociateUcr(DisassociateKind.Mucr, None, Some("mucr-reference"))
-  private val page = new disassociate_ucr_summary(main_template)
+  private val page = instanceOf[disassociate_ucr_summary]
 
   "View" should {
     "render title" in {
@@ -44,14 +45,14 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec {
 
     "render back button" when {
       "ducr" in {
-        val backButton = page(answersDUCR).getBackButton
+        val backButton = page(answersDUCR).getGovUkBackButton
 
         backButton mustBe defined
         backButton.get must haveHref(controllers.consolidations.routes.DisassociateUCRController.display())
       }
 
       "mucr" in {
-        val backButton = page(answersMUCR).getBackButton
+        val backButton = page(answersMUCR).getGovUkBackButton
 
         backButton mustBe defined
         backButton.get must haveHref(controllers.consolidations.routes.DisassociateUCRController.display())
@@ -60,33 +61,33 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec {
 
     "render type" when {
       "ducr" in {
-        page(answersDUCR).getElementById("disassociate_ucr-type") must containText("DUCR")
+        page(answersDUCR).getElementsByClass("govuk-summary-list__key").first() must containText("DUCR")
       }
 
       "mucr" in {
-        page(answersMUCR).getElementById("disassociate_ucr-type") must containText("MUCR")
+        page(answersMUCR).getElementsByClass("govuk-summary-list__key").first() must containText("MUCR")
       }
     }
 
     "render reference" when {
       "ducr" in {
-        page(answersDUCR).getElementById("disassociate_ucr-reference") must containText("ducr-reference")
+        page(answersDUCR).getElementsByClass("govuk-summary-list__value").first() must containText("ducr-reference")
       }
 
       "mucr" in {
-        page(answersMUCR).getElementById("disassociate_ucr-reference") must containText("mucr-reference")
+        page(answersMUCR).getElementsByClass("govuk-summary-list__value").first() must containText("mucr-reference")
       }
     }
 
-    "render remove link" when {
+    "render 'Change' link" when {
       "ducr" in {
-        val anchor: Element = page(answersDUCR).getElementById("disassociate_ucr-remove")
+        val anchor: Element = page(answersDUCR).getElementsByClass("govuk-link").first()
         anchor must containMessage("site.change")
         anchor must haveHref(controllers.consolidations.routes.DisassociateUCRController.display())
       }
 
       "mucr" in {
-        val anchor = page(answersDUCR).getElementById("disassociate_ucr-remove")
+        val anchor = page(answersMUCR).getElementsByClass("govuk-link").first()
         anchor must containMessage("site.change")
         anchor must haveHref(controllers.consolidations.routes.DisassociateUCRController.display())
       }
@@ -94,15 +95,11 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec {
 
     "render submit button" when {
       "ducr" in {
-        val submit = page(answersDUCR).getSubmitButton
-        submit mustBe defined
-        submit.get must containMessage("site.confirmAndSubmit")
+        page(answersDUCR).getElementsByClass("govuk-button").text() mustBe messages("site.confirmAndSubmit")
       }
 
       "mucr" in {
-        val submit = page(answersMUCR).getSubmitButton
-        submit mustBe defined
-        submit.get must containMessage("site.confirmAndSubmit")
+        page(answersMUCR).getElementsByClass("govuk-button").text() mustBe messages("site.confirmAndSubmit")
       }
     }
   }
