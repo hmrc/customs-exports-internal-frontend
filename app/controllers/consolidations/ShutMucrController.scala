@@ -18,6 +18,7 @@ package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.consolidations.{routes => consolidationsRoutes}
+import forms.ShutMucr
 import forms.ShutMucr.form
 import javax.inject.{Inject, Singleton}
 import models.cache.{Cache, JourneyType, ShutMucrAnswers}
@@ -40,7 +41,7 @@ class ShutMucrController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)) { implicit request =>
-    val shutMucr = request.answersAs[ShutMucrAnswers].shutMucr
+    val shutMucr: Option[ShutMucr] = request.answersAs[ShutMucrAnswers].shutMucr
     Ok(shutMucrPage(shutMucr.fold(form())(form().fill)))
   }
 
