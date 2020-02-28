@@ -32,14 +32,14 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@gotoTimelineLink = {<a class="govuk-link" href="@routes.ViewSubmissionsController.displayPage()">@messages("movement.confirmation.notification.timeline.link")</a>}
+@gotoTimelineLink = {<a class="govuk-link" href="@routes.ViewSubmissionsController.displayPage()">@messages("confirmation.notification.timeline.link")</a>}
 
-@govukLayout(title = Title(s"movement.confirmation.title.ASSOCIATE_UCR")) {
+@govukLayout(title = Title(s"confirmation.title.ASSOCIATE_UCR")) {
 
-    @pageTitle(text = messages(s"movement.confirmation.title.ASSOCIATE_UCR"), classes = "govuk-heading-xl")
+    @pageTitle(text = messages(s"confirmation.title.ASSOCIATE_UCR"), classes = "govuk-heading-xl")
 
     @govukInsetText(InsetText(
-        content = HtmlContent(messages("movement.confirmation.header")+"<br>"+messages("movement.confirmation.header.check", gotoTimelineLink))
+        content = HtmlContent(messages("confirmation.insetText")+"<br>"+messages("confirmation.insetText.check", gotoTimelineLink))
     ))
 
     @confirmationLink()

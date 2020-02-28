@@ -39,7 +39,7 @@ class DisassociateUCRSummaryController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def display: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)) { implicit request =>
+  def displayPage: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)) { implicit request =>
     request.answersAs[DisassociateUcrAnswers].ucr match {
       case Some(ucr) => Ok(page(ucr))
       case _         => throw ReturnToStartException
@@ -48,12 +48,10 @@ class DisassociateUCRSummaryController @Inject()(
 
   def submit: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)).async { implicit request =>
     val answers = request.answersAs[DisassociateUcrAnswers]
-    val ucr = answers.ucr.map(_.ucr).getOrElse(throw ReturnToStartException)
-    val kind = answers.ucr.map(_.kind).getOrElse(throw ReturnToStartException)
 
     submissionService.submit(request.providerId, answers).map { _ =>
-      Redirect(controllers.consolidations.routes.DisassociateUCRConfirmationController.display())
-        .flashing(FlashKeys.UCR -> ucr, FlashKeys.CONSOLIDATION_KIND -> kind.toString)
+      Redirect(controllers.consolidations.routes.DisassociateUCRConfirmationController.displayPage())
+        .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString)
     }
   }
 

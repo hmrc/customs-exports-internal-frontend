@@ -16,7 +16,6 @@
 
 package views.components
 
-import config.AppConfig
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
@@ -27,9 +26,7 @@ class ConfirmationLinkViewSpec extends ViewSpec with ViewMatchers with MockitoSu
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  private val appConfig = mock[AppConfig]
-
-  private def linkComponent = new confirmation_link(appConfig)
+  private def linkComponent = new confirmation_link()
 
   "Confirmation link component" should {
 
@@ -39,8 +36,7 @@ class ConfirmationLinkViewSpec extends ViewSpec with ViewMatchers with MockitoSu
         .getElementsByClass("govuk-link")
         .first()
       linkView must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
-      linkView must containMessage("movement.confirmation.redirect.query.link")
-
+      linkView must containMessage("confirmation.redirect.query.link")
     }
 
   }

@@ -32,14 +32,14 @@ class AssociateUCRConfirmationViewSpec extends ViewSpec with Injector {
 
       "render title" in {
 
-        page().getTitle must containMessage("movement.confirmation.title.ASSOCIATE_UCR")
+        page().getTitle must containMessage("confirmation.title.ASSOCIATE_UCR")
       }
 
       "render header" in {
 
         page()
           .getElementsByClass("govuk-heading-xl")
-          .first() must containMessage("movement.confirmation.title.ASSOCIATE_UCR")
+          .first() must containMessage("confirmation.title.ASSOCIATE_UCR")
       }
 
       "have 'notification timeline' link" in {

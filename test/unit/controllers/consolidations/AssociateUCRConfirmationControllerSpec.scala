@@ -19,37 +19,102 @@ package controllers.consolidations
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import models.ReturnToStartException
+import models.cache.JourneyType
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import views.html.associateucr.associate_ucr_confirmation
+import views.html.confirmation_page
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class AssociateUCRConfirmationControllerSpec extends ControllerLayerSpec with MockitoSugar {
+class AssociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
 
-  private val page = mock[associate_ucr_confirmation]
+  private val confirmationPage = mock[confirmation_page]
 
-  private def controller(auth: AuthenticatedAction) =
-    new AssociateUCRConfirmationController(auth, stubMessagesControllerComponents(), page)
+  private def controller(auth: AuthenticatedAction = SuccessfulAuth()) =
+    new AssociateUCRConfirmationController(auth, stubMessagesControllerComponents(), confirmationPage)
 
-  "GET" should {
-    when(page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
-    implicit val get = FakeRequest("GET", "/")
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
 
-    "return 200 when authenticated" in {
-      val result = controller(SuccessfulAuth()).display(get.withFlash(FlashKeys.CONSOLIDATION_KIND -> "kind", FlashKeys.UCR -> "123"))
+    reset(confirmationPage)
+    when(confirmationPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+  }
 
-      status(result) mustBe Status.OK
-      contentAsHtml(result) mustBe page()
+  override protected def afterEach(): Unit = {
+    reset(confirmationPage)
+
+    super.afterEach()
+  }
+
+  "Associate Ucr Confirmation Controller on displayPage" should {
+    val getRequest = FakeRequest("GET", "/")
+
+    "return 200 when authenticated" when {
+
+      "journey type is ASSOCIATE_UCR" in {
+        val result = controller().displayPage()(getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ASSOCIATE_UCR.toString))
+
+        status(result) mustBe Status.OK
+        verify(confirmationPage).apply(meq(JourneyType.ASSOCIATE_UCR))(any(), any())
+      }
+    }
+
+    "throw ReturnToStartException" when {
+
+      "journey type is missing" in {
+        intercept[RuntimeException] {
+          await(controller().displayPage()(getRequest))
+        } mustBe ReturnToStartException
+      }
+
+      "journey type is ARRIVE" in {
+        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString)
+
+        intercept[RuntimeException] {
+          await(controller().displayPage()(request))
+        } mustBe ReturnToStartException
+      }
+
+      "journey type is RETROSPECTIVE_ARRIVE" in {
+        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.RETROSPECTIVE_ARRIVE.toString)
+
+        intercept[RuntimeException] {
+          await(controller().displayPage()(request))
+        } mustBe ReturnToStartException
+      }
+
+      "journey type is DEPART" in {
+        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.DEPART.toString)
+
+        intercept[RuntimeException] {
+          await(controller().displayPage()(request))
+        } mustBe ReturnToStartException
+      }
+
+      "journey type is DISSOCIATE_UCR" in {
+        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.DISSOCIATE_UCR.toString)
+
+        intercept[RuntimeException] {
+          await(controller().displayPage()(request))
+        } mustBe ReturnToStartException
+      }
+
+      "journey type is SHUT_MUCR" in {
+        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.SHUT_MUCR.toString)
+
+        intercept[RuntimeException] {
+          await(controller().displayPage()(request))
+        } mustBe ReturnToStartException
+      }
     }
 
     "return 403 when unauthenticated" in {
-      val result = controller(UnsuccessfulAuth).display(get)
+      val result = controller(UnsuccessfulAuth).displayPage(getRequest)
 
       status(result) mustBe Status.FORBIDDEN
     }

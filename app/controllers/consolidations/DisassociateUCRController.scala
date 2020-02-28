@@ -52,7 +52,7 @@ class DisassociateUCRController @Inject()(
         formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
         answers =>
           cacheRepository.upsert(request.cache.update(request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
-            Redirect(controllers.consolidations.routes.DisassociateUCRSummaryController.display())
+            Redirect(controllers.consolidations.routes.DisassociateUCRSummaryController.displayPage())
         }
       )
   }

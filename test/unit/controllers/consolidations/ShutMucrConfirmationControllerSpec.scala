@@ -31,12 +31,12 @@ import views.html.confirmation_page
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class DisassociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
+class ShutMucrConfirmationControllerSpec extends ControllerLayerSpec {
 
   private val confirmationPage = mock[confirmation_page]
 
   private def controller(auth: AuthenticatedAction = SuccessfulAuth()) =
-    new DisassociateUCRConfirmationController(auth, stubMessagesControllerComponents(), confirmationPage)
+    new ShutMucrConfirmationController(auth, stubMessagesControllerComponents(), confirmationPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -51,26 +51,20 @@ class DisassociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
     super.afterEach()
   }
 
-  "Disassociate Ucr Confirmation Controller on displayPage" should {
+  "GET" should {
     val getRequest = FakeRequest("GET", "/")
 
     "return 200 when authenticated" when {
 
-      "journey type is DISSOCIATE_UCR" in {
-        val result = controller().displayPage()(getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.DISSOCIATE_UCR.toString))
+      "journey type is SHUT_MUCR" in {
+        val result = controller().displayPage()(getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.SHUT_MUCR.toString))
 
         status(result) mustBe Status.OK
-        verify(confirmationPage).apply(meq(JourneyType.DISSOCIATE_UCR))(any(), any())
+        verify(confirmationPage).apply(meq(JourneyType.SHUT_MUCR))(any(), any())
       }
     }
 
     "throw ReturnToStartException" when {
-
-      "journey type is missing" in {
-        intercept[RuntimeException] {
-          await(controller().displayPage()(getRequest))
-        } mustBe ReturnToStartException
-      }
 
       "journey type is ARRIVE" in {
         val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString)
@@ -104,11 +98,17 @@ class DisassociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
         } mustBe ReturnToStartException
       }
 
-      "journey type is SHUT_MUCR" in {
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.SHUT_MUCR.toString)
+      "journey type is DISSOCIATE_UCR" in {
+        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.DISSOCIATE_UCR.toString)
 
         intercept[RuntimeException] {
           await(controller().displayPage()(request))
+        } mustBe ReturnToStartException
+      }
+
+      "journey type is missing" in {
+        intercept[RuntimeException] {
+          await(controller().displayPage()(getRequest))
         } mustBe ReturnToStartException
       }
     }
@@ -119,4 +119,5 @@ class DisassociateUCRConfirmationControllerSpec extends ControllerLayerSpec {
       status(result) mustBe Status.FORBIDDEN
     }
   }
+
 }

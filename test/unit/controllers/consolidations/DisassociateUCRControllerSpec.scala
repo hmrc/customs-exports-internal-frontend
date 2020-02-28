@@ -71,7 +71,7 @@ class DisassociateUCRControllerSpec extends ControllerLayerSpec with MockCache w
       val result = controller(SuccessfulAuth(), DisassociateUcrAnswers()).submit(post)
 
       status(result) mustBe Status.SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.DisassociateUCRSummaryController.display().url)
+      redirectLocation(result) mustBe Some(routes.DisassociateUCRSummaryController.displayPage().url)
       theCacheUpserted.answers mustBe Some(DisassociateUcrAnswers(ucr = Some(disassociation)))
     }
 

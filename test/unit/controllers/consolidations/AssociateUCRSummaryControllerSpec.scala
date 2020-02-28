@@ -17,88 +17,119 @@
 package controllers.consolidations
 
 import controllers.ControllerLayerSpec
-import forms.{AssociateKind, AssociateUcr, MucrOptions}
+import controllers.storage.FlashKeys
+import forms.AssociateKind.Ducr
+import forms.{AssociateUcr, MucrOptions}
 import models.ReturnToStartException
-import models.cache.AssociateUcrAnswers
-import org.mockito.ArgumentMatchers.any
+import models.cache.{Answers, AssociateUcrAnswers, JourneyType}
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
+import org.scalatest.concurrent.ScalaFutures
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.SubmissionService
 import views.html.associateucr.associate_ucr_summary
 
-import scala.concurrent.ExecutionContext.global
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec {
+class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec with ScalaFutures {
 
   private val summaryPage = mock[associate_ucr_summary]
   private val submissionService = mock[SubmissionService]
 
-  private def controller(associateUcrAnswers: AssociateUcrAnswers) =
-    new AssociateUCRSummaryController(
-      SuccessfulAuth(),
-      ValidJourney(associateUcrAnswers),
-      stubMessagesControllerComponents(),
-      submissionService,
-      summaryPage
-    )(global)
+  private def controller(answers: Answers) =
+    new AssociateUCRSummaryController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), submissionService, summaryPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
+    reset(submissionService, summaryPage)
     when(summaryPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(submissionService.submit(any(), any[AssociateUcrAnswers])(any())).thenReturn(Future.successful((): Unit))
   }
 
   override protected def afterEach(): Unit = {
-    reset(summaryPage)
+    reset(submissionService, summaryPage)
 
     super.afterEach()
   }
 
-  "GET" should {
-    "return 200 (OK)" in {
+  private def theResponseData: (AssociateUcr, String) = {
+    val associateDucrCaptor = ArgumentCaptor.forClass(classOf[AssociateUcr])
+    val mucrOptionsCaptor = ArgumentCaptor.forClass(classOf[String])
+    verify(summaryPage).apply(associateDucrCaptor.capture(), mucrOptionsCaptor.capture())(any(), any())
+    (associateDucrCaptor.getValue, mucrOptionsCaptor.getValue)
+  }
 
-      val answers = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")), associateUcr = Some(AssociateUcr(AssociateKind.Ducr, "123")))
+  private val mucrOptions = MucrOptions("MUCR")
+  private val associateUcr = AssociateUcr(Ducr, "DUCR")
 
-      val result = controller(answers).displayPage()(getRequest)
+  "Associate Ducr Summary Controller on displayPage" should {
 
-      status(result) mustBe OK
-      verify(summaryPage).apply(any(), any())(any(), any())
+    "return 200 (OK)" when {
+
+      "display page is invoked with data in cache" in {
+        val result = controller(AssociateUcrAnswers(mucrOptions = Some(mucrOptions), associateUcr = Some(associateUcr))).displayPage()(getRequest)
+
+        status(result) mustBe OK
+        verify(summaryPage).apply(any(), any())(any(), any())
+
+        val (viewUCR, viewOptions) = theResponseData
+        viewUCR.ucr mustBe "DUCR"
+        viewOptions mustBe "MUCR"
+      }
     }
 
-    "throw an exception" when {
+    "throw an ReturnToStartException exception" when {
 
-      "mucr is missing" in {
-        val answers = AssociateUcrAnswers(associateUcr = Some(AssociateUcr(AssociateKind.Ducr, "123")))
-
+      "Mucr Options is missing during displaying page" in {
         intercept[RuntimeException] {
-          await(controller(answers).displayPage()(getRequest))
+          await(controller(AssociateUcrAnswers(mucrOptions = None, associateUcr = Some(associateUcr))).displayPage()(getRequest))
         } mustBe ReturnToStartException
       }
 
-      "ucr is missing" in {
-        val answers = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")))
-
+      "Associate Ducr is missing during displaying page" in {
         intercept[RuntimeException] {
-          await(controller(answers).displayPage()(getRequest))
+          await(controller(AssociateUcrAnswers(mucrOptions = Some(mucrOptions), associateUcr = None)).displayPage()(getRequest))
         } mustBe ReturnToStartException
       }
-
     }
   }
 
-  "POST" should {
-    "redirect to confirmation" in {
-      when(submissionService.submit(any(), any[AssociateUcrAnswers])(any())).thenReturn(Future.successful((): Unit))
+  "Associate Ducr Summary Controller on submit" when {
 
-      val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")), associateUcr = Some(AssociateUcr(AssociateKind.Ducr, "123")))
+    "everything works correctly" should {
 
-      val result = controller(cachedData).submit()(postRequest)
+      "call SubmissionService" in {
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUCRConfirmationController.display().url)
+        val cachedAnswers = AssociateUcrAnswers(mucrOptions = Some(mucrOptions), associateUcr = Some(associateUcr))
+
+        controller(cachedAnswers).submit()(postRequest(Json.obj())).futureValue
+
+        val expectedProviderId = SuccessfulAuth().operator.providerId
+        verify(submissionService).submit(meq(expectedProviderId), meq(cachedAnswers))(any())
+      }
+
+      "return SEE_OTHER (303) that redirects to AssociateUcrConfirmation" in {
+
+        val result =
+          controller(AssociateUcrAnswers(mucrOptions = Some(mucrOptions), associateUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUCRConfirmationController.displayPage().url)
+      }
+
+      "return response with Movement Type in flash" in {
+
+        val result =
+          controller(AssociateUcrAnswers(mucrOptions = Some(mucrOptions), associateUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
+
+        flash(result).get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.ASSOCIATE_UCR.toString)
+      }
     }
-
   }
+
 }

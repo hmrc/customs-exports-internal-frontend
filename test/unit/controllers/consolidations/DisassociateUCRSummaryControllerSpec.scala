@@ -18,86 +18,110 @@ package controllers.consolidations
 
 import base.Injector
 import controllers.ControllerLayerSpec
-import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashKeys
 import forms.{DisassociateKind, DisassociateUcr}
 import models.ReturnToStartException
-import models.cache.{Answers, DisassociateUcrAnswers}
+import models.cache.{Answers, DisassociateUcrAnswers, JourneyType}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.verify
-import play.api.http.Status
-import play.api.test.FakeRequest
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito.{reset, verify, when}
+import org.scalatest.concurrent.ScalaFutures
+import play.api.libs.json.{JsString, Json}
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
 import services.SubmissionService
 import views.html.disassociateucr.disassociate_ucr_summary
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DisassociateUCRSummaryControllerSpec extends ControllerLayerSpec with Injector {
+class DisassociateUCRSummaryControllerSpec extends ControllerLayerSpec with ScalaFutures with Injector {
 
-  private val ucr = "9AB123456"
-  private val disassociation = DisassociateUcr(DisassociateKind.Ducr, Some(ucr), None)
-  private val answers = DisassociateUcrAnswers(Answers.fakeEORI, Some(DisassociateUcr(DisassociateKind.Ducr, Some(ucr), None)))
   private val submissionService = mock[SubmissionService]
-  private val page = instanceOf[disassociate_ucr_summary]
+  private val summaryPage = mock[disassociate_ucr_summary]
 
-  private def controller(auth: AuthenticatedAction, existingAnswers: Answers) =
-    new DisassociateUCRSummaryController(auth, ValidJourney(existingAnswers), stubMessagesControllerComponents(), submissionService, page)
+  private def controller(answers: Answers) =
+    new DisassociateUCRSummaryController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), submissionService, summaryPage)
 
-  "GET" should {
-    implicit val get = FakeRequest("GET", "/").withCSRFToken
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
 
-    "return 200 when authenticated" when {
-      "empty page answers" in {
-        intercept[Throwable] {
-          await(controller(SuccessfulAuth(), DisassociateUcrAnswers(ucr = None)).display(get))
+    reset(submissionService, summaryPage)
+    when(summaryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(submissionService.submit(any(), any[DisassociateUcrAnswers])(any())).thenReturn(Future.successful((): Unit))
+  }
+
+  override protected def afterEach(): Unit = {
+    reset(submissionService, summaryPage)
+
+    super.afterEach()
+  }
+
+  private def theResponseData: DisassociateUcr = {
+    val disassociateUcrCaptor = ArgumentCaptor.forClass(classOf[DisassociateUcr])
+    verify(summaryPage).apply(disassociateUcrCaptor.capture())(any(), any())
+    disassociateUcrCaptor.getValue
+  }
+
+  private val ucr: DisassociateUcr = DisassociateUcr(DisassociateKind.Ducr, ducr = Some("DUCR"), mucr = None)
+
+  "Disassociate Ucr Summary Controller on displayPage" should {
+
+    "return 200 (OK)" when {
+
+      "display page is invoked with data in cache" in {
+
+        val result = controller(DisassociateUcrAnswers(ucr = Some(ucr))).displayPage()(getRequest)
+
+        status(result) mustBe OK
+        verify(summaryPage).apply(any())(any(), any())
+
+        theResponseData.ducr.get mustBe "DUCR"
+      }
+    }
+
+    "throw an ReturnToStartException exception" when {
+
+      "DisassociateUcr is missing during displaying page" in {
+
+        intercept[RuntimeException] {
+          await(controller(DisassociateUcrAnswers(None)).displayPage()(getRequest))
         } mustBe ReturnToStartException
       }
+    }
+  }
 
-      "existing page answers" in {
-        val result = controller(SuccessfulAuth(), answers).display(get)
+  "Disassociate Ucr Summary Controller on submit" when {
 
-        status(result) mustBe Status.OK
-        contentAsHtml(result) mustBe page(disassociation)
+    "everything works correctly" should {
+
+      "call SubmissionService" in {
+
+        val cachedAnswers = DisassociateUcrAnswers(ucr = Some(ucr))
+
+        controller(cachedAnswers).submit()(postRequest(JsString(""))).futureValue
+
+        val expectedProviderId = SuccessfulAuth().operator.providerId
+        verify(submissionService).submit(meq(expectedProviderId), meq(cachedAnswers))(any())
+      }
+
+      "return SEE_OTHER (303) that redirects to DisassociateUcrConfirmation" in {
+
+        val result = controller(DisassociateUcrAnswers(ucr = Some(ucr))).submit()(postRequest(Json.obj()))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.consolidations.routes.DisassociateUCRConfirmationController.displayPage().url)
+
+      }
+
+      "return response with Movement Type in flash" in {
+
+        val result = controller(DisassociateUcrAnswers(ucr = Some(ucr))).submit()(postRequest(Json.obj()))
+
+        flash(result).get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.DISSOCIATE_UCR.toString)
+
       }
     }
-
-    "return 403 when unauthenticated" in {
-      val result = controller(UnsuccessfulAuth, DisassociateUcrAnswers()).display(get)
-
-      status(result) mustBe Status.FORBIDDEN
-    }
   }
 
-  "POST" should {
-    "return 200 when authenticated" in {
-      given(submissionService.submit(anyString(), any[DisassociateUcrAnswers]())(any())).willReturn(Future.successful((): Unit))
-
-      val post = FakeRequest("POST", "/").withCSRFToken
-      val result = controller(SuccessfulAuth(), answers).submit(post)
-
-      status(result) mustBe Status.SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.DisassociateUCRConfirmationController.display().url)
-      flash(result).get(FlashKeys.UCR) mustBe Some(ucr)
-      flash(result).get(FlashKeys.CONSOLIDATION_KIND) mustBe Some(DisassociateKind.Ducr.toString)
-      theSubmission mustBe answers
-    }
-
-    def theSubmission: DisassociateUcrAnswers = {
-      val captor: ArgumentCaptor[DisassociateUcrAnswers] = ArgumentCaptor.forClass(classOf[DisassociateUcrAnswers])
-      verify(submissionService).submit(anyString(), captor.capture())(any())
-      captor.getValue
-    }
-
-    "return 403 when unauthenticated" in {
-      val post = FakeRequest("POST", "/").withCSRFToken
-
-      val result = controller(UnsuccessfulAuth, DisassociateUcrAnswers()).submit(post)
-
-      status(result) mustBe Status.FORBIDDEN
-    }
-  }
 }

@@ -17,11 +17,15 @@
 package controllers.consolidations
 
 import controllers.actions.AuthenticatedAction
+import controllers.storage.FlashKeys
 import javax.inject.{Inject, Singleton}
+import models.ReturnToStartException
+import models.cache.JourneyType
+import models.cache.JourneyType.{DISSOCIATE_UCR, JourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.disassociateucr.disassociate_ucr_confirmation
+import views.html.confirmation_page
 
 import scala.concurrent.ExecutionContext
 
@@ -29,12 +33,19 @@ import scala.concurrent.ExecutionContext
 class DisassociateUCRConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
-  page: disassociate_ucr_confirmation
+  confirmationPage: confirmation_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def display: Action[AnyContent] = authenticate { implicit request =>
-    Ok(page())
+  def displayPage: Action[AnyContent] = authenticate { implicit request =>
+    val journeyType = extractJourneyType
+    journeyType match {
+      case DISSOCIATE_UCR => Ok(confirmationPage(journeyType))
+      case _              => throw ReturnToStartException
+    }
   }
+
+  private def extractJourneyType(implicit request: Request[_]): JourneyType =
+    request.flash.get(FlashKeys.MOVEMENT_TYPE).map(JourneyType.withName).getOrElse(throw ReturnToStartException)
 
 }

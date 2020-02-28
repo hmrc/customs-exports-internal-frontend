@@ -165,16 +165,16 @@ summary.departure.time = Time of departure
 
 summary.arrivalReference.reference = Unique reference
 
-movement.confirmation.title.ARRIVE = Your arrival request has been submitted
-movement.confirmation.title.ASSOCIATE_UCR = Your association request has been submitted
-movement.confirmation.title.DISSOCIATE_UCR = Your dissociation request has been submitted
-movement.confirmation.title.SHUT_MUCR = Your shut MUCR request has been submitted
-movement.confirmation.title.DEPART = Your departure request has been submitted
-movement.confirmation.title.RETROSPECTIVE_ARRIVE = Your retrospective arrival request has been submitted
-movement.confirmation.header = It might take a few minutes before a decision is made.
-movement.confirmation.header.check = Go to the {0} to check the status.
-movement.confirmation.notification.timeline.link = consignment’s notification timeline
-movement.confirmation.redirect.query.link = Find another consignment
+confirmation.title.ARRIVE = Your arrival request has been submitted
+confirmation.title.DEPART = Your departure request has been submitted
+confirmation.title.RETROSPECTIVE_ARRIVE = Your retrospective arrival request has been submitted
+confirmation.title.ASSOCIATE_UCR = Your association request has been submitted
+confirmation.title.DISSOCIATE_UCR = Your dissociation request has been submitted
+confirmation.title.SHUT_MUCR = Your shut MUCR request has been submitted
+confirmation.insetText = It might take a few minutes before a decision is made.
+confirmation.insetText.check = Go to the {0} to check the status.
+confirmation.notification.timeline.link = consignment’s notification timeline
+confirmation.redirect.query.link = Find another consignment
 
 associate.heading = Add to MUCR {0}
 mucrOptions.heading = Add to MUCR

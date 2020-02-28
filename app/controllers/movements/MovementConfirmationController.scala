@@ -21,21 +21,31 @@ import controllers.storage.FlashKeys
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
 import models.cache.JourneyType
+import models.cache.JourneyType.{ARRIVE, DEPART, JourneyType, RETROSPECTIVE_ARRIVE}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.movement_confirmation_page
+import views.html.confirmation_page
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class MovementConfirmationController @Inject()(authenticate: AuthenticatedAction, mcc: MessagesControllerComponents, page: movement_confirmation_page)(
-  implicit ec: ExecutionContext
-) extends FrontendController(mcc) with I18nSupport {
+class MovementConfirmationController @Inject()(
+  authenticate: AuthenticatedAction,
+  mcc: MessagesControllerComponents,
+  confirmationPage: confirmation_page
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
-  def display: Action[AnyContent] = authenticate { implicit request =>
-    val `type` = request.flash.get(FlashKeys.MOVEMENT_TYPE).map(JourneyType.withName).getOrElse(throw ReturnToStartException)
-    Ok(page(`type`))
+  def displayPage: Action[AnyContent] = authenticate { implicit request =>
+    val journeyType = extractJourneyType
+    journeyType match {
+      case ARRIVE | RETROSPECTIVE_ARRIVE | DEPART => Ok(confirmationPage(journeyType))
+      case _                                      => throw ReturnToStartException
+    }
   }
+
+  private def extractJourneyType(implicit request: Request[_]): JourneyType =
+    request.flash.get(FlashKeys.MOVEMENT_TYPE).map(JourneyType.withName).getOrElse(throw ReturnToStartException)
 
 }

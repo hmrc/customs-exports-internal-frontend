@@ -17,21 +17,35 @@
 package controllers.consolidations
 
 import controllers.actions.AuthenticatedAction
+import controllers.storage.FlashKeys
 import javax.inject.{Inject, Singleton}
+import models.ReturnToStartException
+import models.cache.JourneyType
+import models.cache.JourneyType.{JourneyType, SHUT_MUCR}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.shutmucr.shut_mucr_confirmation
+import views.html.confirmation_page
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ShutMUCRConfirmationController @Inject()(authenticate: AuthenticatedAction, mcc: MessagesControllerComponents, page: shut_mucr_confirmation)(
-  implicit ec: ExecutionContext
-) extends FrontendController(mcc) with I18nSupport {
+class ShutMucrConfirmationController @Inject()(
+  authenticate: AuthenticatedAction,
+  mcc: MessagesControllerComponents,
+  confirmationPage: confirmation_page
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
-  def display: Action[AnyContent] = authenticate { implicit request =>
-    Ok(page())
+  def displayPage: Action[AnyContent] = authenticate { implicit request =>
+    val journeyType = extractJourneyType
+    journeyType match {
+      case SHUT_MUCR => Ok(confirmationPage(journeyType))
+      case _         => throw ReturnToStartException
+    }
   }
+
+  private def extractJourneyType(implicit request: Request[_]): JourneyType =
+    request.flash.get(FlashKeys.MOVEMENT_TYPE).map(JourneyType.withName).getOrElse(throw ReturnToStartException)
 
 }
