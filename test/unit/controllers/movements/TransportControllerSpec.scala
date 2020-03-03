@@ -19,7 +19,7 @@ package controllers.movements
 import controllers.ControllerLayerSpec
 import forms.GoodsDeparted.DepartureLocation.OutOfTheUk
 import forms.providers.TransportFormProvider
-import forms.{GoodsDeparted, Transport}
+import forms.{ConsignmentReferenceType, ConsignmentReferences, GoodsDeparted, Transport}
 import models.cache.{Answers, ArrivalAnswers, Cache, DepartureAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -38,6 +38,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
   private val formProvider = mock[TransportFormProvider]
   private val page = mock[transport]
+  private val consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, "referenceValue"))
 
   private def controller(answers: Answers = DepartureAnswers()) =
     new TransportController(SuccessfulAuth(), ValidJourney(answers), cacheRepository, formProvider, stubMessagesControllerComponents(), page)(global)
@@ -46,7 +47,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
     super.beforeEach()
 
     when(formProvider.provideForm(any())).thenReturn(Transport.outOfTheUkForm)
-    when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -58,7 +59,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
   private def theResponseForm: Form[Transport] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[Transport]])
-    verify(page).apply(captor.capture())(any(), any())
+    verify(page).apply(captor.capture(), any())(any(), any())
     captor.getValue
   }
 
@@ -74,7 +75,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
       "invoked without data for Transport in cache" in {
 
-        val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)))
+        val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)), consignmentReferences = consignmentReferences)
         givenTheCacheContains(Cache(providerId, Some(answers), None))
 
         val result = controller(answers).displayPage()(getRequest)
@@ -87,7 +88,8 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
         val cachedGoodsDeparted = Some(GoodsDeparted(OutOfTheUk))
         val cachedTransport = Some(Transport(Some("1"), Some("GB"), Some("123")))
-        val answers = DepartureAnswers(goodsDeparted = cachedGoodsDeparted, transport = cachedTransport)
+        val answers =
+          DepartureAnswers(goodsDeparted = cachedGoodsDeparted, transport = cachedTransport, consignmentReferences = consignmentReferences)
         givenTheCacheContains(Cache(providerId, Some(answers), None))
 
         val result = controller(answers).displayPage()(getRequest)
@@ -103,7 +105,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
         givenTheCacheIsEmpty()
 
-        val result = controller(DepartureAnswers()).displayPage()(getRequest)
+        val result = controller(DepartureAnswers(consignmentReferences = consignmentReferences)).displayPage()(getRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).get mustBe routes.GoodsDepartedController.displayPage().url
@@ -117,7 +119,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
       "return 400 (BAD_REQUEST)" in {
 
-        val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)))
+        val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)), consignmentReferences = consignmentReferences)
         givenTheCacheContains(Cache(providerId, Some(answers), None))
 
         val invalidForm = Json.toJson(Transport(Some("99"), Some("Invalid"), Some("Invalid")))

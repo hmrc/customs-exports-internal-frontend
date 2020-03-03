@@ -93,7 +93,7 @@ class MovementDetailsController @Inject()(
         validForm =>
           cacheRepository.upsert(request.cache.update(departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
-          }
+        }
       )
   }
 }
