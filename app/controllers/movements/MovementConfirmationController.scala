@@ -17,11 +17,10 @@
 package controllers.movements
 
 import controllers.actions.AuthenticatedAction
-import controllers.storage.FlashKeys
+import controllers.storage.FlashExtractor
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
-import models.cache.JourneyType
-import models.cache.JourneyType.{ARRIVE, DEPART, JourneyType, RETROSPECTIVE_ARRIVE}
+import models.cache.JourneyType.{ARRIVE, DEPART, RETROSPECTIVE_ARRIVE}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -33,19 +32,17 @@ import scala.concurrent.ExecutionContext
 class MovementConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
+  flashExtractor: FlashExtractor,
   confirmationPage: confirmation_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage: Action[AnyContent] = authenticate { implicit request =>
-    val journeyType = extractJourneyType
-    journeyType match {
-      case ARRIVE | RETROSPECTIVE_ARRIVE | DEPART => Ok(confirmationPage(journeyType))
+    val movementType = flashExtractor.extractMovementType(request).getOrElse(throw ReturnToStartException)
+    movementType match {
+      case ARRIVE | RETROSPECTIVE_ARRIVE | DEPART => Ok(confirmationPage(movementType))
       case _                                      => throw ReturnToStartException
     }
   }
-
-  private def extractJourneyType(implicit request: Request[_]): JourneyType =
-    request.flash.get(FlashKeys.MOVEMENT_TYPE).map(JourneyType.withName).getOrElse(throw ReturnToStartException)
 
 }
