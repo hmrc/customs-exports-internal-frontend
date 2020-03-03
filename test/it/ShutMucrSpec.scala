@@ -80,7 +80,7 @@ class ShutMucrSpec extends IntegrationSpec {
 
         // Then
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.consolidations.routes.ShutMUCRConfirmationController.display().url)
+        redirectLocation(response) mustBe Some(controllers.consolidations.routes.ShutMucrConfirmationController.displayPage().url)
         theAnswersFor("pid") mustBe None
         verify(
           postRequestedForConsolidation()

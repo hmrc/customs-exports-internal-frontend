@@ -203,7 +203,7 @@ class ArrivalSpec extends IntegrationSpec {
 
         // Then
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.movements.routes.MovementConfirmationController.display().url)
+        redirectLocation(response) mustBe Some(controllers.movements.routes.MovementConfirmationController.displayPage().url)
         theAnswersFor("pid") mustBe None
         verify(
           postRequestedForMovement()

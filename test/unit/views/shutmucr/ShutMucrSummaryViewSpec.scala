@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package views.consolidations
+package views.shutmucr
 
 import base.Injector
 import models.cache.ShutMucrAnswers
 import views.ViewSpec
-import views.html.shut_mucr_summary
+import views.html.shutmucr.shut_mucr_summary
 
 class ShutMucrSummaryViewSpec extends ViewSpec with Injector {
 

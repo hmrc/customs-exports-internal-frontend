@@ -21,7 +21,7 @@ import forms.MucrOptions
 import models.cache.ArrivalAnswers
 import org.jsoup.nodes.Document
 import play.api.data.FormError
-import views.html.mucr_options
+import views.html.associateucr.mucr_options
 
 class MucrOptionsViewSpec extends ViewSpec with Injector {
 

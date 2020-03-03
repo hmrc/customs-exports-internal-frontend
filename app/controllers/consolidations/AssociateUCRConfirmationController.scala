@@ -17,11 +17,14 @@
 package controllers.consolidations
 
 import controllers.actions.AuthenticatedAction
+import controllers.storage.FlashExtractor
 import javax.inject.{Inject, Singleton}
+import models.ReturnToStartException
+import models.cache.JourneyType.ASSOCIATE_UCR
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.associate_ucr_confirmation
+import views.html.confirmation_page
 
 import scala.concurrent.ExecutionContext
 
@@ -29,12 +32,17 @@ import scala.concurrent.ExecutionContext
 class AssociateUCRConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
-  page: associate_ucr_confirmation
+  flashExtractor: FlashExtractor,
+  confirmationPage: confirmation_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def display: Action[AnyContent] = authenticate { implicit request =>
-    Ok(page())
+  def displayPage: Action[AnyContent] = authenticate { implicit request =>
+    val journeyType = flashExtractor.extractMovementType(request).getOrElse(throw ReturnToStartException)
+    journeyType match {
+      case ASSOCIATE_UCR => Ok(confirmationPage(journeyType))
+      case _             => throw ReturnToStartException
+    }
   }
 
 }

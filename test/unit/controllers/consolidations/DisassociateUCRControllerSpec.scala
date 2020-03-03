@@ -26,7 +26,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.MockCache
-import views.html.disassociate_ucr
+import views.html.disassociateucr.disassociate_ucr
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -71,7 +71,7 @@ class DisassociateUCRControllerSpec extends ControllerLayerSpec with MockCache w
       val result = controller(SuccessfulAuth(), DisassociateUcrAnswers()).submit(post)
 
       status(result) mustBe Status.SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.DisassociateUCRSummaryController.display().url)
+      redirectLocation(result) mustBe Some(routes.DisassociateUCRSummaryController.displayPage().url)
       theCacheUpserted.answers mustBe Some(DisassociateUcrAnswers(ucr = Some(disassociation)))
     }
 

@@ -14,14 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import views.html.components.gds.link
 
-@this(
-        appConfig: AppConfig
-)
+@this()
+
 @()(implicit messages: Messages)
 
 <p class="govuk-body">
-    @link(message = messages("movement.confirmation.redirect.query.link"), href = ileQuery.routes.FindConsignmentController.displayQueryForm())
+    @link(message = messages("confirmation.redirect.query.link"), href = ileQuery.routes.FindConsignmentController.displayQueryForm())
 </p>

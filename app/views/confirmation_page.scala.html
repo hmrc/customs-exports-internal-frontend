@@ -14,33 +14,38 @@
  * limitations under the License.
  *@
 
-@import views.Title
 @import components.gds.gds_main_template
 @import components.gds.pageTitle
+@import models.cache.JourneyType.JourneyType
 @import uk.gov.hmrc.govukfrontend.views.html.components.govukInsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-@import views.html.components.gds.link
 @import views.html.components.confirmation_link
+@import views.html.components.gds.link
+@import views.Title
 
 @this(
-        govukLayout: gds_main_template,
-        pageTitle: pageTitle,
-        govukInsetText: govukInsetText,
-        confirmationLink: confirmation_link
+  govukLayout: gds_main_template,
+  pageTitle: pageTitle,
+  govukInsetText: govukInsetText,
+  confirmationLink: confirmation_link
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(journeyType: JourneyType)(implicit request: Request[_], messages: Messages)
 
-    @gotoTimelineLink = {<a class="govuk-link" href="@routes.ViewSubmissionsController.displayPage()">@messages("movement.confirmation.notification.timeline.link")</a>}
+@gotoTimelineLink = @{
+  link(message = messages("confirmation.notification.timeline.link"), href = routes.ViewSubmissionsController.displayPage())
+}
 
-    @govukLayout(title = Title(s"movement.confirmation.title.DISSOCIATE_UCR")) {
 
-        @pageTitle(text = messages(s"movement.confirmation.title.DISSOCIATE_UCR"), classes = "govuk-heading-xl")
+@govukLayout(title = Title(s"confirmation.title.$journeyType")) {
 
-        @govukInsetText(InsetText(
-            content = HtmlContent(messages("movement.confirmation.header")+"<br>"+messages("movement.confirmation.header.check", gotoTimelineLink))
-        ))
+  @pageTitle(text = messages(s"confirmation.title.$journeyType"), classes = "govuk-heading-xl")
 
-        @confirmationLink()
-    }
+  @govukInsetText(InsetText(
+    content = HtmlContent(messages("confirmation.insetText")+"<br>"+messages("confirmation.insetText.check", gotoTimelineLink))
+  ))
+
+  @confirmationLink()
+
+}

@@ -47,7 +47,7 @@ class DissociateUcrSpec extends IntegrationSpec {
 
         // Then
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.consolidations.routes.DisassociateUCRSummaryController.display().url)
+        redirectLocation(response) mustBe Some(controllers.consolidations.routes.DisassociateUCRSummaryController.displayPage().url)
         theAnswersFor("pid") mustBe Some(
           DisassociateUcrAnswers(ucr = Some(DisassociateUcr(kind = DisassociateKind.Mucr, mucr = Some("GB/321-54321"), ducr = None)))
         )
@@ -66,7 +66,7 @@ class DissociateUcrSpec extends IntegrationSpec {
         )
 
         // When
-        val response = get(controllers.consolidations.routes.DisassociateUCRSummaryController.display())
+        val response = get(controllers.consolidations.routes.DisassociateUCRSummaryController.displayPage())
 
         // Then
         status(response) mustBe OK
@@ -88,7 +88,7 @@ class DissociateUcrSpec extends IntegrationSpec {
 
         // Then
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.consolidations.routes.DisassociateUCRConfirmationController.display().url)
+        redirectLocation(response) mustBe Some(controllers.consolidations.routes.DisassociateUCRConfirmationController.displayPage().url)
         theAnswersFor("pid") mustBe None
         verify(
           postRequestedForConsolidation()

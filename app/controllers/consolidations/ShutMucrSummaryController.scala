@@ -25,7 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.shut_mucr_summary
+import views.html.shutmucr.shut_mucr_summary
 
 import scala.concurrent.ExecutionContext
 
@@ -46,10 +46,10 @@ class ShutMucrSummaryController @Inject()(
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)).async { implicit request =>
     val answers = request.answersAs[ShutMucrAnswers]
-    val mucr = answers.shutMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
+
     submissionService.submit(request.providerId, answers).map { _ =>
-      Redirect(controllers.consolidations.routes.ShutMUCRConfirmationController.display())
-        .flashing(FlashKeys.MUCR -> mucr)
+      Redirect(controllers.consolidations.routes.ShutMucrConfirmationController.displayPage())
+        .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString)
     }
   }
 }

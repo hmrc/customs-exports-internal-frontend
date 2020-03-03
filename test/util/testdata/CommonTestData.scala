@@ -32,6 +32,9 @@ object CommonTestData {
   val conversationId_2: String = "93feaae9-5043-4569-9fc5-ff04bfea0d22"
   val conversationId_3: String = "93feaae9-5043-4569-9fc5-ff04bfea0d33"
 
+  val validMucr = "GB/1234567890-MUCR"
+  val validDucr = "4GB123456789000-DUCR"
+
   def exampleNotificationPageSingleElement(
     title: String = "TITLE",
     timestampInfo: String = "TIMESTAMP",

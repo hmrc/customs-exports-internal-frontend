@@ -22,7 +22,6 @@ import javax.inject.Inject
 import models.cache._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.CacheRepository
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.summary.{arrival_summary_page, departure_summary_page, retrospective_arrival_summary_page}
@@ -32,7 +31,6 @@ import scala.concurrent.ExecutionContext
 class MovementSummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
-  cacheRepository: CacheRepository,
   submissionService: SubmissionService,
   mcc: MessagesControllerComponents,
   arrivalSummaryPage: arrival_summary_page,
@@ -52,15 +50,9 @@ class MovementSummaryController @Inject()(
 
   def submitMovementRequest(): Action[AnyContent] =
     (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)).async { implicit request =>
-      submissionService
-        .submit(request.providerId, request.answersAs[MovementAnswers])
-        .map { consignmentReferences =>
-          Redirect(controllers.movements.routes.MovementConfirmationController.display())
-            .flashing(
-              FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString,
-              FlashKeys.UCR_KIND -> consignmentReferences.reference.toString,
-              FlashKeys.UCR -> consignmentReferences.referenceValue
-            )
-        }
+      submissionService.submit(request.providerId, request.answersAs[MovementAnswers]).map { _ =>
+        Redirect(controllers.movements.routes.MovementConfirmationController.displayPage())
+          .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString)
+      }
     }
 }

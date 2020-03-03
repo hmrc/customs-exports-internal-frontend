@@ -112,7 +112,7 @@ class AssociateUcrSpec extends IntegrationSpec {
         val response = post(controllers.consolidations.routes.AssociateUCRSummaryController.submit())
 
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUCRConfirmationController.display().url)
+        redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUCRConfirmationController.displayPage().url)
         theAnswersFor("pid") mustBe None
         verify(
           postRequestedForConsolidation()

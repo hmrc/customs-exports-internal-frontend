@@ -20,18 +20,21 @@ import controllers.ControllerLayerSpec
 import controllers.storage.FlashKeys
 import forms.ShutMucr
 import models.ReturnToStartException
-import models.cache.{Answers, Cache, ShutMucrAnswers}
-import org.mockito.ArgumentMatchers.any
+import models.cache.{Answers, JourneyType, ShutMucrAnswers}
+import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
+import org.scalatest.concurrent.ScalaFutures
+import play.api.libs.json.JsString
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import services.{MockCache, SubmissionService}
-import views.html.shut_mucr_summary
+import services.SubmissionService
+import testdata.CommonTestData.validMucr
+import views.html.shutmucr.shut_mucr_summary
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
-class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with MockCache {
+class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with ScalaFutures {
 
   private val summaryPage = mock[shut_mucr_summary]
   private val submissionService = mock[SubmissionService]
@@ -42,50 +45,72 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with MockCache {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
+    reset(summaryPage, submissionService)
     when(summaryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(submissionService.submit(any(), any[ShutMucrAnswers])(any())).thenReturn(Future.successful((): Unit))
   }
 
   override protected def afterEach(): Unit = {
-    reset(summaryPage)
+    reset(summaryPage, submissionService)
 
     super.afterEach()
   }
 
-  "GET" should {
+  private val shutMucr = ShutMucr(validMucr)
+
+  "Shut Mucr Summary Controller on displayPage" should {
+
     "return 200 (OK)" when {
-      "answers are present" in {
 
-        val cachedForm = Some(ShutMucr("123"))
-        givenTheCacheContains(Cache("12345", Some(ShutMucrAnswers(shutMucr = cachedForm)), None))
+      "the cache contains information from shut mucr page" in {
 
-        val result = controller(ShutMucrAnswers(shutMucr = cachedForm)).displayPage()(getRequest)
+        val result = controller(ShutMucrAnswers(shutMucr = Some(shutMucr))).displayPage()(getRequest)
 
         status(result) mustBe OK
         verify(summaryPage).apply(any())(any(), any())
       }
     }
 
-    "return to start" when {
-      "no answers" in {
-        val cachedData = ShutMucrAnswers()
+    "throw ReturnToStartException" when {
+
+      "the cache is empty" in {
 
         intercept[RuntimeException] {
-          await(controller(cachedData).displayPage()(getRequest))
+          await(controller().displayPage()(getRequest))
         } mustBe ReturnToStartException
       }
     }
   }
 
-  "POST" should {
-    "redirect to confirmation" in {
-      when(submissionService.submit(any(), any[ShutMucrAnswers])(any())).thenReturn(Future.successful((): Unit))
-      val cachedData = ShutMucrAnswers(shutMucr = Some(ShutMucr("mucr")))
+  "Shut Mucr Summary Controller on submit" should {
 
-      val result = controller(cachedData).submit()(postRequest)
+    "everything works correctly" should {
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.consolidations.routes.ShutMUCRConfirmationController.display().url)
-      flash(result).get(FlashKeys.MUCR) mustBe Some("mucr")
+      "call SubmissionService" in {
+
+        val cachedAnswers = ShutMucrAnswers(shutMucr = Some(shutMucr))
+
+        controller(cachedAnswers).submit()(postRequest(JsString(""))).futureValue
+
+        val expectedProviderId = SuccessfulAuth().operator.providerId
+        verify(submissionService).submit(meq(expectedProviderId), meq(cachedAnswers))(any())
+      }
+
+      "return 303 (SEE_OTHER) that redirects to ShutMucrConfirmationController" in {
+
+        val result = controller(ShutMucrAnswers(shutMucr = Some(shutMucr))).submit()(postRequest(JsString("")))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.consolidations.routes.ShutMucrConfirmationController.displayPage().url)
+      }
+
+      "return response with Movement Type in flash" in {
+
+        val result = controller(ShutMucrAnswers(shutMucr = Some(shutMucr))).submit()(postRequest(JsString("")))
+
+        flash(result).get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.SHUT_MUCR.toString)
+      }
     }
   }
+
 }

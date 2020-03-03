@@ -19,12 +19,12 @@ package controllers.consolidations
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import forms.DisassociateUcr
 import javax.inject.{Inject, Singleton}
-import models.cache.{Cache, DisassociateUcrAnswers, JourneyType}
+import models.cache.{DisassociateUcrAnswers, JourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.disassociate_ucr
+import views.html.disassociateucr.disassociate_ucr
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -52,7 +52,7 @@ class DisassociateUCRController @Inject()(
         formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
         answers =>
           cacheRepository.upsert(request.cache.update(request.answersAs[DisassociateUcrAnswers].copy(ucr = Some(answers)))).map { _ =>
-            Redirect(controllers.consolidations.routes.DisassociateUCRSummaryController.display())
+            Redirect(controllers.consolidations.routes.DisassociateUCRSummaryController.displayPage())
         }
       )
   }

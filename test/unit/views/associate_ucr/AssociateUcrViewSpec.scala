@@ -23,7 +23,7 @@ import play.api.data.Form
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import views.html.associate_ucr
+import views.html.associateucr.associate_ucr
 import views.{ViewMatchers, ViewSpec}
 
 class AssociateUcrViewSpec extends ViewSpec with ViewMatchers with Injector {

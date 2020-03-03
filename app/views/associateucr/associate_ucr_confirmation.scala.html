@@ -14,8 +14,6 @@
  * limitations under the License.
  *@
 
-@import forms.ConsignmentReferences
-@import models.cache.JourneyType.JourneyType
 @import views.Title
 @import components.gds.gds_main_template
 @import components.gds.pageTitle
@@ -26,22 +24,22 @@
 @import views.html.components.confirmation_link
 
 @this(
-    govukLayout: gds_main_template,
-    pageTitle: pageTitle,
-    govukInsetText: govukInsetText,
-    confirmationLink: confirmation_link
+        govukLayout: gds_main_template,
+        pageTitle: pageTitle,
+        govukInsetText: govukInsetText,
+        confirmationLink: confirmation_link
 )
 
-@(journeyType: JourneyType)(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[_], messages: Messages)
 
-@gotoTimelineLink = {<a class="govuk-link" href="@routes.ViewSubmissionsController.displayPage()">@messages("movement.confirmation.notification.timeline.link")</a>}
+@gotoTimelineLink = {<a class="govuk-link" href="@routes.ViewSubmissionsController.displayPage()">@messages("confirmation.notification.timeline.link")</a>}
 
-@govukLayout(title = Title(s"movement.confirmation.title.${journeyType}")) {
+@govukLayout(title = Title(s"confirmation.title.ASSOCIATE_UCR")) {
 
-    @pageTitle(text = messages(s"movement.confirmation.title.${journeyType}"), classes = "govuk-heading-xl")
+    @pageTitle(text = messages(s"confirmation.title.ASSOCIATE_UCR"), classes = "govuk-heading-xl")
 
     @govukInsetText(InsetText(
-        content = HtmlContent(messages("movement.confirmation.header")+"<br>"+messages("movement.confirmation.header.check", gotoTimelineLink))
+        content = HtmlContent(messages("confirmation.insetText")+"<br>"+messages("confirmation.insetText.check", gotoTimelineLink))
     ))
 
     @confirmationLink()
