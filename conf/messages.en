@@ -148,12 +148,19 @@ transport.nationality.error = Nationality of transport is incorrect
 transport.backIntoTheUk.error.allFieldsEntered = You cannot answer all three fields for an export back into the UK
 
 summary.referenceType = Consignment type
+summary.referenceType.change = Change consignment type
 summary.referenceValue = Consignment reference
+summary.referenceValue.change = Change consignment reference
 summary.consignmentDetails = Consignment details
 summary.goodsLocation = Goods location code
+summary.goodsLocation.change = Change goods location code
+summary.goodsDeparted.change = Change where the goods are going
 summary.modeOfTransport = Transport type
+summary.modeOfTransport.change = Change transport type
 summary.transportId = Transport ID
+summary.transportId.change = Change transport ID
 summary.nationality = Transport nationality
+summary.nationality.change = Change transport nationality
 
 summary.arrival.title = Is the information provided for this arrival correct?
 summary.arrival.date = Date of arrival
@@ -163,7 +170,9 @@ summary.retrospectiveArrival.title = Is the information provided for this retros
 
 summary.departure.title = Is the information provided for this departure correct?
 summary.departure.date = Date of departure
+summary.departure.date.change = Change date of departure
 summary.departure.time = Time of departure
+summary.departure.time.change = Change time of departure
 
 summary.arrivalReference.reference = Unique reference
 

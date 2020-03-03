@@ -16,16 +16,17 @@
 
 package views.movement
 
+import base.Injector
 import models.cache.{ArrivalAnswers, DepartureAnswers}
 import play.api.test.Helpers._
 import views.ViewSpec
 import views.html.summary.departure_summary_page
 
-class DepartureSummaryViewSpec extends ViewSpec {
+class DepartureSummaryViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(ArrivalAnswers())
 
-  private val page = new departure_summary_page(main_template)
+  private val page = instanceOf[departure_summary_page]
 
   private val answers = DepartureAnswers()
 
@@ -40,7 +41,7 @@ class DepartureSummaryViewSpec extends ViewSpec {
     }
 
     "render back button" in {
-      val backButton = page(answers).getBackButton
+      val backButton = page(answers).getGovUkBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.movements.routes.TransportController.displayPage())
