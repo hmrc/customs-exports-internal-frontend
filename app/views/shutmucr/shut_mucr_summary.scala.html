@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import consolidations.routes
 @import views.Title
 @import views.components.BackButton
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -30,7 +29,7 @@
 
 @govukLayout(
     title = Title("shutMucr.summary.title"),
-    backButton = Some(BackButton(messages("site.back"), consolidations.routes.ShutMucrController.displayPage))) {
+    backButton = Some(BackButton(messages("site.back"), controllers.routes.ChoiceController.displayPage))) {
 
     @formHelper(action = consolidations.routes.ShutMucrSummaryController.submit(), 'autoComplete -> "off") {
 
@@ -49,7 +48,7 @@
                         actions = Some(Actions(
                             items = Seq(
                                 ActionItem(
-                                    href = s"${consolidations.routes.ShutMucrController.displayPage}",
+                                    href = s"${controllers.ileQuery.routes.FindConsignmentController.displayQueryForm()}",
                                     content = Text(messages("site.change")),
                                     visuallyHiddenText = Some(messages("site.change.hint.disassociate.ucr", mucr.toUpperCase()))
                                 )

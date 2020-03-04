@@ -105,7 +105,7 @@ class LocationViewSpec extends ViewSpec with Injector {
         }
       }
 
-      "links to Consignment References page" when {
+      "links to Choice page" when {
 
         "user is on Retrospective Arrival journey" in {
 
@@ -114,7 +114,7 @@ class LocationViewSpec extends ViewSpec with Injector {
           val backButton = page(Location.form(), "D").getElementById("back-link")
 
           backButton.text() mustBe messages("site.back")
-          backButton.attr("href") mustBe controllers.movements.routes.ConsignmentReferencesController.displayPage().toString()
+          backButton.attr("href") mustBe controllers.routes.ChoiceController.displayPage().toString()
 
         }
       }

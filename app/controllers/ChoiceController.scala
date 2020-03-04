@@ -62,17 +62,17 @@ class ChoiceController @Inject()(
 
   private def proceed(choice: Choice)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] = choice match {
     case Choice.Arrival =>
-      saveAndRedirect(ArrivalAnswers.fromQueryUcr, movements.routes.ConsignmentReferencesController.displayPage())
+      saveAndRedirect(ArrivalAnswers.fromQueryUcr, movements.routes.MovementDetailsController.displayPage())
     case Choice.RetrospectiveArrival =>
-      saveAndRedirect(RetrospectiveArrivalAnswers.fromQueryUcr, movements.routes.ConsignmentReferencesController.displayPage())
+      saveAndRedirect(RetrospectiveArrivalAnswers.fromQueryUcr, movements.routes.LocationController.displayPage())
     case Choice.Departure =>
-      saveAndRedirect(DepartureAnswers.fromQueryUcr, movements.routes.ConsignmentReferencesController.displayPage())
+      saveAndRedirect(DepartureAnswers.fromQueryUcr, movements.routes.MovementDetailsController.displayPage())
     case Choice.AssociateUCR =>
       saveAndRedirect(AssociateUcrAnswers.fromQueryUcr, consolidations.routes.MucrOptionsController.displayPage())
     case Choice.DisassociateUCR =>
-      saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, consolidations.routes.DisassociateUCRController.display())
+      saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, consolidations.routes.DisassociateUCRSummaryController.displayPage())
     case Choice.ShutMUCR =>
-      saveAndRedirect(ShutMucrAnswers.fromQueryUcr, consolidations.routes.ShutMucrController.displayPage())
+      saveAndRedirect(ShutMucrAnswers.fromQueryUcr, consolidations.routes.ShutMucrSummaryController.displayPage())
     case Choice.ViewSubmissions =>
       Future.successful(Redirect(routes.ViewSubmissionsController.displayPage()))
   }
