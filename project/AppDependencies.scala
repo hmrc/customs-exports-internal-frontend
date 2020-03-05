@@ -22,7 +22,7 @@ object AppDependencies {
 
   val test = Seq(
     "org.scalatest"           %% "scalatest"                % "3.0.8"                 % "test, it",
-    "org.jsoup"               %  "jsoup"                    % "1.10.2"                % "test, it",
+    "org.jsoup"               %  "jsoup"                    % "1.12.1"                % "test, it",
     "com.typesafe.play"       %% "play-test"                % current                 % "test, it",
     "org.mockito"             %  "mockito-core"             % "3.0.0"                 % "test, it",
     "com.github.tomakehurst"  % "wiremock-jre8"             % "2.24.1"                % "test, it",
