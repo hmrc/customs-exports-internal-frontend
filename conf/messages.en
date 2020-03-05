@@ -48,13 +48,14 @@ global.error.heading = There is a problem with a service
 global.error.message = Please try again later.
 
 movement.sectionHeading = {0} consignment {1}
+movement.choice.sectionHeading = Consignment {0}
 movement.choice.title = What do you want to do?
-movement.choice.arrival.label = Arrive a consignment
-movement.choice.departure.label = Depart a consignment
-movement.choice.associate.label = Associate a consignment
-movement.choice.disassociateDucr.label = Disassociate a consignment
+movement.choice.arrival.label = Arrive
+movement.choice.departure.label = Depart
+movement.choice.associate.label = Associate
+movement.choice.disassociateDucr.label = Dissociate
 movement.choice.shutMucr.label = Shut a master consignment
-movement.choice.retrospectiveArrival.label = Retrospectively arrive a consignment
+movement.choice.retrospectiveArrival.label = Retrospectively arrive
 
 choicePage.input.error.empty = Please, choose what do you want to do
 choicePage.input.error.incorrectValue = Please, choose valid option

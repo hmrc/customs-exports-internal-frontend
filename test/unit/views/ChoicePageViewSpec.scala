@@ -38,6 +38,12 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
       page(Choice.form()).getTitle must containMessage("movement.choice.title")
     }
 
+    "render section header" in {
+
+      page(Choice.form(), Some(UcrBlock("9GB123456", "D")))
+        .getElementById("section-header") must containMessage("movement.choice.sectionHeading", "9GB123456")
+    }
+
     "render all options for radio button" in {
 
       val choicePage = page(Choice.form())

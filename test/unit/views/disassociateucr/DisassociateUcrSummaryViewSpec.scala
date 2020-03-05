@@ -79,20 +79,6 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
       }
     }
 
-    "render 'Change' link" when {
-      "ducr" in {
-        val anchor: Element = page(answersDUCR).getElementsByClass("govuk-link").first()
-        anchor must containMessage("site.change")
-        anchor must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
-      }
-
-      "mucr" in {
-        val anchor = page(answersMUCR).getElementsByClass("govuk-link").first()
-        anchor must containMessage("site.change")
-        anchor must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
-      }
-    }
-
     "render submit button" when {
       "ducr" in {
         page(answersDUCR).getElementsByClass("govuk-button").text() mustBe messages("site.confirmAndSubmit")
