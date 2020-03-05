@@ -216,10 +216,6 @@ associate.ucr.summary.kind.ducr = DUCR
 associate.ucr.summary.addConsignment = Add consignment
 associate.ucr.summary.masterConsignment = To master consignment
 
-
-movement.confirmation.statusInfo = To check the status of this consignment, {0}.
-movement.confirmation.statusInfo.submissions = view requests
-
 associate.ducr.confirmation.tab.heading = Add DUCR request submitted
 associate.ducr.confirmation.heading = Request to associate DUCR {0} has been submitted
 associate.mucr.confirmation.tab.heading = Add MUCR request submitted
