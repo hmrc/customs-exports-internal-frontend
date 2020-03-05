@@ -21,10 +21,11 @@ import java.time.{Instant, ZoneId}
 
 import base.UnitSpec
 import com.google.inject.Guice
+import connectors.exchanges.ActionType.{ConsolidationType, MovementType}
 import controllers.MessagesStub
 import models.UcrBlock
 import models.notifications.NotificationFrontendModel
-import models.submissions.{ActionType, Submission}
+import models.submissions.Submission
 import models.viewmodels.notificationspage.converters._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
@@ -65,7 +66,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       "provided with Arrival Submission" in {
 
         val input: Submission =
-          exampleSubmission(actionType = ActionType.Arrival, requestTimestamp = testTimestamp)
+          exampleSubmission(actionType = MovementType.Arrival, requestTimestamp = testTimestamp)
 
         val expectedTitle = messages("notifications.elem.title.Arrival")
         val expectedTimestampInfo = "31 Oct 2019 at 00:00"
@@ -76,10 +77,24 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         assertResult(result, expectedTitle, expectedTimestampInfo, expectedContent)
       }
 
+      "provided with RetrospectiveArrival Submission" in {
+
+        val input: Submission =
+          exampleSubmission(actionType = MovementType.RetrospectiveArrival, requestTimestamp = testTimestamp)
+
+        val expectedTitle = messages("notifications.elem.title.RetrospectiveArrival")
+        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
+        val expectedContent = Seq(messages("notifications.elem.content.RetrospectiveArrival", "DUCR"), messages("notifications.elem.content.footer"))
+
+        val result = factory.build(input)
+
+        assertResult(result, expectedTitle, expectedTimestampInfo, expectedContent)
+      }
+
       "provided with Departure Submission" in {
 
         val input: Submission =
-          exampleSubmission(actionType = ActionType.Departure, requestTimestamp = testTimestamp)
+          exampleSubmission(actionType = MovementType.Departure, requestTimestamp = testTimestamp)
 
         val expectedTitle = messages("notifications.elem.title.Departure")
         val expectedTimestampInfo = "31 Oct 2019 at 00:00"
@@ -95,7 +110,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         val input: Submission = Submission(
           eori = validEori,
           conversationId = conversationId,
-          actionType = ActionType.DucrAssociation,
+          actionType = ConsolidationType.DucrAssociation,
           requestTimestamp = testTimestamp,
           ucrBlocks =
             Seq(UcrBlock(ucr = correctUcr, ucrType = "M"), UcrBlock(ucr = correctUcr_2, ucrType = "D"), UcrBlock(ucr = correctUcr_3, ucrType = "D"))
@@ -115,7 +130,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         val input: Submission = Submission(
           eori = validEori,
           conversationId = conversationId,
-          actionType = ActionType.MucrAssociation,
+          actionType = ConsolidationType.MucrAssociation,
           requestTimestamp = testTimestamp,
           ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "M"), UcrBlock(ucr = correctUcr_2, ucrType = "M"))
         )
@@ -132,7 +147,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       "provided with DucrDisassociation Submission" in {
 
         val input: Submission = exampleSubmission(
-          actionType = ActionType.DucrDisassociation,
+          actionType = ConsolidationType.DucrDisassociation,
           requestTimestamp = testTimestamp,
           ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "D"))
         )
@@ -149,7 +164,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       "provided with MucrDisassociation Submission" in {
 
         val input: Submission = exampleSubmission(
-          actionType = ActionType.MucrDisassociation,
+          actionType = ConsolidationType.MucrDisassociation,
           requestTimestamp = testTimestamp,
           ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "M"))
         )
@@ -167,7 +182,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
 
         val input: Submission =
           exampleSubmission(
-            actionType = ActionType.ShutMucr,
+            actionType = ConsolidationType.ShutMucr,
             requestTimestamp = testTimestamp,
             ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "M"))
           )

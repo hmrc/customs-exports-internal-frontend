@@ -19,14 +19,15 @@ package testdata
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, LocalDate, LocalTime, ZoneId}
 
-import connectors.exchanges.{ArrivalExchange, DepartureExchange, MovementDetailsExchange, RetrospectiveArrivalExchange}
+import connectors.exchanges.ActionType.MovementType
+import connectors.exchanges._
 import forms.GoodsDeparted.DepartureLocation.OutOfTheUk
 import forms.Transport.ModesOfTransport
 import forms._
 import forms.common.{Date, Time}
 import models.UcrBlock
 import models.cache.{ArrivalAnswers, DepartureAnswers, RetrospectiveArrivalAnswers}
-import models.submissions.{ActionType, Submission}
+import models.submissions.Submission
 import testdata.CommonTestData._
 
 object MovementsTestData {
@@ -92,7 +93,7 @@ object MovementsTestData {
     eori: String = validEori,
     conversationId: String = conversationId,
     ucrBlocks: Seq[UcrBlock] = Seq(UcrBlock(ucr = correctUcr, ucrType = "D")),
-    actionType: ActionType = ActionType.Arrival,
+    actionType: ActionType = MovementType.Arrival,
     requestTimestamp: Instant = Instant.now()
   ): Submission =
     Submission(eori = eori, conversationId = conversationId, ucrBlocks = ucrBlocks, actionType = actionType, requestTimestamp = requestTimestamp)

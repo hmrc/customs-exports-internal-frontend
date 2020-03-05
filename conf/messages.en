@@ -256,8 +256,8 @@ shutMucr.confirmation.nextSteps.depart = Depart a consignment
 
 view.unauthorized.title=You are not authorized
 
-submissions.title = All requests
-submissions.summary = This page displays all submitted requests and any notifications related to them.
+submissions.title = Requests
+submissions.summary = This page displays submitted requests and any notifications related to them.
 submissions.submissionType = Type
 submissions.submissionAction = Type of request
 submissions.eori = Eori
