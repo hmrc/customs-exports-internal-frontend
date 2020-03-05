@@ -21,6 +21,7 @@ import controllers.exchanges.JourneyRequest
 import forms.Transport
 import forms.providers.TransportFormProvider
 import javax.inject.{Inject, Singleton}
+import models.ReturnToStartException
 import models.cache.{Cache, DepartureAnswers, JourneyType}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -44,19 +45,22 @@ class TransportController @Inject()(
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)) { implicit request =>
     val answers = request.answersAs[DepartureAnswers]
+    val consignmentReference = answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
     answers.goodsDeparted match {
-      case Some(_) => Ok(transportPage(answers.transport.fold(form)(form.fill(_))))
+      case Some(_) => Ok(transportPage(answers.transport.fold(form)(form.fill(_)), consignmentReference))
       case None    => Redirect(routes.GoodsDepartedController.displayPage())
     }
   }
 
   def saveTransport(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)).async { implicit request =>
+    val answers = request.answersAs[DepartureAnswers]
+    def consignmentReference = answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
     form
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[Transport]) => Future.successful(BadRequest(transportPage(formWithErrors))),
+        (formWithErrors: Form[Transport]) => Future.successful(BadRequest(transportPage(formWithErrors, consignmentReference))),
         validForm => {
-          val movementAnswers = request.answersAs[DepartureAnswers].copy(transport = Some(validForm))
+          val movementAnswers = answers.copy(transport = Some(validForm))
           cacheRepository.upsert(request.cache.update(movementAnswers)).map { _ =>
             Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
           }

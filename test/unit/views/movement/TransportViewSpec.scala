@@ -16,36 +16,48 @@
 
 package views.movement
 
-import forms.Transport
+import base.Injector
+import forms.{GoodsDeparted, Transport}
 import models.cache.ArrivalAnswers
+import org.jsoup.nodes.Document
+import play.api.data.FormError
+import play.twirl.api.Html
 import views.ViewSpec
 import views.html.transport
 
-class TransportViewSpec extends ViewSpec {
+class TransportViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(ArrivalAnswers())
 
-  private val page = new transport(main_template)
+  private val page = instanceOf[transport]
+
+  private def createPage: Html = page(Transport.outOfTheUkForm, "some-reference")
 
   "View" should {
     "render title" in {
-      page(Transport.outOfTheUkForm).getTitle must containMessage("transport.title")
+      createPage.getTitle must containMessage("transport.title")
     }
 
     "render input for mode of transport" in {
-      page(Transport.outOfTheUkForm).getElementById("modeOfTransport-label") must containMessage("transport.modeOfTransport.question")
-      for (i <- 1 to 8) {
-        page(Transport.outOfTheUkForm).getElementById(s"$i-label") must containMessage(s"transport.modeOfTransport.$i")
-      }
+      createPage.getElementsByClass("govuk-fieldset__legend").get(0).text() must be(messages("transport.modeOfTransport.question"))
+
+      createPage.getElementsByAttributeValue("for", "modeOfTransport").text() must be(messages("transport.modeOfTransport.1"))
+      createPage.getElementsByAttributeValue("for", "modeOfTransport-2").text() must be(messages("transport.modeOfTransport.2"))
+      createPage.getElementsByAttributeValue("for", "modeOfTransport-3").text() must be(messages("transport.modeOfTransport.3"))
+      createPage.getElementsByAttributeValue("for", "modeOfTransport-4").text() must be(messages("transport.modeOfTransport.4"))
+      createPage.getElementsByAttributeValue("for", "modeOfTransport-5").text() must be(messages("transport.modeOfTransport.5"))
+      createPage.getElementsByAttributeValue("for", "modeOfTransport-6").text() must be(messages("transport.modeOfTransport.6"))
+      createPage.getElementsByAttributeValue("for", "modeOfTransport-7").text() must be(messages("transport.modeOfTransport.7"))
+      createPage.getElementsByAttributeValue("for", "modeOfTransport-8").text() must be(messages("transport.modeOfTransport.8"))
     }
 
     "render input for nationality" in {
-      page(Transport.outOfTheUkForm).getElementById("nationality-label") must containMessage("transport.nationality.question")
-      page(Transport.outOfTheUkForm).getElementById("nationality-hint") must containMessage("transport.nationality.hint")
+      createPage.getElementsByAttributeValue("for", "nationality").text() must be(messages("transport.nationality.question"))
+      createPage.getElementById("nationality-hint").text() mustBe messages("transport.nationality.hint")
     }
 
     "render back button" in {
-      val backButton = page(Transport.outOfTheUkForm).getBackButton
+      val backButton = createPage.getGovUkBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.movements.routes.GoodsDepartedController.displayPage())
@@ -53,11 +65,12 @@ class TransportViewSpec extends ViewSpec {
 
     "render error summary" when {
       "no errors" in {
-        page(Transport.outOfTheUkForm).getErrorSummary mustBe empty
+        createPage.getErrorSummary mustBe empty
       }
 
       "some errors" in {
-        page(Transport.outOfTheUkForm.withError("error", "error.required")).getErrorSummary mustBe defined
+        val viewWithError = page(Transport.outOfTheUkForm.withError("error", "error.required"), "some-reference")
+        viewWithError.getElementById("error-summary-title").text() mustBe messages("error.summary.title")
       }
     }
   }

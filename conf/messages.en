@@ -99,11 +99,12 @@ arrivalConfirmation.notification.timeline = consignment’s notification timelin
 arrivalConfirmation.redirect.link = Find another consignment
 
 departureDetails.title = Departure date and time
-departureDetails.header = Enter departure details
+departureDetails.sectionHeading = Depart consignment {0}
+departureDetails.header = Enter date and time of departure
 departureDetails.date.question = Date of departure
 departureDetails.date.hint = For example, 01 08 2007
 departureDetails.time.question = Time of departure
-departureDetails.time.hint = For example, 21 37
+departureDetails.time.hint = Enter the time in 24 hour format. For example, 13 30
 
 departure.details.error.overdue = Time of Departure cannot be more than 60 days in the past
 departure.details.error.future = Time of Departure cannot be in the future
@@ -124,7 +125,8 @@ goodsDeparted.departureLocation.error.empty = Please select where your goods bei
 goodsDeparted.departureLocation.error.incorrect = Please select a valid option
 
 transport.title = Transport
-transport.modeOfTransport.question = What transport type took the goods across the border?
+transport.heading = Depart consignment {0}
+transport.modeOfTransport.question = Which type of transport took the goods across the border?
 transport.modeOfTransport.empty = You need to choose mode of transport
 transport.modeOfTransport.error = Mode of transport is incorrect
 transport.modeOfTransport.1 = Sea transport
@@ -146,12 +148,19 @@ transport.nationality.error = Nationality of transport is incorrect
 transport.backIntoTheUk.error.allFieldsEntered = You cannot answer all three fields for an export back into the UK
 
 summary.referenceType = Consignment type
+summary.referenceType.change = Change consignment type
 summary.referenceValue = Consignment reference
+summary.referenceValue.change = Change consignment reference
 summary.consignmentDetails = Consignment details
 summary.goodsLocation = Goods location code
+summary.goodsLocation.change = Change goods location code
+summary.goodsDeparted.change = Change where the goods are going
 summary.modeOfTransport = Transport type
+summary.modeOfTransport.change = Change transport type
 summary.transportId = Transport ID
+summary.transportId.change = Change transport ID
 summary.nationality = Transport nationality
+summary.nationality.change = Change transport nationality
 
 summary.arrival.title = Is the information provided for this arrival correct?
 summary.arrival.date = Date of arrival
@@ -161,7 +170,9 @@ summary.retrospectiveArrival.title = Is the information provided for this retros
 
 summary.departure.title = Is the information provided for this departure correct?
 summary.departure.date = Date of departure
+summary.departure.date.change = Change date of departure
 summary.departure.time = Time of departure
+summary.departure.time.change = Change time of departure
 
 summary.arrivalReference.reference = Unique reference
 
@@ -204,10 +215,6 @@ associate.ucr.summary.kind.mucr = MUCR
 associate.ucr.summary.kind.ducr = DUCR
 associate.ucr.summary.addConsignment = Add consignment
 associate.ucr.summary.masterConsignment = To master consignment
-
-
-movement.confirmation.statusInfo = To check the status of this consignment, {0}.
-movement.confirmation.statusInfo.submissions = view requests
 
 associate.ducr.confirmation.tab.heading = Add DUCR request submitted
 associate.ducr.confirmation.heading = Request to associate DUCR {0} has been submitted

@@ -17,31 +17,52 @@
 @import forms.GoodsDeparted
 @import forms.GoodsDeparted.DepartureLocation.{BackIntoTheUk, OutOfTheUk}
 @import views.Title
-@import views.components.fields.RadioOption
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.components.BackButton
+@import components.gds.{errorSummary, gds_main_template, pageTitle, sectionHeader}
 
-@this(main_template: views.html.templates.main_template)
+@this(
+    govukLayout: gds_main_template,
+    govukButton: GovukButton,
+    govukRadios: GovukRadios,
+    pageTitle: pageTitle,
+    errorSummary: errorSummary,
+    formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+)
 
 @(form: Form[GoodsDeparted])(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title("goodsDeparted.title")) {
-  @helper.form(controllers.movements.routes.GoodsDepartedController.saveGoodsDeparted(), 'autoComplete -> "off") {
-    @helper.CSRF.formField
+@govukLayout(
+    title = Title("goodsDeparted.title"),
+    backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.LocationController.displayPage()))) {
 
-    @components.back_link(controllers.movements.routes.LocationController.displayPage())
+        @formHelper(action = controllers.movements.routes.GoodsDepartedController.saveGoodsDeparted(), 'autoComplete -> "off") {
+            @errorSummary(form.errors)
 
-    @components.error_summary(form.errors)
-
-    @components.page_title(Some(messages("goodsDeparted.header")))
-
-    @components.input_radio(
-      field = form("departureLocation"),
-      legend = "",
-      inputs = Seq(
-        RadioOption(OutOfTheUk.value, OutOfTheUk.value, "goodsDeparted.departureLocation.outOfTheUk"),
-        RadioOption(BackIntoTheUk.value, BackIntoTheUk.value, "goodsDeparted.departureLocation.backIntoTheUk")
-      )
-    )
-
-    @components.submit_button(messages("site.continue"))
- }
-}
+            @govukRadios(Radios(
+                name = "departureLocation",
+                fieldset = Some(Fieldset(
+                    legend = Some(Legend(
+                        content = Text(messages("goodsDeparted.header")),
+                        isPageHeading = true,
+                        classes = "govuk-fieldset__legend--l"
+                    ))
+                )),
+                items = Seq(
+                    RadioItem(
+                        value = Some(OutOfTheUk.value),
+                        content = Text(messages("goodsDeparted.departureLocation.outOfTheUk")),
+                        checked = form("departureLocation").value.contains(OutOfTheUk.value)
+                    ),
+                    RadioItem(
+                        value = Some(BackIntoTheUk.value),
+                        content = Text(messages("goodsDeparted.departureLocation.backIntoTheUk")),
+                        checked = form("departureLocation").value.contains(BackIntoTheUk.value)
+                    )
+                ),
+                errorMessage = form("departureLocation").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+            ))
+            @govukButton(Button(content = Text(messages("site.continue"))))
+        }
+    }
+)

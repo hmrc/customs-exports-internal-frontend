@@ -16,17 +16,20 @@
 
 package views.movement
 
+import base.Injector
 import controllers.movements.routes
-import forms.GoodsDeparted
+import forms.{DisassociateUcr, GoodsDeparted}
 import models.cache.DepartureAnswers
+import org.jsoup.nodes.Document
+import play.api.data.FormError
 import views.ViewSpec
 import views.html.goods_departed
 
-class GoodsDepartedViewSpec extends ViewSpec {
+class GoodsDepartedViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(DepartureAnswers())
 
-  private val goodsDepartedPage = new goods_departed(main_template)
+  private val goodsDepartedPage = instanceOf[goods_departed]
 
   "GoodsDeparted view" should {
 
@@ -36,15 +39,16 @@ class GoodsDepartedViewSpec extends ViewSpec {
     }
 
     "display radio input" in {
+      val view = goodsDepartedPage(GoodsDeparted.form)
 
-      goodsDepartedPage(GoodsDeparted.form).getElementById("title") must containMessage("goodsDeparted.header")
-      goodsDepartedPage(GoodsDeparted.form).getElementById("outOfTheUk-label") must containMessage("goodsDeparted.departureLocation.outOfTheUk")
-      goodsDepartedPage(GoodsDeparted.form).getElementById("backIntoTheUk-label") must containMessage("goodsDeparted.departureLocation.backIntoTheUk")
+      view.getElementsByClass("govuk-fieldset__heading").first() must containMessage("goodsDeparted.header")
+      view.getElementsByAttributeValue("for", "departureLocation").text() must be(messages("goodsDeparted.departureLocation.outOfTheUk"))
+      view.getElementsByAttributeValue("for", "departureLocation-2").text() must be(messages("goodsDeparted.departureLocation.backIntoTheUk"))
     }
 
     "display back button" in {
 
-      val backButton = goodsDepartedPage(GoodsDeparted.form).getBackButton
+      val backButton = goodsDepartedPage(GoodsDeparted.form).getGovUkBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(routes.LocationController.displayPage())
@@ -53,10 +57,10 @@ class GoodsDepartedViewSpec extends ViewSpec {
     "display error summary" when {
       "there are errors in the form" in {
 
-        val page = goodsDepartedPage(GoodsDeparted.form.withError("departureLocation", "goodsDeparted.departureLocation.error.empty"))
+        val view: Document = goodsDepartedPage(GoodsDeparted.form.withError(FormError("departureLocation", "error.required")))
 
-        page.getErrorSummary mustBe defined
-        page.getElementById("departureLocation-error") must haveHref("#departureLocation")
+        view must haveGovUkGlobalErrorSummary
+        view must haveGovUkFieldError("departureLocation", messages("error.required"))
       }
     }
 

@@ -16,37 +16,83 @@
 
 package views.movement
 
+import base.Injector
 import forms.MovementDetails
 import models.cache.ArrivalAnswers
 import testdata.MovementsTestData
 import views.ViewSpec
 import views.html.departure_details
+import scala.collection.JavaConversions._
 
-class DepartureDetailsViewSpec extends ViewSpec {
+class DepartureDetailsViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(ArrivalAnswers())
 
   private val movementDetails = MovementsTestData.movementDetails
 
-  private val page = new departure_details(main_template)
+  private val page = instanceOf[departure_details]
+  private val consignmentReferences = "M-ref"
+
+  private val view = page(movementDetails.departureForm(), consignmentReferences)
 
   "Departure View" should {
     "render title" in {
-      page(movementDetails.departureForm()).getTitle must containMessage("departureDetails.header")
+      view.getTitle must containMessage("departureDetails.header")
     }
 
-    "render heading input with hint for date" in {
-      page(movementDetails.departureForm()).getElementById("dateOfDeparture-label") must containMessage("departureDetails.date.question")
-      page(movementDetails.departureForm()).getElementById("dateOfDeparture-hint") must containMessage("departureDetails.date.hint")
+    "have date section" which {
+
+      "contains label" in {
+        view.getElementsByTag("legend").exists { elem =>
+          elem.text() == messages("departureDetails.date.question")
+        }
+      }
+
+      "contains hint" in {
+        view.getElementById("dateOfDeparture-hint") must containMessage("departureDetails.date.hint")
+      }
+
+      "contains input for day" in {
+        view.getElementsByAttributeValue("for", "dateOfDeparture_day").first() must containMessage("date.day")
+        view.getElementById("dateOfDeparture_day").`val`() mustBe empty
+      }
+
+      "contains input for month" in {
+        view.getElementsByAttributeValue("for", "dateOfDeparture_month").first() must containMessage("date.month")
+        view.getElementById("dateOfDeparture_month").`val`() mustBe empty
+      }
+
+      "contains input for year" in {
+        view.getElementsByAttributeValue("for", "dateOfDeparture_year").first() must containMessage("date.year")
+        view.getElementById("dateOfDeparture_year").`val`() mustBe empty
+      }
     }
 
-    "render heading input with hint for time" in {
-      page(movementDetails.departureForm()).getElementById("timeOfDeparture-label") must containMessage("departureDetails.time.question")
-      page(movementDetails.departureForm()).getElementById("timeOfDeparture-hint") must containMessage("departureDetails.time.hint")
+    "have time section" which {
+
+      "contains label" in {
+        view.getElementsByTag("legend").exists { elem =>
+          elem.text() == messages("departureDetails.time.question")
+        }
+      }
+
+      "contains hint" in {
+        view.getElementById("timeOfDeparture-hint") must containMessage("departureDetails.time.hint")
+      }
+
+      "contains input for hour" in {
+        view.getElementsByAttributeValue("for", "timeOfDeparture_hour").first() must containMessage("time.hour")
+        view.getElementById("timeOfDeparture_hour").`val`() mustBe empty
+      }
+
+      "contains input for minute" in {
+        view.getElementsByAttributeValue("for", "timeOfDeparture_minute").first() must containMessage("time.minute")
+        view.getElementById("timeOfDeparture_minute").`val`() mustBe empty
+      }
     }
 
     "render back button" in {
-      val backButton = page(movementDetails.departureForm()).getBackButton
+      val backButton = view.getGovUkBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.movements.routes.ConsignmentReferencesController.displayPage())
@@ -54,11 +100,12 @@ class DepartureDetailsViewSpec extends ViewSpec {
 
     "render error summary" when {
       "no errors" in {
-        page(movementDetails.departureForm()).getErrorSummary mustBe empty
+        view.getErrorSummary mustBe empty
       }
 
       "some errors" in {
-        page(movementDetails.departureForm().withError("error", "error.required")).getErrorSummary mustBe defined
+        val viewWithError = page(movementDetails.departureForm().withError("error", "error.required"), consignmentReferences)
+        viewWithError.getElementById("error-summary-title").text() mustBe messages("error.summary.title")
       }
     }
   }
