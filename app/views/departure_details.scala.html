@@ -36,11 +36,10 @@
 
 @govukLayout(
 title = Title("departureDetails.header"),
-backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.ConsignmentReferencesController.displayPage))) {
+backButton = Some(BackButton(messages("site.back"), controllers.routes.ChoiceController.displayPage))) {
 
     @formHelper(action = controllers.movements.routes.MovementDetailsController.saveMovementDetails(), 'autoComplete -> "off") {
         @errorSummary(form.errors)
-        @components.back_link(controllers.routes.ChoiceController.displayPage())
 
         @sectionHeader(messages("departureDetails.sectionHeading", consignmentReferences))
 
