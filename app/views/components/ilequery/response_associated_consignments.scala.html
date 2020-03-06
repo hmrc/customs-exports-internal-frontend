@@ -20,17 +20,17 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.ViewDates
 
-@this(converter: IleQueryCodeConverter,govukTable: GovukTable)
+@this(converter: IleQueryCodeConverter, govukTable: GovukTable)
 
 @(associatedUcrs: Seq[UcrInfo])(implicit request: Request[_], messages: Messages)
 
-@if(associatedUcrs.size > 0) {
+@if(associatedUcrs.nonEmpty) {
     <div class="govuk-grid-column-full" id="associatedUcrs">
         @govukTable(Table(
             rows = associatedUcrs.zipWithIndex.map(indexedUcr => {
                 Seq(
                     TableRow(
-                        content = HtmlContent(link(indexedUcr._1.ucr, controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(indexedUcr._1.ucr))),
+                        content = HtmlContent(link(content = Html(indexedUcr._1.ucr), href = controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(indexedUcr._1.ucr))),
                         attributes = Map("id" -> s"associateUcr_${indexedUcr._2}_ucr")
                     ),
                     TableRow(

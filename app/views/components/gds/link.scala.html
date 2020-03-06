@@ -14,6 +14,10 @@
  * limitations under the License.
  *@
 
-@(message: String = "", href: Call)
+@import play.twirl.api.HtmlFormat.empty
 
-<a class="govuk-link govuk-link--no-visited-state" href="@href.url">@message</a>
+@(content: Html = empty, href: Call, classes: String = "")
+
+@allClasses = @{s"govuk-link $classes"}
+
+<a class="@allClasses" href="@href.url">@content</a>

@@ -34,7 +34,11 @@
 @(journeyType: JourneyType)(implicit request: Request[_], messages: Messages)
 
 @gotoTimelineLink = @{
-  link(message = messages("confirmation.notification.timeline.link"), href = routes.ViewSubmissionsController.displayPage())
+  link(
+    content = Html(messages("confirmation.notification.timeline.link")),
+    href = routes.ViewSubmissionsController.displayPage(),
+    classes = "govuk-link--no-visited-state"
+  )
 }
 
 
