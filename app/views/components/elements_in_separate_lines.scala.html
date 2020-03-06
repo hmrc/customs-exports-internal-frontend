@@ -14,10 +14,8 @@
  * limitations under the License.
  *@
 
-@import play.twirl.api.HtmlFormat.empty
+@(list: Seq[String])
 
-@(content: Html = empty, href: Call, classes: String = "")
-
-@allClasses = @{s"govuk-link $classes"}
-
-<a class="@allClasses" href="@href.url">@content</a>
+@for(elem <- list) {
+  @elem<br/>
+}

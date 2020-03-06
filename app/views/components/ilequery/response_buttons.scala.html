@@ -18,9 +18,7 @@
 @import controllers.routes
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(
-        govukButton: GovukButton
-)
+@this(govukButton: GovukButton)
 
 @()(implicit request: Request[_], messages: Messages)
 
@@ -29,6 +27,6 @@
       @govukButton(Button(content = Text(messages("ileQueryResponse.links.manageConsignment")), href = Some(routes.ChoiceController.displayPage().url)))
   </div>
   <div class="govuk-body govuk-!-margin-bottom-9">
-      @link(messages("ileQueryResponse.links.findConsignment"), controllers.ileQuery.routes.FindConsignmentController.displayQueryForm)
+      @link(content = Html(messages("ileQueryResponse.links.findConsignment")), href = controllers.ileQuery.routes.FindConsignmentController.displayQueryForm)
   </div>
 </div>

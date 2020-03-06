@@ -14,55 +14,101 @@
  * limitations under the License.
  *@
 
+@import components.gds.{gds_main_template, pageTitle}
 @import java.time.format.DateTimeFormatter
-
 @import models.notifications.NotificationFrontendModel
 @import models.submissions.Submission
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.components.BackButton
+@import views.html.components.gds.link
 @import views.Title
 
-@this(main_template: views.html.templates.main_template, formatter: DateTimeFormatter)
+@this(
+  govukLayout: gds_main_template,
+  pageTitle: pageTitle,
+  table: GovukTable,
+  formatter: DateTimeFormatter
+)
 
 @(submissions: Seq[(Submission, Seq[NotificationFrontendModel])])(implicit request: Request[_], messages: Messages)
 
+@ucrCellContent(submission: Submission, notifications: Seq[NotificationFrontendModel]) = {
+  @if(notifications.isEmpty){
+    @components.elements_in_separate_lines(submission.ucrBlocks.map(_.ucr))
+  } else {
+    @link(
+      content = components.elements_in_separate_lines(submission.ucrBlocks.map(_.ucr)),
+      href = routes.ViewNotificationsController.listOfNotifications(submission.conversationId)
+    )
+  }
+}
 
-@main_template(title = Title("submissions.title"), fullWidth = true) {
+@ucrClass = @{"ucr"}
+@submissionTypeClass = @{"submission-type"}
+@dateOfRequestClass = @{"date-of-request"}
+@submissionActionClass = @{"submission-action"}
 
-  @components.back_link(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
 
-  @components.page_title(Some(messages("submissions.title")))
+@govukLayout(
+  title = Title("submissions.title"),
+  backButton = Some(BackButton(
+    title = messages("site.back"),
+    call = controllers.ileQuery.routes.FindConsignmentController.displayQueryForm()
+  )),
+  useCustomContentWidth = true
+) {
 
-  <div>
-    <p>@messages("submissions.summary") </p>
-    <table>
-      <thead>
-        <tr>
-          <th scope="col" id="ucr">@messages("submissions.ucr")</th>
-          <th scope="col" id="ucrType">@messages("submissions.submissionType")</th>
-          <th scope="col" id="dateOfRequest">@messages("submissions.dateOfRequest")</th>
-          <th scope="col" id="submissionAction">@messages("submissions.submissionAction")</th>
-        </tr>
-      </thead>
-      <tbody>
-      @for( (submission, notifications) <- submissions ){
-        <tr>
-          <td id="ucr-@submission.conversationId">
-          @if(notifications.isEmpty) {
-            @for(ucr <- submission.ucrBlocks.map(_.ucr)) { @ucr<br/> }
-          } else {
-            <a href="@routes.ViewNotificationsController.listOfNotifications(submission.conversationId)">
-              @for(ucr <- submission.ucrBlocks.map(_.ucr)) { @ucr<br/> }
-            </a>
-          }
+  <div class="govuk-grid-row">
 
-          </td>
-          <td id="ucrType-@submission.conversationId">@for(ucr <- submission.ucrBlocks.map(_.ucrType + "UCR")) { @ucr<br/> }</td>
-          <td id="dateOfRequest-@submission.conversationId">
-              @formatter.format(submission.requestTimestamp)
-          </td>
-          <td id="submissionAction-@submission.conversationId">@messages(s"submissions.${submission.actionType.toString.toLowerCase}")</td>
-        </tr>
+    <div class="govuk-grid-column-two-thirds">
+      @pageTitle(messages("submissions.title"))
+
+      <p class="govuk-body-l">@messages("submissions.summary") </p>
+    </div>
+
+    <div class="govuk-grid-column-full">
+    @table(Table(
+      head = Some(Seq(
+        HeadCell(
+          content = Text(messages("submissions.ucr")),
+          classes = ucrClass
+        ),
+        HeadCell(
+          content = Text(messages("submissions.submissionType")),
+          classes = submissionTypeClass
+        ),
+        HeadCell(
+          content = Text(messages("submissions.dateOfRequest")),
+          classes = dateOfRequestClass
+        ),
+        HeadCell(
+          content = Text(messages("submissions.submissionAction")),
+          classes = submissionActionClass
+        )
+      )),
+      firstCellIsHeader = false,
+      rows = submissions.map { case (submission, notifications) =>
+        Seq(
+          TableRow(
+            content = HtmlContent(ucrCellContent(submission, notifications)),
+            classes = ucrClass
+          ),
+          TableRow(
+            content = HtmlContent(components.elements_in_separate_lines(submission.ucrBlocks.map(_.ucrType + "UCR"))),
+            classes = submissionTypeClass
+          ),
+          TableRow(
+            content = Text(formatter.format(submission.requestTimestamp)),
+            classes = dateOfRequestClass
+          ),
+          TableRow(
+            content = Text(messages(s"submissions.${submission.actionType.toString.toLowerCase}")),
+            classes = submissionActionClass
+          )
+        )
       }
-      </tbody>
-    </table>
-  </div class="govuk-grid-column-two-thirds">
+    ))
+    </div>
+
+  </div>
 }

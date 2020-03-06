@@ -21,5 +21,5 @@
 @()(implicit messages: Messages)
 
 <p class="govuk-body">
-    @link(message = messages("confirmation.redirect.query.link"), href = ileQuery.routes.FindConsignmentController.displayQueryForm())
+    @link(content = Html(messages("confirmation.redirect.query.link")), href = ileQuery.routes.FindConsignmentController.displayQueryForm())
 </p>

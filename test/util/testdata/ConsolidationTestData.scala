@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import play.twirl.api.HtmlFormat.empty
+package testdata
 
-@(content: Html = empty, href: Call, classes: String = "")
+import connectors.exchanges.ActionType.ConsolidationType
+import models.UcrBlock
+import models.submissions.Submission
+import testdata.CommonTestData._
 
-@allClasses = @{s"govuk-link $classes"}
+object ConsolidationTestData {
 
-<a class="@allClasses" href="@href.url">@content</a>
+  val exampleAssociateDucrRequestSubmission: Submission = Submission(
+    eori = validEori,
+    conversationId = conversationId,
+    actionType = ConsolidationType.DucrAssociation,
+    ucrBlocks = Seq(UcrBlock(ucr = validMucr, ucrType = "M"), UcrBlock(ucr = validDucr, ucrType = "D"))
+  )
+
+}

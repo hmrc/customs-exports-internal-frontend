@@ -17,57 +17,145 @@
 package views
 
 import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDate, ZoneId, ZoneOffset}
+import java.time.temporal.ChronoUnit.MINUTES
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 
+import base.Injector
+import connectors.exchanges.ActionType.{ConsolidationType, MovementType}
 import controllers.routes
 import models.UcrBlock
-import models.notifications.NotificationFrontendModel
+import models.notifications.{Entry, NotificationFrontendModel, ResponseType}
 import models.submissions.Submission
+import org.jsoup.nodes.Document
+import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData._
+import testdata.ConsolidationTestData._
 import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import views.html.view_submissions
 
-class SubmissionsViewSpec extends ViewSpec {
+class SubmissionsViewSpec extends ViewSpec with Injector {
 
-  private implicit val implicitFakeRequest = FakeRequest().withCSRFToken
+  implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  private val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy 'at' HH:mm").withZone(ZoneId.of("Europe/London"))
+  private val page = instanceOf[view_submissions]
+
   private val dateTime: Instant = LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
 
   private def createView(submissions: Seq[(Submission, Seq[NotificationFrontendModel])] = Seq.empty): Html =
-    new view_submissions(main_template, dateTimeFormatter)(submissions)
+    page(submissions)(request, messages)
 
   "Submissions page" should {
+    val emptyPage = createView()
 
     "contain title" in {
+      emptyPage.getTitle must containMessage("submissions.title")
+    }
 
-      createView().getElementById("title") must containText(messages("submissions.title"))
+    "contain back button" in {
+
+      val backButton = emptyPage.getElementById("back-link")
+
+      backButton must containMessage("site.back")
+      backButton must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
+    }
+
+    "contain header" in {
+      emptyPage.getElementById("title") must containMessage("submissions.title")
+    }
+
+    "contain information paragraph" in {
+      emptyPage.getElementsByClass("govuk-body-l").first() must containMessage("submissions.summary")
     }
 
     "contain correct table headers" in {
 
-      val page = createView()
+      val doc: Document = emptyPage
 
-      page.getElementById("ucr") must containText(messages("submissions.ucr"))
-      page.getElementById("ucrType") must containText(messages("submissions.submissionType"))
-      page.getElementById("submissionAction") must containText(messages("submissions.submissionAction"))
-      page.getElementById("dateOfRequest") must containText(messages("submissions.dateOfRequest"))
+      doc.selectFirst(".govuk-table__header.ucr") // must containMessage("submissions.ucr")
+      doc.selectFirst(".govuk-table__header.submission-type") must containMessage("submissions.submissionType")
+      doc.selectFirst(".govuk-table__header.date-of-request") must containMessage("submissions.dateOfRequest")
+      doc.selectFirst(".govuk-table__header.submission-action") must containMessage("submissions.submissionAction")
     }
 
     "contain correct submission data" in {
 
-      val submission = exampleSubmission(requestTimestamp = dateTime)
-      val notifications = Seq(exampleNotificationFrontendModel(timestampReceived = dateTime.plusSeconds(3)))
+      val shutMucrSubmission = Submission(
+        requestTimestamp = dateTime,
+        eori = "",
+        conversationId = conversationId,
+        ucrBlocks = Seq(UcrBlock(ucr = validMucr, ucrType = "M")),
+        actionType = ConsolidationType.ShutMucr
+      )
+      val shutMucrNotifications = Seq(
+        exampleNotificationFrontendModel(
+          timestampReceived = dateTime.plus(10, MINUTES),
+          conversationId = conversationId,
+          responseType = ResponseType.ControlResponse,
+          entries = Seq(Entry(ucrBlock = Some(UcrBlock(ucr = validMucr, ucrType = "M"))))
+        )
+      )
 
-      val page = createView(Seq((submission, notifications)))
+      val arrivalSubmission = Submission(
+        requestTimestamp = dateTime.plus(31, MINUTES),
+        eori = "",
+        conversationId = conversationId_2,
+        ucrBlocks = Seq(UcrBlock(ucr = validDucr, ucrType = "D")),
+        actionType = MovementType.Arrival
+      )
+      val arrivalNotifications = Seq(
+        exampleNotificationFrontendModel(
+          timestampReceived = dateTime.plus(35, MINUTES),
+          conversationId = conversationId_2,
+          responseType = ResponseType.ControlResponse,
+          entries = Seq(Entry(ucrBlock = Some(UcrBlock(ucr = validDucr, ucrType = "D"))))
+        )
+      )
 
-      page.getElementById(s"ucr-$conversationId").text() mustBe correctUcr
-      page.getElementById(s"ucrType-$conversationId").text() mustBe "DUCR"
-      page.getElementById(s"dateOfRequest-$conversationId").text() mustBe "31 Oct 2019 at 00:00"
-      page.getElementById(s"submissionAction-$conversationId").text() mustBe messages(s"submissions.arrival")
+      val pageWithData: Document = createView(Seq(shutMucrSubmission -> shutMucrNotifications, arrivalSubmission -> arrivalNotifications))
+
+      val firstDataRowElements = pageWithData.selectFirst(".govuk-table__body .govuk-table__row:nth-child(1)")
+      val secondDataRowElements = pageWithData.selectFirst(".govuk-table__body .govuk-table__row:nth-child(2)")
+
+      val formatter = DateTimeFormatter.ofPattern("dd MMM YYYY 'at' HH:mm")
+
+      firstDataRowElements.selectFirst(".ucr").text() mustBe validMucr
+      firstDataRowElements.selectFirst(".submission-type").text() mustBe "MUCR"
+      firstDataRowElements.selectFirst(".date-of-request").text() mustBe LocalDateTime
+        .of(2019, 10, 31, 0, 0)
+        .format(formatter) // "31 Oct 2019 at 00:00"
+      firstDataRowElements.selectFirst(".submission-action") must containMessage("submissions.shutmucr")
+
+      secondDataRowElements.selectFirst(".ucr").text() mustBe validDucr
+      secondDataRowElements.selectFirst(".submission-type").text() mustBe "DUCR"
+      secondDataRowElements.selectFirst(".date-of-request").text() mustBe LocalDateTime
+        .of(2019, 10, 31, 0, 31)
+        .format(formatter) //"31 Oct 2019 at 00:31"
+      secondDataRowElements.selectFirst(".submission-action") must containMessage("submissions.arrival")
+    }
+
+    "contain MUCR and DUCR if Submission contains both" in {
+
+      val notifications = Seq(
+        exampleNotificationFrontendModel(
+          conversationId = conversationId,
+          responseType = ResponseType.ControlResponse,
+          entries = Seq(Entry(ucrBlock = Some(UcrBlock(ucr = validMucr, ucrType = "M"))))
+        )
+      )
+
+      val pageWithData: Document = createView(Seq(exampleAssociateDucrRequestSubmission -> notifications))
+
+      val firstDataRowElements = pageWithData.selectFirst(".govuk-table__body .govuk-table__row:nth-child(1)")
+
+      val actualUcrs = firstDataRowElements.selectFirst(".ucr").text()
+      actualUcrs must include(validMucr)
+      actualUcrs must include(validDucr)
+      val actualUcrTypes = firstDataRowElements.selectFirst(".submission-type").text()
+      actualUcrTypes must include("MUCR")
+      actualUcrTypes must include("DUCR")
     }
 
     "contain link to ViewNotifications page" when {
@@ -76,29 +164,12 @@ class SubmissionsViewSpec extends ViewSpec {
         val submission = exampleSubmission(requestTimestamp = dateTime)
         val notifications = Seq(exampleNotificationFrontendModel(timestampReceived = dateTime.plusSeconds(3)))
 
-        val page = createView(Seq((submission, notifications)))
+        val page: Document = createView(Seq((submission, notifications)))
 
-        page.getElementById(s"ucr-$conversationId").child(0) must haveHref(routes.ViewNotificationsController.listOfNotifications(conversationId))
+        val firstDataRowUcrCell = page.selectFirst(".govuk-table__body .govuk-table__row:nth-child(1)")
+
+        firstDataRowUcrCell.selectFirst(".ucr").child(0) must haveHref(routes.ViewNotificationsController.listOfNotifications(conversationId))
       }
     }
-
-    "contain MUCR and DUCR if Submission contains both" in {
-
-      val submission = exampleSubmission(
-        requestTimestamp = dateTime,
-        ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "M"), UcrBlock(ucr = correctUcr_2, ucrType = "D"))
-      )
-      val notifications = Seq(exampleNotificationFrontendModel(timestampReceived = dateTime.plusSeconds(3)))
-
-      val page = createView(Seq((submission, notifications)))
-
-      val actualUcrs = page.getElementById(s"ucr-$conversationId").text()
-      actualUcrs must include(correctUcr)
-      actualUcrs must include(correctUcr_2)
-      val actualUcrTypes = page.getElementById(s"ucrType-$conversationId").text()
-      actualUcrTypes must include("MUCR")
-      actualUcrTypes must include("DUCR")
-    }
   }
-
 }
