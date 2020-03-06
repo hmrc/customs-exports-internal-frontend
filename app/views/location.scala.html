@@ -38,7 +38,7 @@
 @backLink()(implicit request: JourneyRequest[_]) = @{
     request.answers.`type` match {
         case JourneyType.ARRIVE | JourneyType.DEPART => controllers.movements.routes.MovementDetailsController.displayPage
-        case JourneyType.RETROSPECTIVE_ARRIVE => controllers.movements.routes.ConsignmentReferencesController.displayPage
+        case JourneyType.RETROSPECTIVE_ARRIVE => controllers.routes.ChoiceController.displayPage
     }
 }
 

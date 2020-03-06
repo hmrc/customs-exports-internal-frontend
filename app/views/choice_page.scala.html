@@ -21,6 +21,7 @@
 @import views.components.BackButton
 @import views.Title
 @import components.gds.{errorSummary, gds_main_template, pageTitle}
+@import views.html.components.gds.sectionHeader
 
 @this(
     govukLayout: gds_main_template,
@@ -28,6 +29,7 @@
     govukButton: GovukButton,
     errorSummary: errorSummary,
     pageTitle: pageTitle,
+    sectionHeader: sectionHeader,
     formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 )
 
@@ -40,6 +42,8 @@
         @formHelper(action = routes.ChoiceController.submit(), 'autoComplete -> "off") {
 
             @errorSummary(form.errors)
+
+            @sectionHeader(messages("movement.choice.sectionHeading", queryUcr.map(_.ucr).getOrElse("")))
 
             @govukRadios(Radios(
                 name = "choice",

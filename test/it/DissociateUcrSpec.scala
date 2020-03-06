@@ -21,40 +21,6 @@ import play.api.test.Helpers._
 
 class DissociateUcrSpec extends IntegrationSpec {
 
-  "Dissociate UCR Page" when {
-    "GET" should {
-      "return 200" in {
-        // Given
-        givenAuthSuccess("pid")
-        givenCacheFor("pid", DisassociateUcrAnswers())
-
-        // When
-        val response = get(controllers.consolidations.routes.DisassociateUCRController.display())
-
-        // Then
-        status(response) mustBe OK
-      }
-    }
-
-    "POST" should {
-      "continue" in {
-        // Given
-        givenAuthSuccess("pid")
-        givenCacheFor("pid", DisassociateUcrAnswers())
-
-        // When
-        val response = post(controllers.consolidations.routes.DisassociateUCRController.submit(), "kind" -> "mucr", "mucr" -> "GB/321-54321")
-
-        // Then
-        status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.consolidations.routes.DisassociateUCRSummaryController.displayPage().url)
-        theAnswersFor("pid") mustBe Some(
-          DisassociateUcrAnswers(ucr = Some(DisassociateUcr(kind = DisassociateKind.Mucr, mucr = Some("GB/321-54321"), ducr = None)))
-        )
-      }
-    }
-  }
-
   "Dissociate UCR Summary Page" when {
     "GET" should {
       "return 200" in {

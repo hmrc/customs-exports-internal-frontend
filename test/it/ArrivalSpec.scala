@@ -30,44 +30,6 @@ class ArrivalSpec extends IntegrationSpec {
   private val time = LocalTime.now().truncatedTo(ChronoUnit.MINUTES)
   private val datetime = LocalDateTime.of(date, time).toInstant(ZoneOffset.UTC)
 
-  "Consignment References Page" when {
-    "GET" should {
-      "return 200" in {
-        // Given
-        givenAuthSuccess("pid")
-        givenCacheFor("pid", ArrivalAnswers())
-
-        // When
-        val response = get(controllers.movements.routes.ConsignmentReferencesController.displayPage())
-
-        // TThen
-        status(response) mustBe OK
-      }
-    }
-
-    "POST" should {
-      "continue" in {
-        // Given
-        givenAuthSuccess("pid")
-        givenCacheFor("pid", ArrivalAnswers())
-
-        // When
-        val response = post(
-          controllers.movements.routes.ConsignmentReferencesController.saveConsignmentReferences(),
-          "reference" -> "M",
-          "mucrValue" -> "GB/123-12345"
-        )
-
-        // Then
-        status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.movements.routes.MovementDetailsController.displayPage().url)
-        theAnswersFor("pid") mustBe Some(
-          ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")))
-        )
-      }
-    }
-  }
-
   "Movement Details Page" when {
     "GET" should {
       "return 200" in {

@@ -47,7 +47,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
       val backButton = page(movementDetails.arrivalForm(), None).getElementById("back-link")
 
       backButton.text() mustBe messages("site.back")
-      backButton.attr("href") mustBe controllers.movements.routes.ConsignmentReferencesController.displayPage().toString()
+      backButton.attr("href") mustBe controllers.routes.ChoiceController.displayPage().toString()
     }
 
     "render error summary" when {

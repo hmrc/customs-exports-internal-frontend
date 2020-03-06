@@ -48,14 +48,14 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
         val backButton = page(answersDUCR).getGovUkBackButton
 
         backButton mustBe defined
-        backButton.get must haveHref(controllers.consolidations.routes.DisassociateUCRController.display())
+        backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
       }
 
       "mucr" in {
         val backButton = page(answersMUCR).getGovUkBackButton
 
         backButton mustBe defined
-        backButton.get must haveHref(controllers.consolidations.routes.DisassociateUCRController.display())
+        backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
       }
     }
 
@@ -76,20 +76,6 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
 
       "mucr" in {
         page(answersMUCR).getElementsByClass("govuk-summary-list__value").first() must containText("mucr-reference")
-      }
-    }
-
-    "render 'Change' link" when {
-      "ducr" in {
-        val anchor: Element = page(answersDUCR).getElementsByClass("govuk-link").first()
-        anchor must containMessage("site.change")
-        anchor must haveHref(controllers.consolidations.routes.DisassociateUCRController.display())
-      }
-
-      "mucr" in {
-        val anchor = page(answersMUCR).getElementsByClass("govuk-link").first()
-        anchor must containMessage("site.change")
-        anchor must haveHref(controllers.consolidations.routes.DisassociateUCRController.display())
       }
     }
 

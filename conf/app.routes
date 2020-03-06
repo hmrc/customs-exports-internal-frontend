@@ -27,20 +27,12 @@ POST        /associate-ucr-summary                 controllers.consolidations.As
 # Associate UCR confirmation page
 GET         /associate-ucr-confirmation            controllers.consolidations.AssociateUCRConfirmationController.displayPage()
 
-# Disassociate UCR page
-GET         /dissociate-ucr                        controllers.consolidations.DisassociateUCRController.display()
-POST        /dissociate-ucr                        controllers.consolidations.DisassociateUCRController.submit()
-
 # Disassociate UCR summary page
 GET         /dissociate-ucr-summary                controllers.consolidations.DisassociateUCRSummaryController.displayPage()
 POST        /dissociate-ucr-summary                controllers.consolidations.DisassociateUCRSummaryController.submit()
 
 # Disassociate UCR confirmation page
 GET         /dissociate-ucr-confirmation           controllers.consolidations.DisassociateUCRConfirmationController.displayPage()
-
-# Enter DUCR page
-GET         /consignment-references                controllers.movements.ConsignmentReferencesController.displayPage()
-POST        /consignment-references                controllers.movements.ConsignmentReferencesController.saveConsignmentReferences()
 
 # Movement details page
 GET         /movement-details                      controllers.movements.MovementDetailsController.displayPage()
@@ -64,10 +56,6 @@ POST        /summary                               controllers.movements.Movemen
 
 # Movement confirmation page
 GET         /movement-confirmation                 controllers.movements.MovementConfirmationController.displayPage()
-
-# Shut a MUCR
-GET         /shut-mucr                             controllers.consolidations.ShutMucrController.displayPage()
-POST        /shut-mucr                             controllers.consolidations.ShutMucrController.submit()
 
 # Shut a MUCR summary page
 GET         /shut-mucr-summary                     controllers.consolidations.ShutMucrSummaryController.displayPage()

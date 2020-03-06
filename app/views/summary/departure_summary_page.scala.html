@@ -57,16 +57,7 @@
                         ),
                         value = Value(
                             content = Text(referenceTypeKey)
-                        ),
-                        actions = Some(Actions(
-                            items = Seq(
-                                ActionItem(
-                                    href = s"${routes.ConsignmentReferencesController.displayPage}",
-                                    content = Text(messages("site.change")),
-                                    visuallyHiddenText = Some(messages("summary.referenceType.change"))
-                                )
-                            )
-                        ))
+                        )
                     ),
                     SummaryListRow(
                         key = Key(
@@ -74,16 +65,7 @@
                         ),
                         value = Value(
                             content = Text(data.consignmentReferences.map(_.referenceValue).getOrElse(""))
-                        ),
-                        actions = Some(Actions(
-                            items = Seq(
-                                ActionItem(
-                                    href = s"${routes.ConsignmentReferencesController.displayPage}",
-                                    content = Text(messages("site.change")),
-                                    visuallyHiddenText = Some(messages("summary.referenceType.change"))
-                                )
-                            )
-                        ))
+                        )
                     )
                 ),
                 classes = "govuk-!-margin-bottom-9"
