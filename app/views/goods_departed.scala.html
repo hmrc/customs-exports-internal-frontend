@@ -36,33 +36,32 @@
     title = Title("goodsDeparted.title"),
     backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.LocationController.displayPage()))) {
 
-        @formHelper(action = controllers.movements.routes.GoodsDepartedController.saveGoodsDeparted(), 'autoComplete -> "off") {
-            @errorSummary(form.errors)
+    @formHelper(action = controllers.movements.routes.GoodsDepartedController.saveGoodsDeparted(), 'autoComplete -> "off") {
+        @errorSummary(form.errors)
 
-            @govukRadios(Radios(
-                name = "departureLocation",
-                fieldset = Some(Fieldset(
-                    legend = Some(Legend(
-                        content = Text(messages("goodsDeparted.header")),
-                        isPageHeading = true,
-                        classes = "govuk-fieldset__legend--l"
-                    ))
-                )),
-                items = Seq(
-                    RadioItem(
-                        value = Some(OutOfTheUk.value),
-                        content = Text(messages("goodsDeparted.departureLocation.outOfTheUk")),
-                        checked = form("departureLocation").value.contains(OutOfTheUk.value)
-                    ),
-                    RadioItem(
-                        value = Some(BackIntoTheUk.value),
-                        content = Text(messages("goodsDeparted.departureLocation.backIntoTheUk")),
-                        checked = form("departureLocation").value.contains(BackIntoTheUk.value)
-                    )
+        @govukRadios(Radios(
+            name = "departureLocation",
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("goodsDeparted.header")),
+                    isPageHeading = true,
+                    classes = "govuk-fieldset__legend--l"
+                ))
+            )),
+            items = Seq(
+                RadioItem(
+                    value = Some(OutOfTheUk.value),
+                    content = Text(messages("goodsDeparted.departureLocation.outOfTheUk")),
+                    checked = form("departureLocation").value.contains(OutOfTheUk.value)
                 ),
-                errorMessage = form("departureLocation").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
-            ))
-            @govukButton(Button(content = Text(messages("site.continue"))))
-        }
+                RadioItem(
+                    value = Some(BackIntoTheUk.value),
+                    content = Text(messages("goodsDeparted.departureLocation.backIntoTheUk")),
+                    checked = form("departureLocation").value.contains(BackIntoTheUk.value)
+                )
+            ),
+            errorMessage = form("departureLocation").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+        ))
+        @govukButton(Button(content = Text(messages("site.continue"))))
     }
-)
+}
