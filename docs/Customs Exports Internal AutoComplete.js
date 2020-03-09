@@ -11,13 +11,19 @@
 
 (function() {
     'use strict';
-    document.getElementById('global-header').appendChild(createQuickButton());
+    document.getElementsByTagName("body")[0].appendChild(createQuickButton());
 })();
 
 function createQuickButton() {
     let button = document.createElement('button');
     button.id="quickSubmit";
-    button.classList.add('button-start');
+    if (!!document.getElementById('global-header')) {
+        button.classList.add('button-start');
+    } else {
+        button.classList.add('govuk-button');
+    }
+    button.style.position = "absolute"
+    button.style.top = "50px"
     button.innerHTML = 'Quick Submit';
     button.onclick = () => completePage();
     return button;
@@ -44,36 +50,18 @@ function selectFromAutoPredict(element, selected) {
     }
 }
 
-function selectRadioOption(element, index){
-    let inputs = element.getElementsByTagName('input');
-    if (inputs && index < inputs.length) {
-        inputs[index].checked = true
-    }
-}
-
 function currentPageIs(path) {
     let matches = window.location.pathname.match(path + "$");
     return matches && matches.length > 0
 }
 
 function completePage() {
-    if(currentPageIs('stride-idp-stub')){
-        document.getElementById('pid').value = '123';
-        document.getElementById('roles').value = 'write:customs-inventory-linking-exports';
-        document.getElementById('continue-button').click();
-    }
-    if (currentPageIs('/customs-exports-internal/start')) {
-        document.getElementsByClassName('button')[0].click()
+    if(currentPageIs('/customs-exports-internal/start')){
+        document.getElementsByClassName('govuk-button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/choice")){
         document.getElementById("choice").checked = true
         document.getElementsByClassName('govuk-button')[0].click()
-    }
-
-    if(currentPageIs("/customs-exports-internal/consignment-references")){
-        selectRadioOption(document.getElementById("reference"), 0);
-        document.getElementById('ducrValue').value = '8GB12345' + Math.floor(Math.random() * 8999) + 100 + '-101SHIP1';
-        document.getElementsByClassName('button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/movement-details")){
         let title = document.title.toLowerCase();
@@ -93,54 +81,35 @@ function completePage() {
             document.getElementById('timeOfArrival_hour').value = '10';
             document.getElementById('timeOfArrival_minute').value = '00';
         }
-        document.getElementsByClassName('button')[0].click()
+        document.getElementsByClassName('govuk-button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/location")){
         document.getElementById('code').value = 'GBAUEMAEMAEMA';
-        document.getElementsByClassName('button')[0].click()
+        document.getElementsByClassName('govuk-button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/goods-departed")){
-        selectRadioOption(document.getElementById("departureLocation"), 0);
-        document.getElementsByClassName('button')[0].click()
+        document.getElementById("departureLocation").checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/transport")){
-        selectRadioOption(document.getElementById("modeOfTransport"), 0);
+        document.getElementById("modeOfTransport").checked = true
         document.getElementById('nationality').value = 'GB';
         document.getElementById('transportId').value = 'TransportReference';
-        document.getElementsByClassName('button')[0].click()
+        document.getElementsByClassName('govuk-button')[0].click()
     }
-    if(currentPageIs("/customs-exports-internal/summary")){
-        document.getElementsByClassName('button')[0].click()
-    }
+    if(currentPageIs("/customs-exports-internal/summary")){}
     if(currentPageIs("/customs-exports-internal/mucr-options")){
-        document.getElementById("mucrOptions.create").checked = true;
+        document.getElementById("createOrAdd").checked = true;
         document.getElementById("newMucr").value = "GB/1234-123ABC456DEFIIIII";
-        document.getElementsByClassName('button')[0].click()
+        document.getElementsByClassName('govuk-button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/associate-ucr")){
-        selectRadioOption(document.getElementById("kind"), 0);
+        document.getElementById("kind").checked = true
         const now = new Date();
         document.getElementById("ducr").value = `5GB123456789000-${now.valueOf()}IIIII`;
-        document.getElementsByClassName('button')[0].click()
+        document.getElementsByClassName('govuk-button')[0].click()
     }
-    if(currentPageIs("/customs-exports-internal/associate-ucr-summary")){
-        document.getElementsByClassName('button')[0].click()
-    }
-    if(currentPageIs("/customs-exports-internal/dissociate-ucr-summary")){
-        document.getElementsByClassName('button')[0].click()
-    }
-    if(currentPageIs("/customs-exports-internal/dissociate-ucr")){
-        selectRadioOption(document.getElementById("kind"), 0);
-        const now = new Date();
-        document.getElementById("ducr").value = `5GB123456789000-${now.valueOf()}IIIII`;
-        document.getElementsByClassName('button')[0].click()
-    }
-    if(currentPageIs("/customs-exports-internal/shut-mucr")){
-        const now = new Date();
-        document.getElementById("mucr").value = `GB/ABCDE1234-${now.valueOf()}IIIII`;
-        document.getElementsByClassName('button')[0].click()
-    }
-    if(currentPageIs("/customs-exports-internal/shut-mucr-summary")){
-        document.getElementsByClassName('button')[0].click()
-    }
+    if(currentPageIs("/customs-exports-internal/associate-ucr-summary")){}
+    if(currentPageIs("/customs-exports-internal/dissociate-ucr-summary")){}
+    if(currentPageIs("/customs-exports-internal/shut-mucr-summary")){}
 }
