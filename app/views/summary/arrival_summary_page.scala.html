@@ -29,12 +29,12 @@
 
 @(data: ArrivalAnswers)(implicit request: Request[_], messages: Messages)
 
-@referenceTypeKey = @{
+@referenceTypeText = @{
     data.consignmentReferences.map(ref =>
         if(ref.reference.equals(ConsignmentReferenceType.D)) {
-            "consignmentReferences.reference.ducr"
+            messages("consignmentReferences.reference.ducr")
         } else {
-            "consignmentReferences.reference.mucr"
+            messages("consignmentReferences.reference.mucr")
         }
     ).getOrElse("")
 }
@@ -55,7 +55,7 @@
                             content = Text(messages("summary.referenceType"))
                         ),
                         value = Value(
-                            content = Text(messages(referenceTypeKey))
+                            content = Text(referenceTypeText)
                         )
                     ),
                     SummaryListRow(

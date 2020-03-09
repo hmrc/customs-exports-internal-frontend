@@ -33,14 +33,17 @@ class DepartureSummaryViewSpec extends ViewSpec with Injector {
   "View" should {
 
     "render title" in {
+
       page(answers).getTitle must containMessage("summary.departure.title")
     }
 
     "render heading" in {
+
       page(answers).getElementById("title") must containMessage("summary.departure.title")
     }
 
     "render back button" in {
+
       val backButton = page(answers).getGovUkBackButton
 
       backButton mustBe defined
