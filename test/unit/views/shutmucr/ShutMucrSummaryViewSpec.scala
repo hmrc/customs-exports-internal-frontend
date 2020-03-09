@@ -41,13 +41,6 @@ class ShutMucrSummaryViewSpec extends ViewSpec with Injector {
       page(shutMucr).getElementsByClass("govuk-summary-list__value").text() mustBe shutMucr
     }
 
-    "render correct change button" in {
-      val changeButton = page(shutMucr).getElementsByClass("govuk-link").first()
-
-      changeButton must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
-      changeButton.text() must include(messages("site.edit"))
-    }
-
     "render correct submit button" in {
       val submitButton = page(shutMucr).getElementsByClass("govuk-button").first()
 
