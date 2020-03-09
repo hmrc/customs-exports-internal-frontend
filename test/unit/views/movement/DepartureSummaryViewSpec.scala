@@ -24,11 +24,11 @@ import views.html.summary.departure_summary_page
 
 class DepartureSummaryViewSpec extends ViewSpec with Injector {
 
-  private implicit val request = journeyRequest(ArrivalAnswers())
+  private val answers = DepartureAnswers()
+
+  private implicit val request = journeyRequest(answers)
 
   private val page = instanceOf[departure_summary_page]
-
-  private val answers = DepartureAnswers()
 
   "View" should {
 

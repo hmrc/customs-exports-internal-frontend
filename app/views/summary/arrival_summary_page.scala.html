@@ -80,16 +80,7 @@
                         ),
                         value = Value(
                             content = Text(data.arrivalDetails.map(_.dateOfArrival.toString).getOrElse(""))
-                        ),
-                        actions = Some(Actions(
-                            items = Seq(
-                                ActionItem(
-                                    href = s"${controllers.movements.routes.MovementDetailsController.displayPage}",
-                                    content = Text(messages("site.change")),
-                                    visuallyHiddenText = Some(messages("summary.arrival.date.change"))
-                                )
-                            )
-                        ))
+                        )
                     ),
                     SummaryListRow(
                         key = Key(
@@ -97,16 +88,7 @@
                         ),
                         value = Value(
                             content = Text(data.arrivalDetails.map(_.timeOfArrival.toString).getOrElse(""))
-                        ),
-                        actions = Some(Actions(
-                            items = Seq(
-                                ActionItem(
-                                    href = s"${controllers.movements.routes.MovementDetailsController.displayPage}",
-                                    content = Text(messages("site.change")),
-                                    visuallyHiddenText = Some(messages("summary.arrival.time.change"))
-                                )
-                            )
-                        ))
+                        )
                     )
                 ),
                 classes = "govuk-!-margin-bottom-9"
@@ -122,16 +104,7 @@
                         ),
                         value = Value(
                             content = Text(data.location.map(_.code).getOrElse(""))
-                        ),
-                        actions = Some(Actions(
-                            items = Seq(
-                                ActionItem(
-                                    href = s"${controllers.movements.routes.LocationController.displayPage}",
-                                    content = Text(messages("site.change")),
-                                    visuallyHiddenText = Some(messages("summary.goodsLocation.change"))
-                                )
-                            )
-                        ))
+                        )
                     )
                 ),
                 classes = "govuk-!-margin-bottom-9"

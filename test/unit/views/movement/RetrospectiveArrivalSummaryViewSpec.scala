@@ -24,11 +24,11 @@ import views.html.summary.retrospective_arrival_summary_page
 
 class RetrospectiveArrivalSummaryViewSpec extends ViewSpec with Injector {
 
-  private implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
+  private val answers = RetrospectiveArrivalAnswers()
+
+  private implicit val request = journeyRequest(answers)
 
   private val page = instanceOf[retrospective_arrival_summary_page]
-
-  private val answers = RetrospectiveArrivalAnswers()
 
   "View" should {
 
