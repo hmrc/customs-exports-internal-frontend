@@ -340,6 +340,7 @@ ileQueryResponse.details.route = Route
 ileQueryResponse.details.entryStatus = Status
 ileQueryResponse.details.inputCustomsStatus = Input status
 ileQueryResponse.details.transport = Transport
+ileQueryResponse.details.MRN = MRN
 ileQueryResponse.details.isShutMucr.true = Shut
 ileQueryResponse.details.isShutMucr.false = Open
 ileQueryResponse.parent = Parent consignment
