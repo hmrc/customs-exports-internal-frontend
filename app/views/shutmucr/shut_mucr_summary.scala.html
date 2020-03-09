@@ -44,16 +44,7 @@
                         ),
                         value = Value(
                             content = Text(mucr)
-                        ),
-                        actions = Some(Actions(
-                            items = Seq(
-                                ActionItem(
-                                    href = s"${controllers.ileQuery.routes.FindConsignmentController.displayQueryForm()}",
-                                    content = Text(messages("site.change")),
-                                    visuallyHiddenText = Some(messages("site.change.hint.disassociate.ucr", mucr.toUpperCase()))
-                                )
-                            )
-                        ))
+                        )
                     )
                 ),
                 classes = "govuk-!-margin-bottom-9"
