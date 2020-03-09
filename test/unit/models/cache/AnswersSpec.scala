@@ -144,21 +144,21 @@ class AnswersSpec extends UnitSpec {
     "correctly create AssociateUcrAnswers from ducr query" in {
 
       val answer = AssociateUcrAnswers.fromQueryUcr(Some(ducrQuery))
-      answer.associateUcr.map(_.ucr) mustBe Some("ducr")
-      answer.associateUcr.map(_.kind) mustBe Some(UcrType.Ducr)
+      answer.childUcr.map(_.ucr) mustBe Some("ducr")
+      answer.childUcr.map(_.kind) mustBe Some(UcrType.Ducr)
     }
 
     "correctly create AssociateUcrAnswers from mucr query" in {
 
       val answer = AssociateUcrAnswers.fromQueryUcr(Some(mucrQuery))
-      answer.associateUcr.map(_.ucr) mustBe Some("mucr")
-      answer.associateUcr.map(_.kind) mustBe Some(UcrType.Mucr)
+      answer.childUcr.map(_.ucr) mustBe Some("mucr")
+      answer.childUcr.map(_.kind) mustBe Some(UcrType.Mucr)
     }
 
     "correctly create AssociateUcrAnswers from no query" in {
 
       val answer = AssociateUcrAnswers.fromQueryUcr(None)
-      answer.associateUcr mustBe None
+      answer.childUcr mustBe None
     }
 
     "correctly create DisassociateUcrAnswers from ducr query" in {

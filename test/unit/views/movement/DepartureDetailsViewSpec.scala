@@ -92,7 +92,7 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
     }
 
     "render back button" in {
-      val backButton = view.getGovUkBackButton
+      val backButton = view.getBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.movements.routes.SpecificDateTimeController.displayPage())

@@ -45,14 +45,14 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
 
     "render back button" when {
       "ducr" in {
-        val backButton = page(answersDUCR).getGovUkBackButton
+        val backButton = page(answersDUCR).getBackButton
 
         backButton mustBe defined
         backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
       }
 
       "mucr" in {
-        val backButton = page(answersMUCR).getGovUkBackButton
+        val backButton = page(answersMUCR).getBackButton
 
         backButton mustBe defined
         backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())

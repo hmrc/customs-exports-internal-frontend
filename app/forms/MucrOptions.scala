@@ -19,6 +19,7 @@ package forms
 import forms.EnhancedMapping.{mucrOptionsFormatter, requiredRadio}
 import forms.MucrOptions.CreateOrAddValues
 import forms.MucrOptions.CreateOrAddValues.{Add, Create}
+import models.{UcrBlock, UcrType}
 import play.api.data.Forms._
 import play.api.data.{Form, Forms}
 import play.api.libs.json._
@@ -74,4 +75,9 @@ object MucrOptions {
   }
 
   implicit val format = Json.format[MucrOptions]
+
+  def apply(ucrBlock: UcrBlock): MucrOptions = ucrBlock.ucrType match {
+    case UcrType.Mucr.codeValue => MucrOptions("", ucrBlock.ucr, CreateOrAddValues.Add)
+    case _                      => throw new IllegalArgumentException(s"Cannot build MucrOptions from invalid UcrBlock: $ucrBlock")
+  }
 }

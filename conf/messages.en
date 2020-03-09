@@ -17,8 +17,8 @@ site.back = Back
 site.save_and_continue = Save and continue
 site.change = Change
 site.change.hint.disassociate.ucr = Change {0} dissociation
-site.change.hint.associate.ucr = Change {0} to be added
-site.change.hint.associate.mucr = Change MUCR to be associated to
+site.change.hint.associate.mucr = Change MUCR
+site.change.hint.associate.ducr = Change DUCR
 site.change.hint.shut.mucr = Change MUCR
 site.confirmAndSubmit = Confirm and submit
 site.backToStart = Back to start
@@ -199,6 +199,13 @@ confirmation.insetText.check = Go to the {0} to check the status.
 confirmation.notification.timeline.link = consignment’s notification timeline
 confirmation.redirect.query.link = Find another consignment
 
+manageMucr.title = What do you want to associate?
+manageMucr.heading = Associate consignment {0}
+manageMucr.input.error.empty = Please, choose what do you want to do
+manageMucr.input.error.incorrectValue = Please, choose valid option
+manageMucr.associate.this.consignment = Associate this consignment to another
+manageMucr.associate.other.consignment = Associate another consignment to this one
+
 associate.heading = Add to MUCR {0}
 mucrOptions.heading = Add to MUCR
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
@@ -223,6 +230,9 @@ mucr.error.empty = Please provide Master Unique Consignment Reference
 mucr.error.format = Master Unique Consignment Reference is in incorrect format
 
 associate.ucr.summary.title = Is the information provided for this association request correct?
+associate.ucr.summary.consignmentReference = Consignment reference
+associate.ucr.summary.associate.with.mucr = Associate with MUCR
+associate.ucr.summary.associate.with.ducr = Associate with DUCR
 associate.ucr.summary.kind.mucr = MUCR
 associate.ucr.summary.kind.ducr = DUCR
 associate.ucr.summary.addConsignment = Add consignment

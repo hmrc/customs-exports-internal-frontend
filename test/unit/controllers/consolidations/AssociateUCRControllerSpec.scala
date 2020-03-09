@@ -61,7 +61,7 @@ class AssociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
 
       "displayPage method is invoked, there is mucr options in cache and associate ucr is empty" in {
 
-        val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")))
+        val cachedData = AssociateUcrAnswers(parentMucr = Some(MucrOptions("123")))
         val result = controller(cachedData).displayPage()(getRequest)
 
         status(result) mustBe OK
@@ -72,12 +72,13 @@ class AssociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
 
       "correct form is submitted and cache contains mucr options data" in {
 
-        val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")))
+        val cachedData = AssociateUcrAnswers(parentMucr = Some(MucrOptions("123")))
         val correctForm =
           Json.toJson(AssociateUcr.mapping.unbind(AssociateUcr(UcrType.Ducr, "5GB123456789000-123ABC456DEFIIIII")))
         val result = controller(cachedData).submit()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUCRSummaryController.displayPage().url)
       }
     }
 
@@ -85,7 +86,7 @@ class AssociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
 
       "form is incorrect and cache contains data from mucr options" in {
 
-        val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")))
+        val cachedData = AssociateUcrAnswers(parentMucr = Some(MucrOptions("123")))
         val correctForm =
           Json.toJson(AssociateUcr.mapping.unbind(AssociateUcr(UcrType.Ducr, "incorrect")))
         val result = controller(cachedData).submit()(postRequest(correctForm))

@@ -41,7 +41,7 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
 
     def getTitle: Element = document.getElementsByTag("title").first()
 
-    def getGovUkBackButton: Option[Element] = Option(document.getElementById("back-link"))
+    def getBackButton: Option[Element] = Option(document.getElementById("back-link"))
 
     def getSubmitButton: Option[Element] = Option(document.getElementById("submit"))
 

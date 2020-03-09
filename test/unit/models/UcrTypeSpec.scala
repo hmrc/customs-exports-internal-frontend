@@ -17,10 +17,9 @@
 package models
 
 import base.UnitSpec
-import play.api.libs.json.{JsString, JsSuccess, Json}
+import play.api.libs.json.{JsString, JsSuccess}
 
 class UcrTypeSpec extends UnitSpec {
-
 
   "UcrType" should {
 

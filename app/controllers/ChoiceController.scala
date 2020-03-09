@@ -20,8 +20,9 @@ import controllers.actions.AuthenticatedAction
 import controllers.exchanges.AuthenticatedRequest
 import forms.Choice
 import javax.inject.{Inject, Singleton}
-import models.UcrBlock
+import models.UcrType.{Ducr, Mucr}
 import models.cache._
+import models.{ReturnToStartException, UcrBlock}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.CacheRepository
@@ -50,31 +51,44 @@ class ChoiceController @Inject()(
   }
 
   def startSpecificJourney(choice: Choice): Action[AnyContent] = authenticate.async { implicit request =>
-    proceed(choice)
+    cacheRepository.findByProviderId(request.providerId).flatMap {
+      case Some(cache) if cache.queryUcr.isDefined => proceed(choice, cache)
+      case _                                       => Future.successful(Redirect(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm()))
+    }
   }
 
   def submit: Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
-    Choice
-      .form()
-      .bindFromRequest()
-      .fold(formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), proceed)
+    cacheRepository.findByProviderId(request.providerId).flatMap {
+      case Some(cache) if cache.queryUcr.isDefined =>
+        Choice.form().bindFromRequest().fold(formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), proceed(_, cache))
+      case _ =>
+        Future.successful(Redirect(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm()))
+    }
   }
 
-  private def proceed(choice: Choice)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] = choice match {
+  private def proceed(choice: Choice, cache: Cache)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] = choice match {
     case Choice.Arrival =>
       saveAndRedirect(ArrivalAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage())
     case Choice.RetrospectiveArrival =>
       saveAndRedirect(RetrospectiveArrivalAnswers.fromQueryUcr, movements.routes.LocationController.displayPage())
     case Choice.Departure =>
       saveAndRedirect(DepartureAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage())
-    case Choice.AssociateUCR =>
-      saveAndRedirect(AssociateUcrAnswers.fromQueryUcr, consolidations.routes.MucrOptionsController.displayPage())
+
+    case Choice.AssociateUCR => {
+      val redirectionCall = cache.queryUcr
+        .map(_.ucrType match {
+          case Ducr.codeValue => consolidations.routes.MucrOptionsController.displayPage()
+          case Mucr.codeValue => consolidations.routes.ManageMucrController.displayPage()
+        })
+        .getOrElse(throw ReturnToStartException)
+
+      saveAndRedirect(AssociateUcrAnswers.fromQueryUcr, redirectionCall)
+    }
+
     case Choice.DisassociateUCR =>
       saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, consolidations.routes.DisassociateUCRSummaryController.displayPage())
     case Choice.ShutMUCR =>
       saveAndRedirect(ShutMucrAnswers.fromQueryUcr, consolidations.routes.ShutMucrSummaryController.displayPage())
-    case Choice.ViewSubmissions =>
-      Future.successful(Redirect(routes.ViewSubmissionsController.displayPage()))
   }
 
   private def saveAndRedirect(answerProvider: Option[UcrBlock] => Answers, call: Call)(

@@ -52,7 +52,7 @@ class SpecificDateTimeViewSpec extends ViewSpec with Injector {
     }
 
     "display 'Back' button that links to Choice" in {
-      val backButton = createView.getGovUkBackButton
+      val backButton = createView.getBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())

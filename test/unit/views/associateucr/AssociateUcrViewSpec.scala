@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.associate_ucr
+package views.associateucr
 
 import base.Injector
 import models.UcrType.{Ducr, Mucr}
@@ -41,6 +41,16 @@ class AssociateUcrViewSpec extends ViewSpec with ViewMatchers with Injector {
     "form is empty" should {
 
       val emptyView = createView(mucrOptions, AssociateUcr.form)
+
+      "display 'Back' button" in {
+        val backButton = emptyView.getBackButton
+
+        backButton mustBe defined
+        backButton.foreach { button =>
+          button must containMessage("site.back")
+          button must haveHref(controllers.consolidations.routes.ManageMucrController.displayPage())
+        }
+      }
 
       "have 'DUCR' section" which {
 

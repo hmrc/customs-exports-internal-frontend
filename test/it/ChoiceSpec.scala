@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-import java.time.{LocalDate, LocalTime}
-import java.time.temporal.ChronoUnit
-
-import forms.common.{Date, Time}
-import forms.{ArrivalDetails, Choice, ConsignmentReferenceType, ConsignmentReferences}
-import models.UcrBlock
+import forms._
+import models.UcrType.Mucr
 import models.cache._
+import models.{UcrBlock, UcrType}
 import play.api.test.Helpers._
 
 class ChoiceSpec extends IntegrationSpec {
@@ -62,49 +59,73 @@ class ChoiceSpec extends IntegrationSpec {
     }
 
     "continue journey" when {
-      "Departure" in {
-        givenAuthSuccess("pid")
 
-        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Departure.value)
-
-        status(response) mustBe SEE_OTHER
-        theAnswersFor("pid") mustBe Some(DepartureAnswers())
-      }
+      val queryResult = UcrBlock("GB/123-12345", Mucr.codeValue)
 
       "Arrival" in {
         givenAuthSuccess("pid")
+        givenCacheFor(pid = "pid", queryUcr = queryResult)
 
         val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Arrival.value)
 
         status(response) mustBe SEE_OTHER
-        theAnswersFor("pid") mustBe Some(ArrivalAnswers())
+        theAnswersFor("pid") mustBe Some(
+          ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, queryResult.ucr)))
+        )
+      }
+
+      "Retrospective Arrival" in {
+        givenAuthSuccess("pid")
+        givenCacheFor(pid = "pid", queryUcr = queryResult)
+
+        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.RetrospectiveArrival.value)
+
+        status(response) mustBe SEE_OTHER
+        theAnswersFor("pid") mustBe Some(
+          RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, queryResult.ucr)))
+        )
+      }
+
+      "Departure" in {
+        givenAuthSuccess("pid")
+        givenCacheFor(pid = "pid", queryUcr = queryResult)
+
+        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Departure.value)
+
+        status(response) mustBe SEE_OTHER
+        theAnswersFor("pid") mustBe Some(
+          DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, queryResult.ucr)))
+        )
       }
 
       "Associate UCR" in {
         givenAuthSuccess("pid")
+        givenCacheFor(pid = "pid", queryUcr = queryResult)
 
         val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.AssociateUCR.value)
 
         status(response) mustBe SEE_OTHER
-        theAnswersFor("pid") mustBe Some(AssociateUcrAnswers())
+        theAnswersFor("pid") mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(queryResult))))
       }
 
       "Dissociate UCR" in {
         givenAuthSuccess("pid")
+        givenCacheFor(pid = "pid", queryUcr = queryResult)
 
         val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.DisassociateUCR.value)
 
         status(response) mustBe SEE_OTHER
-        theAnswersFor("pid") mustBe Some(DisassociateUcrAnswers())
+        theAnswersFor("pid") mustBe Some(DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Mucr, None, Some(queryResult.ucr)))))
       }
 
       "Shut MUCR" in {
         givenAuthSuccess("pid")
+        givenCacheFor(pid = "pid", queryUcr = queryResult)
 
         val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.ShutMUCR.value)
 
         status(response) mustBe SEE_OTHER
-        theAnswersFor("pid") mustBe Some(ShutMucrAnswers())
+        theAnswersFor("pid") mustBe Some(ShutMucrAnswers(shutMucr = Some(ShutMucr(queryResult.ucr))))
       }
     }
   }

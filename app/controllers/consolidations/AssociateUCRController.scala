@@ -41,21 +41,21 @@ class AssociateUCRController @Inject()(
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
     val associateUcrAnswers = request.answersAs[AssociateUcrAnswers]
-    val mucrOptions = associateUcrAnswers.mucrOptions.getOrElse(throw ReturnToStartException)
-    val associateUcr = associateUcrAnswers.associateUcr
+    val mucrOptions = associateUcrAnswers.parentMucr.getOrElse(throw ReturnToStartException)
+    val associateUcr = associateUcrAnswers.childUcr
 
     Ok(associateUcrPage(associateUcr.fold(form)(form.fill), mucrOptions))
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    val mucrOptions = request.answersAs[AssociateUcrAnswers].mucrOptions.getOrElse(throw ReturnToStartException)
+    val mucrOptions = request.answersAs[AssociateUcrAnswers].parentMucr.getOrElse(throw ReturnToStartException)
 
     form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions))),
         formData => {
-          val updatedCache = request.answersAs[AssociateUcrAnswers].copy(associateUcr = Some(formData))
+          val updatedCache = request.answersAs[AssociateUcrAnswers].copy(childUcr = Some(formData))
           cacheRepository.upsert(request.cache.update(updatedCache)).map { _ =>
             Redirect(consolidationRoutes.AssociateUCRSummaryController.displayPage())
           }

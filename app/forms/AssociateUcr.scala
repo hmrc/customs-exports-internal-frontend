@@ -16,8 +16,8 @@
 
 package forms
 
-import models.UcrType
 import models.UcrType._
+import models.{UcrBlock, UcrType}
 import play.api.data.Forms._
 import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.json._
@@ -53,4 +53,10 @@ object AssociateUcr {
   }
 
   val form: Form[AssociateUcr] = Form(mapping)
+
+  def apply(ucrBlock: UcrBlock): AssociateUcr =
+    AssociateUcr(ucr = ucrBlock.ucr, kind = ucrBlock.ucrType match {
+      case Ducr.codeValue => Ducr
+      case Mucr.codeValue => Mucr
+    })
 }

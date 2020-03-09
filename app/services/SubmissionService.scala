@@ -65,9 +65,9 @@ class SubmissionService @Inject()(
 
   def submit(providerId: String, answers: AssociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
-    val mucr = answers.mucrOptions.map(_.mucr).getOrElse(throw ReturnToStartException)
-    val ucr = answers.associateUcr.map(_.ucr).getOrElse(throw ReturnToStartException)
-    val exchange = answers.associateUcr.map(_.kind) match {
+    val mucr = answers.parentMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
+    val ucr = answers.childUcr.map(_.ucr).getOrElse(throw ReturnToStartException)
+    val exchange = answers.childUcr.map(_.kind) match {
       case Some(UcrType.Ducr) => AssociateDUCRExchange(providerId, eori, mucr, ucr)
       case Some(UcrType.Mucr) => AssociateMUCRExchange(providerId, eori, mucr, ucr)
     }

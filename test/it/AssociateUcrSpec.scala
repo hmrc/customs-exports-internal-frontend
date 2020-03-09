@@ -16,17 +16,78 @@
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
 import forms.MucrOptions.CreateOrAddValues.Create
-import forms.{AssociateKind, AssociateUcr, MucrOptions}
-import models.cache.AssociateUcrAnswers
+import forms.{AssociateUcr, ManageMucrChoice, MucrOptions}
+import models.cache.{AssociateUcrAnswers, Cache}
+import models.{UcrBlock, UcrType}
 import play.api.test.Helpers._
 
 class AssociateUcrSpec extends IntegrationSpec {
 
-  "UCR Options Page" when {
+  "Manage Mucr Page" when {
+    "GET" should {
+      "return 200 when queried mucr" in {
+        givenAuthSuccess("pid")
+        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
+
+        val response = get(controllers.consolidations.routes.ManageMucrController.displayPage())
+
+        status(response) mustBe OK
+      }
+
+      "throw IllegalStateException when queried ducr" in {
+        givenAuthSuccess("pid")
+        givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(UcrBlock("ducr", UcrType.Ducr.codeValue))))
+
+        intercept[IllegalStateException] {
+          await(get(controllers.consolidations.routes.ManageMucrController.displayPage()))
+        }
+      }
+    }
+
+    "POST" should {
+      "continue for associate this mucr" in {
+        givenAuthSuccess("pid")
+        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
+
+        val response = post(controllers.consolidations.routes.ManageMucrController.submit(), "choice" -> ManageMucrChoice.AssociateThisToMucr)
+
+        status(response) mustBe SEE_OTHER
+        redirectLocation(response) mustBe Some(controllers.consolidations.routes.MucrOptionsController.displayPage().url)
+        theAnswersFor("pid") mustBe Some(
+          AssociateUcrAnswers(
+            childUcr = Some(AssociateUcr(UcrBlock("mucr", UcrType.Mucr.codeValue))),
+            manageMucrChoice = Some(ManageMucrChoice(ManageMucrChoice.AssociateThisToMucr))
+          )
+        )
+      }
+
+      "continue for associate another mucr" in {
+        givenAuthSuccess("pid")
+        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
+
+        val response = post(controllers.consolidations.routes.ManageMucrController.submit(), "choice" -> ManageMucrChoice.AssociateAnotherUcrToThis)
+
+        status(response) mustBe SEE_OTHER
+        redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUCRController.displayPage().url)
+        theAnswersFor("pid") mustBe Some(
+          AssociateUcrAnswers(
+            parentMucr = Some(MucrOptions(UcrBlock("mucr", UcrType.Mucr.codeValue))),
+            manageMucrChoice = Some(ManageMucrChoice(ManageMucrChoice.AssociateAnotherUcrToThis))
+          )
+        )
+      }
+    }
+  }
+
+  "MUCR Options Page" when {
     "GET" should {
       "return 200" in {
         givenAuthSuccess("pid")
-        givenCacheFor("pid", AssociateUcrAnswers())
+        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
 
         val response = get(controllers.consolidations.routes.MucrOptionsController.displayPage())
 
@@ -37,13 +98,14 @@ class AssociateUcrSpec extends IntegrationSpec {
     "POST" should {
       "continue" in {
         givenAuthSuccess("pid")
-        givenCacheFor("pid", AssociateUcrAnswers())
+        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
 
         val response = post(controllers.consolidations.routes.MucrOptionsController.submit(), "createOrAdd" -> "create", "newMucr" -> "GB/123-12345")
 
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUCRController.displayPage().url)
-        theAnswersFor("pid") mustBe Some(AssociateUcrAnswers(mucrOptions = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345"))))
+        redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUCRSummaryController.displayPage().url)
+        theAnswersFor("pid") mustBe Some(AssociateUcrAnswers(parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345"))))
       }
     }
   }
@@ -52,7 +114,10 @@ class AssociateUcrSpec extends IntegrationSpec {
     "GET" should {
       "return 200" in {
         givenAuthSuccess("pid")
-        givenCacheFor("pid", AssociateUcrAnswers(mucrOptions = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345"))))
+        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        givenCacheFor(
+          Cache("pid", Some(AssociateUcrAnswers(parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")))), Some(queryUcr))
+        )
 
         val response = get(controllers.consolidations.routes.AssociateUCRController.displayPage())
 
@@ -63,7 +128,10 @@ class AssociateUcrSpec extends IntegrationSpec {
     "POST" should {
       "continue" in {
         givenAuthSuccess("pid")
-        givenCacheFor("pid", AssociateUcrAnswers(mucrOptions = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345"))))
+        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        givenCacheFor(
+          Cache("pid", Some(AssociateUcrAnswers(parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")))), Some(queryUcr))
+        )
 
         val response = post(controllers.consolidations.routes.AssociateUCRController.submit(), "kind" -> "mucr", "mucr" -> "GB/321-54321")
 
@@ -71,8 +139,8 @@ class AssociateUcrSpec extends IntegrationSpec {
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUCRSummaryController.displayPage().url)
         theAnswersFor("pid") mustBe Some(
           AssociateUcrAnswers(
-            mucrOptions = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
-            associateUcr = Some(AssociateUcr(AssociateKind.Mucr, "GB/321-54321"))
+            parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
+            childUcr = Some(AssociateUcr(UcrType.Mucr, "GB/321-54321"))
           )
         )
       }
@@ -83,11 +151,17 @@ class AssociateUcrSpec extends IntegrationSpec {
     "GET" should {
       "return 200" in {
         givenAuthSuccess("pid")
+        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
         givenCacheFor(
-          "pid",
-          AssociateUcrAnswers(
-            mucrOptions = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
-            associateUcr = Some(AssociateUcr(AssociateKind.Mucr, "GB/321-54321"))
+          Cache(
+            "pid",
+            Some(
+              AssociateUcrAnswers(
+                parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
+                childUcr = Some(AssociateUcr(UcrType.Mucr, "GB/321-54321"))
+              )
+            ),
+            Some(queryUcr)
           )
         )
 
@@ -100,11 +174,17 @@ class AssociateUcrSpec extends IntegrationSpec {
     "POST" should {
       "continue" in {
         givenAuthSuccess("pid")
+        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
         givenCacheFor(
-          "pid",
-          AssociateUcrAnswers(
-            mucrOptions = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
-            associateUcr = Some(AssociateUcr(AssociateKind.Mucr, "GB/321-54321"))
+          Cache(
+            "pid",
+            Some(
+              AssociateUcrAnswers(
+                parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
+                childUcr = Some(AssociateUcr(UcrType.Mucr, "GB/321-54321"))
+              )
+            ),
+            Some(queryUcr)
           )
         )
         givenMovementsBackendAcceptsTheConsolidation()

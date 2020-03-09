@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.storage.FlashKeys
 import javax.inject.Inject
 import models.ReturnToStartException
-import models.cache.AssociateUcrAnswers
+import models.cache.{AssociateUcrAnswers, JourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubmissionService
@@ -38,14 +38,17 @@ class AssociateUCRSummaryController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
+  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ASSOCIATE_UCR)) { implicit request =>
     val answers = request.answersAs[AssociateUcrAnswers]
-    val mucrOptions = answers.mucrOptions.getOrElse(throw ReturnToStartException)
-    val ucr = answers.associateUcr.getOrElse(throw ReturnToStartException)
-    Ok(associateUcrSummaryPage(ucr, mucrOptions.mucr))
+    if (isCacheDataValid(answers))
+      Ok(associateUcrSummaryPage(answers))
+    else
+      throw ReturnToStartException
   }
 
-  def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
+  private def isCacheDataValid(answers: AssociateUcrAnswers): Boolean = answers.parentMucr.isDefined && answers.childUcr.isDefined
+
+  def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ASSOCIATE_UCR)).async { implicit request =>
     val answers = request.answersAs[AssociateUcrAnswers]
 
     submissionService.submit(request.providerId, answers).map { _ =>

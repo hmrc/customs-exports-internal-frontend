@@ -12,6 +12,10 @@ GET         /choice                                controllers.ChoiceController.
 GET         /choice/:journey                       controllers.ChoiceController.startSpecificJourney(journey: forms.Choice)
 POST        /choice                                controllers.ChoiceController.submit()
 
+#Manage MUCR
+GET         /manage-mucr                          controllers.consolidations.ManageMucrController.displayPage()
+POST        /manage-mucr                          controllers.consolidations.ManageMucrController.submit()
+
 # MUCR options page
 GET         /mucr-options                          controllers.consolidations.MucrOptionsController.displayPage()
 POST        /mucr-options                          controllers.consolidations.MucrOptionsController.submit()
