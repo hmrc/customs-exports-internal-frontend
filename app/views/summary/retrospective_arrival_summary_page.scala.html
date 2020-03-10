@@ -14,50 +14,39 @@
  * limitations under the License.
  *@
 
+@import components.gds.{gds_main_template, pageTitle}
+@import components.summary._
 @import controllers.movements.routes
-@import forms.ConsignmentReferenceType
 @import models.cache.RetrospectiveArrivalAnswers
-@import models.viewmodels.HtmlTableRow
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.Title
-@import views.html.templates.main_template
+@import views.components.BackButton
 
-@this(main_template: main_template)
+@this(
+  govukLayout: gds_main_template,
+  govukButton: GovukButton,
+  pageTitle: pageTitle,
+  consignmentDetailsList: consignment_details_summary_list,
+  locationList: location_summary_list,
+  govukSummaryList : GovukSummaryList,
+  formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+)
 
 @(data: RetrospectiveArrivalAnswers)(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title("summary.retrospectiveArrival.title")){
+@govukLayout(
+  title = Title("summary.retrospectiveArrival.title"),
+  backButton = Some(BackButton(messages("site.back"), routes.LocationController.displayPage))) {
 
-    @components.back_link(routes.LocationController.displayPage())
+    @formHelper(action = routes.MovementSummaryController.submitMovementRequest(), 'autoComplete -> "off") {
 
-    @components.page_title(Some(messages("summary.retrospectiveArrival.title")))
+    @pageTitle(messages("summary.retrospectiveArrival.title"))
 
-    @components.summary_list_original(Some(messages("summary.consignmentDetails"))){
-        @components.table_row_no_change_link(HtmlTableRow(
-            label = messages("summary.referenceType"),
-            value = data.consignmentReferences.map(ref =>
-                if(ref.reference.equals(ConsignmentReferenceType.D)) {
-                    messages("consignmentReferences.reference.ducr")
-                } else {
-                    messages("consignmentReferences.reference.mucr")
-                }
-            )
-        ))
-        @components.table_row_no_change_link(HtmlTableRow(
-            label = messages("summary.referenceValue"),
-            value = data.consignmentReferences.map(_.referenceValue)
-        ))
-    }
+    @consignmentDetailsList(data.consignmentReferences)
 
-    @components.summary_list_original(Some(messages("location.title"))){
-        @components.table_row_no_change_link(HtmlTableRow(
-            label = messages("summary.goodsLocation"),
-            value = data.location.map(_.code)
-        ))
-    }
+    @locationList(data.location)
 
-    @helper.form(action = routes.MovementSummaryController.submitMovementRequest()){
-        @helper.CSRF.formField
+    @govukButton(Button(content = Text(messages("site.confirmAndSubmit"))))
 
-        @components.submit_button(messages("site.confirmAndSubmit"))
-    }
+  }
 }
