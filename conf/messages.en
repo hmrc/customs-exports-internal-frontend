@@ -47,7 +47,9 @@ global.error.title = There is a problem
 global.error.heading = There is a problem with a service
 global.error.message = Please try again later.
 
-movement.sectionHeading = {0} consignment {1}
+movement.sectionHeading.ARRIVE = Arrive consignment {0}
+movement.sectionHeading.DEPART = Depart consignment {0}
+movement.sectionHeading.RETROSPECTIVE_ARRIVE = Retrospectively arrive consignment {0}
 movement.choice.sectionHeading = Consignment {0}
 movement.choice.title = What do you want to do?
 movement.choice.arrival.label = Arrive
@@ -111,7 +113,6 @@ departure.details.error.overdue = Time of Departure cannot be more than 60 days 
 departure.details.error.future = Time of Departure cannot be in the future
 
 location.title = Location
-location.sectionHeader.retrospectiveArrival = Retrospectively arrive a consignment
 location.question = What is the goods location code?
 location.question.retrospectiveArrival = What was the goods location code?
 location.hint = This is an alphanumeric code. For example, GBAUEMAEMAEMA

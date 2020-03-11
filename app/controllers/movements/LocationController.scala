@@ -46,6 +46,7 @@ class LocationController @Inject()(
       val answers = request.answersAs[MovementAnswers]
       val location = answers.location
       val consignmentReference = answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
+
       Ok(locationPage(location.fold(form())(form().fill(_)), consignmentReference))
     }
 
