@@ -63,7 +63,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
         val backButton = emptyView.getElementById("back-link")
 
         backButton.text() mustBe messages("site.back")
-        backButton.attr("href") mustBe controllers.routes.ChoiceController.displayPage().toString()
+        backButton.attr("href") mustBe controllers.movements.routes.SpecificDateTimeController.displayPage().toString()
       }
 
       "have section header" in {

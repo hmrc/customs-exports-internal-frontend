@@ -45,11 +45,13 @@ object Answers {
 sealed trait MovementAnswers extends Answers {
   val consignmentReferences: Option[ConsignmentReferences]
   val location: Option[Location]
+  val specificDateTimeChoice: Option[SpecificDateTimeChoice]
 }
 
 case class ArrivalAnswers(
   override val eori: Option[String] = Answers.fakeEORI,
   override val consignmentReferences: Option[ConsignmentReferences] = None,
+  override val specificDateTimeChoice: Option[SpecificDateTimeChoice] = None,
   arrivalDetails: Option[ArrivalDetails] = None,
   override val location: Option[Location] = None
 ) extends MovementAnswers {
@@ -72,6 +74,7 @@ object ArrivalAnswers {
 case class RetrospectiveArrivalAnswers(
   override val eori: Option[String] = Answers.fakeEORI,
   override val consignmentReferences: Option[ConsignmentReferences] = None,
+  override val specificDateTimeChoice: Option[SpecificDateTimeChoice] = None,
   override val location: Option[Location] = None
 ) extends MovementAnswers {
   override val `type`: JourneyType.Value = JourneyType.RETROSPECTIVE_ARRIVE
@@ -95,6 +98,7 @@ object RetrospectiveArrivalAnswers {
 case class DepartureAnswers(
   override val eori: Option[String] = Answers.fakeEORI,
   override val consignmentReferences: Option[ConsignmentReferences] = None,
+  override val specificDateTimeChoice: Option[SpecificDateTimeChoice] = None,
   departureDetails: Option[DepartureDetails] = None,
   override val location: Option[Location] = None,
   goodsDeparted: Option[GoodsDeparted] = None,

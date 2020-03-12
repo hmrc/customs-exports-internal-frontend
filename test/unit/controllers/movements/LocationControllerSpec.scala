@@ -44,7 +44,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
     super.beforeEach()
 
     reset(page)
-    when(page.apply(any(), anyString())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), anyString(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -55,7 +55,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
   private def theResponseForm: Form[Location] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[Location]])
-    verify(page).apply(captor.capture(), any())(any(), any())
+    verify(page).apply(captor.capture(), any(), any())(any(), any())
     captor.getValue
   }
 

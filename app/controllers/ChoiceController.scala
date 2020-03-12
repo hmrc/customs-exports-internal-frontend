@@ -62,11 +62,11 @@ class ChoiceController @Inject()(
 
   private def proceed(choice: Choice)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] = choice match {
     case Choice.Arrival =>
-      saveAndRedirect(ArrivalAnswers.fromQueryUcr, movements.routes.MovementDetailsController.displayPage())
+      saveAndRedirect(ArrivalAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage())
     case Choice.RetrospectiveArrival =>
       saveAndRedirect(RetrospectiveArrivalAnswers.fromQueryUcr, movements.routes.LocationController.displayPage())
     case Choice.Departure =>
-      saveAndRedirect(DepartureAnswers.fromQueryUcr, movements.routes.MovementDetailsController.displayPage())
+      saveAndRedirect(DepartureAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage())
     case Choice.AssociateUCR =>
       saveAndRedirect(AssociateUcrAnswers.fromQueryUcr, consolidations.routes.MucrOptionsController.displayPage())
     case Choice.DisassociateUCR =>

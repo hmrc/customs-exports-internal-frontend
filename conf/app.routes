@@ -34,6 +34,10 @@ POST        /dissociate-ucr-summary                controllers.consolidations.Di
 # Disassociate UCR confirmation page
 GET         /dissociate-ucr-confirmation           controllers.consolidations.DisassociateUCRConfirmationController.displayPage()
 
+# Specific date-time page
+GET         /specific-date-and-time               controllers.movements.SpecificDateTimeController.displayPage()
+POST        /specific-date-and-time               controllers.movements.SpecificDateTimeController.submit()
+
 # Movement details page
 GET         /movement-details                      controllers.movements.MovementDetailsController.displayPage()
 POST        /movement-details                      controllers.movements.MovementDetailsController.saveMovementDetails()
