@@ -46,12 +46,13 @@ class LocationController @Inject()(
       val answers = request.answersAs[MovementAnswers]
       val location = answers.location
       val consignmentReference = answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
+
       Ok(locationPage(location.fold(form())(form().fill(_)), consignmentReference))
     }
 
   def saveLocation(): Action[AnyContent] =
     (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)).async { implicit request =>
-      def consignmentReference =
+      val consignmentReference =
         request.answersAs[MovementAnswers].consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
       form()
         .bindFromRequest()

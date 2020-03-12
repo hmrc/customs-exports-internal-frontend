@@ -14,12 +14,13 @@
  * limitations under the License.
  *@
 
+@import components.gds.{errorSummary, gds_main_template, pageTitle, sectionHeader}
+@import controllers.exchanges.JourneyRequest
 @import forms.GoodsDeparted
 @import forms.GoodsDeparted.DepartureLocation.{BackIntoTheUk, OutOfTheUk}
 @import views.Title
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.components.BackButton
-@import components.gds.{errorSummary, gds_main_template, pageTitle, sectionHeader}
 
 @this(
     govukLayout: gds_main_template,
@@ -27,19 +28,25 @@
     govukRadios: GovukRadios,
     pageTitle: pageTitle,
     errorSummary: errorSummary,
+    sectionHeader: sectionHeader,
     formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 )
 
-@(form: Form[GoodsDeparted])(implicit request: Request[_], messages: Messages)
+@(form: Form[GoodsDeparted], consignmentReference: String)(implicit request: JourneyRequest[_], messages: Messages)
+
+@sectionHeaderKey(request: JourneyRequest[_]) = @{s"movement.sectionHeading.${request.answers.`type`.toString}"}
 
 @govukLayout(
     title = Title("goodsDeparted.title"),
     backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.LocationController.displayPage()))) {
 
     @formHelper(action = controllers.movements.routes.GoodsDepartedController.saveGoodsDeparted(), 'autoComplete -> "off") {
-        @errorSummary(form.errors)
 
-        @govukRadios(Radios(
+      @errorSummary(form.errors)
+
+      @sectionHeader(messages(sectionHeaderKey(request), consignmentReference))
+
+      @govukRadios(Radios(
             name = "departureLocation",
             fieldset = Some(Fieldset(
                 legend = Some(Legend(

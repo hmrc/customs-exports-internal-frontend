@@ -18,10 +18,11 @@ package views.movement
 
 import base.Injector
 import controllers.movements.routes
-import forms.{DisassociateUcr, GoodsDeparted}
+import forms.GoodsDeparted
 import models.cache.DepartureAnswers
 import org.jsoup.nodes.Document
 import play.api.data.FormError
+import testdata.CommonTestData.validDucr
 import views.ViewSpec
 import views.html.goods_departed
 
@@ -35,11 +36,19 @@ class GoodsDepartedViewSpec extends ViewSpec with Injector {
 
     "display title" in {
 
-      goodsDepartedPage(GoodsDeparted.form).getTitle must containMessage("goodsDeparted.title")
+      goodsDepartedPage(GoodsDeparted.form, validDucr).getTitle must containMessage("goodsDeparted.title")
+    }
+
+    "display section header" in {
+
+      val sectionHeader = goodsDepartedPage(GoodsDeparted.form, validDucr).getElementById("section-header")
+
+      sectionHeader must containMessage("movement.sectionHeading.DEPART", validDucr)
     }
 
     "display radio input" in {
-      val view = goodsDepartedPage(GoodsDeparted.form)
+
+      val view = goodsDepartedPage(GoodsDeparted.form, validDucr)
 
       view.getElementsByClass("govuk-fieldset__heading").first() must containMessage("goodsDeparted.header")
       view.getElementsByAttributeValue("for", "departureLocation").text() must be(messages("goodsDeparted.departureLocation.outOfTheUk"))
@@ -48,16 +57,17 @@ class GoodsDepartedViewSpec extends ViewSpec with Injector {
 
     "display back button" in {
 
-      val backButton = goodsDepartedPage(GoodsDeparted.form).getGovUkBackButton
+      val backButton = goodsDepartedPage(GoodsDeparted.form, validDucr).getGovUkBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(routes.LocationController.displayPage())
     }
 
     "display error summary" when {
+
       "there are errors in the form" in {
 
-        val view: Document = goodsDepartedPage(GoodsDeparted.form.withError(FormError("departureLocation", "error.required")))
+        val view: Document = goodsDepartedPage(GoodsDeparted.form.withError(FormError("departureLocation", "error.required")), validDucr)
 
         view must haveGovUkGlobalErrorSummary
         view must haveGovUkFieldError("departureLocation", messages("error.required"))
@@ -65,9 +75,10 @@ class GoodsDepartedViewSpec extends ViewSpec with Injector {
     }
 
     "not display error summary" when {
+
       "there are no errors in the form" in {
 
-        goodsDepartedPage(GoodsDeparted.form).getErrorSummary mustBe empty
+        goodsDepartedPage(GoodsDeparted.form, validDucr).getErrorSummary mustBe empty
       }
     }
   }

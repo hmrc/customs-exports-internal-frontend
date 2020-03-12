@@ -20,7 +20,8 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import forms.GoodsDeparted
 import forms.GoodsDeparted.form
 import javax.inject.{Inject, Singleton}
-import models.cache.{Cache, DepartureAnswers, JourneyType}
+import models.ReturnToStartException
+import models.cache.{Cache, DepartureAnswers, JourneyType, MovementAnswers}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -41,16 +42,20 @@ class GoodsDepartedController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)) { implicit request =>
-    val goodsDeparted = request.answersAs[DepartureAnswers].goodsDeparted
+    val answers = request.answersAs[DepartureAnswers]
+    val goodsDeparted = answers.goodsDeparted
+    val consignmentReference = answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
 
-    Ok(goodsDepartedPage(goodsDeparted.fold(form)(form.fill(_))))
+    Ok(goodsDepartedPage(goodsDeparted.fold(form)(form.fill(_)), consignmentReference))
   }
 
   def saveGoodsDeparted(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)).async { implicit request =>
+    val consignmentReference =
+      request.answersAs[MovementAnswers].consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
     form
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[GoodsDeparted]) => Future.successful(BadRequest(goodsDepartedPage(formWithErrors))),
+        (formWithErrors: Form[GoodsDeparted]) => Future.successful(BadRequest(goodsDepartedPage(formWithErrors, consignmentReference))),
         validGoodsDeparted => {
           val updatedAnswers = request.answersAs[DepartureAnswers].copy(goodsDeparted = Some(validGoodsDeparted))
 
