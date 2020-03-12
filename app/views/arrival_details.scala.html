@@ -35,7 +35,7 @@
 
 @govukLayout(
     title = Title("arrivalDetails.header"),
-    backButton = Some(BackButton(messages("site.back"), controllers.routes.ChoiceController.displayPage))) {
+    backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.SpecificDateTimeController.displayPage))) {
 
     @formHelper(action = controllers.movements.routes.MovementDetailsController.saveMovementDetails(), 'autoComplete -> "off") {
         @errorSummary(form.errors)

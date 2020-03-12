@@ -122,7 +122,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().startSpecificJourney(Choice.Arrival)(getRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(movements.routes.MovementDetailsController.displayPage().url)
+        redirectLocation(result) mustBe Some(movements.routes.SpecificDateTimeController.displayPage().url)
       }
 
       "user chooses departure" in {
@@ -130,7 +130,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().startSpecificJourney(Choice.Departure)(getRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(movements.routes.MovementDetailsController.displayPage().url)
+        redirectLocation(result) mustBe Some(movements.routes.SpecificDateTimeController.displayPage().url)
       }
 
       "user chooses associate ucr" in {
@@ -186,7 +186,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(Arrival))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(movements.routes.MovementDetailsController.displayPage().url)
+        redirectLocation(result) mustBe Some(movements.routes.SpecificDateTimeController.displayPage().url)
         theCacheUpserted.answers mustBe Some(ArrivalAnswers(Answers.fakeEORI))
       }
 
@@ -195,7 +195,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(Departure))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(movements.routes.MovementDetailsController.displayPage().url)
+        redirectLocation(result) mustBe Some(movements.routes.SpecificDateTimeController.displayPage().url)
         theCacheUpserted.answers mustBe Some(DepartureAnswers(Answers.fakeEORI))
       }
 

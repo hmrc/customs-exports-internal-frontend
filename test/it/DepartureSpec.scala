@@ -31,6 +31,64 @@ class DepartureSpec extends IntegrationSpec {
   private val time = LocalTime.now().truncatedTo(ChronoUnit.MINUTES)
   private val datetime = LocalDateTime.of(date, time).toInstant(ZoneOffset.UTC)
 
+  "Specific Date/Time Page" when {
+    "GET" should {
+      "return 200" in {
+        // Given
+        givenAuthSuccess("eori")
+        givenCacheFor("eori", DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345"))))
+
+        // When
+        val response = get(controllers.movements.routes.SpecificDateTimeController.displayPage())
+
+        // Then
+        status(response) mustBe OK
+      }
+    }
+
+    "POST" should {
+      "continue" when {
+        "user elects to enter date time" in {
+          // Given
+          givenAuthSuccess("eori")
+          givenCacheFor("eori", DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345"))))
+
+          // When
+          val response = post(controllers.movements.routes.SpecificDateTimeController.submit(), "choice" -> SpecificDateTimeChoice.UserDateTime)
+
+          // Then
+          status(response) mustBe SEE_OTHER
+          redirectLocation(response) mustBe Some(controllers.movements.routes.MovementDetailsController.displayPage().url)
+          theAnswersFor("eori") mustBe Some(
+            DepartureAnswers(
+              consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
+              specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime))
+            )
+          )
+        }
+        "user elects to current date time" in {
+          // Given
+          givenAuthSuccess("eori")
+          givenCacheFor("eori", DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345"))))
+
+          // When
+          val response = post(controllers.movements.routes.SpecificDateTimeController.submit(), "choice" -> SpecificDateTimeChoice.CurrentDateTime)
+
+          // Then
+          status(response) mustBe SEE_OTHER
+          redirectLocation(response) mustBe Some(controllers.movements.routes.LocationController.displayPage().url)
+          theAnswersFor("eori") mustBe Some(
+            DepartureAnswers(
+              consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
+              departureDetails = Some(DepartureDetails(dateTimeProvider.dateNow, dateTimeProvider.timeNow)),
+              specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime))
+            )
+          )
+        }
+      }
+    }
+  }
+
   "Movement Details Page" when {
     "GET" should {
       "return 200" in {

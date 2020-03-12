@@ -95,7 +95,7 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
       val backButton = view.getGovUkBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
+      backButton.get must haveHref(controllers.movements.routes.SpecificDateTimeController.displayPage())
     }
 
     "render error summary" when {
