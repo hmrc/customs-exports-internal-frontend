@@ -44,18 +44,29 @@
     }
 }
 
+@pageTitleKey(request: JourneyRequest[_]) = @{
+    if (request.answers.`type` == JourneyType.RETROSPECTIVE_ARRIVE)
+        "location.question.retrospectiveArrival"
+    else
+        "location.question"
+}
+
+@sectionHeaderKey(request: JourneyRequest[_]) = @{s"movement.sectionHeading.${request.answers.`type`.toString}"}
+
+
 @govukLayout(
-    title = Title("location.question"),
+    title = Title(pageTitleKey(request)),
     backButton = Some(BackButton(messages("site.back"), backLink))) {
-    @formHelper(action = controllers.movements.routes.LocationController.saveLocation(), 'autoComplete -> "off") {
+
+        @formHelper(action = controllers.movements.routes.LocationController.saveLocation(), 'autoComplete -> "off") {
 
         @errorSummary(form.errors)
 
-        @sectionHeader(messages("movement.sectionHeading", request.answers.`type`.toString.toLowerCase.capitalize, consignmentReference))
+        @sectionHeader(messages(sectionHeaderKey(request), consignmentReference))
 
         @exportsInputText(
             field = form("code"),
-            labelKey = "location.question",
+            labelKey = pageTitleKey(request),
             hintKey = Some("location.hint"),
             isPageHeading = true
         )
