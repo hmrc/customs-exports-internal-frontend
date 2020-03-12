@@ -17,6 +17,7 @@
 package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.exchanges.JourneyRequest
 import forms.Location
 import forms.Location.form
 import javax.inject.{Inject, Singleton}
@@ -43,10 +44,8 @@ class LocationController @Inject()(
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)) { implicit request =>
-      val answers = request.answersAs[MovementAnswers]
-      val location = answers.location
-      val consignmentReference = answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
-      Ok(locationPage(location.fold(form())(form().fill(_)), consignmentReference))
+      val location = request.answersAs[MovementAnswers].location
+      Ok(buildPage(location.fold(form())(form().fill(_))))
     }
 
   def saveLocation(): Action[AnyContent] =
@@ -56,7 +55,7 @@ class LocationController @Inject()(
       form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[Location]) => Future.successful(BadRequest(locationPage(formWithErrors, consignmentReference))),
+          (formWithErrors: Form[Location]) => Future.successful(BadRequest(buildPage(formWithErrors))),
           validLocation => {
             request.answers match {
               case arrivalAnswers: ArrivalAnswers =>
@@ -75,4 +74,9 @@ class LocationController @Inject()(
           }
         )
     }
+
+  private def buildPage(form: Form[Location])(implicit request: JourneyRequest[_]) = {
+    val answers = request.answersAs[MovementAnswers]
+    locationPage(form, answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException), answers.specificDateTimeChoice)
+  }
 }

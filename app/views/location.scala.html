@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.Title
 @import views.components.BackButton
+@import forms.SpecificDateTimeChoice
 
 @this(
         govukLayout: gds_main_template,
@@ -33,12 +34,13 @@
 )
 
 
-@(form: Form[Location], consignmentReference: String)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[Location], consignmentReference: String, specificDateTimeChoice: Option[SpecificDateTimeChoice])(implicit request: JourneyRequest[_], messages: Messages)
 
 @backLink()(implicit request: JourneyRequest[_]) = @{
     request.answers.`type` match {
-        case JourneyType.ARRIVE | JourneyType.DEPART => controllers.movements.routes.MovementDetailsController.displayPage
         case JourneyType.RETROSPECTIVE_ARRIVE => controllers.routes.ChoiceController.displayPage
+        case _ if specificDateTimeChoice.map(_.choice).contains(SpecificDateTimeChoice.CurrentDateTime) => controllers.movements.routes.SpecificDateTimeController.displayPage
+        case _ => controllers.movements.routes.MovementDetailsController.displayPage
     }
 }
 
