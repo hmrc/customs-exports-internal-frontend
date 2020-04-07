@@ -17,8 +17,8 @@
 package models.cache
 
 import base.UnitSpec
-import forms.{AssociateKind, ConsignmentReferenceType, DisassociateKind}
-import models.UcrBlock
+import forms.ConsignmentReferenceType
+import models.{UcrBlock, UcrType}
 import play.api.libs.json.{JsObject, JsString, JsSuccess, JsValue}
 
 class AnswersSpec extends UnitSpec {
@@ -145,14 +145,14 @@ class AnswersSpec extends UnitSpec {
 
       val answer = AssociateUcrAnswers.fromQueryUcr(Some(ducrQuery))
       answer.associateUcr.map(_.ucr) mustBe Some("ducr")
-      answer.associateUcr.map(_.kind) mustBe Some(AssociateKind.Ducr)
+      answer.associateUcr.map(_.kind) mustBe Some(UcrType.Ducr)
     }
 
     "correctly create AssociateUcrAnswers from mucr query" in {
 
       val answer = AssociateUcrAnswers.fromQueryUcr(Some(mucrQuery))
       answer.associateUcr.map(_.ucr) mustBe Some("mucr")
-      answer.associateUcr.map(_.kind) mustBe Some(AssociateKind.Mucr)
+      answer.associateUcr.map(_.kind) mustBe Some(UcrType.Mucr)
     }
 
     "correctly create AssociateUcrAnswers from no query" in {
@@ -165,14 +165,14 @@ class AnswersSpec extends UnitSpec {
 
       val answer = DisassociateUcrAnswers.fromQueryUcr(Some(ducrQuery))
       answer.ucr.map(_.ucr) mustBe Some("ducr")
-      answer.ucr.map(_.kind) mustBe Some(DisassociateKind.Ducr)
+      answer.ucr.map(_.kind) mustBe Some(UcrType.Ducr)
     }
 
     "correctly create DisassociateUcrAnswers from mucr query" in {
 
       val answer = DisassociateUcrAnswers.fromQueryUcr(Some(mucrQuery))
       answer.ucr.map(_.ucr) mustBe Some("mucr")
-      answer.ucr.map(_.kind) mustBe Some(DisassociateKind.Mucr)
+      answer.ucr.map(_.kind) mustBe Some(UcrType.Mucr)
     }
 
     "correctly create DisassociateUcrAnswers from no query" in {

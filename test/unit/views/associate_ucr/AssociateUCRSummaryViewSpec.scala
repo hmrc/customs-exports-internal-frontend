@@ -17,8 +17,8 @@
 package views.associate_ucr
 
 import base.Injector
-import forms.AssociateKind.Ducr
 import forms.AssociateUcr
+import models.UcrType
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
@@ -31,7 +31,7 @@ class AssociateUCRSummaryViewSpec extends ViewSpec with Injector {
   private val page = instanceOf[associate_ucr_summary]
 
   private def createView(mucr: String, ducr: String): Html =
-    page(AssociateUcr(Ducr, ducr), mucr)
+    page(AssociateUcr(UcrType.Ducr, ducr), mucr)
 
   "Associate UCR Confirmation View" should {
 

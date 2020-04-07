@@ -15,7 +15,8 @@
  */
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
-import forms.{DisassociateKind, DisassociateUcr}
+import forms.DisassociateUcr
+import models.UcrType
 import models.cache.DisassociateUcrAnswers
 import play.api.test.Helpers._
 
@@ -26,10 +27,7 @@ class DissociateUcrSpec extends IntegrationSpec {
       "return 200" in {
         // Given
         givenAuthSuccess("pid")
-        givenCacheFor(
-          "pid",
-          DisassociateUcrAnswers(ucr = Some(DisassociateUcr(kind = DisassociateKind.Mucr, mucr = Some("GB/321-54321"), ducr = None)))
-        )
+        givenCacheFor("pid", DisassociateUcrAnswers(ucr = Some(DisassociateUcr(kind = UcrType.Mucr, mucr = Some("GB/321-54321"), ducr = None))))
 
         // When
         val response = get(controllers.consolidations.routes.DisassociateUCRSummaryController.displayPage())
@@ -43,10 +41,7 @@ class DissociateUcrSpec extends IntegrationSpec {
       "continue" in {
         // Given
         givenAuthSuccess("pid")
-        givenCacheFor(
-          "pid",
-          DisassociateUcrAnswers(ucr = Some(DisassociateUcr(kind = DisassociateKind.Mucr, mucr = Some("GB/321-54321"), ducr = None)))
-        )
+        givenCacheFor("pid", DisassociateUcrAnswers(ucr = Some(DisassociateUcr(kind = UcrType.Mucr, mucr = Some("GB/321-54321"), ducr = None))))
         givenMovementsBackendAcceptsTheConsolidation()
 
         // When

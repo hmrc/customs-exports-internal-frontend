@@ -17,7 +17,7 @@
 package models.cache
 
 import forms.{AssociateUcr, MucrOptions, _}
-import models.UcrBlock
+import models.{UcrBlock, UcrType}
 import models.UcrBlock.{ducrType, mucrType}
 import models.cache.JourneyType.JourneyType
 import play.api.libs.json.{Format, Json}
@@ -133,9 +133,9 @@ object AssociateUcrAnswers {
 
   def fromQueryUcr(queryUcr: Option[UcrBlock]): AssociateUcrAnswers = queryUcr match {
     case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
-      AssociateUcrAnswers(associateUcr = Some(AssociateUcr(AssociateKind.Mucr, ucrBlock.ucr)))
+      AssociateUcrAnswers(associateUcr = Some(AssociateUcr(UcrType.Mucr, ucrBlock.ucr)))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
-      AssociateUcrAnswers(associateUcr = Some(AssociateUcr(AssociateKind.Ducr, ucrBlock.ucr)))
+      AssociateUcrAnswers(associateUcr = Some(AssociateUcr(UcrType.Ducr, ucrBlock.ucr)))
     case _ =>
       AssociateUcrAnswers()
   }
@@ -150,9 +150,9 @@ object DisassociateUcrAnswers {
 
   def fromQueryUcr(queryUcr: Option[UcrBlock]): DisassociateUcrAnswers = queryUcr match {
     case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
-      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(DisassociateKind.Mucr, None, Some(ucrBlock.ucr))))
+      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Mucr, None, Some(ucrBlock.ucr))))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
-      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(DisassociateKind.Ducr, Some(ucrBlock.ucr), None)))
+      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Ducr, Some(ucrBlock.ucr), None)))
     case _ =>
       DisassociateUcrAnswers()
   }

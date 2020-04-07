@@ -17,7 +17,7 @@
 package views.associate_ucr
 
 import base.Injector
-import forms.AssociateKind.{Ducr, Mucr}
+import models.UcrType.{Ducr, Mucr}
 import forms.{AssociateUcr, MucrOptions}
 import play.api.data.Form
 import play.api.mvc.{AnyContent, Request}

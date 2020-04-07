@@ -16,7 +16,8 @@
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
 import forms.MucrOptions.CreateOrAddValues.Create
-import forms.{AssociateKind, AssociateUcr, MucrOptions}
+import forms.{AssociateUcr, MucrOptions}
+import models.UcrType
 import models.cache.AssociateUcrAnswers
 import play.api.test.Helpers._
 
@@ -72,7 +73,7 @@ class AssociateUcrSpec extends IntegrationSpec {
         theAnswersFor("pid") mustBe Some(
           AssociateUcrAnswers(
             mucrOptions = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
-            associateUcr = Some(AssociateUcr(AssociateKind.Mucr, "GB/321-54321"))
+            associateUcr = Some(AssociateUcr(UcrType.Mucr, "GB/321-54321"))
           )
         )
       }
@@ -87,7 +88,7 @@ class AssociateUcrSpec extends IntegrationSpec {
           "pid",
           AssociateUcrAnswers(
             mucrOptions = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
-            associateUcr = Some(AssociateUcr(AssociateKind.Mucr, "GB/321-54321"))
+            associateUcr = Some(AssociateUcr(UcrType.Mucr, "GB/321-54321"))
           )
         )
 
@@ -104,7 +105,7 @@ class AssociateUcrSpec extends IntegrationSpec {
           "pid",
           AssociateUcrAnswers(
             mucrOptions = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
-            associateUcr = Some(AssociateUcr(AssociateKind.Mucr, "GB/321-54321"))
+            associateUcr = Some(AssociateUcr(UcrType.Mucr, "GB/321-54321"))
           )
         )
         givenMovementsBackendAcceptsTheConsolidation()

@@ -16,40 +16,15 @@
 
 package forms
 
-import forms.AssociateKind.{Ducr, Mucr}
+import models.UcrType
+import models.UcrType._
 import play.api.data.Forms._
-import play.api.data.format.Formatter
-import play.api.data.{Form, FormError, Forms, Mapping}
+import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.json._
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
 import utils.FieldValidator._
 
-sealed abstract class AssociateKind(val formValue: String)
-
-object AssociateKind {
-  case object Mucr extends AssociateKind("mucr")
-  case object Ducr extends AssociateKind("ducr")
-
-  private val lookup = PartialFunction[String, AssociateKind] {
-    case Mucr.formValue => Mucr
-    case Ducr.formValue => Ducr
-  }
-
-  implicit val formatter: Formatter[AssociateKind] = new Formatter[AssociateKind] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], AssociateKind] = {
-      data.get(key).map { kind =>
-        lookup.andThen(Right.apply).applyOrElse(kind, (_: String) => Left(Seq(FormError(key, "error.unknown"))))
-      }
-    }.getOrElse(Left(Seq(FormError(key, "error.required"))))
-
-    override def unbind(key: String, value: AssociateKind): Map[String, String] = Map(key -> value.formValue)
-  }
-
-  implicit val format =
-    Format[AssociateKind](Reads.StringReads.collect(JsonValidationError("error.unknown"))(lookup), Writes(kind => JsString(kind.formValue)))
-}
-
-case class AssociateUcr(kind: AssociateKind, ucr: String)
+case class AssociateUcr(kind: UcrType, ucr: String)
 
 object AssociateUcr {
   val formId: String = "AssociateDucr"
@@ -57,13 +32,13 @@ object AssociateUcr {
   implicit val format = Json.format[AssociateUcr]
 
   val mapping: Mapping[AssociateUcr] = {
-    def bind(associateKind: AssociateKind, ducr: Option[String], mucr: Option[String]): AssociateUcr =
+    def bind(associateKind: UcrType, ducr: Option[String], mucr: Option[String]): AssociateUcr =
       associateKind match {
         case Ducr => AssociateUcr(Ducr, ducr.get)
         case Mucr => AssociateUcr(Mucr, mucr.get)
       }
 
-    def unbind(value: AssociateUcr): Option[(AssociateKind, Option[String], Option[String])] =
+    def unbind(value: AssociateUcr): Option[(UcrType, Option[String], Option[String])] =
       value.kind match {
         case Ducr => Some((value.kind, Some(value.ucr), None))
         case Mucr => Some((value.kind, None, Some(value.ucr)))
@@ -71,7 +46,7 @@ object AssociateUcr {
       }
 
     Forms.mapping(
-      "kind" -> of[AssociateKind],
+      "kind" -> of[UcrType](UcrType.formatter),
       "ducr" -> mandatoryIfEqual("kind", Ducr.formValue, text().verifying("ducr.error.format", validDucr)),
       "mucr" -> mandatoryIfEqual("kind", Mucr.formValue, text().verifying("mucr.error.format", validMucr))
     )(bind)(unbind)

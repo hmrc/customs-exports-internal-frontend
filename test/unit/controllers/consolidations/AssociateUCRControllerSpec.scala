@@ -17,9 +17,9 @@
 package controllers.consolidations
 
 import controllers.ControllerLayerSpec
-import forms.{AssociateKind, AssociateUcr, MucrOptions}
-import models.ReturnToStartException
+import forms.{AssociateUcr, MucrOptions}
 import models.cache.AssociateUcrAnswers
+import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.libs.json.Json
@@ -74,7 +74,7 @@ class AssociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
 
         val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")))
         val correctForm =
-          Json.toJson(AssociateUcr.mapping.unbind(AssociateUcr(AssociateKind.Ducr, "5GB123456789000-123ABC456DEFIIIII")))
+          Json.toJson(AssociateUcr.mapping.unbind(AssociateUcr(UcrType.Ducr, "5GB123456789000-123ABC456DEFIIIII")))
         val result = controller(cachedData).submit()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
@@ -87,7 +87,7 @@ class AssociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
 
         val cachedData = AssociateUcrAnswers(mucrOptions = Some(MucrOptions("123")))
         val correctForm =
-          Json.toJson(AssociateUcr.mapping.unbind(AssociateUcr(AssociateKind.Ducr, "incorrect")))
+          Json.toJson(AssociateUcr.mapping.unbind(AssociateUcr(UcrType.Ducr, "incorrect")))
         val result = controller(cachedData).submit()(postRequest(correctForm))
 
         status(result) mustBe BAD_REQUEST
@@ -105,7 +105,7 @@ class AssociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
 
       "submit method is invoked without mucr options" in {
 
-        val correctForm = Json.toJson(AssociateUcr(AssociateKind.Mucr, "5GB123456789000-123ABC456DEFIIIII"))
+        val correctForm = Json.toJson(AssociateUcr(UcrType.Mucr, "5GB123456789000-123ABC456DEFIIIII"))
 
         intercept[ReturnToStartException.type] {
           await(controller(AssociateUcrAnswers()).submit()(postRequest(correctForm)))

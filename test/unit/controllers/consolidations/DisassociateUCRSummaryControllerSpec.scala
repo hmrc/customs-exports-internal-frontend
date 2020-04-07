@@ -19,8 +19,8 @@ package controllers.consolidations
 import base.Injector
 import controllers.ControllerLayerSpec
 import controllers.storage.FlashKeys
-import forms.{DisassociateKind, DisassociateUcr}
-import models.ReturnToStartException
+import forms.DisassociateUcr
+import models.{ReturnToStartException, UcrType}
 import models.cache.{Answers, DisassociateUcrAnswers, JourneyType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
@@ -63,7 +63,7 @@ class DisassociateUCRSummaryControllerSpec extends ControllerLayerSpec with Scal
     disassociateUcrCaptor.getValue
   }
 
-  private val ucr: DisassociateUcr = DisassociateUcr(DisassociateKind.Ducr, ducr = Some("DUCR"), mucr = None)
+  private val ucr: DisassociateUcr = DisassociateUcr(UcrType.Ducr, ducr = Some("DUCR"), mucr = None)
 
   "Disassociate Ucr Summary Controller on displayPage" should {
 
