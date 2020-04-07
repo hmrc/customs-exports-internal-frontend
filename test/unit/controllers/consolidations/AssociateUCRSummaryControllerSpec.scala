@@ -18,9 +18,8 @@ package controllers.consolidations
 
 import controllers.ControllerLayerSpec
 import controllers.storage.FlashKeys
-import forms.AssociateKind.Ducr
 import forms.{AssociateUcr, MucrOptions}
-import models.ReturnToStartException
+import models.{ReturnToStartException, UcrType}
 import models.cache.{Answers, AssociateUcrAnswers, JourneyType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
@@ -65,7 +64,7 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
   }
 
   private val mucrOptions = MucrOptions("MUCR")
-  private val associateUcr = AssociateUcr(Ducr, "DUCR")
+  private val associateUcr = AssociateUcr(UcrType.Ducr, "DUCR")
 
   "Associate Ducr Summary Controller on displayPage" should {
 

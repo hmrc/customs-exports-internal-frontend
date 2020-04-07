@@ -20,7 +20,7 @@ import controllers.actions.AuthenticatedAction
 import controllers.consolidations.{routes => consolidationRoutes}
 import forms.Choice._
 import forms._
-import models.UcrBlock
+import models.{UcrBlock, UcrType}
 import models.UcrBlock.mucrType
 import models.cache._
 import org.mockito.ArgumentCaptor
@@ -299,7 +299,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(AssociateUCR))
 
         status(result) mustBe SEE_OTHER
-        theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(Answers.fakeEORI, associateUcr = Some(AssociateUcr(AssociateKind.Mucr, "mucr"))))
+        theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(Answers.fakeEORI, associateUcr = Some(AssociateUcr(UcrType.Mucr, "mucr"))))
         theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
 
@@ -311,7 +311,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe SEE_OTHER
         theCacheUpserted.answers mustBe Some(
-          DisassociateUcrAnswers(Answers.fakeEORI, ucr = Some(DisassociateUcr(DisassociateKind.Mucr, None, Some("mucr"))))
+          DisassociateUcrAnswers(Answers.fakeEORI, ucr = Some(DisassociateUcr(UcrType.Mucr, None, Some("mucr"))))
         )
         theCacheUpserted.queryUcr mustBe Some(queryResult)
       }

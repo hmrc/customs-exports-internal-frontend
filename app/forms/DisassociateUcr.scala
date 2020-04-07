@@ -16,42 +16,16 @@
 
 package forms
 
-import models.ReturnToStartException
+import models.{ReturnToStartException, UcrType}
 import play.api.data.Forms._
-import play.api.data.format.Formatter
-import play.api.data.{Form, FormError, Forms, Mapping}
+import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.json._
 import utils.FieldValidator._
 
-sealed abstract class DisassociateKind(val formValue: String)
-
-object DisassociateKind {
-  case object Mucr extends DisassociateKind("mucr")
-  case object Ducr extends DisassociateKind("ducr")
-
-  private val lookup = PartialFunction[String, DisassociateKind] {
-    case Mucr.formValue => Mucr
-    case Ducr.formValue => Ducr
-  }
-
-  implicit val formatter: Formatter[DisassociateKind] = new Formatter[DisassociateKind] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], DisassociateKind] = {
-      data.get(key).map { kind =>
-        lookup.andThen(Right.apply).applyOrElse(kind, (_: String) => Left(Seq(FormError(key, "error.unknown"))))
-      }
-    }.getOrElse(Left(Seq(FormError(key, "error.required"))))
-
-    override def unbind(key: String, value: DisassociateKind): Map[String, String] = Map(key -> value.formValue)
-  }
-
-  implicit val format =
-    Format[DisassociateKind](Reads.StringReads.collect(JsonValidationError("error.unknown"))(lookup), Writes(kind => JsString(kind.formValue)))
-}
-
-case class DisassociateUcr(kind: DisassociateKind, ducr: Option[String], mucr: Option[String]) {
+case class DisassociateUcr(kind: UcrType, ducr: Option[String], mucr: Option[String]) {
   def ucr: String = kind match {
-    case DisassociateKind.Mucr => mucr.getOrElse(throw ReturnToStartException)
-    case DisassociateKind.Ducr => ducr.getOrElse(throw ReturnToStartException)
+    case UcrType.Mucr => mucr.getOrElse(throw ReturnToStartException)
+    case UcrType.Ducr => ducr.getOrElse(throw ReturnToStartException)
   }
 }
 
@@ -64,7 +38,7 @@ object DisassociateUcr {
 
   val mapping: Mapping[DisassociateUcr] =
     Forms.mapping(
-      "kind" -> of[DisassociateKind],
+      "kind" -> of[UcrType](UcrType.formatter),
       "ducr" -> mandatoryIfEqual(
         "kind",
         "ducr",
