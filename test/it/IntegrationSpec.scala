@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, LocalDateTime, ZoneOffset}
+import java.time.{Clock, LocalDateTime}
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import connectors.{AuditWiremockTestServer, AuthWiremockTestServer, MovementsBackendWiremockTestServer}
 import models.cache.{Answers, Cache}
 import models.{DateTimeProvider, UcrBlock}
+import modules.DateTimeModule
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -50,7 +51,7 @@ abstract class IntegrationSpec
    */
   private lazy val cacheRepository: JSONCollection = app.injector.instanceOf[CacheRepository].collection
 
-  val dateTimeProvider = new DateTimeProvider(Clock.fixed(LocalDateTime.now().toInstant(ZoneOffset.UTC), ZoneOffset.UTC))
+  val dateTimeProvider = new DateTimeProvider(Clock.fixed(LocalDateTime.now().atZone(DateTimeModule.timezone).toInstant, DateTimeModule.timezone))
 
   override lazy val port = 14681
   override def fakeApplication(): Application =

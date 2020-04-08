@@ -16,20 +16,23 @@
 
 package modules
 
-import java.time.{Clock, ZoneId}
 import java.time.format.DateTimeFormatter
+import java.time.{Clock, ZoneId}
 
 import com.google.inject.AbstractModule
 import javax.inject.{Inject, Provider, Singleton}
+import modules.DateTimeModule.timezone
 
 class DateTimeModule extends AbstractModule {
-  def timezone = ZoneId.of("Europe/London")
-
   override def configure(): Unit = {
     bind(classOf[ZoneId]).toInstance(timezone)
     bind(classOf[DateTimeFormatter]).toProvider(classOf[DateTimeFormatterProvider])
     bind(classOf[Clock]).toInstance(Clock.system(timezone))
   }
+}
+
+object DateTimeModule {
+  lazy val timezone: ZoneId = ZoneId.of("Europe/London")
 }
 
 @Singleton

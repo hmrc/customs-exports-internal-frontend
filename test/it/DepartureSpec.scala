@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.time.{LocalDate, LocalDateTime, LocalTime, ZoneOffset}
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
 import forms.GoodsDeparted.DepartureLocation
 import forms._
 import forms.common.{Date, Time}
 import models.cache.DepartureAnswers
+import modules.DateTimeModule
 import play.api.test.Helpers._
 
 class DepartureSpec extends IntegrationSpec {
 
-  private val date = LocalDate.now()
-  private val time = LocalTime.now().truncatedTo(ChronoUnit.MINUTES)
-  private val datetime = LocalDateTime.of(date, time).toInstant(ZoneOffset.UTC)
+  private val date = dateTimeProvider.dateNow.date
+  private val time = dateTimeProvider.timeNow.time.truncatedTo(ChronoUnit.MINUTES)
+  private val datetime = LocalDateTime.of(date, time).atZone(DateTimeModule.timezone).toInstant
 
   "Specific Date/Time Page" when {
     "GET" should {
