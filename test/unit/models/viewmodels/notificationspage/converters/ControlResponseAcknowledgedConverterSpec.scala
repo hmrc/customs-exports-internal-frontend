@@ -16,11 +16,12 @@
 
 package models.viewmodels.notificationspage.converters
 
-import base.UnitSpec
-import com.google.inject.Guice
+import base.{OverridableInjector, UnitSpec}
 import controllers.MessagesStub
 import models.notifications.ResponseType
 import models.viewmodels.decoder.ActionCode
+import modules.DateTimeModule
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
@@ -32,8 +33,8 @@ class ControlResponseAcknowledgedConverterSpec extends UnitSpec with MessagesStu
 
   private implicit val fakeRequest = FakeRequest()
 
-  private val injector = Guice.createInjector(new DateTimeTestModule())
-  private val converter = injector.getInstance(classOf[ControlResponseAcknowledgedConverter])
+  private val injector = new OverridableInjector(bind[DateTimeModule].toInstance(new DateTimeTestModule))
+  private val converter = injector.instanceOf[ControlResponseAcknowledgedConverter]
 
   "ControlResponseAcknowledgedConverter on convert" should {
 
