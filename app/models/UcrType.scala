@@ -18,7 +18,7 @@ package models
 
 import play.api.data.FormError
 import play.api.data.format.Formatter
-import play.api.libs.json.{Format, JsString, JsonValidationError, Reads, Writes}
+import play.api.libs.json._
 
 sealed abstract class UcrType(val formValue: String, val codeValue: String)
 
@@ -41,6 +41,7 @@ object UcrType {
     override def unbind(key: String, value: UcrType): Map[String, String] = Map(key -> value.formValue)
   }
 
+  // TODO: Before JSON formats can be updated to store the whole object, there needs to be an update in BE and DB migration performed
   implicit val format =
-    Format[UcrType](Reads.StringReads.collect(JsonValidationError("error.unknown"))(lookup), Writes(kind => JsString(kind.formValue)))
+    Format[UcrType](Reads.StringReads.collect(JsonValidationError("error.unknown"))(lookup), Writes(ucrType => JsString(ucrType.formValue)))
 }
