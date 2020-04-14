@@ -28,7 +28,7 @@ import play.twirl.api.Html
 import views.ViewSpec
 import views.html.associateucr.associate_ucr_summary
 
-class AssociateUCRSummaryViewSpec extends ViewSpec with Injector {
+class AssociateUcrSummaryViewSpec extends ViewSpec with Injector {
 
   implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
   private val page = instanceOf[associate_ucr_summary]
@@ -77,7 +77,7 @@ class AssociateUCRSummaryViewSpec extends ViewSpec with Injector {
 
       "query Mucr and Associate another consignment to this one" in {
         val view = createView("MUCR", "MUCR", Some(ManageMucrChoice(AssociateAnotherUcrToThis)))
-        validateBackButton(view.getBackButton, controllers.consolidations.routes.AssociateUCRController.displayPage())
+        validateBackButton(view.getBackButton, controllers.consolidations.routes.AssociateUcrController.displayPage())
       }
     }
 
@@ -100,7 +100,7 @@ class AssociateUCRSummaryViewSpec extends ViewSpec with Injector {
 
       "query Mucr and Associate another consignment to this one" in {
         val view = createView("MUCR", "MUCR", Some(ManageMucrChoice(AssociateAnotherUcrToThis)))
-        validateChangeLink(view, controllers.consolidations.routes.AssociateUCRController.displayPage())
+        validateChangeLink(view, controllers.consolidations.routes.AssociateUcrController.displayPage())
       }
     }
   }

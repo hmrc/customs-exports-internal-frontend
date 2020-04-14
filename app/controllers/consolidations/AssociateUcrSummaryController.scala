@@ -29,7 +29,7 @@ import views.html.associateucr.associate_ucr_summary
 
 import scala.concurrent.ExecutionContext
 
-class AssociateUCRSummaryController @Inject()(
+class AssociateUcrSummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
@@ -52,7 +52,7 @@ class AssociateUCRSummaryController @Inject()(
     val answers = request.answersAs[AssociateUcrAnswers]
 
     submissionService.submit(request.providerId, answers).map { _ =>
-      Redirect(controllers.consolidations.routes.AssociateUCRConfirmationController.displayPage())
+      Redirect(controllers.consolidations.routes.AssociateUcrConfirmationController.displayPage())
         .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString)
     }
   }

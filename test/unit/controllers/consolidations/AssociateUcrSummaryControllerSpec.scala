@@ -34,13 +34,13 @@ import views.html.associateucr.associate_ucr_summary
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec with ScalaFutures {
+class AssociateUcrSummaryControllerSpec extends ControllerLayerSpec with ScalaFutures {
 
   private val summaryPage = mock[associate_ucr_summary]
   private val submissionService = mock[SubmissionService]
 
   private def controller(answers: Answers) =
-    new AssociateUCRSummaryController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), submissionService, summaryPage)
+    new AssociateUcrSummaryController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), submissionService, summaryPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -119,7 +119,7 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
           controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUCRConfirmationController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUcrConfirmationController.displayPage().url)
       }
 
       "return response with Movement Type in flash" in {

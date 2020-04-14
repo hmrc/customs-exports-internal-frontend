@@ -35,13 +35,13 @@ import views.html.disassociateucr.disassociate_ucr_summary
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DisassociateUCRSummaryControllerSpec extends ControllerLayerSpec with ScalaFutures with Injector {
+class DisassociateUcrSummaryControllerSpec extends ControllerLayerSpec with ScalaFutures with Injector {
 
   private val submissionService = mock[SubmissionService]
   private val summaryPage = mock[disassociate_ucr_summary]
 
   private def controller(answers: Answers) =
-    new DisassociateUCRSummaryController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), submissionService, summaryPage)
+    new DisassociateUcrSummaryController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), submissionService, summaryPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -110,7 +110,7 @@ class DisassociateUCRSummaryControllerSpec extends ControllerLayerSpec with Scal
         val result = controller(DisassociateUcrAnswers(ucr = Some(ucr))).submit()(postRequest(Json.obj()))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.consolidations.routes.DisassociateUCRConfirmationController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.consolidations.routes.DisassociateUcrConfirmationController.displayPage().url)
 
       }
 

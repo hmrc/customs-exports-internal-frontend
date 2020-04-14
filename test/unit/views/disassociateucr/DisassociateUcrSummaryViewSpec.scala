@@ -40,7 +40,7 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
     "render form" in {
       val form = page(answersDUCR).getForm
       form mustBe defined
-      form.get must haveAttribute("action", controllers.consolidations.routes.DisassociateUCRSummaryController.submit().url)
+      form.get must haveAttribute("action", controllers.consolidations.routes.DisassociateUcrSummaryController.submit().url)
     }
 
     "render back button" when {

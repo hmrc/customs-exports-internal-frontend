@@ -30,12 +30,12 @@ import views.html.associateucr.associate_ucr
 
 import scala.concurrent.ExecutionContext.global
 
-class AssociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
+class AssociateUcrControllerSpec extends ControllerLayerSpec with MockCache {
 
   val associateUcrPage = mock[associate_ucr]
 
   def controller(associateUcrAnswers: AssociateUcrAnswers) =
-    new AssociateUCRController(
+    new AssociateUcrController(
       SuccessfulAuth(),
       ValidJourney(associateUcrAnswers),
       stubMessagesControllerComponents(),
@@ -78,7 +78,7 @@ class AssociateUCRControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller(cachedData).submit()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUCRSummaryController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUcrSummaryController.displayPage().url)
       }
     }
 

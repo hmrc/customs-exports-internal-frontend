@@ -62,7 +62,7 @@ class ManageMucrController @Inject()(
           cacheRepository.upsert(updatedCache).map { _ =>
             validManageMucrChoice.choice match {
               case AssociateThisToMucr       => Redirect(routes.MucrOptionsController.displayPage())
-              case AssociateAnotherUcrToThis => Redirect(routes.AssociateUCRController.displayPage())
+              case AssociateAnotherUcrToThis => Redirect(routes.AssociateUcrController.displayPage())
             }
           }
         }

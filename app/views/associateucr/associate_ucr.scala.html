@@ -36,7 +36,7 @@
     title = Title("associate.ucr.title", "mucrOptions.heading"),
     backButton = Some(BackButton(messages("site.back"), consolidations.routes.ManageMucrController.displayPage()))) {
 
-    @formHelper(action = consolidations.routes.AssociateUCRController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = consolidations.routes.AssociateUcrController.submit(), 'autoComplete -> "off") {
         @errorSummary(form.errors)
 
         @sectionHeader(messages("associate.heading", mucrOptions.mucr))

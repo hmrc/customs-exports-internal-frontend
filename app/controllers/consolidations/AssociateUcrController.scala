@@ -30,7 +30,7 @@ import views.html.associateucr.associate_ucr
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AssociateUCRController @Inject()(
+class AssociateUcrController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
@@ -57,7 +57,7 @@ class AssociateUCRController @Inject()(
         formData => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(childUcr = Some(formData))
           cacheRepository.upsert(request.cache.update(updatedCache)).map { _ =>
-            Redirect(consolidationRoutes.AssociateUCRSummaryController.displayPage())
+            Redirect(consolidationRoutes.AssociateUcrSummaryController.displayPage())
           }
         }
       )

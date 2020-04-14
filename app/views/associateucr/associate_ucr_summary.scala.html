@@ -33,7 +33,7 @@
 
 @backCall = @{
   associateUcrAnswers.manageMucrChoice.map(_.choice) match {
-    case Some(choice) if choice == ManageMucrChoice.AssociateAnotherUcrToThis => consolidations.routes.AssociateUCRController.displayPage
+    case Some(choice) if choice == ManageMucrChoice.AssociateAnotherUcrToThis => consolidations.routes.AssociateUcrController.displayPage
     case _ => consolidations.routes.MucrOptionsController.displayPage
   }
 }
@@ -45,7 +45,7 @@
   title = Title("associate.ucr.summary.title"),
   backButton = Some(BackButton(messages("site.back"), backCall))) {
 
-  @formHelper(action = consolidations.routes.AssociateUCRSummaryController.submit(), 'autoComplete -> "off") {
+  @formHelper(action = consolidations.routes.AssociateUcrSummaryController.submit(), 'autoComplete -> "off") {
 
     @pageTitle(messages("associate.ucr.summary.title"))
 

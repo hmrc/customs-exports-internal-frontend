@@ -86,7 +86,7 @@ class ChoiceController @Inject()(
     }
 
     case Choice.DisassociateUCR =>
-      saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, consolidations.routes.DisassociateUCRSummaryController.displayPage())
+      saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, consolidations.routes.DisassociateUcrSummaryController.displayPage())
     case Choice.ShutMUCR =>
       saveAndRedirect(ShutMucrAnswers.fromQueryUcr, consolidations.routes.ShutMucrSummaryController.displayPage())
   }

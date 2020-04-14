@@ -21,22 +21,22 @@ GET         /mucr-options                          controllers.consolidations.Mu
 POST        /mucr-options                          controllers.consolidations.MucrOptionsController.submit()
 
 # Associate UCR page
-GET         /associate-ucr                         controllers.consolidations.AssociateUCRController.displayPage()
-POST        /associate-ucr                         controllers.consolidations.AssociateUCRController.submit()
+GET         /associate-ucr                         controllers.consolidations.AssociateUcrController.displayPage()
+POST        /associate-ucr                         controllers.consolidations.AssociateUcrController.submit()
 
 # Associate UCR summary page
-GET         /associate-ucr-summary                 controllers.consolidations.AssociateUCRSummaryController.displayPage()
-POST        /associate-ucr-summary                 controllers.consolidations.AssociateUCRSummaryController.submit()
+GET         /associate-ucr-summary                 controllers.consolidations.AssociateUcrSummaryController.displayPage()
+POST        /associate-ucr-summary                 controllers.consolidations.AssociateUcrSummaryController.submit()
 
 # Associate UCR confirmation page
-GET         /associate-ucr-confirmation            controllers.consolidations.AssociateUCRConfirmationController.displayPage()
+GET         /associate-ucr-confirmation            controllers.consolidations.AssociateUcrConfirmationController.displayPage()
 
 # Disassociate UCR summary page
-GET         /dissociate-ucr-summary                controllers.consolidations.DisassociateUCRSummaryController.displayPage()
-POST        /dissociate-ucr-summary                controllers.consolidations.DisassociateUCRSummaryController.submit()
+GET         /dissociate-ucr-summary                controllers.consolidations.DisassociateUcrSummaryController.displayPage()
+POST        /dissociate-ucr-summary                controllers.consolidations.DisassociateUcrSummaryController.submit()
 
 # Disassociate UCR confirmation page
-GET         /dissociate-ucr-confirmation           controllers.consolidations.DisassociateUCRConfirmationController.displayPage()
+GET         /dissociate-ucr-confirmation           controllers.consolidations.DisassociateUcrConfirmationController.displayPage()
 
 # Specific date-time page
 GET         /specific-date-and-time               controllers.movements.SpecificDateTimeController.displayPage()
