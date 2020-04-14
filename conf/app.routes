@@ -9,7 +9,6 @@ GET         /consignment-query/:ucr                controllers.ileQuery.IleQuery
 
 # Declaration choice page
 GET         /choice                                controllers.ChoiceController.displayPage()
-GET         /choice/:journey                       controllers.ChoiceController.startSpecificJourney(journey: forms.Choice)
 POST        /choice                                controllers.ChoiceController.submit()
 
 #Manage MUCR

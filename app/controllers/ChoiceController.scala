@@ -50,13 +50,6 @@ class ChoiceController @Inject()(
     }
   }
 
-  def startSpecificJourney(choice: Choice): Action[AnyContent] = authenticate.async { implicit request =>
-    cacheRepository.findByProviderId(request.providerId).flatMap {
-      case Some(cache) if cache.queryUcr.isDefined => proceed(choice, cache)
-      case _                                       => Future.successful(Redirect(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm()))
-    }
-  }
-
   def submit: Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
     cacheRepository.findByProviderId(request.providerId).flatMap {
       case Some(cache) if cache.queryUcr.isDefined =>
