@@ -18,9 +18,8 @@ package controllers.consolidations
 
 import controllers.ControllerLayerSpec
 import controllers.storage.FlashKeys
-import forms.AssociateKind.Ducr
 import forms.{AssociateUcr, MucrOptions}
-import models.ReturnToStartException
+import models.{ReturnToStartException, UcrType}
 import models.cache.{Answers, AssociateUcrAnswers, JourneyType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
@@ -35,19 +34,19 @@ import views.html.associateucr.associate_ucr_summary
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec with ScalaFutures {
+class AssociateUcrSummaryControllerSpec extends ControllerLayerSpec with ScalaFutures {
 
   private val summaryPage = mock[associate_ucr_summary]
   private val submissionService = mock[SubmissionService]
 
   private def controller(answers: Answers) =
-    new AssociateUCRSummaryController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), submissionService, summaryPage)
+    new AssociateUcrSummaryController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), submissionService, summaryPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
     reset(submissionService, summaryPage)
-    when(summaryPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(summaryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(submissionService.submit(any(), any[AssociateUcrAnswers])(any())).thenReturn(Future.successful((): Unit))
   }
 
@@ -57,29 +56,30 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
     super.afterEach()
   }
 
-  private def theResponseData: (AssociateUcr, String) = {
-    val associateDucrCaptor = ArgumentCaptor.forClass(classOf[AssociateUcr])
-    val mucrOptionsCaptor = ArgumentCaptor.forClass(classOf[String])
-    verify(summaryPage).apply(associateDucrCaptor.capture(), mucrOptionsCaptor.capture())(any(), any())
-    (associateDucrCaptor.getValue, mucrOptionsCaptor.getValue)
+  private def theResponseData: AssociateUcrAnswers = {
+    val associateUcrAnswersCaptor = ArgumentCaptor.forClass(classOf[AssociateUcrAnswers])
+    verify(summaryPage).apply(associateUcrAnswersCaptor.capture())(any(), any())
+    associateUcrAnswersCaptor.getValue
   }
 
   private val mucrOptions = MucrOptions("MUCR")
-  private val associateUcr = AssociateUcr(Ducr, "DUCR")
+  private val associateUcr = AssociateUcr(UcrType.Ducr, "DUCR")
 
   "Associate Ducr Summary Controller on displayPage" should {
 
     "return 200 (OK)" when {
 
       "display page is invoked with data in cache" in {
-        val result = controller(AssociateUcrAnswers(mucrOptions = Some(mucrOptions), associateUcr = Some(associateUcr))).displayPage()(getRequest)
+        val result = controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))).displayPage()(getRequest)
 
         status(result) mustBe OK
-        verify(summaryPage).apply(any(), any())(any(), any())
+        verify(summaryPage).apply(any())(any(), any())
 
-        val (viewUCR, viewOptions) = theResponseData
-        viewUCR.ucr mustBe "DUCR"
-        viewOptions mustBe "MUCR"
+        val associateUcrAnswers = theResponseData
+        associateUcrAnswers.childUcr mustBe defined
+        associateUcrAnswers.childUcr.get.ucr mustBe "DUCR"
+        associateUcrAnswers.parentMucr mustBe defined
+        associateUcrAnswers.parentMucr.get.newMucr mustBe "MUCR"
       }
     }
 
@@ -87,13 +87,13 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
 
       "Mucr Options is missing during displaying page" in {
         intercept[RuntimeException] {
-          await(controller(AssociateUcrAnswers(mucrOptions = None, associateUcr = Some(associateUcr))).displayPage()(getRequest))
+          await(controller(AssociateUcrAnswers(parentMucr = None, childUcr = Some(associateUcr))).displayPage()(getRequest))
         } mustBe ReturnToStartException
       }
 
       "Associate Ducr is missing during displaying page" in {
         intercept[RuntimeException] {
-          await(controller(AssociateUcrAnswers(mucrOptions = Some(mucrOptions), associateUcr = None)).displayPage()(getRequest))
+          await(controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = None)).displayPage()(getRequest))
         } mustBe ReturnToStartException
       }
     }
@@ -105,7 +105,7 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
 
       "call SubmissionService" in {
 
-        val cachedAnswers = AssociateUcrAnswers(mucrOptions = Some(mucrOptions), associateUcr = Some(associateUcr))
+        val cachedAnswers = AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))
 
         controller(cachedAnswers).submit()(postRequest(Json.obj())).futureValue
 
@@ -116,16 +116,16 @@ class AssociateUCRSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
       "return SEE_OTHER (303) that redirects to AssociateUcrConfirmation" in {
 
         val result =
-          controller(AssociateUcrAnswers(mucrOptions = Some(mucrOptions), associateUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
+          controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUCRConfirmationController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUcrConfirmationController.displayPage().url)
       }
 
       "return response with Movement Type in flash" in {
 
         val result =
-          controller(AssociateUcrAnswers(mucrOptions = Some(mucrOptions), associateUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
+          controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
 
         flash(result).get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.ASSOCIATE_UCR.toString)
       }

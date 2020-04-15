@@ -44,7 +44,7 @@ class DepartureSummaryViewSpec extends ViewSpec with Injector {
 
     "render back button" in {
 
-      val backButton = departureSummaryPage(answers).getGovUkBackButton
+      val backButton = departureSummaryPage(answers).getBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.movements.routes.TransportController.displayPage())

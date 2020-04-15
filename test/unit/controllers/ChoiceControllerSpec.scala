@@ -20,9 +20,10 @@ import controllers.actions.AuthenticatedAction
 import controllers.consolidations.{routes => consolidationRoutes}
 import forms.Choice._
 import forms._
-import models.UcrBlock
 import models.UcrBlock.mucrType
+import models.UcrType.{Ducr, Mucr}
 import models.cache._
+import models.{UcrBlock, UcrType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -58,7 +59,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    givenTheCacheIsEmpty
+    givenTheCacheIsEmpty()
     when(choicePage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
@@ -72,6 +73,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     "redirect to query page" when {
 
       "an UCR is not available" in {
+
         givenTheCacheIsEmpty()
 
         val result = controller().displayPage(getRequest)
@@ -79,12 +81,12 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm().url)
       }
-
     }
 
     "return 200 when authenticated" when {
 
       "existing answers with no UcrBlock" in {
+
         givenTheCacheContains(Cache(providerId, Some(ArrivalAnswers()), None))
 
         val result = controller().displayPage(getRequest)
@@ -95,6 +97,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "existing answers with UcrBlock" in {
+
         val ucrBlock = UcrBlock("ucr", mucrType)
         givenTheCacheContains(Cache(providerId, None, Some(ucrBlock)))
 
@@ -107,144 +110,116 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     }
 
     "return 403 when unauthenticated" in {
+
       val result = controller(UnsuccessfulAuth).displayPage(getRequest)
 
       status(result) mustBe FORBIDDEN
     }
   }
 
-  "GET for specific journey" should {
-
-    "return 303 (SEE_OTHER) and redirect to the correct controller" when {
-
-      "user chooses arrival" in {
-
-        val result = controller().startSpecificJourney(Choice.Arrival)(getRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(movements.routes.SpecificDateTimeController.displayPage().url)
-      }
-
-      "user chooses departure" in {
-
-        val result = controller().startSpecificJourney(Choice.Departure)(getRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(movements.routes.SpecificDateTimeController.displayPage().url)
-      }
-
-      "user chooses associate ucr" in {
-
-        val result = controller().startSpecificJourney(Choice.AssociateUCR)(getRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
-      }
-
-      "user chooses dissociate ucr" in {
-
-        val result = controller().startSpecificJourney(Choice.DisassociateUCR)(getRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(consolidations.routes.DisassociateUCRSummaryController.displayPage().url)
-      }
-
-      "user chooses shut mucr" in {
-
-        val result = controller().startSpecificJourney(Choice.ShutMUCR)(getRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(consolidations.routes.ShutMucrSummaryController.displayPage().url)
-      }
-
-      "user chooses retrospective arrival" in {
-
-        val result = controller().startSpecificJourney(Choice.RetrospectiveArrival)(getRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(movements.routes.LocationController.displayPage().url)
-      }
-
-      "user chooses view submissions" in {
-
-        val result = controller().startSpecificJourney(Choice.ViewSubmissions)(getRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ViewSubmissionsController.displayPage().url)
-      }
-    }
-  }
-
   "POST" should {
 
     def postWithChoice(choice: Choice): Request[AnyContentAsJson] = postRequest(Json.obj("choice" -> choice.value))
+    val queryResult = UcrBlock("mucr", Mucr.codeValue)
 
     "return 303 (SEE_OTHER) when authenticated" when {
 
       "user chooses arrival" in {
 
+        givenTheCacheContains(Cache(providerId, queryResult))
+
         val result = controller().submit(postWithChoice(Arrival))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(movements.routes.SpecificDateTimeController.displayPage().url)
-        theCacheUpserted.answers mustBe Some(ArrivalAnswers(Answers.fakeEORI))
+        theCacheUpserted.answers mustBe Some(ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr"))))
+        theCacheUpserted.queryUcr mustBe Some(queryResult)
+      }
+
+      "user chooses retrospective arrival" in {
+
+        givenTheCacheContains(Cache(providerId, queryResult))
+
+        val result = controller().submit(postWithChoice(RetrospectiveArrival))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(movements.routes.LocationController.displayPage().url)
+        theCacheUpserted.answers mustBe Some(
+          RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))
+        )
+        theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
 
       "user chooses departure" in {
+
+        givenTheCacheContains(Cache(providerId, queryResult))
 
         val result = controller().submit(postWithChoice(Departure))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(movements.routes.SpecificDateTimeController.displayPage().url)
-        theCacheUpserted.answers mustBe Some(DepartureAnswers(Answers.fakeEORI))
+        theCacheUpserted.answers mustBe Some(
+          DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))
+        )
+        theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
 
-      "user chooses associate UCR" in {
+      "user chooses associate UCR" when {
 
-        val result = controller().submit(postWithChoice(AssociateUCR))
+        "queryUcr is of type Ducr" in {
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
-        theCacheUpserted.answers mustBe Some(AssociateUcrAnswers())
+          val queryResultDucr = UcrBlock("ucr", Ducr.codeValue)
+          givenTheCacheContains(Cache(providerId, None, Some(queryResultDucr)))
+
+          val result = controller().submit(postWithChoice(AssociateUCR))
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
+          theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(queryResultDucr))))
+          theCacheUpserted.queryUcr mustBe Some(queryResultDucr)
+        }
+
+        "queryUcr is of type Mucr" in {
+
+          givenTheCacheContains(Cache(providerId, None, Some(queryResult)))
+
+          val result = controller().submit(postWithChoice(AssociateUCR))
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(consolidationRoutes.ManageMucrController.displayPage().url)
+          theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(queryResult))))
+          theCacheUpserted.queryUcr mustBe Some(queryResult)
+        }
       }
 
       "user chooses disassociate UCR" in {
 
+        givenTheCacheContains(Cache(providerId, queryResult))
+
         val result = controller().submit(postWithChoice(DisassociateUCR))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateUCRSummaryController.displayPage().url)
-        theCacheUpserted.answers mustBe Some(DisassociateUcrAnswers())
+        redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateUcrSummaryController.displayPage().url)
+        theCacheUpserted.answers mustBe Some(DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Mucr, None, Some("mucr")))))
+        theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
 
       "user chooses shut MUCR" in {
+
+        givenTheCacheContains(Cache(providerId, queryResult))
 
         val result = controller().submit(postWithChoice(ShutMUCR))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(consolidations.routes.ShutMucrSummaryController.displayPage().url)
-        theCacheUpserted.answers mustBe Some(ShutMucrAnswers())
-      }
-
-      "user chooses retrospective arrival" in {
-
-        val result = controller().submit(postWithChoice(RetrospectiveArrival))
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(movements.routes.LocationController.displayPage().url)
-        theCacheUpserted.answers mustBe Some(RetrospectiveArrivalAnswers())
-      }
-
-      "user chooses view submissions" in {
-
-        val result = controller(SuccessfulAuth()).submit(postWithChoice(ViewSubmissions))
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ViewSubmissionsController.displayPage().url)
+        theCacheUpserted.answers mustBe Some(ShutMucrAnswers(shutMucr = Some(ShutMucr("mucr"))))
+        theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
     }
 
     "return 400 when invalid" in {
+
+      givenTheCacheContains(Cache(providerId, queryResult))
 
       val result = controller().submit(postRequest)
 
@@ -257,103 +232,18 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       status(result) mustBe FORBIDDEN
     }
-  }
 
-  "POST Choice after ILE query result" should {
+    "redirect to query page" when {
+      "queried UCR is not available" in {
 
-    def postWithChoice(choice: Choice): Request[AnyContentAsJson] = postRequest(Json.obj("choice" -> choice.value))
-    val queryResult = UcrBlock("mucr", "M")
-
-    "return 303 (SEE_OTHER) when authenticated" when {
-
-      "user chooses arrival following ILE query results" in {
-
-        givenTheCacheContains(Cache(providerId, queryResult))
+        givenTheCacheIsEmpty()
 
         val result = controller().submit(postWithChoice(Arrival))
 
         status(result) mustBe SEE_OTHER
-        theCacheUpserted.answers mustBe Some(
-          ArrivalAnswers(Answers.fakeEORI, consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))
-        )
-        theCacheUpserted.queryUcr mustBe Some(queryResult)
+        redirectLocation(result) mustBe Some(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm().url)
       }
-
-      "user chooses departure following ILE query results" in {
-
-        givenTheCacheContains(Cache(providerId, queryResult))
-
-        val result = controller().submit(postWithChoice(Departure))
-
-        status(result) mustBe SEE_OTHER
-        theCacheUpserted.answers mustBe Some(
-          DepartureAnswers(Answers.fakeEORI, consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))
-        )
-        theCacheUpserted.queryUcr mustBe Some(queryResult)
-      }
-
-      "user chooses associate UCR following ILE query results" in {
-
-        givenTheCacheContains(Cache(providerId, queryResult))
-
-        val result = controller().submit(postWithChoice(AssociateUCR))
-
-        status(result) mustBe SEE_OTHER
-        theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(Answers.fakeEORI, associateUcr = Some(AssociateUcr(AssociateKind.Mucr, "mucr"))))
-        theCacheUpserted.queryUcr mustBe Some(queryResult)
-      }
-
-      "user chooses disassociate UCR following ILE query results" in {
-
-        givenTheCacheContains(Cache(providerId, queryResult))
-
-        val result = controller().submit(postWithChoice(DisassociateUCR))
-
-        status(result) mustBe SEE_OTHER
-        theCacheUpserted.answers mustBe Some(
-          DisassociateUcrAnswers(Answers.fakeEORI, ucr = Some(DisassociateUcr(DisassociateKind.Mucr, None, Some("mucr"))))
-        )
-        theCacheUpserted.queryUcr mustBe Some(queryResult)
-      }
-
-      "user chooses shut MUCR following ILE query results" in {
-
-        givenTheCacheContains(Cache(providerId, queryResult))
-
-        val result = controller().submit(postWithChoice(ShutMUCR))
-
-        status(result) mustBe SEE_OTHER
-        theCacheUpserted.answers mustBe Some(ShutMucrAnswers(Answers.fakeEORI, shutMucr = Some(ShutMucr("mucr"))))
-        theCacheUpserted.queryUcr mustBe Some(queryResult)
-      }
-
-      "user chooses retrospective arrival following ILE query results" in {
-
-        givenTheCacheContains(Cache(providerId, queryResult))
-
-        val result = controller().submit(postWithChoice(RetrospectiveArrival))
-
-        status(result) mustBe SEE_OTHER
-        theCacheUpserted.answers mustBe Some(
-          RetrospectiveArrivalAnswers(Answers.fakeEORI, consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))
-        )
-        theCacheUpserted.queryUcr mustBe Some(queryResult)
-      }
-
-    }
-
-    "return 400 when invalid" in {
-
-      val result = controller().submit(postRequest)
-
-      status(result) mustBe BAD_REQUEST
-    }
-
-    "return 403 when unauthenticated" in {
-
-      val result = controller(UnsuccessfulAuth).submit(postRequest)
-
-      status(result) mustBe FORBIDDEN
     }
   }
+
 }

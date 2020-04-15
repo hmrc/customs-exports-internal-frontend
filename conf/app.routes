@@ -9,30 +9,33 @@ GET         /consignment-query/:ucr                controllers.ileQuery.IleQuery
 
 # Declaration choice page
 GET         /choice                                controllers.ChoiceController.displayPage()
-GET         /choice/:journey                       controllers.ChoiceController.startSpecificJourney(journey: forms.Choice)
 POST        /choice                                controllers.ChoiceController.submit()
+
+#Manage MUCR
+GET         /manage-mucr                          controllers.consolidations.ManageMucrController.displayPage()
+POST        /manage-mucr                          controllers.consolidations.ManageMucrController.submit()
 
 # MUCR options page
 GET         /mucr-options                          controllers.consolidations.MucrOptionsController.displayPage()
 POST        /mucr-options                          controllers.consolidations.MucrOptionsController.submit()
 
 # Associate UCR page
-GET         /associate-ucr                         controllers.consolidations.AssociateUCRController.displayPage()
-POST        /associate-ucr                         controllers.consolidations.AssociateUCRController.submit()
+GET         /associate-ucr                         controllers.consolidations.AssociateUcrController.displayPage()
+POST        /associate-ucr                         controllers.consolidations.AssociateUcrController.submit()
 
 # Associate UCR summary page
-GET         /associate-ucr-summary                 controllers.consolidations.AssociateUCRSummaryController.displayPage()
-POST        /associate-ucr-summary                 controllers.consolidations.AssociateUCRSummaryController.submit()
+GET         /associate-ucr-summary                 controllers.consolidations.AssociateUcrSummaryController.displayPage()
+POST        /associate-ucr-summary                 controllers.consolidations.AssociateUcrSummaryController.submit()
 
 # Associate UCR confirmation page
-GET         /associate-ucr-confirmation            controllers.consolidations.AssociateUCRConfirmationController.displayPage()
+GET         /associate-ucr-confirmation            controllers.consolidations.AssociateUcrConfirmationController.displayPage()
 
 # Disassociate UCR summary page
-GET         /dissociate-ucr-summary                controllers.consolidations.DisassociateUCRSummaryController.displayPage()
-POST        /dissociate-ucr-summary                controllers.consolidations.DisassociateUCRSummaryController.submit()
+GET         /dissociate-ucr-summary                controllers.consolidations.DisassociateUcrSummaryController.displayPage()
+POST        /dissociate-ucr-summary                controllers.consolidations.DisassociateUcrSummaryController.submit()
 
 # Disassociate UCR confirmation page
-GET         /dissociate-ucr-confirmation           controllers.consolidations.DisassociateUCRConfirmationController.displayPage()
+GET         /dissociate-ucr-confirmation           controllers.consolidations.DisassociateUcrConfirmationController.displayPage()
 
 # Specific date-time page
 GET         /specific-date-and-time               controllers.movements.SpecificDateTimeController.displayPage()

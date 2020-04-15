@@ -80,10 +80,9 @@ abstract class IntegrationSpec
   protected def theCacheFor(pid: String): Option[Cache] = await(cacheRepository.find(Json.obj("providerId" -> pid)).one[Cache])
   protected def theAnswersFor(pid: String): Option[Answers] = await(cacheRepository.find(Json.obj("providerId" -> pid)).one[Cache]).flatMap(_.answers)
 
-  protected def givenCacheFor(pid: String, answers: Answers): Unit =
-    await(cacheRepository.insert(Cache.format.writes(Cache(pid, Some(answers), None))))
-
-  protected def givenCacheFor(pid: String, queryUcr: UcrBlock): Unit = await(cacheRepository.insert(Cache.format.writes(Cache(pid, queryUcr))))
+  protected def givenCacheFor(pid: String, answers: Answers): Unit = givenCacheFor(Cache(providerId = pid, answers = Some(answers), queryUcr = None))
+  protected def givenCacheFor(pid: String, queryUcr: UcrBlock): Unit = givenCacheFor(Cache(pid, queryUcr = queryUcr))
+  protected def givenCacheFor(cache: Cache): Unit = await(cacheRepository.insert(Cache.format.writes(cache)))
 
   protected def verifyEventually(requestPatternBuilder: RequestPatternBuilder): Unit = eventually(WireMock.verify(requestPatternBuilder))
 

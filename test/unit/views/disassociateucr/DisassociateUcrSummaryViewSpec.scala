@@ -17,8 +17,8 @@
 package views.disassociateucr
 
 import base.Injector
-import forms.{DisassociateKind, DisassociateUcr}
-import org.jsoup.nodes.Element
+import forms.DisassociateUcr
+import models.UcrType
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import views.ViewSpec
@@ -27,8 +27,8 @@ import views.html.disassociateucr.disassociate_ucr_summary
 class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
-  private val answersDUCR = DisassociateUcr(DisassociateKind.Ducr, Some("ducr-reference"), None)
-  private val answersMUCR = DisassociateUcr(DisassociateKind.Mucr, None, Some("mucr-reference"))
+  private val answersDUCR = DisassociateUcr(UcrType.Ducr, Some("ducr-reference"), None)
+  private val answersMUCR = DisassociateUcr(UcrType.Mucr, None, Some("mucr-reference"))
   private val page = instanceOf[disassociate_ucr_summary]
 
   "View" should {
@@ -40,19 +40,19 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
     "render form" in {
       val form = page(answersDUCR).getForm
       form mustBe defined
-      form.get must haveAttribute("action", controllers.consolidations.routes.DisassociateUCRSummaryController.submit().url)
+      form.get must haveAttribute("action", controllers.consolidations.routes.DisassociateUcrSummaryController.submit().url)
     }
 
     "render back button" when {
       "ducr" in {
-        val backButton = page(answersDUCR).getGovUkBackButton
+        val backButton = page(answersDUCR).getBackButton
 
         backButton mustBe defined
         backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
       }
 
       "mucr" in {
-        val backButton = page(answersMUCR).getGovUkBackButton
+        val backButton = page(answersMUCR).getBackButton
 
         backButton mustBe defined
         backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())

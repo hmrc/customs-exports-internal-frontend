@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.consolidations.{routes => consolidationsRoutes}
 import forms.MucrOptions.form
 import javax.inject.Inject
-import models.cache.{AssociateUcrAnswers, Cache}
+import models.cache.AssociateUcrAnswers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
@@ -39,20 +39,25 @@ class MucrOptionsController @Inject()(
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
-    val mucrOptions = request.answersAs[AssociateUcrAnswers].mucrOptions
+    val answers = request.answersAs[AssociateUcrAnswers]
+    val mucrOptions = answers.parentMucr
+    val manageMucrChoice = answers.manageMucrChoice
 
-    Ok(mucrOptionsPage(mucrOptions.fold(form)(form.fill)))
+    Ok(mucrOptionsPage(mucrOptions.fold(form)(form.fill), manageMucrChoice))
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(mucrOptionsPage(formWithErrors))),
+        formWithErrors => {
+          val manageMucrChoice = request.answersAs[AssociateUcrAnswers].manageMucrChoice
+          Future.successful(BadRequest(mucrOptionsPage(formWithErrors, manageMucrChoice)))
+        },
         validForm => {
-          val updatedCache = request.answersAs[AssociateUcrAnswers].copy(mucrOptions = Some(validForm))
+          val updatedCache = request.answersAs[AssociateUcrAnswers].copy(parentMucr = Some(validForm))
           cacheRepository.upsert(request.cache.update(updatedCache)).map { _ =>
-            Redirect(consolidationsRoutes.AssociateUCRController.displayPage())
+            Redirect(consolidationsRoutes.AssociateUcrSummaryController.displayPage())
           }
         }
       )

@@ -21,7 +21,7 @@ import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges._
 import forms._
 import metrics.MovementsMetricsStub
-import models.ReturnToStartException
+import models.{ReturnToStartException, UcrType}
 import models.cache.{AssociateUcrAnswers, DisassociateUcrAnswers, MovementAnswers, ShutMucrAnswers}
 import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
 import org.mockito.BDDMockito._
@@ -65,7 +65,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
         given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
-        val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
+        val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(UcrType.Ducr, ucr)))
         await(service.submit(providerId, answers))
 
         theAssociationSubmitted[AssociateDUCRExchange] mustBe AssociateDUCRExchange(providerId, validEori, mucr, ucr)
@@ -77,7 +77,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
         given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
-        val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Mucr, ucr)))
+        val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(UcrType.Mucr, ucr)))
         await(service.submit(providerId, answers))
 
         theAssociationSubmitted[AssociateMUCRExchange] mustBe AssociateMUCRExchange(providerId, validEori, mucr, ucr)
@@ -89,7 +89,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
     "audit when failed" in {
       given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
 
-      val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
+      val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(UcrType.Ducr, ucr)))
       intercept[RuntimeException] {
         await(service.submit(providerId, answers))
       }
@@ -100,7 +100,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
     }
 
     "handle missing eori" in {
-      val answers = AssociateUcrAnswers(None, Some(MucrOptions(mucr)), Some(AssociateUcr(AssociateKind.Ducr, ucr)))
+      val answers = AssociateUcrAnswers(None, Some(MucrOptions(mucr)), Some(AssociateUcr(UcrType.Ducr, ucr)))
       intercept[Throwable] {
         await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
@@ -134,7 +134,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
         given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
-        val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Mucr, None, Some(mucr))))
+        val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(UcrType.Mucr, None, Some(mucr))))
         await(service.submit(providerId, answers))
 
         theDisassociationSubmitted[DisassociateMUCRExchange] mustBe DisassociateMUCRExchange(providerId, validEori, mucr)
@@ -146,7 +146,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
         given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
-        val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Ducr, Some(ucr), None)))
+        val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(UcrType.Ducr, Some(ucr), None)))
         await(service.submit(providerId, answers))
 
         theDisassociationSubmitted[DisassociateDUCRExchange] mustBe DisassociateDUCRExchange(providerId, validEori, ucr)
@@ -158,7 +158,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
     "audit when failed" in {
       given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
 
-      val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Mucr, None, Some(mucr))))
+      val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(UcrType.Mucr, None, Some(mucr))))
       intercept[RuntimeException] {
         await(service.submit(providerId, answers))
       }
@@ -169,7 +169,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
     }
 
     "handle missing eori" in {
-      val answers = DisassociateUcrAnswers(None, Some(DisassociateUcr(DisassociateKind.Mucr, None, Some(mucr))))
+      val answers = DisassociateUcrAnswers(None, Some(DisassociateUcr(UcrType.Mucr, None, Some(mucr))))
       intercept[Throwable] {
         await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
@@ -193,7 +193,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       "missing fields" when {
 
         "Disassociate MUCR" in {
-          val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Mucr, None, None)))
+          val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(UcrType.Mucr, None, None)))
           intercept[Throwable] {
             await(service.submit(providerId, answers))
           } mustBe ReturnToStartException
@@ -203,7 +203,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         }
 
         "Disassociate DUCR" in {
-          val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(DisassociateKind.Ducr, None, None)))
+          val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(UcrType.Ducr, None, None)))
           intercept[Throwable] {
             await(service.submit(providerId, answers))
           } mustBe ReturnToStartException

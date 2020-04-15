@@ -57,7 +57,7 @@ class TransportViewSpec extends ViewSpec with Injector {
     }
 
     "render back button" in {
-      val backButton = createPage.getGovUkBackButton
+      val backButton = createPage.getBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(controllers.movements.routes.GoodsDepartedController.displayPage())

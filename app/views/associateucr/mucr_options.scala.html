@@ -14,13 +14,11 @@
  * limitations under the License.
  *@
 
-@import forms.MucrOptions
+@import components.gds.{errorSummary, exportsInputText, gds_main_template, sectionHeader}
+@import forms.{ManageMucrChoice, MucrOptions}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.Title
 @import views.components.BackButton
-@import components.gds.{errorSummary, sectionHeader, gds_main_template}
-@import components.gds.exportsInputText
-
 
 @this(
     govukLayout: gds_main_template,
@@ -33,11 +31,18 @@
     formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 )
 
-@(form: Form[MucrOptions])(implicit request: Request[_], messages: Messages)
+@(form: Form[MucrOptions], manageMucrChoice: Option[ManageMucrChoice])(implicit request: Request[_], messages: Messages)
+
+@backCall = @{
+  if (manageMucrChoice.isDefined)
+    controllers.consolidations.routes.ManageMucrController.displayPage()
+  else
+    controllers.routes.ChoiceController.displayPage()
+}
 
 @govukLayout(
     title = Title("mucrOptions.title"),
-    backButton = Some(BackButton(messages("site.back"), controllers.routes.ChoiceController.displayPage()))) {
+    backButton = Some(BackButton(messages("site.back"), backCall))) {
 
     @formHelper(action = consolidations.routes.MucrOptionsController.submit(), 'autoComplete -> "off") {
         @errorSummary(form.errors)

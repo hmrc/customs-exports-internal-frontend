@@ -14,78 +14,74 @@
  * limitations under the License.
  *@
 
-@import forms.AssociateUcr
-@import views.Title
 @import components.gds.{gds_main_template, pageTitle}
-@import forms.ShutMucr
+@import forms.ManageMucrChoice
+@import models.cache.AssociateUcrAnswers
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.Title
 @import views.components.BackButton
 
-@this(  govukLayout: gds_main_template,
-        govukButton: GovukButton,
-        pageTitle: pageTitle,
-        govukSummaryList : GovukSummaryList,
-        formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF)
+@this(
+  govukLayout: gds_main_template,
+  govukButton: GovukButton,
+  pageTitle: pageTitle,
+  govukSummaryList : GovukSummaryList,
+  formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+)
 
-@(associateUcr: AssociateUcr, mucr: String)(implicit request: Request[_], messages: Messages)
+@(associateUcrAnswers: AssociateUcrAnswers)(implicit request: Request[_], messages: Messages)
+
+@backCall = @{
+  associateUcrAnswers.manageMucrChoice.map(_.choice) match {
+    case Some(choice) if choice == ManageMucrChoice.AssociateAnotherUcrToThis => consolidations.routes.AssociateUcrController.displayPage
+    case _ => consolidations.routes.MucrOptionsController.displayPage
+  }
+}
+
+@changeUrl = @{backCall.url}
+
 
 @govukLayout(
-    title = Title("associate.ucr.summary.title"),
-    backButton = Some(BackButton(messages("site.back"), consolidations.routes.AssociateUCRController.displayPage()))) {
+  title = Title("associate.ucr.summary.title"),
+  backButton = Some(BackButton(messages("site.back"), backCall))) {
 
-    @formHelper(action = consolidations.routes.AssociateUCRSummaryController.submit(), 'autoComplete -> "off") {
+  @formHelper(action = consolidations.routes.AssociateUcrSummaryController.submit(), 'autoComplete -> "off") {
 
-        @pageTitle(messages("associate.ucr.summary.title"))
+    @pageTitle(messages("associate.ucr.summary.title"))
 
-        @components.summary_list(messages("associate.ucr.summary.addConsignment")) {
-            @govukSummaryList(SummaryList(
-                rows = Seq(
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(messages(s"associate.ucr.summary.kind.${associateUcr.kind.formValue}"))
-                        ),
-                        value = Value(
-                            content = Text(associateUcr.ucr)
-                        ),
-                        actions = Some(Actions(
-                            items = Seq(
-                                ActionItem(
-                                    href = s"${consolidations.routes.AssociateUCRController.displayPage}",
-                                    content = Text(messages("site.change")),
-                                    visuallyHiddenText = Some(messages("site.change.hint.associate.ucr", associateUcr.kind.formValue.toUpperCase()))
-                                )
-                            )
-                        ))
-                    )
-                ),
-                classes = "govuk-!-margin-bottom-9"
-            ))
-        }
+    @govukSummaryList(SummaryList(
+      rows = Seq(
+        SummaryListRow(
+          key = Key(
+            content = Text(messages("associate.ucr.summary.consignmentReference"))
+          ),
+          value = Value(
+            content = Text(associateUcrAnswers.consignmentReference.getOrElse(""))
+          ),
+          actions = None
+        ),
+        SummaryListRow(
+          key = Key(
+            content = Text(associateUcrAnswers.associateWith.map(ucr => messages(s"associate.ucr.summary.associate.with.${ucr.typ.formValue}")).getOrElse(""))
+          ),
+          value = Value(
+            content = Text(associateUcrAnswers.associateWith.map(_.value).getOrElse(""))
+          ),
+          actions = Some(Actions(
+            items = Seq(
+              ActionItem(
+                href = changeUrl,
+                content = Text(messages("site.change")),
+                visuallyHiddenText = associateUcrAnswers.associateWith.map(ucr => messages(s"site.change.hint.associate.${ucr.typ.formValue}"))
+              )
+            )
+          ))
+        )
+      ),
+      classes = "govuk-!-margin-bottom-9"
+    ))
 
-        @components.summary_list(messages("associate.ucr.summary.masterConsignment")) {
-            @govukSummaryList(SummaryList(
-                rows = Seq(
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(messages("associate.ucr.summary.kind.mucr"))
-                        ),
-                        value = Value(
-                            content = Text(mucr)
-                        ),
-                        actions = Some(Actions(
-                            items = Seq(
-                                ActionItem(
-                                    href = s"${consolidations.routes.MucrOptionsController.displayPage}",
-                                    content = Text(messages("site.change")),
-                                    visuallyHiddenText = Some(messages("site.change.hint.associate.mucr"))
-                                )
-                            )
-                        ))
-                    )
-                ),
-                classes = "govuk-!-margin-bottom-9"
-            ))
-        }
-        @govukButton(Button(content = Text(messages("site.confirmAndSubmit"))))
-    }
+    @govukButton(Button(content = Text(messages("site.confirmAndSubmit"))))
+  }
+
 }

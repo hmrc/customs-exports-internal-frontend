@@ -30,7 +30,7 @@ import views.html.disassociateucr.disassociate_ucr_summary
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DisassociateUCRSummaryController @Inject()(
+class DisassociateUcrSummaryController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
@@ -50,7 +50,7 @@ class DisassociateUCRSummaryController @Inject()(
     val answers = request.answersAs[DisassociateUcrAnswers]
 
     submissionService.submit(request.providerId, answers).map { _ =>
-      Redirect(controllers.consolidations.routes.DisassociateUCRConfirmationController.displayPage())
+      Redirect(controllers.consolidations.routes.DisassociateUcrConfirmationController.displayPage())
         .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString)
     }
   }

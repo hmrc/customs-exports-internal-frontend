@@ -20,7 +20,7 @@ import controllers.actions.AuthenticatedAction
 import controllers.storage.FlashExtractor
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
-import models.cache.JourneyType.ASSOCIATE_UCR
+import models.cache.JourneyType.DISSOCIATE_UCR
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -29,7 +29,7 @@ import views.html.confirmation_page
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class AssociateUCRConfirmationController @Inject()(
+class DisassociateUcrConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
   flashExtractor: FlashExtractor,
@@ -40,8 +40,8 @@ class AssociateUCRConfirmationController @Inject()(
   def displayPage: Action[AnyContent] = authenticate { implicit request =>
     val journeyType = flashExtractor.extractMovementType(request).getOrElse(throw ReturnToStartException)
     journeyType match {
-      case ASSOCIATE_UCR => Ok(confirmationPage(journeyType))
-      case _             => throw ReturnToStartException
+      case DISSOCIATE_UCR => Ok(confirmationPage(journeyType))
+      case _              => throw ReturnToStartException
     }
   }
 

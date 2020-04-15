@@ -43,6 +43,5 @@ object Cache {
   }
   implicit val format: OFormat[Cache] = Json.format[Cache]
 
-//  def apply(providerId: String, answers: Answers): Cache = new Cache(providerId, Some(answers), None)
   def apply(providerId: String, queryUcr: UcrBlock): Cache = new Cache(providerId, None, Some(queryUcr))
 }

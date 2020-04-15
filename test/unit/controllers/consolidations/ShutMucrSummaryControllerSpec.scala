@@ -90,7 +90,9 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with ScalaFuture
 
         val cachedAnswers = ShutMucrAnswers(shutMucr = Some(shutMucr))
 
-        controller(cachedAnswers).submit()(postRequest(JsString(""))).futureValue
+        val result = controller(cachedAnswers).submit()(postRequest(JsString("")))
+
+        await(result)
 
         val expectedProviderId = SuccessfulAuth().operator.providerId
         verify(submissionService).submit(meq(expectedProviderId), meq(cachedAnswers))(any())

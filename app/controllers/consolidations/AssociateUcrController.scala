@@ -17,40 +17,49 @@
 package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashKeys
+import controllers.consolidations.{routes => consolidationRoutes}
+import forms.AssociateUcr.form
 import javax.inject.Inject
 import models.ReturnToStartException
 import models.cache.AssociateUcrAnswers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SubmissionService
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.associateucr.associate_ucr_summary
+import views.html.associateucr.associate_ucr
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class AssociateUCRSummaryController @Inject()(
+class AssociateUcrController @Inject()(
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
-  submissionService: SubmissionService,
-  associateUcrSummaryPage: associate_ucr_summary
+  cacheRepository: CacheRepository,
+  associateUcrPage: associate_ucr
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
-    val answers = request.answersAs[AssociateUcrAnswers]
-    val mucrOptions = answers.mucrOptions.getOrElse(throw ReturnToStartException)
-    val ucr = answers.associateUcr.getOrElse(throw ReturnToStartException)
-    Ok(associateUcrSummaryPage(ucr, mucrOptions.mucr))
+    val associateUcrAnswers = request.answersAs[AssociateUcrAnswers]
+    val mucrOptions = associateUcrAnswers.parentMucr.getOrElse(throw ReturnToStartException)
+    val associateUcr = associateUcrAnswers.childUcr
+
+    Ok(associateUcrPage(associateUcr.fold(form)(form.fill), mucrOptions))
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
-    val answers = request.answersAs[AssociateUcrAnswers]
+    val mucrOptions = request.answersAs[AssociateUcrAnswers].parentMucr.getOrElse(throw ReturnToStartException)
 
-    submissionService.submit(request.providerId, answers).map { _ =>
-      Redirect(controllers.consolidations.routes.AssociateUCRConfirmationController.displayPage())
-        .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString)
-    }
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions))),
+        formData => {
+          val updatedCache = request.answersAs[AssociateUcrAnswers].copy(childUcr = Some(formData))
+          cacheRepository.upsert(request.cache.update(updatedCache)).map { _ =>
+            Redirect(consolidationRoutes.AssociateUcrSummaryController.displayPage())
+          }
+        }
+      )
   }
 }

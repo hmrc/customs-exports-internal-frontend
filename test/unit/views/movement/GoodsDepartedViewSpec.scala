@@ -57,7 +57,7 @@ class GoodsDepartedViewSpec extends ViewSpec with Injector {
 
     "display back button" in {
 
-      val backButton = goodsDepartedPage(GoodsDeparted.form, validDucr).getGovUkBackButton
+      val backButton = goodsDepartedPage(GoodsDeparted.form, validDucr).getBackButton
 
       backButton mustBe defined
       backButton.get must haveHref(routes.LocationController.displayPage())

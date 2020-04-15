@@ -17,9 +17,9 @@
 package models.cache
 
 import forms.{AssociateUcr, MucrOptions, _}
-import models.UcrBlock
 import models.UcrBlock.{ducrType, mucrType}
 import models.cache.JourneyType.JourneyType
+import models.{Ucr, UcrBlock, UcrType}
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.play.json.Union
 
@@ -122,10 +122,24 @@ object DepartureAnswers {
 
 case class AssociateUcrAnswers(
   override val eori: Option[String] = Answers.fakeEORI,
-  mucrOptions: Option[MucrOptions] = None,
-  associateUcr: Option[AssociateUcr] = None
+  parentMucr: Option[MucrOptions] = None,
+  childUcr: Option[AssociateUcr] = None,
+  manageMucrChoice: Option[ManageMucrChoice] = None
 ) extends Answers {
   override val `type`: JourneyType.Value = JourneyType.ASSOCIATE_UCR
+
+  def consignmentReference: Option[String] =
+    if (manageMucrChoice.exists(_.choice == ManageMucrChoice.AssociateAnotherUcrToThis))
+      parentMucr.map(_.mucr)
+    else
+      childUcr.map(_.ucr)
+
+  def associateWith: Option[Ucr] =
+    if (manageMucrChoice.exists(_.choice == ManageMucrChoice.AssociateAnotherUcrToThis))
+      childUcr.map(childUcr => Ucr(value = childUcr.ucr, typ = childUcr.kind))
+    else
+      parentMucr.map(parentMucr => Ucr(value = parentMucr.mucr, typ = UcrType.Mucr))
+
 }
 
 object AssociateUcrAnswers {
@@ -133,9 +147,9 @@ object AssociateUcrAnswers {
 
   def fromQueryUcr(queryUcr: Option[UcrBlock]): AssociateUcrAnswers = queryUcr match {
     case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
-      AssociateUcrAnswers(associateUcr = Some(AssociateUcr(AssociateKind.Mucr, ucrBlock.ucr)))
+      AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.Mucr, ucrBlock.ucr)))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
-      AssociateUcrAnswers(associateUcr = Some(AssociateUcr(AssociateKind.Ducr, ucrBlock.ucr)))
+      AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.Ducr, ucrBlock.ucr)))
     case _ =>
       AssociateUcrAnswers()
   }
@@ -150,9 +164,9 @@ object DisassociateUcrAnswers {
 
   def fromQueryUcr(queryUcr: Option[UcrBlock]): DisassociateUcrAnswers = queryUcr match {
     case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
-      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(DisassociateKind.Mucr, None, Some(ucrBlock.ucr))))
+      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Mucr, None, Some(ucrBlock.ucr))))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
-      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(DisassociateKind.Ducr, Some(ucrBlock.ucr), None)))
+      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Ducr, Some(ucrBlock.ucr), None)))
     case _ =>
       DisassociateUcrAnswers()
   }
