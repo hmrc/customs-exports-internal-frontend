@@ -50,6 +50,10 @@ function selectFromAutoPredict(element, selected) {
     }
 }
 
+function randomValueFrom(list) {
+    return list[Math.floor(Math.random() * list.length)];
+}
+
 function currentPageIs(path) {
     let matches = window.location.pathname.match(path + "$");
     return matches && matches.length > 0
@@ -98,6 +102,11 @@ function completePage() {
         document.getElementsByClassName('govuk-button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/summary")){}
+    if(currentPageIs("/customs-exports-internal/manage-mucr")){
+        const radioOptions = ["choice", "choice-2"];
+        document.getElementById(randomValueFrom(radioOptions)).checked = true;
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
     if(currentPageIs("/customs-exports-internal/mucr-options")){
         document.getElementById("createOrAdd").checked = true;
         document.getElementById("newMucr").value = "GB/1234-123ABC456DEFIIIII";
