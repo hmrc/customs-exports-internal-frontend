@@ -39,7 +39,9 @@ trait ViewTemplates {
     "microservice.services.contact-frontend.host" -> "localhost",
     "microservice.services.contact-frontend.port" -> "9250",
     "microservice.services.auth.host" -> "localhost",
-    "microservice.services.auth.port" -> "8500"
+    "microservice.services.auth.port" -> "8500",
+    "timeoutDialog.timeout" -> "13min",
+    "timeoutDialog.countdown" -> "3min"
   )
 
   private val minimalAppConfig: AppConfig = new AppConfig(

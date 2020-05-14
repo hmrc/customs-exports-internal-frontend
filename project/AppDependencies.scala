@@ -16,8 +16,9 @@ object AppDependencies {
     "uk.gov.hmrc"          %% "simple-reactivemongo"          % "7.22.0-play-26",
     "ai.x"                 %% "play-json-extensions"          % "0.40.2",
     "com.github.tototoshi" %% "scala-csv"                     % "1.3.6",
-    "com.github.cloudyrock.mongock"  %  "mongock-core"                      % "2.0.2",
-    "org.mongodb"          %  "mongo-java-driver"             % "3.12.1"
+    "com.github.cloudyrock.mongock"  %  "mongock-core"        % "2.0.2",
+    "org.mongodb"          %  "mongo-java-driver"             % "3.12.1",
+    "org.webjars.npm"      %  "hmrc-frontend"                 % "1.5.0"
   ).map(_.withSources())
 
   val test = Seq(

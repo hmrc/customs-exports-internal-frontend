@@ -49,5 +49,4 @@ class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMa
 
     def getForm: Option[Element] = Option(document.getElementsByTag("form")).filter(!_.isEmpty).map(_.first())
   }
-
 }
