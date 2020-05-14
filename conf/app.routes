@@ -77,3 +77,7 @@ GET         /submissions                           controllers.ViewSubmissionsCo
 # Notifications page
 GET         /notifications/:conversationId         controllers.ViewNotificationsController.listOfNotifications(conversationId)
 
+# Session timeout
+
+GET         /sign-out                              controllers.SessionTimeoutController.signOut()
+GET         /we-signed-you-out                     controllers.SessionTimeoutController.signedOut()
