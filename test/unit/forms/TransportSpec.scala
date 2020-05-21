@@ -19,7 +19,7 @@ package forms
 import base.UnitSpec
 import forms.Transport.ModesOfTransport._
 import play.api.data.FormError
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, JsString, Json}
 import testdata.TestDataHelper.createRandomAlphanumericString
 
 class TransportSpec extends UnitSpec {
@@ -220,6 +220,20 @@ class TransportSpec extends UnitSpec {
 
         Transport.outOfTheUkForm.bind(inputData).errors mustBe empty
       }
+
+      "convert to upper case" when {
+
+        "country is lower case" in {
+          val form = Transport.outOfTheUkForm.bind(
+            JsObject(Map("modeOfTransport" -> JsString("2"), "transportId" -> JsString("xwercwrxwy"), "nationality" -> JsString("pl")))
+          )
+
+          form.errors mustBe (empty)
+          form.value.flatMap(_.modeOfTransport) must be(Some("2"))
+          form.value.flatMap(_.transportId) must be(Some("xwercwrxwy"))
+          form.value.flatMap(_.nationality) must be(Some("PL"))
+        }
+      }
     }
   }
 
@@ -362,6 +376,17 @@ class TransportSpec extends UnitSpec {
         val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "GB", "transportId" -> "")
 
         Transport.backIntoTheUkForm.bind(inputData).errors mustBe empty
+      }
+
+      "convert to upper case" when {
+
+        "country is lower case" in {
+          val form = Transport.backIntoTheUkForm.bind(JsObject(Map("modeOfTransport" -> JsString("2"), "nationality" -> JsString("pl"))))
+
+          form.errors mustBe (empty)
+          form.value.flatMap(_.modeOfTransport) must be(Some("2"))
+          form.value.flatMap(_.nationality) must be(Some("PL"))
+        }
       }
     }
   }

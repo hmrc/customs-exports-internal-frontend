@@ -19,7 +19,7 @@ package forms
 import base.UnitSpec
 import forms.MucrOptions.CreateOrAddValues._
 import play.api.data.FormError
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, JsString, Json}
 import testdata.CommonTestData.correctUcr
 
 class MucrOptionsSpec extends UnitSpec {
@@ -104,6 +104,26 @@ class MucrOptionsSpec extends UnitSpec {
         val errors = MucrOptions.form.fillAndValidate(inputData).errors
 
         errors.length mustBe 0
+      }
+
+      "convert new mucr to upper case" in {
+
+        val form = MucrOptions.form.bind(
+          JsObject(Map("createOrAdd" -> JsString("create"), "newMucr" -> JsString("gb/abced1234-15804test"), "existingMucr" -> JsString("")))
+        )
+
+        form.errors mustBe (empty)
+        form.value.map(_.newMucr) must be(Some("GB/ABCED1234-15804TEST"))
+      }
+
+      "convert existing mucr to upper case" in {
+
+        val form = MucrOptions.form.bind(
+          JsObject(Map("createOrAdd" -> JsString("add"), "newMucr" -> JsString(""), "existingMucr" -> JsString("gb/abced1234-15804test")))
+        )
+
+        form.errors mustBe (empty)
+        form.value.map(_.existingMucr) must be(Some("GB/ABCED1234-15804TEST"))
       }
     }
   }

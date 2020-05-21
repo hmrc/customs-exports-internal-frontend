@@ -18,6 +18,7 @@ package forms
 
 import base.UnitSpec
 import play.api.data.FormError
+import play.api.libs.json.{JsObject, JsString}
 
 class ShutMucrSpec extends UnitSpec {
 
@@ -58,6 +59,16 @@ class ShutMucrSpec extends UnitSpec {
         val errors = ShutMucr.form().fillAndValidate(inputData).errors
 
         errors.length must be(0)
+      }
+    }
+
+    "convert to upper case" when {
+
+      "provided MUCR is lower case" in {
+        val form = ShutMucr.form.bind(JsObject(Map("mucr" -> JsString("gb/abced1234-15804test"))))
+
+        form.errors mustBe (empty)
+        form.value.map(_.mucr) must be(Some("GB/ABCED1234-15804TEST"))
       }
     }
   }

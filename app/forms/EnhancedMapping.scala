@@ -19,7 +19,7 @@ package forms
 import forms.MucrOptions.CreateOrAddValues
 import play.api.data.format.Formatter
 import play.api.data.{FieldMapping, FormError, Forms}
-import utils.FieldValidator.validMucr
+import utils.FieldValidator.validMucrIgnoreCase
 
 object EnhancedMapping {
 
@@ -43,7 +43,7 @@ object EnhancedMapping {
 
         if (mucr.isEmpty) Left(Seq(FormError(key, "mucrOptions.reference.value.empty")))
         else {
-          if (validMucr(mucr)) Right(mucr)
+          if (validMucrIgnoreCase(mucr)) Right(mucr)
           else Left(Seq(FormError(key, "mucrOptions.reference.value.error")))
         }
 

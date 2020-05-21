@@ -40,8 +40,8 @@ object ConsignmentReferences {
   private def form2Model: (ConsignmentReferenceType, Option[String], Option[String]) => ConsignmentReferences = {
     case (reference, ducrValue, mucrValue) =>
       reference match {
-        case ConsignmentReferenceType.D => ConsignmentReferences(ConsignmentReferenceType.D, ducrValue.getOrElse(""))
-        case ConsignmentReferenceType.M => ConsignmentReferences(ConsignmentReferenceType.M, mucrValue.getOrElse(""))
+        case ConsignmentReferenceType.D => ConsignmentReferences(ConsignmentReferenceType.D, ducrValue.map(_.toUpperCase).getOrElse(""))
+        case ConsignmentReferenceType.M => ConsignmentReferences(ConsignmentReferenceType.M, mucrValue.map(_.toUpperCase).getOrElse(""))
       }
   }
 
@@ -63,14 +63,14 @@ object ConsignmentReferences {
         ConsignmentReferenceType.D.toString,
         text()
           .verifying("consignmentReferences.reference.ducrValue.empty", nonEmpty)
-          .verifying("consignmentReferences.reference.ducrValue.error", isEmpty or validDucr)
+          .verifying("consignmentReferences.reference.ducrValue.error", isEmpty or validDucrIgnoreCase)
       ),
       "mucrValue" -> mandatoryIfEqual(
         "reference",
         ConsignmentReferenceType.M.toString,
         text()
           .verifying("consignmentReferences.reference.mucrValue.empty", nonEmpty)
-          .verifying("consignmentReferences.reference.mucrValue.error", isEmpty or validMucr)
+          .verifying("consignmentReferences.reference.mucrValue.error", isEmpty or validMucrIgnoreCase)
       )
     )(form2Model)(model2Form)
 
