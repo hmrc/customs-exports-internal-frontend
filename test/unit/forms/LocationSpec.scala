@@ -18,6 +18,7 @@ package forms
 
 import base.UnitSpec
 import play.api.data.FormError
+import play.api.libs.json.{JsObject, JsString}
 
 class LocationSpec extends UnitSpec {
 
@@ -90,6 +91,16 @@ class LocationSpec extends UnitSpec {
         val errors = Location.form().fillAndValidate(inputData).errors
 
         errors.length must be(0)
+      }
+
+      "data converted to upper case" in {
+
+        def formData(code: String) =
+          JsObject(Map("code" -> JsString(code)))
+
+        val form = Location.form().bind(formData("plaucorrect"))
+
+        form.value.map(_.code) must be(Some("PLAUCORRECT"))
       }
     }
   }

@@ -42,8 +42,8 @@ object Transport {
 
   import ModesOfTransport._
 
-  private def form2Model(modeOfTransport: String, nationality: String, transportId: String): Transport =
-    Transport(modeOfTransport = Some(modeOfTransport), nationality = Some(nationality), transportId = Some(transportId))
+  private def form2OutOfUkModel(modeOfTransport: String, nationality: String, transportId: String): Transport =
+    Transport(modeOfTransport = Some(modeOfTransport), nationality = Some(nationality.toUpperCase), transportId = Some(transportId))
 
   private def model2Form(transport: Transport): Option[(String, String, String)] =
     for {
@@ -61,23 +61,26 @@ object Transport {
         .verifying("transport.modeOfTransport.error", isContainedIn(allowedModesOfTransport)),
       "nationality" -> text()
         .verifying("transport.nationality.empty", nonEmpty)
-        .verifying("transport.nationality.error", isEmpty or isValidCountryCode),
+        .verifying("transport.nationality.error", isEmpty or (input => isValidCountryCode(input.toUpperCase))),
       "transportId" -> text()
         .verifying("transport.transportId.empty", nonEmpty)
         .verifying("transport.transportId.error", isEmpty or (noLongerThan(35) and isAlphanumericWithAllowedSpecialCharacters))
-    )(form2Model)(model2Form)
+    )(form2OutOfUkModel)(model2Form)
 
   private val atLeastOneIsEmpty: Transport => Boolean = (t: Transport) => t.transportId.isEmpty || t.nationality.isEmpty || t.modeOfTransport.isEmpty
 
   private val backIntoTheUkMapping = Forms
     .mapping(
       "modeOfTransport" -> optional(text().verifying("transport.modeOfTransport.error", isContainedIn(allowedModesOfTransport))),
-      "nationality" -> optional(text().verifying("transport.nationality.error", isEmpty or isValidCountryCode)),
+      "nationality" -> optional(text().verifying("transport.nationality.error", isEmpty or (input => isValidCountryCode(input.toUpperCase)))),
       "transportId" -> optional(
         text().verifying("transport.transportId.error", isEmpty or (noLongerThan(35) and isAlphanumericWithAllowedSpecialCharacters))
       )
-    )(Transport.apply)(Transport.unapply)
+    )(form2IntoUkModel)(Transport.unapply)
     .verifying("transport.backIntoTheUk.error.allFieldsEntered", atLeastOneIsEmpty)
+
+  private def form2IntoUkModel(modeOfTransport: Option[String], nationality: Option[String], transportId: Option[String]): Transport =
+    new Transport(modeOfTransport, nationality.map(_.toUpperCase), transportId)
 
   def outOfTheUkForm: Form[Transport] = Form(outOfTheUkMapping)
   def backIntoTheUkForm: Form[Transport] = Form(backIntoTheUkMapping)

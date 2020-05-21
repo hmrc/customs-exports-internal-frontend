@@ -16,18 +16,28 @@
 
 package forms
 
-import play.api.data.{Form, Forms}
-import play.api.data.Forms.text
-import utils.FieldValidator._
+import base.UnitSpec
+import play.api.libs.json.{JsObject, JsString}
 
-object IleQueryForm {
+class IleQueryFormSpec extends UnitSpec {
 
-  val form: Form[String] = Form(
-    Forms.single(
-      "ucr" -> text()
-        .verifying("ileQuery.ucr.empty", nonEmpty)
-        .verifying("ileQuery.ucr.incorrect", isEmpty or validDucrIgnoreCase or validMucrIgnoreCase)
-        .transform(input => input.toUpperCase, (output: String) => output)
-    )
-  )
+  "IleQueryForm" should {
+
+    "convert ducr to upper case" in {
+
+      val form = IleQueryForm.form.bind(JsObject(Map("ucr" -> JsString("8gb123457359100-test0001"))))
+
+      form.errors mustBe (empty)
+      form.value must be(Some("8GB123457359100-TEST0001"))
+    }
+
+    "convert mucr to upper case" in {
+
+      val form = IleQueryForm.form.bind(JsObject(Map("ucr" -> JsString("gb/abced1234-15804test"))))
+
+      form.errors mustBe (empty)
+      form.value must be(Some("GB/ABCED1234-15804TEST"))
+    }
+  }
+
 }
