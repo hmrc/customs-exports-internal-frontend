@@ -15,6 +15,8 @@ feedback.link = feedback
 site.continue = Continue
 site.back = Back
 site.save_and_continue = Save and continue
+site.link.backToGovUk = Back to GOV.UK
+site.link.signOut = Sign out
 site.change = Change
 site.change.hint.disassociate.ucr = Change {0} dissociation
 site.change.hint.associate.mucr = Change MUCR
@@ -385,9 +387,12 @@ ileQueryResponse.timeout.message = Try again later.
 sessionTimout.title = For your security, we signed you out
 sessionTimout.paragraph.saved = We saved your answers.
 sessionTimout.signin.button = Sign in
-sessionTimout.back.button = Back to GOV.UK
 
 timeoutDialog.title = Your session will timeout soon
 timeoutDialog.message = For your security, we will sign you out in
 timeoutDialog.keepAlive.text= Stay signed in
 timeoutDialog.signout.text= Sign out
+
+userSignedOut.title = We have saved your answers and signed you out
+userSignedOut.information = To continue the declaration later, save this link:
+userSignedOut.findConsignmentPageLink = {0}/customs-exports-internal/consignment-query

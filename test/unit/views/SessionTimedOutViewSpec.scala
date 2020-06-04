@@ -37,7 +37,7 @@ class SessionTimedOutViewSpec extends ViewSpec with Injector {
       messages must haveTranslationFor("sessionTimout.title")
       messages must haveTranslationFor("sessionTimout.paragraph.saved")
       messages must haveTranslationFor("sessionTimout.signin.button")
-      messages must haveTranslationFor("sessionTimout.back.button")
+      messages must haveTranslationFor("site.link.backToGovUk")
     }
 
     val view = createView()
@@ -52,14 +52,14 @@ class SessionTimedOutViewSpec extends ViewSpec with Injector {
       val button = view.getElementsByClass("govuk-button").first()
 
       button.text() mustBe messages("sessionTimout.signin.button")
-      button.attr("href") mustBe controllers.routes.ChoiceController.displayPage().url
+      button.attr("href") mustBe controllers.ileQuery.routes.FindConsignmentController.displayQueryForm().url
     }
 
     "display back to gov.uk link" in {
 
       val link = view.getElementsByClass("govuk-link").first()
 
-      link.text() mustBe messages("sessionTimout.back.button")
+      link.text() mustBe messages("site.link.backToGovUk")
       link.attr("href") mustBe "https://www.gov.uk/"
     }
   }

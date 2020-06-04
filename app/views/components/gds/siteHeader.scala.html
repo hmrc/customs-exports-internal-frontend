@@ -14,23 +14,39 @@
  * limitations under the License.
  *@
 
+@import controllers.exchanges.JourneyRequest
+@import controllers.exchanges.AuthenticatedRequest
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukHeader
 
-@this(govukHeader: GovukHeader)
+@this()
 
 @()(implicit request: Request[_], messages: Messages)
 
-<div class="hmrc-internal-header app-header">
+@signOutHref = {
+  @if(request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]]){
+      <nav class="hmrc-header hmrc-header--with-additional-navigation hmrc-sign-out-nav">
+        <a href="@{controllers.routes.SignOutController.signOut(models.SignOutReason.UserAction).url}" class="hmrc-sign-out-nav__link">
+          @messages("site.link.signOut")
+        </a>
+      </nav>
+  }
+}
+
+<div class="hmrc-internal-header hmrc-header hmrc-header--with-additional-navigation">
     <div class="govuk-width-container">
         <div class="hmrc-logo app-header__title">
             <a href="https://www.gov.uk/government/organisations/hm-revenue-customs" title="@messages("header.homepage.alt")" class="hmrc-logo__link">
                 @messages("header.homepage.text")
             </a>
         </div>
-        <div class="hmrc-internal-service-name app-header__link">
+
+        <div class="hmrc-internal-service-name">
             <a href="/" title="Go to the Exports Declaration Service homepage" class="hmrc-internal-service-name__link">
                 @messages("service.name")
             </a>
+
+            @signOutHref
         </div>
+
     </div>
 </div>
