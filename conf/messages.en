@@ -1,6 +1,7 @@
 service.name = CDS Exports Service
 header.homepage.alt = Go to the HMRC homepage
 header.homepage.text = HM Revenue & Customs
+header.servicename.alt = Go to the Exports Declaration Service homepage
 
 date.day = Day
 date.month = Month
