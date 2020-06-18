@@ -41,7 +41,7 @@
         </div>
 
         <div class="hmrc-internal-service-name">
-            <a href="/" title="Go to the Exports Declaration Service homepage" class="hmrc-internal-service-name__link">
+            <a href="@{controllers.ileQuery.routes.FindConsignmentController.displayQueryForm().url}" title="@messages("header.servicename.alt")" class="hmrc-internal-service-name__link">
                 @messages("service.name")
             </a>
 
