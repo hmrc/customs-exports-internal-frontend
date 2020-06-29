@@ -67,13 +67,18 @@
         @timeoutDialog(request.uri, timeoutDialogConfig.timeout, timeoutDialogConfig.countdown)
     }
 
+}
+
+@content = {
+    <div class="govuk-back-link-div">
     @backButton.map(back =>
         govukBackLink(BackLink(
-        content = Text(back.title),
-        attributes = Map("id" -> "back-link"),
-        href = back.call.url
-    )))
-
+            content = Text(back.title),
+            attributes = Map("id" -> "back-link"),
+            href = back.call.url
+        )))
+    </div>
+    @contentBlock
 }
 
 @footer = @{
@@ -93,7 +98,7 @@
     scriptsBlock = Some(scripts),
     headerBlock = Some(siteHeader()),
     footerItems = footer
-  )(contentBlock)
+  )(content)
 } else {
   @govukLayout(
     pageTitle = Some(title.format),
@@ -103,5 +108,5 @@
     scriptsBlock = Some(scripts),
     headerBlock = Some(siteHeader()),
     footerItems = footer
-  )(contentBlock)
+  )(content)
 }
