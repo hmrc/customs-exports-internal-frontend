@@ -16,15 +16,22 @@
 
 package views.movement
 
+import java.time.temporal.ChronoUnit
+import java.time.{LocalDate, LocalTime}
+
 import base.Injector
+import forms.DepartureDetails
+import forms.common.{Date, Time}
 import models.cache.DepartureAnswers
 import play.api.test.Helpers._
-import views.ViewSpec
 import views.html.summary.departure_summary_page
+import views.{ViewDates, ViewSpec}
 
 class DepartureSummaryViewSpec extends ViewSpec with Injector {
 
-  private val answers = DepartureAnswers()
+  private val date = Date(LocalDate.now())
+  private val time = Time(LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
+  private val answers = DepartureAnswers(departureDetails = Some(DepartureDetails(date, time)))
 
   private implicit val request = journeyRequest(answers)
 
@@ -59,6 +66,13 @@ class DepartureSummaryViewSpec extends ViewSpec with Injector {
       summaryContent must include(messages("departureDetails.title"))
       summaryContent must include(messages("goodsDeparted.title"))
       summaryContent must include(messages("transport.title"))
+    }
+
+    "render formatted departure date" in {
+      val view = departureSummaryPage(answers)
+
+      view.getElementsByClass("govuk-summary-list__key").get(2) must containMessage("summary.departure.date")
+      view.getElementsByClass("govuk-summary-list__value").get(2).text mustBe date.date.format(ViewDates.dateFormatter)
     }
   }
 

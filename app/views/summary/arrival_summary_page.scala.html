@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.Title
 @import views.components.BackButton
+@import views.ViewDates
 
 @this(
   govukLayout: gds_main_template,
@@ -52,7 +53,7 @@
               content = Text(messages("summary.arrival.date"))
             ),
             value = Value(
-              content = Text(data.arrivalDetails.map(_.dateOfArrival.toString).getOrElse(""))
+              content = Text(data.arrivalDetails.map(arrival => ViewDates.dateFormatter.format(arrival.dateOfArrival.date)).getOrElse(""))
             ),
             actions = Some(Actions(
               items = Seq(
