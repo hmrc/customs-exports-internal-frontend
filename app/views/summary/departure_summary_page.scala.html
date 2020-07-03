@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.gds.{gds_main_template, pageTitle}
+@import components.gds.{gds_main_template, linkContent, pageTitle}
 @import components.summary._
 @import controllers.movements.routes
 @import models.cache.DepartureAnswers
@@ -31,6 +31,7 @@
   locationList: location_summary_list,
   goodsDepartedList: goods_departed_summary_list,
   transportList: transport_summary_list,
+  linkContent: linkContent,
   govukSummaryList: GovukSummaryList,
   formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 )
@@ -61,7 +62,7 @@
               items = Seq(
                 ActionItem(
                   href = s"${routes.MovementDetailsController.displayPage}",
-                  content = Text(messages("site.change")),
+                  content = HtmlContent(linkContent(messages("site.change"))),
                   visuallyHiddenText = Some(messages("summary.departure.date.change"))
                 )
               )
@@ -78,7 +79,7 @@
               items = Seq(
                 ActionItem(
                   href = s"${routes.MovementDetailsController.displayPage}",
-                  content = Text(messages("site.change")),
+                  content = HtmlContent(linkContent(messages("site.change"))),
                   visuallyHiddenText = Some(messages("summary.departure.time.change"))
                 )
               )

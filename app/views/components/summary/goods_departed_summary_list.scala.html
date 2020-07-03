@@ -16,9 +16,10 @@
 
 @import controllers.movements.routes
 @import forms.GoodsDeparted
+@import views.html.components.gds.linkContent
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(govukSummaryList: GovukSummaryList)
+@this(govukSummaryList: GovukSummaryList, linkContent: linkContent)
 
 @(goodsDeparted: Option[GoodsDeparted])(implicit request: Request[_], messages: Messages)
 
@@ -36,7 +37,7 @@
           items = Seq(
             ActionItem(
               href = s"${routes.GoodsDepartedController.displayPage}",
-              content = Text(messages("site.change")),
+              content = HtmlContent(linkContent(messages("site.change"))),
               visuallyHiddenText = Some(messages("summary.goodsDeparted.change"))
             )
           )

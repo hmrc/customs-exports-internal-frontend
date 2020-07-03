@@ -17,8 +17,9 @@
 @import controllers.movements.routes
 @import forms.Location
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components.gds.linkContent
 
-@this(govukSummaryList: GovukSummaryList)
+@this(govukSummaryList: GovukSummaryList, linkContent: linkContent)
 
 @(location: Option[Location])(implicit request: Request[_], messages: Messages)
 
@@ -37,7 +38,7 @@
           items = Seq(
             ActionItem(
               href = s"${routes.LocationController.displayPage}",
-              content = Text(messages("site.change")),
+              content = HtmlContent(linkContent(messages("site.change"))),
               visuallyHiddenText = Some(messages("summary.goodsLocation.change"))
             )
           )
