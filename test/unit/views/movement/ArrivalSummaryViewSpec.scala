@@ -16,15 +16,22 @@
 
 package views.movement
 
+import java.time.temporal.ChronoUnit
+import java.time.{LocalDate, LocalTime}
+
 import base.Injector
+import forms.ArrivalDetails
+import forms.common.{Date, Time}
 import models.cache.ArrivalAnswers
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import views.ViewSpec
 import views.html.summary.arrival_summary_page
+import views.{ViewDates, ViewSpec}
 
 class ArrivalSummaryViewSpec extends ViewSpec with Injector {
 
-  private val answers = ArrivalAnswers()
+  private val date = Date(LocalDate.now())
+  private val time = Time(LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
+  private val answers = ArrivalAnswers(arrivalDetails = Some(ArrivalDetails(date, time)))
 
   private implicit val request = journeyRequest(answers)
 
@@ -57,6 +64,13 @@ class ArrivalSummaryViewSpec extends ViewSpec with Injector {
       summaryContent must include(messages("summary.consignmentDetails"))
       summaryContent must include(messages("arrivalDetails.title"))
       summaryContent must include(messages("location.title"))
+    }
+
+    "render formatted arrivate date" in {
+      val view = page(answers)
+
+      view.getElementsByClass("govuk-summary-list__key").get(2) must containMessage("summary.arrival.date")
+      view.getElementsByClass("govuk-summary-list__value").get(2).text mustBe date.date.format(ViewDates.dateFormatter)
     }
   }
 
