@@ -19,6 +19,7 @@ package views.associateucr
 import base.Injector
 import forms.ManageMucrChoice._
 import forms.{ManageMucrChoice, MucrOptions}
+import models.UcrBlock
 import models.cache.AssociateUcrAnswers
 import org.jsoup.nodes.{Document, Element}
 import play.api.data.{Form, FormError}
@@ -33,8 +34,9 @@ class MucrOptionsViewSpec extends ViewSpec with Injector {
 
   private val page = instanceOf[mucr_options]
 
+  private val queryUcr = Some(UcrBlock("testMucr", UcrBlock.mucrType))
   private def createView(form: Form[MucrOptions] = MucrOptions.form, manageMucrChoice: Option[ManageMucrChoice] = None): Html =
-    page(form, manageMucrChoice)
+    page(form, queryUcr, manageMucrChoice)
 
   "MUCR options" should {
 
@@ -45,7 +47,7 @@ class MucrOptionsViewSpec extends ViewSpec with Injector {
     }
 
     "have the correct heading" in {
-      view.getElementById("section-header") must containMessage("mucrOptions.heading")
+      view.getElementById("section-header") must containMessage("mucrOptions.heading", "testMucr")
     }
 
     "render the correct labels and hints" in {
