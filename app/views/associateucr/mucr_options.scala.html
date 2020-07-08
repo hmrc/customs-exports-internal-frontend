@@ -31,7 +31,7 @@
     formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 )
 
-@(form: Form[MucrOptions], manageMucrChoice: Option[ManageMucrChoice])(implicit request: Request[_], messages: Messages)
+@(form: Form[MucrOptions], queryUcr: Option[UcrBlock], manageMucrChoice: Option[ManageMucrChoice])(implicit request: Request[_], messages: Messages)
 
 @backCall = @{
   if (manageMucrChoice.isDefined)
@@ -47,7 +47,7 @@
     @formHelper(action = consolidations.routes.MucrOptionsController.submit(), 'autoComplete -> "off") {
         @errorSummary(form.errors)
 
-        @sectionHeader(messages("mucrOptions.heading"))
+        @sectionHeader(messages("mucrOptions.heading", queryUcr.map(_.ucr).getOrElse("")))
 
         @govukRadios(Radios(
             name = "createOrAdd",

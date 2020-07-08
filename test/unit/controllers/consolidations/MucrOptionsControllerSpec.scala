@@ -19,6 +19,7 @@ package controllers.consolidations
 import controllers.ControllerLayerSpec
 import forms.ManageMucrChoice.AssociateAnotherUcrToThis
 import forms.{ManageMucrChoice, MucrOptions}
+import models.UcrBlock
 import models.cache.AssociateUcrAnswers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -29,6 +30,7 @@ import play.api.libs.json.{JsString, Json}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.MockCache
+import testdata.CommonTestData.validDucr
 import views.html.associateucr.mucr_options
 
 import scala.concurrent.ExecutionContext.global
@@ -37,12 +39,12 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
 
   private val page = mock[mucr_options]
 
-  private def controller(answers: AssociateUcrAnswers = AssociateUcrAnswers()) =
-    new MucrOptionsController(SuccessfulAuth(), ValidJourney(answers), stubMessagesControllerComponents(), cacheRepository, page)(global)
+  private def controller(answers: AssociateUcrAnswers = AssociateUcrAnswers(), queryUcr: Option[UcrBlock] = None) =
+    new MucrOptionsController(SuccessfulAuth(), ValidJourney(answers, queryUcr), stubMessagesControllerComponents(), cacheRepository, page)(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -52,13 +54,19 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
 
   private def theResponseForm: Form[MucrOptions] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[MucrOptions]])
-    verify(page).apply(captor.capture(), any())(any(), any())
+    verify(page).apply(captor.capture(), any(), any())(any(), any())
+    captor.getValue
+  }
+
+  private def theQueryUcr: Option[UcrBlock] = {
+    val captor = ArgumentCaptor.forClass(classOf[Option[UcrBlock]])
+    verify(page).apply(any(), captor.capture(), any())(any(), any())
     captor.getValue
   }
 
   private def theManageMucrChoice: Option[ManageMucrChoice] = {
     val captor = ArgumentCaptor.forClass(classOf[Option[ManageMucrChoice]])
-    verify(page).apply(any(), captor.capture())(any(), any())
+    verify(page).apply(any(), any(), captor.capture())(any(), any())
     captor.getValue
   }
 
@@ -78,6 +86,12 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
         theResponseForm.value mustBe empty
       }
 
+      "pass empty queryUcr to view" in {
+
+        controller().displayPage()(getRequest).futureValue
+        theQueryUcr mustNot be(defined)
+      }
+
       "pass empty ManageMucrChoice to view" in {
 
         controller().displayPage()(getRequest).futureValue
@@ -87,36 +101,37 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
 
     "GET displayPage is invoked with data in cache" should {
 
+      val cachedForm = MucrOptions("123")
+      val cachedManageMucrChoice = ManageMucrChoice(AssociateAnotherUcrToThis)
+      val cachedAnswers = AssociateUcrAnswers(parentMucr = Some(cachedForm), manageMucrChoice = Some(cachedManageMucrChoice))
+      val queryUcr = UcrBlock(validDucr, UcrBlock.ducrType)
+
       "return 200 (OK) response" in {
 
-        val cachedForm = MucrOptions("123")
-        val cachedManageMucrChoice = ManageMucrChoice(AssociateAnotherUcrToThis)
-        val cachedAnswers = AssociateUcrAnswers(parentMucr = Some(cachedForm), manageMucrChoice = Some(cachedManageMucrChoice))
-
-        val result = controller(cachedAnswers).displayPage()(getRequest)
+        val result = controller(cachedAnswers, Some(queryUcr)).displayPage()(getRequest)
 
         status(result) mustBe OK
       }
 
       "pass form to view" in {
 
-        val cachedForm = MucrOptions("123")
-        val cachedManageMucrChoice = ManageMucrChoice(AssociateAnotherUcrToThis)
-        val cachedAnswers = AssociateUcrAnswers(parentMucr = Some(cachedForm), manageMucrChoice = Some(cachedManageMucrChoice))
-
-        controller(cachedAnswers).displayPage()(getRequest).futureValue
+        controller(cachedAnswers, Some(queryUcr)).displayPage()(getRequest).futureValue
 
         theResponseForm.value mustBe defined
         theResponseForm.value.get mustBe cachedForm
       }
 
+      "pass QueryUcr to view" in {
+
+        controller(cachedAnswers, Some(queryUcr)).displayPage()(getRequest).futureValue
+
+        theQueryUcr mustBe defined
+        theQueryUcr.get mustBe queryUcr
+      }
+
       "pass ManageMucrChoice to view" in {
 
-        val cachedForm = MucrOptions("123")
-        val cachedManageMucrChoice = ManageMucrChoice(AssociateAnotherUcrToThis)
-        val cachedAnswers = AssociateUcrAnswers(parentMucr = Some(cachedForm), manageMucrChoice = Some(cachedManageMucrChoice))
-
-        controller(cachedAnswers).displayPage()(getRequest).futureValue
+        controller(cachedAnswers, Some(queryUcr)).displayPage()(getRequest).futureValue
 
         theManageMucrChoice mustBe defined
         theManageMucrChoice.get mustBe cachedManageMucrChoice

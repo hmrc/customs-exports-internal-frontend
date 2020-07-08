@@ -43,7 +43,7 @@ class MucrOptionsController @Inject()(
     val mucrOptions = answers.parentMucr
     val manageMucrChoice = answers.manageMucrChoice
 
-    Ok(mucrOptionsPage(mucrOptions.fold(form)(form.fill), manageMucrChoice))
+    Ok(mucrOptionsPage(mucrOptions.fold(form)(form.fill), request.cache.queryUcr, manageMucrChoice))
   }
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
@@ -52,7 +52,7 @@ class MucrOptionsController @Inject()(
       .fold(
         formWithErrors => {
           val manageMucrChoice = request.answersAs[AssociateUcrAnswers].manageMucrChoice
-          Future.successful(BadRequest(mucrOptionsPage(formWithErrors, manageMucrChoice)))
+          Future.successful(BadRequest(mucrOptionsPage(formWithErrors, request.cache.queryUcr, manageMucrChoice)))
         },
         validForm => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(parentMucr = Some(validForm))

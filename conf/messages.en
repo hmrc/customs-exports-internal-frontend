@@ -206,7 +206,7 @@ manageMucr.associate.this.consignment = Associate this consignment to another
 manageMucr.associate.other.consignment = Associate another consignment to this one
 
 associate.heading = Add to MUCR {0}
-mucrOptions.heading = Associate consignment
+mucrOptions.heading = Associate consignment {0}
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
 mucrOptions.create = Create a new MUCR
 mucrOptions.add = Add to an existing MUCR
