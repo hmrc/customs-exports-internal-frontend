@@ -41,6 +41,37 @@
 
 @changeUrl = @{backCall.url}
 
+@summaryList = {
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+            @messages("associate.ucr.summary.consignmentReference")
+            </dt>
+            <dd class="govuk-summary-list__value">
+            @associateUcrAnswers.consignmentReference.getOrElse("")
+            </dd>
+            <dd class="govuk-summary-list__actions"></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+            @associateUcrAnswers.associateWith.map(ucr => messages(s"associate.ucr.summary.associate.with.${ucr.typ.formValue}")).getOrElse("")
+            </dt>
+            <dd class="govuk-summary-list__value">
+            @associateUcrAnswers.associateWith.map(_.value).getOrElse("")
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                <a class="govuk-link" href="@changeUrl">
+                    <span aria-hidden="true">
+                    @messages("site.change")
+                    </span>
+                    @associateUcrAnswers.associateWith.map { ucr =>
+                        <span class="govuk-visually-hidden">@messages(s"site.change.hint.associate.${ucr.typ.formValue}")</span>
+                    }
+                </a>
+            </dd>
+        </div>
+    </dl>
+}
 
 @govukLayout(
   title = Title("associate.ucr.summary.title"),
@@ -50,37 +81,7 @@
 
     @pageTitle(messages("associate.ucr.summary.title"))
 
-    @govukSummaryList(SummaryList(
-      rows = Seq(
-        SummaryListRow(
-          key = Key(
-            content = Text(messages("associate.ucr.summary.consignmentReference"))
-          ),
-          value = Value(
-            content = Text(associateUcrAnswers.consignmentReference.getOrElse(""))
-          ),
-          actions = None
-        ),
-        SummaryListRow(
-          key = Key(
-            content = Text(associateUcrAnswers.associateWith.map(ucr => messages(s"associate.ucr.summary.associate.with.${ucr.typ.formValue}")).getOrElse(""))
-          ),
-          value = Value(
-            content = Text(associateUcrAnswers.associateWith.map(_.value).getOrElse(""))
-          ),
-          actions = Some(Actions(
-            items = Seq(
-              ActionItem(
-                href = changeUrl,
-                content = HtmlContent(linkContent(messages("site.change"))),
-                visuallyHiddenText = associateUcrAnswers.associateWith.map(ucr => messages(s"site.change.hint.associate.${ucr.typ.formValue}"))
-              )
-            )
-          ))
-        )
-      ),
-      classes = "govuk-!-margin-bottom-9"
-    ))
+    @summaryList
 
     @govukButton(Button(content = Text(messages("site.confirmAndSubmit"))))
   }
