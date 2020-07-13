@@ -15,15 +15,12 @@ feedback.link = feedback
 
 site.continue = Continue
 site.back = Back
-site.save_and_continue = Save and continue
 site.link.backToGovUk = Back to GOV.UK
 site.link.signOut = Sign out
 site.change = Change
 site.change.hint.associate.mucr = Change MUCR
 site.change.hint.associate.ducr = Change DUCR
 site.confirmAndSubmit = Confirm and submit
-site.backToStart = Back to start
-site.edit = Change
 site.inputText.ducr.label = Enter an existing DUCR
 site.inputText.mucr.label = Enter an existing MUCR
 site.inputText.newMucr.label = Enter a new MUCR
@@ -63,13 +60,6 @@ movement.choice.retrospectiveArrival.label = Retrospectively arrive
 choicePage.input.error.empty = Please, choose what do you want to do
 choicePage.input.error.incorrectValue = Please, choose valid option
 
-consignmentReferences.arrive.title = What consignment do you want to arrive?
-consignmentReferences.arrive.heading = Arrive consignment
-consignmentReferences.retrospective_arrive.heading = Retrospectively arrive a consignment
-consignmentReferences.depart.heading = Depart consignment
-consignmentReferences.arrive.question = What consignment do you want to arrive?
-consignmentReferences.retrospective_arrive.question = Which consignment do you want to retrospectively arrive?
-consignmentReferences.depart.question = What consignment do you want to depart?
 consignmentReferences.reference.ducr = Declaration Consignment Reference (DUCR)
 consignmentReferences.reference.mucr = Master Consignment Reference (MUCR)
 consignmentReferences.reference.empty = Please choose reference
@@ -88,11 +78,6 @@ specific.datetime.userDateTime = Yes
 specific.datetime.currentDateTime = No, use the current date and time
 specific.datetime.input.error.empty = Please, choose what do you want to do
 specific.datetime.input.error.incorrectValue = Please, choose valid option
-        
-arrivalReference = Arrival reference
-arrivalReference.question = Give this arrival a unique reference
-arrivalReference.hint = This will help you identify it if you need to find it in the future. It can be up to 25 characters.
-arrivalReference.error = The reference should be no more than 25 characters.
 
 arrivalDetails.title = Arrival date and time
 arrivalDetails.header = Enter date and time of arrival
@@ -104,11 +89,6 @@ arrivalDetails.sectionHeading = Arrive consignment {0}
 
 arrival.details.error.overdue = Time of Arrival cannot be more than 60 days in the past
 arrival.details.error.future = Time of Arrival cannot be in the future
-
-arrivalConfirmation.title = Your arrival request has been submitted
-arrivalConfirmation.header = It might take a few minutes before a decision is made. Go to the {0} to check the status.
-arrivalConfirmation.notification.timeline = consignment’s notification timeline
-arrivalConfirmation.redirect.link = Find another consignment
 
 departureDetails.title = Departure date and time
 departureDetails.sectionHeading = Depart consignment {0}
@@ -185,8 +165,6 @@ summary.departure.date.change = Change date of departure
 summary.departure.time = Time of departure
 summary.departure.time.change = Change time of departure
 
-summary.arrivalReference.reference = Unique reference
-
 confirmation.title.ARRIVE = Your arrival request has been submitted
 confirmation.title.DEPART = Your departure request has been submitted
 confirmation.title.RETROSPECTIVE_ARRIVE = Your retrospective arrival request has been submitted
@@ -210,22 +188,16 @@ mucrOptions.heading = Associate consignment {0}
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
 mucrOptions.create = Create a new MUCR
 mucrOptions.add = Add to an existing MUCR
-mucrOptions.create.reference = Enter an alphanumeric reference
-mucrOptions.add.reference = Which MUCR do you want to add to?
 mucrOptions.createAdd.value.empty = Please select an option
 mucrOptions.reference.value.empty = Please enter a reference
 mucrOptions.reference.value.error = Please enter a valid reference
 
 associate.ucr.title = Which consignment do you want to add?
 associate.ucr.ducr = Declaration Consignment Reference (DUCR)
-associate.ucr.ducr.label = Declaration Unique Consignment Reference
 associate.ucr.mucr = Master Consignment Reference (MUCR)
-associate.ucr.mucr.label = Master Unique Consignment Reference
 associate.ucr.hint = You may want to keep a record of which consignments you have added to this MUCR.
 
-ducr.error.empty = Please provide Declaration Unique Consignment Reference
 ducr.error.format = Declaration Unique Consignment Reference is in incorrect format
-mucr.error.empty = Please provide Master Unique Consignment Reference
 mucr.error.format = Master Unique Consignment Reference is in incorrect format
 
 associate.ucr.summary.title = Is the information provided for this association request correct?
@@ -234,45 +206,21 @@ associate.ucr.summary.associate.with.mucr = Associate with MUCR
 associate.ucr.summary.associate.with.ducr = Associate with DUCR
 associate.ucr.summary.kind.mucr = MUCR
 associate.ucr.summary.kind.ducr = DUCR
-associate.ucr.summary.addConsignment = Add consignment
-associate.ucr.summary.masterConsignment = To master consignment
 
-associate.ducr.confirmation.tab.heading = Add DUCR request submitted
-associate.ducr.confirmation.heading = Request to associate DUCR {0} has been submitted
-associate.mucr.confirmation.tab.heading = Add MUCR request submitted
-associate.mucr.confirmation.heading = Request to associate MUCR {0} has been submitted
-association.confirmation.associateOrDepart = {0} another consignment, or {1} a consignment.
-association.confirmation.associateOrDepart.associate = Associate
-association.confirmation.associateOrDepart.depart = depart
-
-disassociate.ucr.title = Which consignment do you want to remove?
-disassociate.ucr.heading = Remove from MUCR
 disassociate.ucr.ducr = Declaration Consignment Reference (DUCR)
 disassociate.ucr.mucr = Master Consignment Reference (MUCR)
 disassociate.ucr.summary.title = Is the information provided for this dissociation request correct?
 disassociate.ucr.summary.table.caption = Remove consignment
-disassociate.ucr.confirmation.tab.heading = Request to dissociate {0} submitted
-disassociate.ucr.confirmation.heading = Request to dissociate {0} {1} has been submitted
 disassociate.ucr.ducr.error = Declaration Consignment Reference is incorrect
 disassociate.ucr.ducr.empty = Enter a Declaration Consignment Reference
 disassociate.ucr.mucr.error = Master Consignment Reference is incorrect
 disassociate.ucr.mucr.empty = Enter a Master Consignment Reference
-
-disassociation.confirmation.associateOrShut = {0} a consignment, or {1}.
-disassociation.confirmation.associateOrShut.associate = Associate
-disassociation.confirmation.associateOrShut.shut = shut a master consignment
 
 shutMucr.title = Which MUCR do you want to shut?
 
 shutMucr.summary.title = Is the information provided for this shut request correct?
 shutMucr.summary.header = Shut master consignment
 shutMucr.summary.type = Shut MUCR
-
-shutMucr.confirmation.tab.heading = Shut MUCR request submitted
-shutMucr.confirmation.heading = Request to shut MUCR {0} has been submitted
-shutMucr.confirmation.nextSteps = {0} another master consignment. {1}.
-shutMucr.confirmation.nextSteps.shutMucr = Shut
-shutMucr.confirmation.nextSteps.depart = Depart a consignment
 
 view.unauthorized.title=You are not authorized
 
@@ -340,7 +288,6 @@ ileQuery.title = Find a consignment
 ileQuery.ucr.empty = Enter a Unique Consignment Reference
 ileQuery.ucr.incorrect = Unique Consignment Reference is incorrect
 
-ileQuery.link.emptyMucr = Create an empty Master Consignment Reference (MUCR)
 ileQuery.link.requests = View previous requests
 
 ileQuery.loading.title = Looking for consignment
