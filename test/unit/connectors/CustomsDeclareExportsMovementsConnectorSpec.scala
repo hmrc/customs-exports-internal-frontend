@@ -32,7 +32,6 @@ import play.api.test.Helpers._
 import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import uk.gov.hmrc.http.Upstream5xxResponse
 
 class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with MockitoSugar {
 
@@ -297,16 +296,16 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
 
     "received InternalServerError (500) response" should {
 
-      "return failed Future" in {
+      "return Internal server error" in {
 
         stubFor(
           get(s"/consignment-query/$conversationId?providerId=$providerId")
             .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR))
         )
 
-        intercept[Upstream5xxResponse] {
-          await(connector.fetchQueryNotifications(conversationId, providerId))
-        }
+        val response = connector.fetchQueryNotifications(conversationId, providerId).futureValue
+
+        response.status mustBe INTERNAL_SERVER_ERROR
       }
     }
   }

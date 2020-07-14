@@ -124,7 +124,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
       when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
         .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
       when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-      val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulMucrResponseExchange))))
+      val backendResponse = HttpResponse(status = OK, json = Json.toJson(Seq(successfulMucrResponseExchange)), headers = Map.empty)
       when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
       controller.getConsignmentInformation("mucr")(request).futureValue
@@ -270,7 +270,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
           .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
         when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-        val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulMucrResponseExchange))))
+        val backendResponse = HttpResponse(status = OK, json = Json.toJson(Seq(successfulMucrResponseExchange)), headers = Map.empty)
         when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
         controller.getConsignmentInformation("mucr")(request).futureValue
@@ -288,7 +288,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
             .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
           when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-          val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq.empty[IleQueryResponseExchange])))
+          val backendResponse = HttpResponse(status = OK, json = Json.toJson(Seq.empty[IleQueryResponseExchange]), headers = Map.empty)
           when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
           val result = controller.getConsignmentInformation("mucr")(request)
@@ -305,7 +305,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
             .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
           when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-          val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulMucrResponseExchange))))
+          val backendResponse = HttpResponse(status = OK, json = Json.toJson(Seq(successfulMucrResponseExchange)), headers = Map.empty)
           when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
           val result = controller.getConsignmentInformation("mucr")(request)
@@ -323,7 +323,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
             when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
               .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
             when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-            val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(ucrNotFoundResponseExchange))))
+            val backendResponse = HttpResponse(status = OK, json = Json.toJson(Seq(ucrNotFoundResponseExchange)), headers = Map.empty)
             when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
             val result = controller.getConsignmentInformation("mucr")(request)
@@ -340,7 +340,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
             when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
               .thenReturn(Future.successful(Some(IleQuery("sessionId", "ducr", conversationId))))
             when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-            val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulDucrResponseExchange))))
+            val backendResponse = HttpResponse(status = OK, json = Json.toJson(Seq(successfulDucrResponseExchange)), headers = Map.empty)
             when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
             controller.getConsignmentInformation("ducr")(request).futureValue
@@ -359,7 +359,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
             when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
               .thenReturn(Future.successful(Some(IleQuery("sessionId", "ducr", conversationId))))
             when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-            val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulDucrResponseExchange))))
+            val backendResponse = HttpResponse(status = OK, json = Json.toJson(Seq(successfulDucrResponseExchange)), headers = Map.empty)
             when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
             val result = controller.getConsignmentInformation("ducr")(request)
@@ -379,7 +379,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
             when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
               .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
             when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-            val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulMucrResponseExchange))))
+            val backendResponse = HttpResponse(status = OK, json = Json.toJson(Seq(successfulMucrResponseExchange)), headers = Map.empty)
             when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
             controller.getConsignmentInformation("mucr")(request).futureValue
@@ -398,7 +398,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
             when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
               .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
             when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-            val backendResponse = HttpResponse(OK, Some(Json.toJson(Seq(successfulMucrResponseExchange))))
+            val backendResponse = HttpResponse(status = OK, json = Json.toJson(Seq(successfulMucrResponseExchange)), headers = Map.empty)
             when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
             val result = controller.getConsignmentInformation("mucr")(request)
@@ -419,7 +419,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
             .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
           when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-          val backendResponse = HttpResponse(responseStatus = SERVICE_UNAVAILABLE)
+          val backendResponse = HttpResponse(status = SERVICE_UNAVAILABLE, body = "")
           when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
           controller.getConsignmentInformation("mucr")(request).futureValue
@@ -432,7 +432,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
             .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
           when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-          val backendResponse = HttpResponse(responseStatus = SERVICE_UNAVAILABLE)
+          val backendResponse = HttpResponse(status = SERVICE_UNAVAILABLE, body = "")
           when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
           val result = controller.getConsignmentInformation("mucr")(request)
@@ -448,7 +448,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
             .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
           when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-          val backendResponse = HttpResponse(responseStatus = FAILED_DEPENDENCY)
+          val backendResponse = HttpResponse(status = FAILED_DEPENDENCY, body = "")
           when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
           controller.getConsignmentInformation("mucr")(request).futureValue
@@ -461,7 +461,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
             .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
           when(ileQueryRepository.removeByConversationId(anyString())).thenReturn(Future.successful((): Unit))
-          val backendResponse = HttpResponse(responseStatus = FAILED_DEPENDENCY)
+          val backendResponse = HttpResponse(status = FAILED_DEPENDENCY, body = "")
           when(connector.fetchQueryNotifications(anyString(), anyString())(any())).thenReturn(Future.successful(backendResponse))
 
           val result = controller.getConsignmentInformation("mucr")(request)
