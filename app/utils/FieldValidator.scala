@@ -16,6 +16,8 @@
 
 package utils
 
+import java.util.regex.Pattern
+
 import services.Countries.allCountries
 
 import scala.util.{Success, Try}
@@ -48,7 +50,9 @@ object FieldValidator {
 
   val validEori: String => Boolean = (input: String) => input.matches("^[A-Z]{2}[0-9]{1,15}$")
 
-  val validDucr: String => Boolean = (input: String) => input.matches("""[0-9][A-Z][A-Z][0-9A-Z\(\)\-/]{6,32}""")
+  private val ducrPattern = Pattern.compile("[0-9]{1}[A-Z]{2}[0-9]{12}[-]{1}[-/()A-Z0-9]{1,19}")
+
+  val validDucr: String => Boolean = ducrPattern.matcher(_).matches()
 
   val validDucrIgnoreCase: String => Boolean = (input: String) => validDucr(input.toUpperCase)
 
