@@ -36,7 +36,7 @@ import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import views.html.view_submissions
 
-class SubmissionsViewSpec extends ViewSpec with Injector {
+class ViewSubmissionsViewSpec extends ViewSpec with Injector {
 
   implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
