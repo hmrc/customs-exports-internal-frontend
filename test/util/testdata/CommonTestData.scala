@@ -28,12 +28,14 @@ object CommonTestData {
   val correctUcr_2: String = "GB/1UZYBD3XE-1J8MEBF9N6X78C"
   val correctUcr_3: String = "GB/1UZYBD3XE-1J8MEBF9N6XABC"
 
+  val validMucr = "GB/1234567890-MUCR"
+  val validDucr = "4GB123456789000-DUCR"
+  val validDucrPartId = "123"
+  val validWholeDucrParts = s"${validDucr}-${validDucrPartId}"
+
   val conversationId: String = "93feaae9-5043-4569-9fc5-ff04bfea0d11"
   val conversationId_2: String = "93feaae9-5043-4569-9fc5-ff04bfea0d22"
   val conversationId_3: String = "93feaae9-5043-4569-9fc5-ff04bfea0d33"
-
-  val validMucr = "GB/1234567890-MUCR"
-  val validDucr = "4GB123456789000-DUCR"
 
   def exampleNotificationPageSingleElement(
     title: String = "TITLE",
