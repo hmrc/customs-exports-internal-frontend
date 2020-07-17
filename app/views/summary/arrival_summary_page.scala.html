@@ -31,6 +31,7 @@
   locationList: location_summary_list,
   linkContent: linkContent,
   govukSummaryList: GovukSummaryList,
+  viewDates: ViewDates,
   formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 )
 
@@ -54,7 +55,7 @@
               content = Text(messages("summary.arrival.date"))
             ),
             value = Value(
-              content = Text(data.arrivalDetails.map(arrival => ViewDates.dateFormatter.format(arrival.dateOfArrival.date)).getOrElse(""))
+              content = Text(data.arrivalDetails.map(arrival => viewDates.formatDate(arrival.dateOfArrival.date)).getOrElse(""))
             ),
             actions = Some(Actions(
               items = Seq(

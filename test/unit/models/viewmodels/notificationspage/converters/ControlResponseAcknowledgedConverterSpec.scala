@@ -16,16 +16,14 @@
 
 package models.viewmodels.notificationspage.converters
 
-import base.{OverridableInjector, UnitSpec}
+import base.UnitSpec
 import controllers.MessagesStub
 import models.notifications.ResponseType
 import models.viewmodels.decoder.ActionCode
-import modules.DateTimeModule
-import play.api.inject.bind
 import play.api.test.FakeRequest
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import utils.DateTimeTestModule
+import views.ViewDates
 
 class ControlResponseAcknowledgedConverterSpec extends UnitSpec with MessagesStub {
 
@@ -33,8 +31,7 @@ class ControlResponseAcknowledgedConverterSpec extends UnitSpec with MessagesStu
 
   private implicit val fakeRequest = FakeRequest()
 
-  private val injector = new OverridableInjector(bind[DateTimeModule].toInstance(new DateTimeTestModule))
-  private val converter = injector.instanceOf[ControlResponseAcknowledgedConverter]
+  private val converter = new ControlResponseAcknowledgedConverter(new ViewDates())
 
   "ControlResponseAcknowledgedConverter on convert" should {
 
@@ -51,7 +48,7 @@ class ControlResponseAcknowledgedConverterSpec extends UnitSpec with MessagesStu
     "return NotificationsPageSingleElement with correct timestampInfo" in {
 
       val input = AcknowledgedControlResponse
-      val expectedTimestampInfo = "23 Oct 2019 at 12:34"
+      val expectedTimestampInfo = "23 October 2019 at 12:34pm"
 
       val result = converter.convert(input)
 

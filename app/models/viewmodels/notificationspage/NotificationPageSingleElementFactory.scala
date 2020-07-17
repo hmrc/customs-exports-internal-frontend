@@ -28,10 +28,11 @@ import models.submissions.Submission
 import models.viewmodels.notificationspage.converters._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import views.ViewDates
 import views.html.components.paragraph
 
 @Singleton
-class NotificationPageSingleElementFactory @Inject()(responseConverterProvider: ResponseConverterProvider, dateTimeFormatter: DateTimeFormatter) {
+class NotificationPageSingleElementFactory @Inject()(responseConverterProvider: ResponseConverterProvider, viewDates: ViewDates) {
 
   def build(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement =
     submission.actionType match {
@@ -53,7 +54,7 @@ class NotificationPageSingleElementFactory @Inject()(responseConverterProvider: 
 
     NotificationsPageSingleElement(
       title = messages(s"notifications.elem.title.${submission.actionType.typeName}"),
-      timestampInfo = dateTimeFormatter.format(submission.requestTimestamp),
+      timestampInfo = viewDates.formatDateAtTime(submission.requestTimestamp),
       content = content
     )
   }
@@ -73,5 +74,4 @@ class NotificationPageSingleElementFactory @Inject()(responseConverterProvider: 
     val responseConverter = responseConverterProvider.provideResponseConverter(notification)
     responseConverter.convert(notification)
   }
-
 }

@@ -32,6 +32,7 @@ class ArrivalSummaryViewSpec extends ViewSpec with Injector {
   private val date = Date(LocalDate.now())
   private val time = Time(LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
   private val answers = ArrivalAnswers(arrivalDetails = Some(ArrivalDetails(date, time)))
+  private val viewDates = new ViewDates()
 
   private implicit val request = journeyRequest(answers)
 
@@ -70,7 +71,7 @@ class ArrivalSummaryViewSpec extends ViewSpec with Injector {
       val view = page(answers)
 
       view.getElementsByClass("govuk-summary-list__key").get(2) must containMessage("summary.arrival.date")
-      view.getElementsByClass("govuk-summary-list__value").get(2).text mustBe date.date.format(ViewDates.dateFormatter)
+      view.getElementsByClass("govuk-summary-list__value").get(2).text mustBe viewDates.formatDate(date.date)
     }
   }
 

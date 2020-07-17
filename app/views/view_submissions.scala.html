@@ -15,19 +15,18 @@
  *@
 
 @import components.gds.{gds_main_template, pageTitle}
-@import java.time.format.DateTimeFormatter
 @import models.notifications.NotificationFrontendModel
 @import models.submissions.Submission
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.components.BackButton
 @import views.html.components.gds.link
-@import views.Title
+@import views.{ViewDates, Title}
 
 @this(
   govukLayout: gds_main_template,
   pageTitle: pageTitle,
   table: GovukTable,
-  formatter: DateTimeFormatter
+  viewDates: ViewDates
 )
 
 @(submissions: Seq[(Submission, Seq[NotificationFrontendModel])])(implicit request: Request[_], messages: Messages)
@@ -47,7 +46,6 @@
 @submissionTypeClass = @{"submission-type"}
 @dateOfRequestClass = @{"date-of-request"}
 @submissionActionClass = @{"submission-action"}
-
 
 @govukLayout(
   title = Title("submissions.title"),
@@ -98,7 +96,7 @@
             classes = submissionTypeClass
           ),
           TableRow(
-            content = Text(formatter.format(submission.requestTimestamp)),
+            content = Text(viewDates.formatDateAtTime(submission.requestTimestamp)),
             classes = dateOfRequestClass
           ),
           TableRow(

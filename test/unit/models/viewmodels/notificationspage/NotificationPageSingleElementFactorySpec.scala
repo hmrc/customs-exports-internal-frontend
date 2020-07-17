@@ -16,8 +16,7 @@
 
 package models.viewmodels.notificationspage
 
-import java.time.format.DateTimeFormatter
-import java.time.{Instant, ZoneId}
+import java.time.Instant
 
 import base.UnitSpec
 import com.google.inject.Guice
@@ -37,6 +36,7 @@ import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import utils.DateTimeTestModule
+import views.ViewDates
 
 class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStub with BeforeAndAfterEach {
 
@@ -45,8 +45,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
   private implicit val fakeRequest = FakeRequest()
 
   private val responseConverterProvider = mock[ResponseConverterProvider]
-  private val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy 'at' HH:mm").withZone(ZoneId.of("Europe/London"))
-  private val factory = new NotificationPageSingleElementFactory(responseConverterProvider, formatter)
+  private val factory = new NotificationPageSingleElementFactory(responseConverterProvider, new ViewDates())
 
   private val injector = Guice.createInjector(new DateTimeTestModule())
   private val unknownResponseConverter = injector.getInstance(classOf[UnknownResponseConverter])
@@ -69,7 +68,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
           exampleSubmission(actionType = MovementType.Arrival, requestTimestamp = testTimestamp)
 
         val expectedTitle = messages("notifications.elem.title.Arrival")
-        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
+        val expectedTimestampInfo = "31 October 2019 at 12:00am"
         val expectedContent = Seq(messages("notifications.elem.content.Arrival", "DUCR"), messages("notifications.elem.content.footer"))
 
         val result = factory.build(input)
@@ -83,7 +82,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
           exampleSubmission(actionType = MovementType.RetrospectiveArrival, requestTimestamp = testTimestamp)
 
         val expectedTitle = messages("notifications.elem.title.RetrospectiveArrival")
-        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
+        val expectedTimestampInfo = "31 October 2019 at 12:00am"
         val expectedContent = Seq(messages("notifications.elem.content.RetrospectiveArrival", "DUCR"), messages("notifications.elem.content.footer"))
 
         val result = factory.build(input)
@@ -97,7 +96,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
           exampleSubmission(actionType = MovementType.Departure, requestTimestamp = testTimestamp)
 
         val expectedTitle = messages("notifications.elem.title.Departure")
-        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
+        val expectedTimestampInfo = "31 October 2019 at 12:00am"
         val expectedContent = Seq(messages("notifications.elem.content.Departure", "DUCR"), messages("notifications.elem.content.footer"))
 
         val result = factory.build(input)
@@ -117,7 +116,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         )
 
         val expectedTitle = messages("notifications.elem.title.DucrAssociation")
-        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
+        val expectedTimestampInfo = "31 October 2019 at 12:00am"
         val expectedContent = Seq(messages("notifications.elem.content.DucrAssociation"), messages("notifications.elem.content.footer"))
 
         val result = factory.build(input)
@@ -136,7 +135,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         )
 
         val expectedTitle = messages("notifications.elem.title.MucrAssociation")
-        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
+        val expectedTimestampInfo = "31 October 2019 at 12:00am"
         val expectedContent = Seq(messages("notifications.elem.content.MucrAssociation"), messages("notifications.elem.content.footer"))
 
         val result = factory.build(input)
@@ -153,7 +152,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         )
 
         val expectedTitle = messages("notifications.elem.title.DucrDisassociation")
-        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
+        val expectedTimestampInfo = "31 October 2019 at 12:00am"
         val expectedContent = Seq(messages("notifications.elem.content.DucrDisassociation"), messages("notifications.elem.content.footer"))
 
         val result = factory.build(input)
@@ -170,7 +169,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
         )
 
         val expectedTitle = messages("notifications.elem.title.MucrDisassociation")
-        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
+        val expectedTimestampInfo = "31 October 2019 at 12:00am"
         val expectedContent = Seq(messages("notifications.elem.content.MucrDisassociation"), messages("notifications.elem.content.footer"))
 
         val result = factory.build(input)
@@ -188,7 +187,7 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
           )
 
         val expectedTitle = messages("notifications.elem.title.ShutMucr")
-        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
+        val expectedTimestampInfo = "31 October 2019 at 12:00am"
         val expectedContent = Seq(messages("notifications.elem.content.ShutMucr"), messages("notifications.elem.content.footer"))
 
         val result = factory.build(input)

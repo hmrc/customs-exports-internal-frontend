@@ -19,7 +19,6 @@ package models.viewmodels.notificationspage.converters
 import java.time.{Instant, LocalDate, ZoneOffset}
 
 import base.UnitSpec
-import com.google.inject.{AbstractModule, Guice}
 import models.UcrBlock
 import models.notifications.{Entry, EntryStatus, ResponseType}
 import models.viewmodels.decoder.{Decoder, ICSCode, ROECode, SOECode}
@@ -33,7 +32,7 @@ import play.api.test.Helpers.stubMessages
 import play.twirl.api.Html
 import testdata.CommonTestData._
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import utils.DateTimeTestModule
+import views.ViewDates
 
 class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
@@ -42,12 +41,7 @@ class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
   private implicit val messages: Messages = stubMessages()
 
   private val decoder: Decoder = mock[Decoder]
-
-  private val injector = Guice.createInjector(new DateTimeTestModule(), new AbstractModule {
-    override def configure(): Unit = bind(classOf[Decoder]).toInstance(decoder)
-  })
-
-  private val contentBuilder = injector.getInstance(classOf[ERSResponseConverter])
+  private val contentBuilder = new ERSResponseConverter(decoder, new ViewDates())
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -79,7 +73,7 @@ class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
         val input = ersResponseAllCodes
         val expectedTitle = messages("notifications.elem.title.inventoryLinkingMovementTotalsResponse")
-        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
+        val expectedTimestampInfo = "31 October 2019 at 12:00am"
         val expectedContentElements = Seq(
           messages("notifications.elem.content.inventoryLinkingMovementTotalsResponse.roe"),
           roeKeyFromDecoder.code,
@@ -120,7 +114,7 @@ class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
         val input = ersResponseMissingCodes
         val expectedTitle = messages("notifications.elem.title.inventoryLinkingMovementTotalsResponse")
-        val expectedTimestampInfo = "31 Oct 2019 at 00:00"
+        val expectedTimestampInfo = "31 October 2019 at 12:00am"
         val expectedContentElements =
           Seq(messages("notifications.elem.content.inventoryLinkingMovementTotalsResponse.soe"), messages(soeKeyFromDecoder.messageKey))
 
@@ -158,7 +152,7 @@ class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
         val input = ersResponseUnknownCodes
         val expectedResult = NotificationsPageSingleElement(
           title = messages("notifications.elem.title.inventoryLinkingMovementTotalsResponse"),
-          timestampInfo = "31 Oct 2019 at 00:00",
+          timestampInfo = "31 October 2019 at 12:00am",
           content = Html("")
         )
 
