@@ -18,13 +18,13 @@ site.back = Back
 site.link.backToGovUk = Back to GOV.UK
 site.link.signOut = Sign out
 site.change = Change
-site.change.hint.associate.mucr = Change MUCR
-site.change.hint.associate.ducr = Change DUCR
+site.change.hint.associate.mucr = Change MUCR.
+site.change.hint.associate.ducr = Change DUCR.
 site.confirmAndSubmit = Confirm and submit
 site.inputText.ducr.label = Enter an existing DUCR
 site.inputText.mucr.label = Enter an existing MUCR
 site.inputText.newMucr.label = Enter a new MUCR
-site.inputText.newMucr.label.hint = For example ‘GB/123456789100-AB123’
+site.inputText.newMucr.label.hint = For example ‘GB/123456789100-AB123’.
 
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
@@ -82,9 +82,9 @@ specific.datetime.input.error.incorrectValue = Please, choose valid option
 arrivalDetails.title = Arrival date and time
 arrivalDetails.header = Enter date and time of arrival
 arrivalDetails.date.question = Date of Arrival
-arrivalDetails.date.hint = For example, 01 08 2007
+arrivalDetails.date.hint = For example, 01 08 2007.
 arrivalDetails.time.question = Time of Arrival
-arrivalDetails.time.hint = Enter the time in 24 hour format. For example, 13 30
+arrivalDetails.time.hint = Enter the time in 24 hour format. For example, 13 30.
 arrivalDetails.sectionHeading = Arrive consignment {0}
 
 arrival.details.error.overdue = Time of Arrival cannot be more than 60 days in the past
@@ -94,9 +94,9 @@ departureDetails.title = Departure date and time
 departureDetails.sectionHeading = Depart consignment {0}
 departureDetails.header = Enter date and time of departure
 departureDetails.date.question = Date of departure
-departureDetails.date.hint = For example, 01 08 2007
+departureDetails.date.hint = For example, 01 08 2007.
 departureDetails.time.question = Time of departure
-departureDetails.time.hint = Enter the time in 24 hour format. For example, 13 30
+departureDetails.time.hint = Enter the time in 24 hour format. For example, 13 30.
 
 departure.details.error.overdue = Time of Departure cannot be more than 60 days in the past
 departure.details.error.future = Time of Departure cannot be in the future
@@ -104,7 +104,7 @@ departure.details.error.future = Time of Departure cannot be in the future
 location.title = Location
 location.question = What is the goods location code?
 location.question.retrospectiveArrival = What was the goods location code?
-location.hint = This is an alphanumeric code. For example, GBAUEMAEMAEMA
+location.hint = This is an alphanumeric code. For example, GBAUEMAEMAEMA.
 location.code.empty = Goods location code cannot be empty
 location.code.error = Goods location code is incorrect
 
@@ -294,7 +294,7 @@ ileQuery.ucr.incorrect = Unique Consignment Reference is incorrect
 ileQuery.link.requests = View previous requests
 
 ileQuery.loading.title = Looking for consignment
-ileQuery.loading.hint = This should only take a few seconds, do not refresh the page
+ileQuery.loading.hint = This should only take a few seconds, do not refresh the page.
 
 ileQueryResponse.ducr.title = Consignment information
 ileQueryResponse.mucr.title = Consignment information
