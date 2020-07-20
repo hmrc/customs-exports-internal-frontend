@@ -41,7 +41,7 @@ class ChoiceSpec extends IntegrationSpec {
 
     "return 200 if there is an UCR in the cache" in {
       givenAuthSuccess("pid")
-      givenCacheFor(pid = "pid", queryUcr = UcrBlock("GB/123-12345", "M"))
+      givenCacheFor(pid = "pid", queryUcr = UcrBlock(ucr = "GB/123-12345", ucrType = Mucr))
 
       val response = get(controllers.routes.ChoiceController.displayPage())
 
@@ -60,7 +60,7 @@ class ChoiceSpec extends IntegrationSpec {
 
     "continue journey" when {
 
-      val queryResult = UcrBlock("GB/123-12345", Mucr.codeValue)
+      val queryResult = UcrBlock(ucr = "GB/123-12345", ucrType = Mucr)
 
       "Arrival" in {
         givenAuthSuccess("pid")

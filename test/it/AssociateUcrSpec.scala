@@ -17,8 +17,9 @@
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
 import forms.MucrOptions.CreateOrAddValues.Create
 import forms.{AssociateUcr, ManageMucrChoice, MucrOptions}
+import models.UcrBlock
+import models.UcrType._
 import models.cache.{AssociateUcrAnswers, Cache}
-import models.{UcrBlock, UcrType}
 import play.api.test.Helpers._
 
 class AssociateUcrSpec extends IntegrationSpec {
@@ -27,7 +28,7 @@ class AssociateUcrSpec extends IntegrationSpec {
     "GET" should {
       "return 200 when queried mucr" in {
         givenAuthSuccess("pid")
-        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
 
         val response = get(controllers.consolidations.routes.ManageMucrController.displayPage())
@@ -37,7 +38,7 @@ class AssociateUcrSpec extends IntegrationSpec {
 
       "throw IllegalStateException when queried ducr" in {
         givenAuthSuccess("pid")
-        givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(UcrBlock("ducr", UcrType.Ducr.codeValue))))
+        givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(UcrBlock(ucr = "ducr", ucrType = Ducr))))
 
         intercept[IllegalStateException] {
           await(get(controllers.consolidations.routes.ManageMucrController.displayPage()))
@@ -48,7 +49,7 @@ class AssociateUcrSpec extends IntegrationSpec {
     "POST" should {
       "continue for associate this mucr" in {
         givenAuthSuccess("pid")
-        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
 
         val response = post(controllers.consolidations.routes.ManageMucrController.submit(), "choice" -> ManageMucrChoice.AssociateThisToMucr)
@@ -57,7 +58,7 @@ class AssociateUcrSpec extends IntegrationSpec {
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.MucrOptionsController.displayPage().url)
         theAnswersFor("pid") mustBe Some(
           AssociateUcrAnswers(
-            childUcr = Some(AssociateUcr(UcrBlock("mucr", UcrType.Mucr.codeValue))),
+            childUcr = Some(AssociateUcr(UcrBlock(ucr = "mucr", ucrType = Mucr))),
             manageMucrChoice = Some(ManageMucrChoice(ManageMucrChoice.AssociateThisToMucr))
           )
         )
@@ -65,7 +66,7 @@ class AssociateUcrSpec extends IntegrationSpec {
 
       "continue for associate another mucr" in {
         givenAuthSuccess("pid")
-        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
 
         val response = post(controllers.consolidations.routes.ManageMucrController.submit(), "choice" -> ManageMucrChoice.AssociateAnotherUcrToThis)
@@ -74,7 +75,7 @@ class AssociateUcrSpec extends IntegrationSpec {
         redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUcrController.displayPage().url)
         theAnswersFor("pid") mustBe Some(
           AssociateUcrAnswers(
-            parentMucr = Some(MucrOptions(UcrBlock("mucr", UcrType.Mucr.codeValue))),
+            parentMucr = Some(MucrOptions(UcrBlock(ucr = "mucr", ucrType = Mucr))),
             manageMucrChoice = Some(ManageMucrChoice(ManageMucrChoice.AssociateAnotherUcrToThis))
           )
         )
@@ -86,7 +87,7 @@ class AssociateUcrSpec extends IntegrationSpec {
     "GET" should {
       "return 200" in {
         givenAuthSuccess("pid")
-        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
 
         val response = get(controllers.consolidations.routes.MucrOptionsController.displayPage())
@@ -98,7 +99,7 @@ class AssociateUcrSpec extends IntegrationSpec {
     "POST" should {
       "continue" in {
         givenAuthSuccess("pid")
-        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
 
         val response = post(controllers.consolidations.routes.MucrOptionsController.submit(), "createOrAdd" -> "create", "newMucr" -> "GB/123-12345")
@@ -114,7 +115,7 @@ class AssociateUcrSpec extends IntegrationSpec {
     "GET" should {
       "return 200" in {
         givenAuthSuccess("pid")
-        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(
           Cache("pid", Some(AssociateUcrAnswers(parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")))), Some(queryUcr))
         )
@@ -128,7 +129,7 @@ class AssociateUcrSpec extends IntegrationSpec {
     "POST" should {
       "continue" in {
         givenAuthSuccess("pid")
-        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(
           Cache("pid", Some(AssociateUcrAnswers(parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")))), Some(queryUcr))
         )
@@ -140,7 +141,7 @@ class AssociateUcrSpec extends IntegrationSpec {
         theAnswersFor("pid") mustBe Some(
           AssociateUcrAnswers(
             parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
-            childUcr = Some(AssociateUcr(UcrType.Mucr, "GB/321-54321"))
+            childUcr = Some(AssociateUcr(Mucr, "GB/321-54321"))
           )
         )
       }
@@ -151,14 +152,14 @@ class AssociateUcrSpec extends IntegrationSpec {
     "GET" should {
       "return 200" in {
         givenAuthSuccess("pid")
-        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(
           Cache(
             "pid",
             Some(
               AssociateUcrAnswers(
                 parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
-                childUcr = Some(AssociateUcr(UcrType.Mucr, "GB/321-54321"))
+                childUcr = Some(AssociateUcr(Mucr, "GB/321-54321"))
               )
             ),
             Some(queryUcr)
@@ -174,14 +175,14 @@ class AssociateUcrSpec extends IntegrationSpec {
     "POST" should {
       "continue" in {
         givenAuthSuccess("pid")
-        val queryUcr = UcrBlock("mucr", UcrType.Mucr.codeValue)
+        val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(
           Cache(
             "pid",
             Some(
               AssociateUcrAnswers(
                 parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
-                childUcr = Some(AssociateUcr(UcrType.Mucr, "GB/321-54321"))
+                childUcr = Some(AssociateUcr(Mucr, "GB/321-54321"))
               )
             ),
             Some(queryUcr)

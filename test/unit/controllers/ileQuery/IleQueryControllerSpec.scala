@@ -25,6 +25,7 @@ import controllers.ControllerLayerSpec
 import controllers.exchanges.Operator
 import forms.IleQueryForm
 import models.UcrBlock
+import models.UcrType.Mucr
 import models.cache.{Answers, Cache, IleQuery}
 import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
 import models.notifications.queries._
@@ -114,7 +115,8 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
   private val successfulDucrResponseExchange =
     IleQueryResponseExchange(Instant.now(), conversationId, "inventoryLinkingQueryResponse", successfulDucrResponseData)
 
-  private val ucrNotFoundResponseData = UcrNotFoundResponseExchangeData(messageCode = "QUE", actionCode = "1", ucrBlock = Some(UcrBlock("mucr", "M")))
+  private val ucrNotFoundResponseData =
+    UcrNotFoundResponseExchangeData(messageCode = "QUE", actionCode = "1", ucrBlock = Some(UcrBlock(ucr = "mucr", ucrType = Mucr)))
   private val ucrNotFoundResponseExchange =
     IleQueryResponseExchange(Instant.now(), conversationId, "inventoryLinkingControlResponse", ucrNotFoundResponseData)
 

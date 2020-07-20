@@ -19,6 +19,7 @@ package views
 import base.Injector
 import forms.Choice
 import models.UcrBlock
+import models.UcrType.{Ducr, Mucr}
 import org.jsoup.nodes.Document
 import play.api.data.FormError
 import play.api.mvc.{AnyContent, Request}
@@ -40,7 +41,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
 
     "render section header" in {
 
-      page(Choice.form(), Some(UcrBlock("9GB123456", "D")))
+      page(Choice.form(), Some(UcrBlock(ucr = "9GB123456", ucrType = Ducr)))
         .getElementById("section-header") must containMessage("movement.choice.sectionHeading", "9GB123456")
     }
 
@@ -76,7 +77,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
 
       "form contains ucr block" in {
 
-        val backButton = page(Choice.form(), Some(UcrBlock("ucr", "D"))).getElementById("back-link")
+        val backButton = page(Choice.form(), Some(UcrBlock(ucr = "ucr", ucrType = Ducr))).getElementById("back-link")
 
         backButton must haveHref(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation("ucr"))
       }
@@ -96,7 +97,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
 
       "ILE query was for a Ducr" in {
 
-        val choicePage = page(Choice.form(), Some(UcrBlock("ducr", UcrBlock.ducrType)))
+        val choicePage = page(Choice.form(), Some(UcrBlock(ucr = "ducr", ucrType = Ducr)))
 
         choicePage.getElementsByClass("govuk-radios__input").size() mustBe 5
 
@@ -114,7 +115,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
 
       "ILE query was for a Mucr" in {
 
-        val choicePage = page(Choice.form(), Some(UcrBlock("mucr", UcrBlock.mucrType)))
+        val choicePage = page(Choice.form(), Some(UcrBlock(ucr = "mucr", ucrType = Mucr)))
 
         choicePage.getElementsByClass("govuk-radios__input").size() mustBe 6
 
