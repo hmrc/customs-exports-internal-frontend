@@ -19,6 +19,7 @@ package controllers.consolidations
 import controllers.ControllerLayerSpec
 import forms.ManageMucrChoice.{AssociateAnotherUcrToThis, AssociateThisToMucr}
 import forms.{AssociateUcr, ManageMucrChoice, MucrOptions}
+import models.UcrType._
 import models.cache.AssociateUcrAnswers
 import models.{UcrBlock, UcrType}
 import org.mockito.ArgumentCaptor
@@ -39,7 +40,7 @@ class ManageMucrControllerSpec extends ControllerLayerSpec with MockCache with S
 
   private val page = mock[manage_mucr]
 
-  private val defaultUcrBlock = UcrBlock(validMucr, UcrType.Mucr.codeValue)
+  private val defaultUcrBlock = UcrBlock(ucr = validMucr, ucrType = Mucr)
   private def controller(answers: AssociateUcrAnswers, queryUcr: Option[UcrBlock] = Some(defaultUcrBlock)) =
     new ManageMucrController(SuccessfulAuth(), ValidJourney(answers, queryUcr), stubMessagesControllerComponents(), cacheRepository, page)
 
@@ -88,7 +89,7 @@ class ManageMucrControllerSpec extends ControllerLayerSpec with MockCache with S
 
         val queryUcr = theQueryUcrPassedToView
         queryUcr mustBe defined
-        queryUcr.get mustBe UcrBlock(validMucr, UcrType.Mucr.codeValue)
+        queryUcr.get mustBe UcrBlock(ucr = validMucr, ucrType = Mucr)
       }
     }
 
@@ -116,14 +117,14 @@ class ManageMucrControllerSpec extends ControllerLayerSpec with MockCache with S
 
         val queryUcr = theQueryUcrPassedToView
         queryUcr mustBe defined
-        queryUcr.get mustBe UcrBlock(validMucr, UcrType.Mucr.codeValue)
+        queryUcr.get mustBe UcrBlock(ucr = validMucr, ucrType = Mucr)
       }
     }
 
     "GET displayPage is invoked with Ducr queryUcr in cache" should {
       "throw IllegalStateException" in {
 
-        val queryUcr = UcrBlock(validDucr, UcrType.Ducr.codeValue)
+        val queryUcr = UcrBlock(ucr = validDucr, ucrType = Ducr)
         intercept[IllegalStateException] {
           await(controller(AssociateUcrAnswers(), Some(queryUcr)).displayPage()(getRequest))
         }

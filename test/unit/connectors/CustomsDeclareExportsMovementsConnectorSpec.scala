@@ -21,6 +21,7 @@ import config.AppConfig
 import connectors.exchanges.{ArrivalExchange, DisassociateDUCRExchange, IleQueryExchange, MovementDetailsExchange}
 import forms.{ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.UcrBlock
+import models.UcrType.Ducr
 import models.notifications.ResponseType.ControlResponse
 import models.notifications.queries.DucrInfo
 import models.notifications.queries.IleQueryResponseExchangeData.SuccessfulResponseExchangeData
@@ -109,7 +110,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
           )
       )
 
-      val request = IleQueryExchange("eori", "provider-id", UcrBlock("ucr", "D"))
+      val request = IleQueryExchange("eori", "provider-id", UcrBlock(ucr = "ucr", ucrType = Ducr))
       val result = connector.submit(request).futureValue
 
       verify(

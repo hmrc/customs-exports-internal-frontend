@@ -97,7 +97,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "existing answers with UcrBlock" in {
 
-        val ucrBlock = UcrBlock("ucr", Mucr.codeValue)
+        val ucrBlock = UcrBlock(ucr = "ucr", ucrType = Mucr)
         givenTheCacheContains(Cache(providerId, None, Some(ucrBlock)))
 
         val result = controller().displayPage(getRequest)
@@ -119,7 +119,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
   "POST" should {
 
     def postWithChoice(choice: Choice): Request[AnyContentAsJson] = postRequest(Json.obj("choice" -> choice.value))
-    val queryResult = UcrBlock("mucr", Mucr.codeValue)
+    val queryResult = UcrBlock(ucr = "mucr", ucrType = Mucr)
 
     "return 303 (SEE_OTHER) when authenticated" when {
 
@@ -167,7 +167,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         "queryUcr is of type Ducr" in {
 
-          val queryResultDucr = UcrBlock("ucr", Ducr.codeValue)
+          val queryResultDucr = UcrBlock(ucr = "ucr", ucrType = Ducr)
           givenTheCacheContains(Cache(providerId, None, Some(queryResultDucr)))
 
           val result = controller().submit(postWithChoice(AssociateUCR))

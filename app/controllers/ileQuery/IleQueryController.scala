@@ -24,6 +24,7 @@ import controllers.exchanges.AuthenticatedRequest
 import forms.IleQueryForm.form
 import javax.inject.{Inject, Singleton}
 import models.UcrBlock
+import models.UcrType.{Ducr, Mucr}
 import models.cache.{Answers, Cache, IleQuery}
 import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
 import models.notifications.queries.{DucrInfo, IleQueryResponseExchange, MucrInfo}
@@ -118,8 +119,8 @@ class IleQueryController @Inject()(
 
       case response: UcrNotFoundResponseExchangeData =>
         response.ucrBlock match {
-          case Some(UcrBlock(ucr, _)) => Future.successful(Ok(consignmentNotFound(ucr)))
-          case _                      => Future.successful(InternalServerError(errorHandler.standardErrorTemplate()))
+          case Some(UcrBlock(ucr, _, _)) => Future.successful(Ok(consignmentNotFound(ucr)))
+          case _                         => Future.successful(InternalServerError(errorHandler.standardErrorTemplate()))
         }
     }
 
@@ -142,9 +143,9 @@ class IleQueryController @Inject()(
       )
 
   private def buildIleQuery(providerId: String, ucr: String): IleQueryExchange = {
-    val ucrType = if (validDucr(ucr)) "D" else "M"
+    val ucrType = if (validDucr(ucr)) Ducr.codeValue else Mucr.codeValue
 
-    val ucrBlock = UcrBlock(ucr, ucrType)
+    val ucrBlock = UcrBlock(ucr = ucr, ucrType = ucrType)
 
     IleQueryExchange(Answers.fakeEORI.get, providerId, ucrBlock)
   }

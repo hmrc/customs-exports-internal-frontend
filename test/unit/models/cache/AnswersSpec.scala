@@ -79,8 +79,8 @@ class AnswersSpec extends UnitSpec {
 
   "Answers build fromQueryUcr" should {
 
-    val ducrQuery = UcrBlock("ducr", Ducr.codeValue)
-    val mucrQuery = UcrBlock("mucr", Mucr.codeValue)
+    val ducrQuery = UcrBlock(ucr = "ducr", ucrType = Ducr)
+    val mucrQuery = UcrBlock(ucr = "mucr", ucrType = Mucr)
 
     "correctly create ArrivalAnswers from ducr query" in {
 

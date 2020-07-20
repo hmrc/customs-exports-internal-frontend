@@ -105,7 +105,7 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
       val cachedForm = MucrOptions("123")
       val cachedManageMucrChoice = ManageMucrChoice(AssociateAnotherUcrToThis)
       val cachedAnswers = AssociateUcrAnswers(parentMucr = Some(cachedForm), manageMucrChoice = Some(cachedManageMucrChoice))
-      val queryUcr = UcrBlock(validDucr, Ducr.codeValue)
+      val queryUcr = UcrBlock(ucr = validDucr, ucrType = Ducr)
 
       "return 200 (OK) response" in {
 

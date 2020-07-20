@@ -35,9 +35,9 @@ case class Submission(
 
   def hasMucr: Boolean = ucrBlocks.exists(_.ucrType == Mucr.codeValue)
 
-  def extractMucr: Option[String] = ucrBlocks.find(_.ucrType == Mucr.codeValue).map(_.ucr)
+  def extractMucr: Option[String] = ucrBlocks.find(_.ucrType == Mucr.codeValue).map(_.fullUcr)
 
-  def extractFirstUcr: Option[String] = ucrBlocks.headOption.map(_.ucr)
+  def extractFirstUcr: Option[String] = ucrBlocks.headOption.map(_.fullUcr)
 }
 
 object Submission {
