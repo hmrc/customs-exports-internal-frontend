@@ -29,6 +29,7 @@ import play.api.test.Helpers.stubMessages
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import utils.DateTimeTestModule
+import views.ViewDates
 
 class ControlResponseBlockedConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
@@ -37,8 +38,7 @@ class ControlResponseBlockedConverterSpec extends UnitSpec with BeforeAndAfterEa
   private implicit val messages: Messages = stubMessages()
 
   private val decoder: Decoder = mock[Decoder]
-  private val injector = new OverridableInjector(bind[DateTimeModule].toInstance(new DateTimeTestModule), bind[Decoder].toInstance(decoder))
-  private val converter = injector.instanceOf[ControlResponseBlockedConverter]
+  private val converter = new ControlResponseBlockedConverter(decoder, new ViewDates())
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -63,7 +63,7 @@ class ControlResponseBlockedConverterSpec extends UnitSpec with BeforeAndAfterEa
     "return NotificationsPageSingleElement with correct timestampInfo" in {
 
       val input = BlockedControlResponseSingleError
-      val expectedTimestampInfo = "23 Oct 2019 at 12:34"
+      val expectedTimestampInfo = "23 October 2019 at 12:34pm"
 
       val result = converter.convert(input)
 

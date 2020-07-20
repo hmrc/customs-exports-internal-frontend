@@ -33,6 +33,7 @@
   transportList: transport_summary_list,
   linkContent: linkContent,
   govukSummaryList: GovukSummaryList,
+  viewDates: ViewDates,
   formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 )
 
@@ -56,7 +57,7 @@
               content = Text(messages("summary.departure.date"))
             ),
             value = Value(
-              content = Text(data.departureDetails.map(departure => ViewDates.dateFormatter.format(departure.dateOfDeparture.date)).getOrElse(""))
+              content = Text(data.departureDetails.map(departure => viewDates.formatDate(departure.dateOfDeparture.date)).getOrElse(""))
             ),
             actions = Some(Actions(
               items = Seq(

@@ -16,18 +16,19 @@
 
 package models.viewmodels.notificationspage.converters
 
-import base.{Injector, UnitSpec}
+import base.UnitSpec
 import models.notifications.ResponseType.MovementTotalsResponse
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 import play.twirl.api.HtmlFormat
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
+import views.ViewDates
 
-class UnknownResponseConverterSpec extends UnitSpec with Injector {
+class UnknownResponseConverterSpec extends UnitSpec {
 
   implicit private val messages: Messages = stubMessages()
-  private val converter = instanceOf[UnknownResponseConverter]
+  private val converter = new UnknownResponseConverter(new ViewDates())
 
   "UnknownResponseConverter on convert" should {
 
@@ -42,7 +43,7 @@ class UnknownResponseConverterSpec extends UnitSpec with Injector {
       val result = converter.convert(input)
 
       result.title mustBe messages("notifications.elem.title.unknown")
-      result.timestampInfo mustBe "23 Oct 2019 at 12:34"
+      result.timestampInfo mustBe "23 October 2019 at 12:34pm"
       result.content mustBe HtmlFormat.empty
     }
   }

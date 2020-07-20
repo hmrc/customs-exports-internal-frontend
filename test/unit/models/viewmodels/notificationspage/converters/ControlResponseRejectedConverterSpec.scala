@@ -16,19 +16,17 @@
 
 package models.viewmodels.notificationspage.converters
 
-import base.{OverridableInjector, UnitSpec}
+import base.UnitSpec
 import models.notifications.ResponseType
 import models.viewmodels.decoder.{ActionCode, Decoder, ILEError}
-import modules.DateTimeModule
 import org.mockito.ArgumentMatchers.{anyString, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
-import play.api.inject.bind
 import play.api.test.Helpers.stubMessages
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import utils.DateTimeTestModule
+import views.ViewDates
 
 class ControlResponseRejectedConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
@@ -37,8 +35,7 @@ class ControlResponseRejectedConverterSpec extends UnitSpec with BeforeAndAfterE
   private implicit val messages: Messages = stubMessages()
 
   private val decoder: Decoder = mock[Decoder]
-  private val injector = new OverridableInjector(bind[DateTimeModule].toInstance(new DateTimeTestModule), bind[Decoder].toInstance(decoder))
-  private val converter = injector.instanceOf[ControlResponseRejectedConverter]
+  private val converter = new ControlResponseRejectedConverter(decoder, new ViewDates())
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -62,7 +59,7 @@ class ControlResponseRejectedConverterSpec extends UnitSpec with BeforeAndAfterE
     "return NotificationsPageSingleElement with correct timestampInfo" in {
 
       val input = RejectedControlResponseSingleError
-      val expectedTimestampInfo = "23 Oct 2019 at 12:34"
+      val expectedTimestampInfo = "23 October 2019 at 12:34pm"
 
       val result = converter.convert(input)
 

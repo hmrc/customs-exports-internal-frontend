@@ -16,17 +16,16 @@
 
 package models.viewmodels.notificationspage.converters
 
-import java.time.format.DateTimeFormatter
-
 import javax.inject.{Inject, Singleton}
 import models.notifications.NotificationFrontendModel
 import models.viewmodels.notificationspage.NotificationsPageSingleElement
 import play.api.i18n.Messages
 import play.twirl.api.Html
+import views.ViewDates
 import views.html.components.paragraph
 
 @Singleton
-class ControlResponseAcknowledgedConverter @Inject()(dateTimeFormatter: DateTimeFormatter) extends NotificationPageSingleElementConverter {
+class ControlResponseAcknowledgedConverter @Inject()(viewDates: ViewDates) extends NotificationPageSingleElementConverter {
 
   private val TitleMessagesKey = "notifications.elem.title.inventoryLinkingControlResponse.AcknowledgedAndProcessed"
   private val ContentHeaderMessagesKey = "notifications.elem.content.inventoryLinkingControlResponse.AcknowledgedAndProcessed"
@@ -34,11 +33,11 @@ class ControlResponseAcknowledgedConverter @Inject()(dateTimeFormatter: DateTime
   override def convert(notification: NotificationFrontendModel)(implicit messages: Messages): NotificationsPageSingleElement =
     NotificationsPageSingleElement(
       title = messages(TitleMessagesKey),
-      timestampInfo = dateTimeFormatter.format(notification.timestampReceived),
-      content = buildContent(notification)
+      timestampInfo = viewDates.formatDateAtTime(notification.timestampReceived),
+      content = buildContent()
     )
 
-  private def buildContent(notification: NotificationFrontendModel)(implicit messages: Messages): Html =
+  private def buildContent()(implicit messages: Messages): Html =
     paragraph(messages(ContentHeaderMessagesKey))
 
 }
