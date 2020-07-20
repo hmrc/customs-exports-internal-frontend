@@ -17,7 +17,7 @@
 package models.cache
 
 import forms.{AssociateUcr, MucrOptions, _}
-import models.UcrBlock.{ducrType, mucrType}
+import models.UcrType.{Ducr, Mucr}
 import models.cache.JourneyType.JourneyType
 import models.{Ucr, UcrBlock, UcrType}
 import play.api.libs.json.{Format, Json}
@@ -62,9 +62,9 @@ object ArrivalAnswers {
   implicit val format: Format[ArrivalAnswers] = Json.format[ArrivalAnswers]
 
   def fromQueryUcr(queryUcr: Option[UcrBlock]): ArrivalAnswers = queryUcr match {
-    case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(Mucr.codeValue) =>
       ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, ucrBlock.ucr)))
-    case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))
     case _ =>
       ArrivalAnswers()
@@ -84,11 +84,11 @@ object RetrospectiveArrivalAnswers {
   implicit val format: Format[RetrospectiveArrivalAnswers] = Json.format[RetrospectiveArrivalAnswers]
 
   def fromQueryUcr(queryUcr: Option[UcrBlock]): RetrospectiveArrivalAnswers = queryUcr match {
-    case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(Mucr.codeValue) =>
       RetrospectiveArrivalAnswers(
         consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = ucrBlock.ucr))
       )
-    case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))
     case _ =>
       RetrospectiveArrivalAnswers()
@@ -111,9 +111,9 @@ object DepartureAnswers {
   implicit val format: Format[DepartureAnswers] = Json.format[DepartureAnswers]
 
   def fromQueryUcr(queryUcr: Option[UcrBlock]): DepartureAnswers = queryUcr match {
-    case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(Mucr.codeValue) =>
       DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, ucrBlock.ucr)))
-    case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))
     case _ =>
       DepartureAnswers()
@@ -146,9 +146,9 @@ object AssociateUcrAnswers {
   implicit val format: Format[AssociateUcrAnswers] = Json.format[AssociateUcrAnswers]
 
   def fromQueryUcr(queryUcr: Option[UcrBlock]): AssociateUcrAnswers = queryUcr match {
-    case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(Mucr.codeValue) =>
       AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.Mucr, ucrBlock.ucr)))
-    case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.Ducr, ucrBlock.ucr)))
     case _ =>
       AssociateUcrAnswers()
@@ -163,9 +163,9 @@ object DisassociateUcrAnswers {
   implicit val format: Format[DisassociateUcrAnswers] = Json.format[DisassociateUcrAnswers]
 
   def fromQueryUcr(queryUcr: Option[UcrBlock]): DisassociateUcrAnswers = queryUcr match {
-    case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(Mucr.codeValue) =>
       DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Mucr, None, Some(ucrBlock.ucr))))
-    case Some(ucrBlock) if ucrBlock.ucrType.equals(ducrType) =>
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Ducr, Some(ucrBlock.ucr), None)))
     case _ =>
       DisassociateUcrAnswers()
@@ -180,7 +180,7 @@ object ShutMucrAnswers {
   implicit val format: Format[ShutMucrAnswers] = Json.format[ShutMucrAnswers]
 
   def fromQueryUcr(queryUcr: Option[UcrBlock]): ShutMucrAnswers = queryUcr match {
-    case Some(ucrBlock) if ucrBlock.ucrType.equals(mucrType) =>
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(Mucr.codeValue) =>
       ShutMucrAnswers(shutMucr = Some(ShutMucr(ucrBlock.ucr)))
     case _ =>
       ShutMucrAnswers()

@@ -20,7 +20,6 @@ import controllers.actions.AuthenticatedAction
 import controllers.consolidations.{routes => consolidationRoutes}
 import forms.Choice._
 import forms._
-import models.UcrBlock.mucrType
 import models.UcrType.{Ducr, Mucr}
 import models.cache._
 import models.{UcrBlock, UcrType}
@@ -98,7 +97,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "existing answers with UcrBlock" in {
 
-        val ucrBlock = UcrBlock("ucr", mucrType)
+        val ucrBlock = UcrBlock("ucr", Mucr.codeValue)
         givenTheCacheContains(Cache(providerId, None, Some(ucrBlock)))
 
         val result = controller().displayPage(getRequest)

@@ -20,6 +20,7 @@ import controllers.ControllerLayerSpec
 import forms.ManageMucrChoice.AssociateAnotherUcrToThis
 import forms.{ManageMucrChoice, MucrOptions}
 import models.UcrBlock
+import models.UcrType.Ducr
 import models.cache.AssociateUcrAnswers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -104,7 +105,7 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
       val cachedForm = MucrOptions("123")
       val cachedManageMucrChoice = ManageMucrChoice(AssociateAnotherUcrToThis)
       val cachedAnswers = AssociateUcrAnswers(parentMucr = Some(cachedForm), manageMucrChoice = Some(cachedManageMucrChoice))
-      val queryUcr = UcrBlock(validDucr, UcrBlock.ducrType)
+      val queryUcr = UcrBlock(validDucr, Ducr.codeValue)
 
       "return 200 (OK) response" in {
 

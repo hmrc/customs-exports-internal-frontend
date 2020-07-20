@@ -22,6 +22,7 @@
 @import views.Title
 @import components.gds.{errorSummary, gds_main_template, pageTitle}
 @import views.html.components.gds.sectionHeader
+@import models.UcrType.Ducr
 
 @this(
     govukLayout: gds_main_template,
@@ -85,7 +86,7 @@
                         content = Text(messages("movement.choice.retrospectiveArrival.label")),
                         checked = form("choice").value.contains(RetrospectiveArrival.value.toString)
                     )
-                ).filterNot(item => item.value.contains(ShutMUCR.value) && queryUcr.exists(_.ucrType == UcrBlock.ducrType)),
+                ).filterNot(item => item.value.contains(ShutMUCR.value) && queryUcr.exists(_.ucrType == Ducr.codeValue)),
                 errorMessage = form("choice").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
             ))
             @govukButton(Button(content = Text(messages("site.continue"))))

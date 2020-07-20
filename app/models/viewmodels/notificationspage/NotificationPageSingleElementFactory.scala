@@ -16,13 +16,11 @@
 
 package models.viewmodels.notificationspage
 
-import java.time.format.DateTimeFormatter
-
 import connectors.exchanges.ActionType.ConsolidationType._
 import connectors.exchanges.ActionType.MovementType._
 import javax.inject.{Inject, Singleton}
 import models.UcrBlock
-import models.UcrBlock.ducrType
+import models.UcrType.Ducr
 import models.notifications.NotificationFrontendModel
 import models.submissions.Submission
 import models.viewmodels.notificationspage.converters._
@@ -60,7 +58,7 @@ class NotificationPageSingleElementFactory @Inject()(responseConverterProvider: 
   }
 
   private def buildForDucrAssociation(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement = {
-    val ducrs: List[UcrBlock] = submission.ucrBlocks.filter(_.ucrType == ducrType).toList
+    val ducrs: List[UcrBlock] = submission.ucrBlocks.filter(_.ucrType == Ducr.codeValue).toList
     val content = HtmlFormat.fill(
       paragraph(messages(s"notifications.elem.content.${submission.actionType.typeName}")) +:
         ducrs.map(block => paragraph(block.ucr)) :+

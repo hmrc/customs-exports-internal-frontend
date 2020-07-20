@@ -19,6 +19,7 @@ package views
 import base.Injector
 import forms.Choice
 import models.UcrBlock
+import models.UcrType.{Ducr, Mucr}
 import org.jsoup.nodes.Document
 import play.api.data.FormError
 import play.api.mvc.{AnyContent, Request}
@@ -96,7 +97,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
 
       "ILE query was for a Ducr" in {
 
-        val choicePage = page(Choice.form(), Some(UcrBlock("ducr", UcrBlock.ducrType)))
+        val choicePage = page(Choice.form(), Some(UcrBlock("ducr", Ducr.codeValue)))
 
         choicePage.getElementsByClass("govuk-radios__input").size() mustBe 5
 
@@ -114,7 +115,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
 
       "ILE query was for a Mucr" in {
 
-        val choicePage = page(Choice.form(), Some(UcrBlock("mucr", UcrBlock.mucrType)))
+        val choicePage = page(Choice.form(), Some(UcrBlock("mucr", Mucr.codeValue)))
 
         choicePage.getElementsByClass("govuk-radios__input").size() mustBe 6
 

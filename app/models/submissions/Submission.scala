@@ -21,7 +21,7 @@ import java.util.UUID
 
 import connectors.exchanges.ActionType
 import models.UcrBlock
-import models.UcrBlock.mucrType
+import models.UcrType.Mucr
 import play.api.libs.json._
 
 case class Submission(
@@ -33,9 +33,9 @@ case class Submission(
   requestTimestamp: Instant = Instant.now()
 ) {
 
-  def hasMucr: Boolean = ucrBlocks.exists(_.ucrType == mucrType)
+  def hasMucr: Boolean = ucrBlocks.exists(_.ucrType == Mucr.codeValue)
 
-  def extractMucr: Option[String] = ucrBlocks.find(_.ucrType == mucrType).map(_.ucr)
+  def extractMucr: Option[String] = ucrBlocks.find(_.ucrType == Mucr.codeValue).map(_.ucr)
 
   def extractFirstUcr: Option[String] = ucrBlocks.headOption.map(_.ucr)
 }

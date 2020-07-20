@@ -20,6 +20,7 @@ import base.Injector
 import forms.ManageMucrChoice._
 import forms.{ManageMucrChoice, MucrOptions}
 import models.UcrBlock
+import models.UcrType.Mucr
 import models.cache.AssociateUcrAnswers
 import org.jsoup.nodes.{Document, Element}
 import play.api.data.{Form, FormError}
@@ -34,7 +35,7 @@ class MucrOptionsViewSpec extends ViewSpec with Injector {
 
   private val page = instanceOf[mucr_options]
 
-  private val queryUcr = Some(UcrBlock("testMucr", UcrBlock.mucrType))
+  private val queryUcr = Some(UcrBlock("testMucr", Mucr.codeValue))
   private def createView(form: Form[MucrOptions] = MucrOptions.form, manageMucrChoice: Option[ManageMucrChoice] = None): Html =
     page(form, queryUcr, manageMucrChoice)
 

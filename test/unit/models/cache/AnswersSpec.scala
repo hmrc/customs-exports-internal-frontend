@@ -18,6 +18,7 @@ package models.cache
 
 import base.UnitSpec
 import forms.ConsignmentReferenceType
+import models.UcrType.{Ducr, Mucr}
 import models.{UcrBlock, UcrType}
 import play.api.libs.json.{JsObject, JsString, JsSuccess, JsValue}
 
@@ -78,8 +79,8 @@ class AnswersSpec extends UnitSpec {
 
   "Answers build fromQueryUcr" should {
 
-    val ducrQuery = UcrBlock("ducr", UcrBlock.ducrType)
-    val mucrQuery = UcrBlock("mucr", UcrBlock.mucrType)
+    val ducrQuery = UcrBlock("ducr", Ducr.codeValue)
+    val mucrQuery = UcrBlock("mucr", Mucr.codeValue)
 
     "correctly create ArrivalAnswers from ducr query" in {
 
