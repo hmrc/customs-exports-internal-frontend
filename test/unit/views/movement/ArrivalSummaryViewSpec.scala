@@ -67,11 +67,14 @@ class ArrivalSummaryViewSpec extends ViewSpec with Injector {
       summaryContent must include(messages("location.title"))
     }
 
-    "render formatted arrivate date" in {
+    "render formatted arrival date and time" in {
       val view = page(answers)
 
       view.getElementsByClass("govuk-summary-list__key").get(2) must containMessage("summary.arrival.date")
       view.getElementsByClass("govuk-summary-list__value").get(2).text mustBe viewDates.formatDate(date.date)
+
+      view.getElementsByClass("govuk-summary-list__key").get(3) must containMessage("summary.arrival.time")
+      view.getElementsByClass("govuk-summary-list__value").get(3).text mustBe viewDates.formatTime(time.time)
     }
   }
 
