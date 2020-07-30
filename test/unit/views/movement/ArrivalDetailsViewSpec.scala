@@ -152,7 +152,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
       }
 
       "have value in hour field" in {
-        viewWithData.getElementById("timeOfArrival_hour").`val`() mustBe convertIntoTwoDigitFormat(time.getHour)
+        viewWithData.getElementById("timeOfArrival_hour").`val`() mustBe time.getHour.toString
       }
 
       "have value in minute field" in {

@@ -30,6 +30,7 @@ class DepartureSpec extends IntegrationSpec {
 
   private val date = dateTimeProvider.dateNow.date
   private val time = dateTimeProvider.timeNow.time.truncatedTo(ChronoUnit.MINUTES)
+  private val timeForm = Time(time)
   private val datetime = LocalDateTime.of(date, time).atZone(DateTimeModule.timezone).toInstant
 
   "Specific Date/Time Page" when {
@@ -117,8 +118,9 @@ class DepartureSpec extends IntegrationSpec {
           "dateOfDeparture.day" -> date.getDayOfMonth.toString,
           "dateOfDeparture.month" -> date.getMonthValue.toString,
           "dateOfDeparture.year" -> date.getYear.toString,
-          "timeOfDeparture.hour" -> time.getHour.toString,
-          "timeOfDeparture.minute" -> time.getMinute.toString
+          "timeOfDeparture.hour" -> timeForm.getClockHour.toString,
+          "timeOfDeparture.minute" -> timeForm.getMinute.toString,
+          "timeOfDeparture.ampm" -> timeForm.getAmPm
         )
 
         // Then

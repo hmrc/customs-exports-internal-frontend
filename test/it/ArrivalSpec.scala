@@ -29,6 +29,7 @@ class ArrivalSpec extends IntegrationSpec {
 
   private val date = dateTimeProvider.dateNow.date
   private val time = dateTimeProvider.timeNow.time.truncatedTo(ChronoUnit.MINUTES)
+  private val timeForm = Time(time)
   private val datetime = LocalDateTime.of(date, time).atZone(DateTimeModule.timezone).toInstant
 
   "Specific Date/Time Page" when {
@@ -116,8 +117,9 @@ class ArrivalSpec extends IntegrationSpec {
           "dateOfArrival.day" -> date.getDayOfMonth.toString,
           "dateOfArrival.month" -> date.getMonthValue.toString,
           "dateOfArrival.year" -> date.getYear.toString,
-          "timeOfArrival.hour" -> time.getHour.toString,
-          "timeOfArrival.minute" -> time.getMinute.toString
+          "timeOfArrival.hour" -> timeForm.getClockHour.toString,
+          "timeOfArrival.minute" -> timeForm.getMinute.toString,
+          "timeOfArrival.ampm" -> timeForm.getAmPm
         )
 
         // Then

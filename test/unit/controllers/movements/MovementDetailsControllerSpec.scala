@@ -26,7 +26,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.Form
-import play.api.libs.json.{JsNumber, JsObject, Json}
+import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.MockCache
@@ -120,8 +120,9 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
             "dateOfArrival.day" -> JsNumber(validArrivalDetails.dateOfArrival.date.getDayOfMonth),
             "dateOfArrival.month" -> JsNumber(validArrivalDetails.dateOfArrival.date.getMonthValue),
             "dateOfArrival.year" -> JsNumber(validArrivalDetails.dateOfArrival.date.getYear),
-            "timeOfArrival.hour" -> JsNumber(validArrivalDetails.timeOfArrival.time.getHour),
-            "timeOfArrival.minute" -> JsNumber(validArrivalDetails.timeOfArrival.time.getMinute)
+            "timeOfArrival.hour" -> JsNumber(validArrivalDetails.timeOfArrival.getClockHour),
+            "timeOfArrival.minute" -> JsNumber(validArrivalDetails.timeOfArrival.getMinute),
+            "timeOfArrival.ampm" -> JsString(validArrivalDetails.timeOfArrival.getAmPm)
           )
         )
 
@@ -142,8 +143,9 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
             "dateOfDeparture.day" -> JsNumber(validDepartureDetails.dateOfDeparture.date.getDayOfMonth),
             "dateOfDeparture.month" -> JsNumber(validDepartureDetails.dateOfDeparture.date.getMonthValue),
             "dateOfDeparture.year" -> JsNumber(validDepartureDetails.dateOfDeparture.date.getYear),
-            "timeOfDeparture.hour" -> JsNumber(validDepartureDetails.timeOfDeparture.time.getHour),
-            "timeOfDeparture.minute" -> JsNumber(validDepartureDetails.timeOfDeparture.time.getMinute)
+            "timeOfDeparture.hour" -> JsNumber(validDepartureDetails.timeOfDeparture.getClockHour),
+            "timeOfDeparture.minute" -> JsNumber(validDepartureDetails.timeOfDeparture.getMinute),
+            "timeOfDeparture.ampm" -> JsString(validDepartureDetails.timeOfDeparture.getAmPm)
           )
         )
 
