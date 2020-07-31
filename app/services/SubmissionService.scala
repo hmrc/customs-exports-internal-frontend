@@ -47,8 +47,9 @@ class SubmissionService @Inject()(
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
     val ucr = answers.ucr.map(_.ucr).getOrElse(throw ReturnToStartException)
     val exchange = answers.ucr.map(_.kind) match {
-      case Some(UcrType.Ducr) => DisassociateDUCRExchange(providerId, eori, ucr)
-      case Some(UcrType.Mucr) => DisassociateMUCRExchange(providerId, eori, ucr)
+      case Some(UcrType.Ducr)     => DisassociateDUCRExchange(providerId, eori, ucr)
+      case Some(UcrType.DucrPart) => DisassociateDUCRPartExchange(providerId, eori, ucr)
+      case Some(UcrType.Mucr)     => DisassociateMUCRExchange(providerId, eori, ucr)
     }
 
     connector
@@ -68,8 +69,9 @@ class SubmissionService @Inject()(
     val mucr = answers.parentMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
     val ucr = answers.childUcr.map(_.ucr).getOrElse(throw ReturnToStartException)
     val exchange = answers.childUcr.map(_.kind) match {
-      case Some(UcrType.Ducr) => AssociateDUCRExchange(providerId, eori, mucr, ucr)
-      case Some(UcrType.Mucr) => AssociateMUCRExchange(providerId, eori, mucr, ucr)
+      case Some(UcrType.Ducr)     => AssociateDUCRExchange(providerId, eori, mucr, ucr)
+      case Some(UcrType.DucrPart) => AssociateDUCRPartExchange(providerId, eori, mucr, ucr)
+      case Some(UcrType.Mucr)     => AssociateMUCRExchange(providerId, eori, mucr, ucr)
     }
 
     connector

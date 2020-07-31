@@ -75,5 +75,4 @@ class JourneyRefinerSpec extends WordSpec with MustMatchers with MockitoSugar wi
       }
     }
   }
-
 }

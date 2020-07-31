@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.DucrPartConfig
 @import views.Title
 @import views.html.components.gds.link
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -26,7 +27,8 @@
         exportsInputText: exportsInputText,
         errorSummary: errorSummary,
         pageTitle: pageTitle,
-        formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+        formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF,
+        ducrPartConfig: DucrPartConfig
 )
 
 @(form: Form[String])(implicit request: Request[_], messages: Messages)
@@ -50,6 +52,9 @@
 
         <ul class="govuk-list">
             <li>@link(content = Html(messages("ileQuery.link.requests")), href = routes.ViewSubmissionsController.displayPage())</li>
+            @if(ducrPartConfig.isDucrPartsEnabled){
+                <li>@link(content = Html(messages("ileQuery.link.ducrPart")), href = routes.DucrPartDetailsController.displayPage())</li>
+            }
         </ul>
 
     }

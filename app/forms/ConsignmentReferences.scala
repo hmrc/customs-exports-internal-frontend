@@ -28,7 +28,7 @@ case class ConsignmentReferences(reference: ConsignmentReferenceType, referenceV
 
 object ConsignmentReferenceType extends Enumeration {
   type ConsignmentReferenceType = Value
-  val D, M = Value
+  val D, M, DP = Value
   implicit val format: Format[ConsignmentReferenceType] = Format(Reads.enumNameReads(ConsignmentReferenceType), Writes.enumNameWrites)
 }
 

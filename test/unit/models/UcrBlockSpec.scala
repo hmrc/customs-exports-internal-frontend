@@ -39,7 +39,7 @@ class UcrBlockSpec extends WordSpec with MustMatchers {
 
       "return String containing both elements separated by '-'" in {
 
-        val ucrBlock = UcrBlock(ucr = validDucr, ucrPartNo = Some(validDucrPartId), ucrType = Ducr.codeValue)
+        val ucrBlock = UcrBlock(ucr = validDucr + "-" + validDucrPartId, ucrType = Ducr.codeValue)
         val expectedResult = s"$validDucr-$validDucrPartId"
 
         ucrBlock.fullUcr mustBe expectedResult

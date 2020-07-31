@@ -20,7 +20,7 @@ import connectors.exchanges.ActionType.ConsolidationType._
 import connectors.exchanges.ActionType.MovementType._
 import javax.inject.{Inject, Singleton}
 import models.UcrBlock
-import models.UcrType.Ducr
+import models.UcrType.{Ducr, DucrPart}
 import models.notifications.NotificationFrontendModel
 import models.submissions.Submission
 import models.viewmodels.notificationspage.converters._
@@ -34,14 +34,16 @@ class NotificationPageSingleElementFactory @Inject()(responseConverterProvider: 
 
   def build(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement =
     submission.actionType match {
-      case Arrival | RetrospectiveArrival | Departure | DucrDisassociation | MucrAssociation | MucrDisassociation | ShutMucr =>
+      case Arrival | RetrospectiveArrival | Departure | DucrDisassociation | DucrPartDisassociation | MucrAssociation | MucrDisassociation |
+          ShutMucr =>
         buildForRequest(submission)
-      case DucrAssociation => buildForDucrAssociation(submission)
+      case DucrAssociation     => buildForDucrAssociation(submission)
+      case DucrPartAssociation => buildForDucrPartAssociation(submission)
     }
 
   private def buildForRequest(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement = {
 
-    val ucrMessage = if (submission.hasMucr) "MUCR" else "DUCR"
+    val ucrMessage = if (submission.hasMucr) "MUCR" else if (submission.hasDucrPart) "DUCR Part" else "DUCR"
 
     val content = HtmlFormat.fill(
       List(
@@ -62,6 +64,17 @@ class NotificationPageSingleElementFactory @Inject()(responseConverterProvider: 
     val content = HtmlFormat.fill(
       paragraph(messages(s"notifications.elem.content.${submission.actionType.typeName}")) +:
         ducrs.map(block => paragraph(block.ucr)) :+
+        paragraph(messages("notifications.elem.content.footer"))
+    )
+
+    buildForRequest(submission).copy(content = content)
+  }
+
+  private def buildForDucrPartAssociation(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement = {
+    val ducrs: List[UcrBlock] = submission.ucrBlocks.filter(_.ucrType == DucrPart.codeValue).toList
+    val content = HtmlFormat.fill(
+      paragraph(messages(s"notifications.elem.content.${submission.actionType.typeName}")) +:
+        ducrs.map(block => paragraph(block.fullUcr)) :+
         paragraph(messages("notifications.elem.content.footer"))
     )
 

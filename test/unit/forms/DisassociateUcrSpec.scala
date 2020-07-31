@@ -27,7 +27,7 @@ class DisassociateUcrSpec extends UnitSpec {
 
       val form = DisassociateUcr.form.bind(JsObject(Map("kind" -> JsString("ducr"), "ducr" -> JsString("8gb123457359100-test0001"))))
 
-      form.errors mustBe (empty)
+      form.errors mustBe empty
       form.value.map(_.ucr) must be(Some("8GB123457359100-TEST0001"))
     }
 
@@ -35,9 +35,8 @@ class DisassociateUcrSpec extends UnitSpec {
 
       val form = DisassociateUcr.form.bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test"))))
 
-      form.errors mustBe (empty)
+      form.errors mustBe empty
       form.value.map(_.ucr) must be(Some("GB/ABCED1234-15804TEST"))
     }
   }
-
 }

@@ -24,8 +24,8 @@ import utils.FieldValidator._
 
 case class DisassociateUcr(kind: UcrType, ducr: Option[String], mucr: Option[String]) {
   def ucr: String = kind match {
-    case UcrType.Mucr => mucr.getOrElse(throw ReturnToStartException)
-    case UcrType.Ducr => ducr.getOrElse(throw ReturnToStartException)
+    case UcrType.Mucr                    => mucr.getOrElse(throw ReturnToStartException)
+    case UcrType.Ducr | UcrType.DucrPart => ducr.getOrElse(throw ReturnToStartException)
   }
 }
 
