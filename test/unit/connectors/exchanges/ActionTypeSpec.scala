@@ -48,6 +48,13 @@ class ActionTypeSpec extends UnitSpec {
         json must equal(expectedJson)
       }
 
+      "it is DUCR Part Association" in {
+        val json = ActionType.format.writes(DucrPartAssociation)
+        val expectedJson = JsString("DucrPartAssociation")
+
+        json must equal(expectedJson)
+      }
+
       "it is MUCR Association" in {
         val json = ActionType.format.writes(MucrAssociation)
         val expectedJson = JsString("MucrAssociation")
@@ -58,6 +65,13 @@ class ActionTypeSpec extends UnitSpec {
       "it is DUCR Disassociation" in {
         val json = ActionType.format.writes(DucrDisassociation)
         val expectedJson = JsString("DucrDisassociation")
+
+        json must equal(expectedJson)
+      }
+
+      "it is DUCR Part Disassociation" in {
+        val json = ActionType.format.writes(DucrPartDisassociation)
+        val expectedJson = JsString("DucrPartDisassociation")
 
         json must equal(expectedJson)
       }
@@ -100,6 +114,13 @@ class ActionTypeSpec extends UnitSpec {
         actionType must equal(expectedActionType)
       }
 
+      "it is DUCR Part Association" in {
+        val actionType = ActionType.format.reads(JsString("DucrPartAssociation")).get
+        val expectedActionType = DucrPartAssociation
+
+        actionType must equal(expectedActionType)
+      }
+
       "it is MUCR Association" in {
         val actionType = ActionType.format.reads(JsString("MucrAssociation")).get
         val expectedActionType = MucrAssociation
@@ -110,6 +131,13 @@ class ActionTypeSpec extends UnitSpec {
       "it is DUCR Disassociation" in {
         val actionType = ActionType.format.reads(JsString("DucrDisassociation")).get
         val expectedActionType = DucrDisassociation
+
+        actionType must equal(expectedActionType)
+      }
+
+      "it is DUCR Part Disassociation" in {
+        val actionType = ActionType.format.reads(JsString("DucrPartDisassociation")).get
+        val expectedActionType = DucrPartDisassociation
 
         actionType must equal(expectedActionType)
       }
@@ -136,5 +164,4 @@ class ActionTypeSpec extends UnitSpec {
       }
     }
   }
-
 }

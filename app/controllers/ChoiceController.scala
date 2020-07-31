@@ -20,7 +20,7 @@ import controllers.actions.AuthenticatedAction
 import controllers.exchanges.AuthenticatedRequest
 import forms.Choice
 import javax.inject.{Inject, Singleton}
-import models.UcrType.{Ducr, Mucr}
+import models.UcrType.{Ducr, DucrPart, Mucr}
 import models.cache._
 import models.{ReturnToStartException, UcrBlock}
 import play.api.i18n.I18nSupport
@@ -70,8 +70,8 @@ class ChoiceController @Inject()(
     case Choice.AssociateUCR => {
       val redirectionCall = cache.queryUcr
         .map(_.ucrType match {
-          case Ducr.codeValue => consolidations.routes.MucrOptionsController.displayPage()
-          case Mucr.codeValue => consolidations.routes.ManageMucrController.displayPage()
+          case Ducr.codeValue | DucrPart.codeValue => consolidations.routes.MucrOptionsController.displayPage()
+          case Mucr.codeValue                      => consolidations.routes.ManageMucrController.displayPage()
         })
         .getOrElse(throw ReturnToStartException)
 

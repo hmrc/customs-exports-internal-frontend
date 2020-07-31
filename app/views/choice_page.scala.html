@@ -16,8 +16,10 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import controllers.routes
+@import config.DucrPartConfig
 @import forms.Choice
 @import forms.Choice._
+@import models.UcrType.DucrPart
 @import views.components.BackButton
 @import views.Title
 @import components.gds.{errorSummary, gds_main_template, pageTitle}
@@ -31,14 +33,24 @@
     errorSummary: errorSummary,
     pageTitle: pageTitle,
     sectionHeader: sectionHeader,
-    formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+    formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF,
+    ducrPartConfig: DucrPartConfig
 )
 
 @(form: Form[Choice], queryUcr: Option[UcrBlock] = None)(implicit request: Request[_], messages: Messages)
 
+@backLink = @{
+  queryUcr.map { block =>
+    if (block.is(DucrPart) && ducrPartConfig.isDucrPartsEnabled)
+      BackButton(messages("site.back"), controllers.routes.DucrPartDetailsController.displayPage())
+    else
+      BackButton(messages("site.back"), controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(block.ucr))
+  }
+}
+
 @govukLayout(
     title = Title("movement.choice.title"),
-    backButton = queryUcr.map(block => BackButton(messages("site.back"), controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(block.ucr)))) {
+    backButton = backLink) {
 
         @formHelper(action = routes.ChoiceController.submit(), 'autoComplete -> "off") {
 
@@ -57,36 +69,38 @@
                 )),
                 items = Seq(
                     RadioItem(
-                        value = Some(Arrival.value.toString),
+                        value = Some(Arrival.value),
                         content = Text(messages("movement.choice.arrival.label")),
-                        checked = form("choice").value.contains(Arrival.value.toString)
+                        checked = form("choice").value.contains(Arrival.value)
                     ),
                     RadioItem(
-                        value = Some(AssociateUCR.value.toString),
+                        value = Some(AssociateUCR.value),
                         content = Text(messages("movement.choice.associate.label")),
-                        checked = form("choice").value.contains(AssociateUCR.value.toString)
+                        checked = form("choice").value.contains(AssociateUCR.value)
                     ),
                     RadioItem(
-                        value = Some(DisassociateUCR.value.toString),
+                        value = Some(DisassociateUCR.value),
                         content = Text(messages("movement.choice.disassociateDucr.label")),
-                        checked = form("choice").value.contains(DisassociateUCR.value.toString)
+                        checked = form("choice").value.contains(DisassociateUCR.value)
                     ),
                     RadioItem(
-                        value = Some(ShutMUCR.value.toString),
+                        value = Some(ShutMUCR.value),
                         content = Text(messages("movement.choice.shutMucr.label")),
-                        checked = form("choice").value.contains(ShutMUCR.value.toString)
+                        checked = form("choice").value.contains(ShutMUCR.value)
                     ),
                     RadioItem(
-                        value = Some(Departure.value.toString),
+                        value = Some(Departure.value),
                         content = Text(messages("movement.choice.departure.label")),
-                        checked = form("choice").value.contains(Departure.value.toString)
+                        checked = form("choice").value.contains(Departure.value)
                     ),
                     RadioItem(
-                        value = Some(RetrospectiveArrival.value.toString),
+                        value = Some(RetrospectiveArrival.value),
                         content = Text(messages("movement.choice.retrospectiveArrival.label")),
-                        checked = form("choice").value.contains(RetrospectiveArrival.value.toString)
+                        checked = form("choice").value.contains(RetrospectiveArrival.value)
                     )
-                ).filterNot(item => item.value.contains(ShutMUCR.value) && queryUcr.exists(_.ucrType == Ducr.codeValue)),
+                )
+                .filterNot(item => item.value.contains(ShutMUCR.value) && queryUcr.exists(_.ucrType == Ducr.codeValue))
+                .filterNot(item => (item.value.contains(ShutMUCR.value) || item.value.contains(RetrospectiveArrival.value)) && queryUcr.exists(_.ucrType == DucrPart.codeValue)),
                 errorMessage = form("choice").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
             ))
             @govukButton(Button(content = Text(messages("site.continue"))))

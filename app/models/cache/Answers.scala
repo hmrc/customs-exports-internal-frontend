@@ -17,7 +17,7 @@
 package models.cache
 
 import forms.{AssociateUcr, MucrOptions, _}
-import models.UcrType.{Ducr, Mucr}
+import models.UcrType.{Ducr, DucrPart, Mucr}
 import models.cache.JourneyType.JourneyType
 import models.{Ucr, UcrBlock, UcrType}
 import play.api.libs.json.{Format, Json}
@@ -66,6 +66,8 @@ object ArrivalAnswers {
       ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, ucrBlock.ucr)))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(DucrPart.codeValue) =>
+      ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.DP, ucrBlock.ucr)))
     case _ =>
       ArrivalAnswers()
   }
@@ -90,6 +92,8 @@ object RetrospectiveArrivalAnswers {
       )
     case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(DucrPart.codeValue) =>
+      RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.DP, ucrBlock.ucr)))
     case _ =>
       RetrospectiveArrivalAnswers()
   }
@@ -115,6 +119,8 @@ object DepartureAnswers {
       DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, ucrBlock.ucr)))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(DucrPart.codeValue) =>
+      DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.DP, ucrBlock.ucr)))
     case _ =>
       DepartureAnswers()
   }
@@ -150,6 +156,8 @@ object AssociateUcrAnswers {
       AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.Mucr, ucrBlock.ucr)))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.Ducr, ucrBlock.ucr)))
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(DucrPart.codeValue) =>
+      AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.DucrPart, ucrBlock.ucr)))
     case _ =>
       AssociateUcrAnswers()
   }
@@ -167,6 +175,8 @@ object DisassociateUcrAnswers {
       DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Mucr, None, Some(ucrBlock.ucr))))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Ducr, Some(ucrBlock.ucr), None)))
+    case Some(ucrBlock) if ucrBlock.ucrType.equals(DucrPart.codeValue) =>
+      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.DucrPart, Some(ucrBlock.ucr), None)))
     case _ =>
       DisassociateUcrAnswers()
   }

@@ -19,7 +19,7 @@ package views
 import base.Injector
 import forms.Choice
 import models.UcrBlock
-import models.UcrType.{Ducr, Mucr}
+import models.UcrType.{Ducr, DucrPart, Mucr}
 import org.jsoup.nodes.Document
 import play.api.data.FormError
 import play.api.mvc.{AnyContent, Request}
@@ -106,6 +106,24 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
         choicePage.getElementsByAttributeValue("value", "disassociateUCR").size() mustBe 1
         choicePage.getElementsByAttributeValue("value", "departure").size() mustBe 1
         choicePage.getElementsByAttributeValue("value", "retrospectiveArrival").size() mustBe 1
+
+        choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 0
+      }
+    }
+
+    "not render 'Shut Mucr' and 'Retrospective arrival` option" when {
+
+      "ILE query was for a Ducr" in {
+
+        val choicePage = page(Choice.form(), Some(UcrBlock(ucr = "ducr-part", ucrType = DucrPart)))
+
+        choicePage.getElementsByClass("govuk-radios__input").size() mustBe 4
+
+        choicePage.getElementsByAttributeValue("value", "arrival").size() mustBe 1
+        choicePage.getElementsByAttributeValue("value", "associateUCR").size() mustBe 1
+        choicePage.getElementsByAttributeValue("value", "disassociateUCR").size() mustBe 1
+        choicePage.getElementsByAttributeValue("value", "departure").size() mustBe 1
+        choicePage.getElementsByAttributeValue("value", "retrospectiveArrival").size() mustBe 0
 
         choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 0
       }

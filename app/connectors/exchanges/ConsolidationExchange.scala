@@ -28,16 +28,20 @@ sealed trait ConsolidationExchange {
 
 object ConsolidationExchange {
   implicit val associateDucrFormat = Json.format[AssociateDUCRExchange]
+  implicit val associateDucrPartFormat = Json.format[AssociateDUCRPartExchange]
   implicit val associateMucrFormat = Json.format[AssociateMUCRExchange]
   implicit val disassociateDucrFormat = Json.format[DisassociateDUCRExchange]
+  implicit val disassociateDucrPartFormat = Json.format[DisassociateDUCRPartExchange]
   implicit val disassociateMucrFormat = Json.format[DisassociateMUCRExchange]
   implicit val shutMucrFormat = Json.format[ShutMUCRExchange]
 
   implicit val format: Format[ConsolidationExchange] = Union
     .from[ConsolidationExchange](typeField = "consolidationType")
     .and[AssociateDUCRExchange](typeTag = ConsolidationType.DucrAssociation.typeName)
+    .and[AssociateDUCRPartExchange](typeTag = ConsolidationType.DucrPartAssociation.typeName)
     .and[AssociateMUCRExchange](typeTag = ConsolidationType.MucrAssociation.typeName)
     .and[DisassociateDUCRExchange](typeTag = ConsolidationType.DucrDisassociation.typeName)
+    .and[DisassociateDUCRPartExchange](typeTag = ConsolidationType.DucrPartDisassociation.typeName)
     .and[DisassociateMUCRExchange](typeTag = ConsolidationType.MucrDisassociation.typeName)
     .and[ShutMUCRExchange](typeTag = ConsolidationType.ShutMucr.typeName)
     .format
@@ -48,6 +52,11 @@ case class AssociateDUCRExchange(override val providerId: String, override val e
   override val consolidationType: ConsolidationType = ConsolidationType.DucrAssociation
 }
 
+case class AssociateDUCRPartExchange(override val providerId: String, override val eori: String, mucr: String, ucr: String)
+    extends ConsolidationExchange {
+  override val consolidationType: ConsolidationType = ConsolidationType.DucrPartAssociation
+}
+
 case class AssociateMUCRExchange(override val providerId: String, override val eori: String, mucr: String, ucr: String)
     extends ConsolidationExchange {
   override val consolidationType: ConsolidationType = ConsolidationType.MucrAssociation
@@ -55,6 +64,10 @@ case class AssociateMUCRExchange(override val providerId: String, override val e
 
 case class DisassociateDUCRExchange(override val providerId: String, override val eori: String, ucr: String) extends ConsolidationExchange {
   override val consolidationType: ConsolidationType = ConsolidationType.DucrDisassociation
+}
+
+case class DisassociateDUCRPartExchange(override val providerId: String, override val eori: String, ucr: String) extends ConsolidationExchange {
+  override val consolidationType: ConsolidationType = ConsolidationType.DucrPartDisassociation
 }
 
 case class DisassociateMUCRExchange(override val providerId: String, override val eori: String, ucr: String) extends ConsolidationExchange {

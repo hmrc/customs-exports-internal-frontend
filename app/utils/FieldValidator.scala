@@ -129,4 +129,6 @@ object FieldValidator {
   val areAllElementsUnique: Iterable[_] => Boolean = (input: Iterable[_]) => input.toSet.size == input.size
 
   val ofPattern: String => String => Boolean = (pattern: String) => (input: String) => input.matches(pattern)
+
+  val isValidDucrPartId: String => Boolean = (input: String) => lengthInRange(1)(3)(input) && input.forall(_.isDigit)
 }

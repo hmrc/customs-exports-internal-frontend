@@ -20,7 +20,7 @@ import controllers.actions.AuthenticatedAction
 import controllers.consolidations.{routes => consolidationRoutes}
 import forms.Choice._
 import forms._
-import models.UcrType.{Ducr, Mucr}
+import models.UcrType.{Ducr, DucrPart, Mucr}
 import models.cache._
 import models.{UcrBlock, UcrType}
 import org.mockito.ArgumentCaptor
@@ -175,6 +175,19 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
           theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(queryResultDucr))))
+          theCacheUpserted.queryUcr mustBe Some(queryResultDucr)
+        }
+
+        "queryUcr is of type Ducr Part" in {
+
+          val queryResultDucr = UcrBlock(ucr = "ucr-123", ucrType = DucrPart.codeValue)
+          givenTheCacheContains(Cache(providerId, None, Some(queryResultDucr)))
+
+          val result = controller().submit(postWithChoice(AssociateUCR))
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
+          theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.DucrPart, "ucr-123"))))
           theCacheUpserted.queryUcr mustBe Some(queryResultDucr)
         }
 
