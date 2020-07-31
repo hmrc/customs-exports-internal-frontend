@@ -18,6 +18,7 @@
 @import forms.Transport
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.gds.linkContent
+@import services.Countries
 
 @this(govukSummaryList: GovukSummaryList, linkContent: linkContent)
 
@@ -66,7 +67,7 @@
           content = Text(messages("summary.nationality"))
         ),
         value = Value(
-          content = Text(transport.flatMap(_.nationality).getOrElse(""))
+          content = Text(transport.flatMap(_.nationality).flatMap(Countries.country).map(_.asString()).getOrElse(""))
         ),
         actions = Some(Actions(
           items = Seq(

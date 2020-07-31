@@ -17,10 +17,8 @@
 package views.movement
 
 import base.Injector
-import forms.{GoodsDeparted, Transport}
+import forms.Transport
 import models.cache.ArrivalAnswers
-import org.jsoup.nodes.Document
-import play.api.data.FormError
 import play.twirl.api.Html
 import views.ViewSpec
 import views.html.transport
@@ -51,9 +49,13 @@ class TransportViewSpec extends ViewSpec with Injector {
       createPage.getElementsByAttributeValue("for", "modeOfTransport-8").text() must be(messages("transport.modeOfTransport.8"))
     }
 
+    "render input for transport id" in {
+      createPage.getElementsByAttributeValue("for", "transportId").first() must containMessage("transport.transportId.question")
+      createPage.getElementById("transportId-hint") must containMessage("transport.transportId.hint")
+    }
+
     "render input for nationality" in {
-      createPage.getElementsByAttributeValue("for", "nationality").text() must be(messages("transport.nationality.question"))
-      createPage.getElementById("nationality-hint").text() mustBe messages("transport.nationality.hint")
+      createPage.getElementsByAttributeValue("for", "nationality").first() must containMessage("transport.nationality.question")
     }
 
     "render back button" in {
