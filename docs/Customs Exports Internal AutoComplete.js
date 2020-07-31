@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Customs Exports Internal AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  Customs Exports Internal AutoComplete
 // @author       You
 // @match        http*://*/*customs-exports-internal*
@@ -29,7 +29,6 @@ function createQuickButton() {
     return button;
 }
 
-// selected can be an index or a value
 function selectFromAutoPredict(element, selected) {
     let index = typeof selected == "number" ? selected : 0;
     let selects = element.getElementsByTagName('select');
@@ -97,7 +96,7 @@ function completePage() {
     }
     if(currentPageIs("/customs-exports-internal/transport")){
         document.getElementById("modeOfTransport").checked = true
-        document.getElementById('nationality').value = 'GB';
+        selectFromAutoPredict(document.getElementById('nationality-container'), "GB");
         document.getElementById('transportId').value = 'TransportReference';
         document.getElementsByClassName('govuk-button')[0].click()
     }
