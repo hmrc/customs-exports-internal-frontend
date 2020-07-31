@@ -31,7 +31,7 @@ class UcrBlockSpec extends WordSpec with MustMatchers {
         val ucrBlock = UcrBlock(ucr = validDucr, ucrType = Ducr.codeValue)
         val expectedResult = validDucr
 
-        ucrBlock.ucr mustBe expectedResult
+        ucrBlock.fullUcr mustBe expectedResult
       }
     }
 
@@ -42,7 +42,7 @@ class UcrBlockSpec extends WordSpec with MustMatchers {
         val ucrBlock = UcrBlock(ucr = validDucr + "-" + validDucrPartId, ucrType = Ducr.codeValue)
         val expectedResult = s"$validDucr-$validDucrPartId"
 
-        ucrBlock.ucr mustBe expectedResult
+        ucrBlock.fullUcr mustBe expectedResult
       }
     }
   }

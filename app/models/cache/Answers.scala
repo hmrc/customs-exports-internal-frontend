@@ -67,7 +67,7 @@ object ArrivalAnswers {
     case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(DucrPart.codeValue) =>
-      ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.DP, ucrBlock.ucr)))
+      ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.DP, ucrBlock.fullUcr)))
     case _ =>
       ArrivalAnswers()
   }
@@ -93,7 +93,7 @@ object RetrospectiveArrivalAnswers {
     case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(DucrPart.codeValue) =>
-      RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.DP, ucrBlock.ucr)))
+      RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.DP, ucrBlock.fullUcr)))
     case _ =>
       RetrospectiveArrivalAnswers()
   }
@@ -120,7 +120,7 @@ object DepartureAnswers {
     case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(DucrPart.codeValue) =>
-      DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.DP, ucrBlock.ucr)))
+      DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.DP, ucrBlock.fullUcr)))
     case _ =>
       DepartureAnswers()
   }
@@ -157,7 +157,7 @@ object AssociateUcrAnswers {
     case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.Ducr, ucrBlock.ucr)))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(DucrPart.codeValue) =>
-      AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.DucrPart, ucrBlock.ucr)))
+      AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.DucrPart, ucrBlock.fullUcr)))
     case _ =>
       AssociateUcrAnswers()
   }
@@ -176,7 +176,7 @@ object DisassociateUcrAnswers {
     case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Ducr, Some(ucrBlock.ucr), None)))
     case Some(ucrBlock) if ucrBlock.ucrType.equals(DucrPart.codeValue) =>
-      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.DucrPart, Some(ucrBlock.ucr), None)))
+      DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.DucrPart, Some(ucrBlock.fullUcr), None)))
     case _ =>
       DisassociateUcrAnswers()
   }
