@@ -43,7 +43,7 @@ formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF)
             rows = Seq(
                 SummaryListRow(
                     key = Key(
-                        content = Text(disassociateUcr.kind.toString.toUpperCase)
+                        content = Text(messages(s"disassociate.ucr.summary.kind.${disassociateUcr.kind.formValue}"))
                     ),
                     value = Value(
                         content = Text(disassociateUcr.ucr)
