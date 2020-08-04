@@ -77,6 +77,7 @@ ducrPartDetails.ducrPartId.hint = This can be up to 3 digits. For example, 123.
 ducrPartDetails.ducrPartId.error = Enter a DUCR Part ID in the correct format
 
 consignmentReferences.reference.ducr = Declaration Consignment Reference (DUCR)
+consignmentReferences.reference.ducrPart = DUCR Part
 consignmentReferences.reference.mucr = Master Consignment Reference (MUCR)
 consignmentReferences.reference.empty = Please choose reference
 consignmentReferences.reference.error = Incorrect reference
@@ -226,6 +227,9 @@ associate.ucr.summary.kind.ducr = DUCR
 
 disassociate.ucr.ducr = Declaration Consignment Reference (DUCR)
 disassociate.ucr.mucr = Master Consignment Reference (MUCR)
+disassociate.ucr.summary.kind.mucr = MUCR
+disassociate.ucr.summary.kind.ducr = DUCR
+disassociate.ucr.summary.kind.ducrPart = DUCR Part
 disassociate.ucr.summary.title = Is the information provided for this dissociation request correct?
 disassociate.ucr.summary.table.caption = Remove consignment
 disassociate.ucr.ducr.error = Declaration Consignment Reference is incorrect

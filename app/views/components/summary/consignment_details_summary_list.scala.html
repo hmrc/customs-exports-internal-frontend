@@ -26,6 +26,8 @@
   consignmentReferences.map(ref =>
     if(ref.reference.equals(ConsignmentReferenceType.D)) {
       messages("consignmentReferences.reference.ducr")
+    } else if(ref.reference.equals(ConsignmentReferenceType.DP)) {
+      messages("consignmentReferences.reference.ducrPart")
     } else {
       messages("consignmentReferences.reference.mucr")
     }
