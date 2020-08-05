@@ -17,11 +17,12 @@
 package views.movement
 
 import base.Injector
-import forms.MovementDetails
 import models.cache.ArrivalAnswers
+import org.jsoup.nodes.Document
 import testdata.MovementsTestData
 import views.ViewSpec
 import views.html.departure_details
+
 import scala.collection.JavaConversions._
 
 class DepartureDetailsViewSpec extends ViewSpec with Injector {
@@ -107,6 +108,21 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
         val viewWithError = page(movementDetails.departureForm().withError("error", "error.required"), consignmentReferences)
         viewWithError.getElementById("error-summary-title").text() mustBe messages("error.summary.title")
       }
+    }
+
+    "provided with form level DateTime error" should {
+      val viewWithDateError: Document = page(
+        movementDetails
+          .departureForm()
+          .withError("dateOfDeparture", "departure.details.error.future")
+          .withError("timeOfDeparture", "departure.details.error.future"),
+        consignmentReferences
+      )
+
+      "have single error in summary" in {
+        viewWithDateError.getElementsByClass("govuk-list govuk-error-summary__list").text() mustBe (messages("departure.details.error.future"))
+      }
+
     }
   }
 }

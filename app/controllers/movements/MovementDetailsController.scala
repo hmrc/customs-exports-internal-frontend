@@ -22,7 +22,7 @@ import forms.{ArrivalDetails, DepartureDetails, MovementDetails}
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
 import models.cache._
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import play.twirl.api.Html
@@ -71,29 +71,41 @@ class MovementDetailsController @Inject()(
       }
   }
 
-  private def handleSavingArrival(arrivalAnswers: ArrivalAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] =
+  private def handleSavingArrival(arrivalAnswers: ArrivalAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] = {
+    def withDateSpecificErrors(formWithErrors: Form[ArrivalDetails]) = formWithErrors.copy(errors = formLevelErrors("Arrival", formWithErrors.errors))
     details
       .arrivalForm()
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[ArrivalDetails]) => Future.successful(Left(arrivalDetailsPage(formWithErrors, arrivalAnswers.consignmentReferences))),
+        (formWithErrors: Form[ArrivalDetails]) =>
+          Future.successful(Left(arrivalDetailsPage(withDateSpecificErrors(formWithErrors), arrivalAnswers.consignmentReferences))),
         validForm =>
           cacheRepository.upsert(request.cache.update(arrivalAnswers.copy(arrivalDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
         }
       )
+  }
 
   private def handleSavingDeparture(departureAnswers: DepartureAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] = {
     def consignmentReference = departureAnswers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
+    def withDateSpecificErrors(formWithErrors: Form[DepartureDetails]) =
+      formWithErrors.copy(errors = formLevelErrors("Departure", formWithErrors.errors))
     details
       .departureForm()
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[DepartureDetails]) => Future.successful(Left(departureDetailsPage(formWithErrors, consignmentReference))),
+        (formWithErrors: Form[DepartureDetails]) =>
+          Future.successful(Left(departureDetailsPage(withDateSpecificErrors(formWithErrors), consignmentReference))),
         validForm =>
           cacheRepository.upsert(request.cache.update(departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
         }
       )
   }
+
+  private def formLevelErrors(keySuffix: String, errors: Seq[FormError]) =
+    errors.headOption
+      .filter(_.key.isEmpty)
+      .map(err => Seq(FormError(s"dateOf$keySuffix", err.message), FormError(s"timeOf$keySuffix", err.message)))
+      .getOrElse(errors)
 }

@@ -33,12 +33,16 @@
 
 @(form: Form[ArrivalDetails], consignmentReferences: Option[ConsignmentReferences])(implicit request: Request[_], messages: Messages)
 
+@removeDuplicateMessages(errors: Seq[FormError]) = @{
+    Map(errors map { a => a.message -> a }: _*).values.toSeq
+}
+
 @govukLayout(
     title = Title("arrivalDetails.header"),
     backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.SpecificDateTimeController.displayPage))) {
 
     @formHelper(action = controllers.movements.routes.MovementDetailsController.saveMovementDetails(), 'autoComplete -> "off") {
-        @errorSummary(form.errors)
+        @errorSummary(removeDuplicateMessages(form.errors))
 
         @sectionHeader(messages("arrivalDetails.sectionHeading", consignmentReferences.map(_.referenceValue).getOrElse("")))
 

@@ -16,7 +16,7 @@
 
 package controllers.movements
 
-import java.time.{LocalDate, LocalTime}
+import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 import controllers.ControllerLayerSpec
 import forms.common.{Date, Time}
@@ -25,7 +25,7 @@ import models.cache.{Answers, ArrivalAnswers, Cache, DepartureAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -37,7 +37,8 @@ import scala.concurrent.ExecutionContext.global
 
 class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
 
-  private val page = mock[arrival_details]
+  private val mockArrivalDetailsPage = mock[arrival_details]
+  private val mockDepartureDetailsPage = mock[departure_details]
 
   private def controller(answers: Answers = ArrivalAnswers()) =
     new MovementDetailsController(
@@ -46,25 +47,32 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
       cacheRepository,
       stubMessagesControllerComponents(),
       MovementsTestData.movementDetails,
-      page,
-      mock[departure_details]
+      mockArrivalDetailsPage,
+      mockDepartureDetailsPage
     )(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    when(page.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(mockArrivalDetailsPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(mockDepartureDetailsPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
-    reset(page)
+    reset(mockArrivalDetailsPage, mockDepartureDetailsPage)
 
     super.afterEach()
   }
 
-  private def theResponseForm: Form[ArrivalDetails] = {
+  private def arrivalResponseForm: Form[ArrivalDetails] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[ArrivalDetails]])
-    verify(page).apply(captor.capture(), any())(any(), any())
+    verify(mockArrivalDetailsPage).apply(captor.capture(), any())(any(), any())
+    captor.getValue
+  }
+
+  private def departureResponseForm: Form[DepartureDetails] = {
+    val captor = ArgumentCaptor.forClass(classOf[Form[DepartureDetails]])
+    verify(mockDepartureDetailsPage).apply(captor.capture(), any())(any(), any())
     captor.getValue
   }
 
@@ -79,7 +87,7 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().displayPage()(getRequest)
 
         status(result) mustBe OK
-        theResponseForm.value mustBe empty
+        arrivalResponseForm.value mustBe empty
       }
 
       "GET displayPage is invoked with data in cache" in {
@@ -91,7 +99,7 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe OK
 
-        theResponseForm.value mustBe cachedForm
+        arrivalResponseForm.value mustBe cachedForm
       }
     }
 
@@ -106,6 +114,38 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().saveMovementDetails()(postRequest(invalidForm))
 
         status(result) mustBe BAD_REQUEST
+      }
+
+      "date is in the future" in {
+
+        val tomorrow = LocalDateTime.now().plusDays(1)
+        val incorrectForm = Json.obj(
+          "dateOfArrival" -> Json.obj("day" -> tomorrow.getDayOfMonth, "month" -> tomorrow.getMonthValue, "year" -> tomorrow.getYear),
+          "timeOfArrival" -> Json.obj("hour" -> "10", "minute" -> "35", "ampm" -> "AM")
+        )
+        val result = controller(ArrivalAnswers()).saveMovementDetails()(postRequest(incorrectForm))
+
+        status(result) mustBe BAD_REQUEST
+
+        arrivalResponseForm.errors must be(
+          Seq(FormError("dateOfArrival", "arrival.details.error.future"), FormError("timeOfArrival", "arrival.details.error.future"))
+        )
+      }
+
+      "date is in the past" in {
+
+        val lastYear = LocalDateTime.now().minusYears(1)
+        val incorrectForm = Json.obj(
+          "dateOfArrival" -> Json.obj("day" -> lastYear.getDayOfMonth, "month" -> lastYear.getMonthValue, "year" -> lastYear.getYear),
+          "timeOfArrival" -> Json.obj("hour" -> "10", "minute" -> "35", "ampm" -> "AM")
+        )
+        val result = controller(ArrivalAnswers()).saveMovementDetails()(postRequest(incorrectForm))
+
+        status(result) mustBe BAD_REQUEST
+
+        arrivalResponseForm.errors must be(
+          Seq(FormError("dateOfArrival", "arrival.details.error.overdue"), FormError("timeOfArrival", "arrival.details.error.overdue"))
+        )
       }
     }
 
