@@ -11,6 +11,8 @@ $(document).ready(function(){
 
     $('[data-gov-select-autocomplete]').each(function() {
 
+        var enterKey = 13;
+
         var selectFieldName = $(this).attr('id').replace('[', '\\[').replace(']', '\\]');
         var nonSelectFieldName = selectFieldName.replace('-select','');
 
@@ -18,7 +20,7 @@ $(document).ready(function(){
         var nonSelectField = $('#' + nonSelectFieldName)
 
         nonSelectField.keydown(function(e) {
-            if (e.keyCode === 13 && $(this).val() === '') {
+            if (e.keyCode === enterKey && $(this).val() === '') {
                 selectField.val('')
             }
         }).keyup(function() {
@@ -35,7 +37,7 @@ $(document).ready(function(){
             }).on('click', '.autocomplete__option', function(evt) {
             evt.preventDefault()
             var e = jQuery.Event('keydown');
-            e.keyCode = 13;
+            e.keyCode = enterKey;
             $(this).closest('.autocomplete__wrapper').trigger(e);
         })
 
