@@ -110,6 +110,33 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
       }
     }
 
+    "provided with Date error" should {
+      val viewWithDateError: Document =
+        page(movementDetails.departureForm().withError("dateOfDeparture", "date.error.invalid"), consignmentReferences)
+
+      "have error summary" in {
+        viewWithDateError must haveGovUkGlobalErrorSummary
+      }
+
+      "have field error for Date" in {
+        viewWithDateError must haveGovUkFieldError("dateOfDeparture", messages("date.error.invalid"))
+        viewWithDateError must haveGovUkGlobalErrorLink("#dateOfDeparture.day", messages("date.error.invalid"))
+      }
+    }
+
+    "provided with Time error" should {
+      val viewWithTimeError: Document =
+        page(movementDetails.departureForm().withError("timeOfDeparture", "time.error.invalid"), consignmentReferences)
+
+      "have error summary" in {
+        viewWithTimeError must haveGovUkGlobalErrorSummary
+      }
+
+      "have field error for Time" in {
+        viewWithTimeError must haveGovUkFieldError("timeOfDeparture", messages("time.error.invalid"))
+      }
+    }
+
     "provided with form level DateTime error" should {
       val viewWithDateError: Document = page(
         movementDetails
