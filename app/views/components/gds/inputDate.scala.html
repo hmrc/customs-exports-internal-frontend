@@ -26,9 +26,15 @@
   hint: Option[String] = None
 )(implicit messages: Messages)
 
+@dateField = @{form(fieldName)}
 @dayField = @{form(s"$fieldName.$dayKey")}
 @monthField = @{form(s"$fieldName.$monthKey")}
 @yearField = @{form(s"$fieldName.$yearKey")}
+
+@errorMessages = @{
+    val errors = (dateField.errors ++ dayField.errors ++ monthField.errors ++ yearField.errors).map(err => messages(err.message, err.args:_*)).mkString("<br>")
+    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
+}
 
 @dateInput(DateInput(
   id = fieldName,
@@ -39,28 +45,28 @@
     ))
   )),
   hint = hint.map(h => Hint(content = Text(h))),
-  errorMessage = form(fieldName).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
+  errorMessage = errorMessages,
   items = Seq(
     InputItem(
       id = s"${fieldName}_$dayKey",
       name = dayField.name,
       label = Some(messages("date.day")),
       value = dayField.value,
-      classes = "govuk-input--width-2"
+        classes = s"govuk-input--width-2 ${if(dateField.hasErrors || dayField.hasErrors) "govuk-input--error"}"
     ),
     InputItem(
       id = s"${fieldName}_$monthKey",
       name = monthField.name,
       label = Some(messages("date.month")),
       value = monthField.value,
-      classes = "govuk-input--width-2"
+        classes = s"govuk-input--width-2 ${if(dateField.hasErrors || monthField.hasErrors) "govuk-input--error"}"
     ),
     InputItem(
       id = s"${fieldName}_$yearKey",
       name = yearField.name,
       label = Some(messages("date.year")),
       value = yearField.value,
-      classes = "govuk-input--width-4"
+        classes = s"govuk-input--width-4 ${if(dateField.hasErrors || yearField.hasErrors) "govuk-input--error"}"
     )
   )
 ))

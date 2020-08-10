@@ -20,6 +20,7 @@
 @import views.Title
 @import views.components.BackButton
 @import views.html.components.gds._
+@import forms.common.DateTimeErrors
 
 @this(
         govukLayout: gds_main_template,
@@ -34,16 +35,12 @@
 
 @(form: Form[DepartureDetails], consignmentReferences: String)(implicit request: Request[_], messages: Messages)
 
-@removeDuplicateMessages(errors: Seq[FormError]) = @{
-    Map(errors map { a => a.message -> a }: _*).values.toSeq
-}
-
 @govukLayout(
 title = Title("departureDetails.header"),
 backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.SpecificDateTimeController.displayPage))) {
 
     @formHelper(action = controllers.movements.routes.MovementDetailsController.saveMovementDetails(), 'autoComplete -> "off") {
-        @errorSummary(removeDuplicateMessages(form.errors))
+        @errorSummary(DateTimeErrors.processErrors(form.errors, "dateOfDeparture", "timeOfDeparture"))
 
         @sectionHeader(messages("departureDetails.sectionHeading", consignmentReferences))
 
