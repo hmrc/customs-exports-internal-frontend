@@ -18,6 +18,7 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.AppConfig
+import connectors.exception.MovementsConnectorException
 import connectors.exchanges.{ArrivalExchange, DisassociateDUCRExchange, IleQueryExchange, MovementDetailsExchange}
 import forms.{ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.UcrBlock
@@ -74,6 +75,29 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
                  }"""))
       )
     }
+
+    "Handle failure from back end" in {
+      stubFor(
+        post("/movements")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.INTERNAL_SERVER_ERROR)
+          )
+      )
+
+      val request =
+        ArrivalExchange(
+          "eori",
+          "provider-id",
+          ConsignmentReferences(ConsignmentReferenceType.D, "value"),
+          Location("code"),
+          MovementDetailsExchange("datetime")
+        )
+
+      intercept[MovementsConnectorException] {
+        await(connector.submit(request))
+      }
+    }
   }
 
   "Submit Consolidation" should {
@@ -94,6 +118,22 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
         postRequestedFor(urlEqualTo("/consolidation"))
           .withRequestBody(equalToJson("""{"ucr":"ucr","providerId":"provider-id","consolidationType":"DucrDisassociation", "eori":"eori"}"""))
       )
+    }
+
+    "Handle failure from back end" in {
+      stubFor(
+        post("/consolidation")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.INTERNAL_SERVER_ERROR)
+          )
+      )
+
+      val request = DisassociateDUCRExchange("provider-id", "eori", "ucr")
+
+      intercept[MovementsConnectorException] {
+        await(connector.submit(request))
+      }
     }
   }
 
@@ -119,6 +159,22 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
       )
 
       result mustBe conversationId
+    }
+
+    "Handle failure from back end" in {
+      stubFor(
+        post("/consignment-query")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.INTERNAL_SERVER_ERROR)
+          )
+      )
+
+      val request = IleQueryExchange("eori", "provider-id", UcrBlock(ucr = "ucr", ucrType = Ducr))
+
+      intercept[MovementsConnectorException] {
+        await(connector.submit(request))
+      }
     }
   }
 
