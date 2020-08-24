@@ -214,7 +214,7 @@ mucrOptions.createAdd.value.empty = Please select an option
 mucrOptions.reference.value.empty = Please enter a reference
 mucrOptions.reference.value.error = Please enter a valid reference
 
-associate.ucr.title = Which consignment do you want to add? - Associate consignment {0}
+associate.ucr.title = Which consignment do you want to add to MUCR {0}?
 associate.ucr.heading = Which consignment do you want to add?
 associate.ucr.sectionHeader = Add to MUCR {0}
 associate.ucr.ducr = Declaration Consignment Reference (DUCR)
