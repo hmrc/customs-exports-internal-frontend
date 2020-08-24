@@ -206,7 +206,6 @@ manageMucr.input.error.incorrectValue = Please, choose valid option
 manageMucr.associate.this.consignment = Associate this consignment to another
 manageMucr.associate.other.consignment = Associate another consignment to this one
 
-associate.heading = Add to MUCR {0}
 mucrOptions.heading = Associate consignment {0}
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
 mucrOptions.create = Create a new MUCR
@@ -215,7 +214,9 @@ mucrOptions.createAdd.value.empty = Please select an option
 mucrOptions.reference.value.empty = Please enter a reference
 mucrOptions.reference.value.error = Please enter a valid reference
 
-associate.ucr.title = Which consignment do you want to add?
+associate.ucr.title = Which consignment do you want to add to MUCR {0}?
+associate.ucr.heading = Which consignment do you want to add?
+associate.ucr.sectionHeader = Add to MUCR {0}
 associate.ucr.ducr = Declaration Consignment Reference (DUCR)
 associate.ucr.mucr = Master Consignment Reference (MUCR)
 associate.ucr.hint = You may want to keep a record of which consignments you have added to this MUCR.
