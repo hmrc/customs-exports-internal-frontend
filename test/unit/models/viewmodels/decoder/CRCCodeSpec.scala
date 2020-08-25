@@ -17,7 +17,7 @@
 package models.viewmodels.decoder
 
 import base.UnitSpec
-import models.viewmodels.decoder.CRCCode.{PrelodgedDeclarationNotArrived, Success, DeclarationNotArrived}
+import models.viewmodels.decoder.CRCCode.{DeclarationNotArrived, PrelodgedDeclarationNotArrived, Success}
 
 class CRCCodeSpec extends UnitSpec {
 
