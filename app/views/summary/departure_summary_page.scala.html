@@ -41,7 +41,9 @@
 
 @govukLayout(
   title = Title("summary.departure.title"),
-  backButton = Some(BackButton(messages("site.back"), routes.TransportController.displayPage))) {
+  backButton = Some(BackButton(messages("site.back"), routes.TransportController.displayPage)),
+  useCustomContentWidth = true
+) {
 
     @formHelper(action = routes.MovementSummaryController.submitMovementRequest(), 'autoComplete -> "off") {
 

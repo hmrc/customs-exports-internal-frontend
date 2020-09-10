@@ -29,7 +29,9 @@
 
 @govukLayout(
     title = Title("shutMucr.summary.title"),
-    backButton = Some(BackButton(messages("site.back"), controllers.routes.ChoiceController.displayPage))) {
+    backButton = Some(BackButton(messages("site.back"), controllers.routes.ChoiceController.displayPage)),
+    useCustomContentWidth = true
+) {
 
     @formHelper(action = consolidations.routes.ShutMucrSummaryController.submit(), 'autoComplete -> "off") {
 
