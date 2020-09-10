@@ -31,7 +31,9 @@ formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF)
 
 @govukLayout(
     title = Title("disassociate.ucr.summary.title"),
-    backButton = Some(BackButton(messages("site.back"), controllers.routes.ChoiceController.displayPage())))  {
+    backButton = Some(BackButton(messages("site.back"), controllers.routes.ChoiceController.displayPage())),
+    useCustomContentWidth = true
+) {
 
     @formHelper(action = consolidations.routes.DisassociateUcrSummaryController.submit(), 'autoComplete -> "off") {
 
