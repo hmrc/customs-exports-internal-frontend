@@ -32,19 +32,21 @@
     </p>
 }
 
-@gdsTemplate(title = Title("userSignedOut.title")) {
-
-  @pageTitle(messages("userSignedOut.title"))
-
-  @paragraphBody(messages("userSignedOut.information"))
-
+@paragraphBodyContent = {
   <p class="govuk-body">
-    @link(
-      content = Html(messages("userSignedOut.findConsignmentPageLink", request.host)),
+    @messages("userSignedOut.information") @link(
+      content = Html(messages("userSignedOut.findConsignmentPageLink")),
       href = controllers.ileQuery.routes.FindConsignmentController.displayQueryForm(),
       classes = "govuk-link--no-visited-state"
     )
   </p>
+}
+
+@gdsTemplate(title = Title("userSignedOut.title")) {
+
+  @pageTitle(messages("userSignedOut.title"))
+
+  @paragraphBodyContent
 
   @govukLink
 }

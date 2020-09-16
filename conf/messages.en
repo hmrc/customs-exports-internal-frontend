@@ -373,6 +373,6 @@ timeoutDialog.message = For your security, we will sign you out in
 timeoutDialog.keepAlive.text= Stay signed in
 timeoutDialog.signout.text= Sign out
 
-userSignedOut.title = We have saved your answers and signed you out
-userSignedOut.information = To continue the declaration later, save this link:
-userSignedOut.findConsignmentPageLink = {0}/customs-exports-internal/consignment-query
+userSignedOut.title = For your security we have signed you out
+userSignedOut.information = To use the service again, you will need to
+userSignedOut.findConsignmentPageLink = sign in and start a new query.
