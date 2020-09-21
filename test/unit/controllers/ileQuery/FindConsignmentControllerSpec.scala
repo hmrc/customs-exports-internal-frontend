@@ -25,14 +25,12 @@ import play.twirl.api.HtmlFormat
 import testdata.CommonTestData.correctUcr
 import views.html.ile_query
 
-import scala.concurrent.ExecutionContext.global
-
 class FindConsignmentControllerSpec extends ControllerLayerSpec {
 
   private val ileQueryPage = mock[ile_query]
 
   private val controller: FindConsignmentController =
-    new FindConsignmentController(SuccessfulAuth(), stubMessagesControllerComponents(), ileQueryPage)(global)
+    new FindConsignmentController(SuccessfulAuth(), stubMessagesControllerComponents(), ileQueryPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

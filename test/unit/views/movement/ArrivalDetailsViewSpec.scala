@@ -20,8 +20,8 @@ import java.text.DecimalFormat
 import java.time.{LocalDate, LocalTime}
 
 import base.Injector
-import forms.{ArrivalDetails, ConsignmentReferenceType, ConsignmentReferences}
 import forms.common.{Date, Time}
+import forms.{ArrivalDetails, ConsignmentReferenceType, ConsignmentReferences}
 import models.cache.ArrivalAnswers
 import org.jsoup.nodes.Document
 import play.api.data.Form
@@ -30,6 +30,8 @@ import testdata.CommonTestData.correctUcr
 import testdata.MovementsTestData
 import views.ViewSpec
 import views.html.arrival_details
+
+import scala.collection.JavaConverters.collectionAsScalaIterable
 
 class ArrivalDetailsViewSpec extends ViewSpec with Injector {
 
@@ -77,9 +79,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
       "have date section" which {
 
         "contains label" in {
-          import scala.collection.JavaConversions._
-
-          emptyView.getElementsByTag("legend").exists { elem =>
+          collectionAsScalaIterable(emptyView.getElementsByTag("legend")).exists { elem =>
             elem.text() == messages("arrivalDetails.date.question")
           }
         }
@@ -107,9 +107,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
       "have time section" which {
 
         "contains label" in {
-          import scala.collection.JavaConversions._
-
-          emptyView.getElementsByTag("legend").exists { elem =>
+          collectionAsScalaIterable(emptyView.getElementsByTag("legend")).exists { elem =>
             elem.text() == messages("arrivalDetails.time.question")
           }
         }
@@ -194,7 +192,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
       )
 
       "have single error in summary" in {
-        viewWithDateError.getElementsByClass("govuk-list govuk-error-summary__list").text() mustBe (messages("arrival.details.error.overdue"))
+        viewWithDateError.getElementsByClass("govuk-list govuk-error-summary__list").text() mustBe messages("arrival.details.error.overdue")
       }
 
     }

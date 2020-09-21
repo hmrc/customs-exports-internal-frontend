@@ -20,7 +20,7 @@ import config.AppConfig
 import connectors.StrideAuthConnector
 import controllers.ControllerLayerSpec
 import controllers.exchanges.AuthenticatedRequest
-import org.mockito.{ArgumentCaptor, Mockito}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.verify
@@ -32,7 +32,7 @@ import testdata.CommonTestData.providerId
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval}
-import uk.gov.hmrc.auth.core.{AuthProvider, AuthProviders, AuthorisationException, Enrolment, NoActiveSession}
+import uk.gov.hmrc.auth.core.{AuthProviders, AuthorisationException, Enrolment, NoActiveSession}
 import views.html.unauthorized
 
 import scala.concurrent.Future

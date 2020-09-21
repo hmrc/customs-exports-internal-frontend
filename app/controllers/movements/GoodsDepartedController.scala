@@ -21,7 +21,7 @@ import forms.GoodsDeparted
 import forms.GoodsDeparted.form
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
-import models.cache.{Cache, DepartureAnswers, JourneyType, MovementAnswers}
+import models.cache.{DepartureAnswers, JourneyType, MovementAnswers}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

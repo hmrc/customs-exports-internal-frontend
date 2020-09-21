@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-import java.time.temporal.ChronoUnit
-import java.time.{LocalDate, LocalDateTime, LocalTime, ZoneOffset}
-
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
 import forms.{ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.cache.RetrospectiveArrivalAnswers
 import play.api.test.Helpers._
 
 class RetrospectiveArrivalSpec extends IntegrationSpec {
-
-  private val date = LocalDate.now()
-  private val time = LocalTime.now().truncatedTo(ChronoUnit.MINUTES)
-  private val datetime = LocalDateTime.of(date, time).toInstant(ZoneOffset.UTC)
 
   "Location Page" when {
     "GET" should {

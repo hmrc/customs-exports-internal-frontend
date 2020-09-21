@@ -53,7 +53,4 @@ class AppConfig @Inject()(
 
   lazy val customsDeclarationsGoodsTakenOutOfEuUrl: String = loadConfig("urls.customsDeclarationsGoodsTakenOutOfEu")
   lazy val serviceAvailabilityUrl: String = loadConfig("urls.serviceAvailability")
-
-  private def featureSwitch(key: String): Boolean =
-    runModeConfiguration.getOptional[Boolean](s"featureSwitches.$key").getOrElse(false)
 }

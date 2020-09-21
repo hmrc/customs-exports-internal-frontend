@@ -23,7 +23,6 @@ import models.cache.JourneyType.JourneyType
 import play.api.mvc.{ActionRefiner, Result, Results}
 import repositories.CacheRepository
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyRefiner @Inject()(cacheRepository: CacheRepository)(implicit val exc: ExecutionContext)

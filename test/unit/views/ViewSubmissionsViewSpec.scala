@@ -16,7 +16,6 @@
 
 package views
 
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit.MINUTES
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 

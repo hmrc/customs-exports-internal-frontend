@@ -18,7 +18,7 @@ package views.components.ilequery
 
 import base.Injector
 import models.notifications.EntryStatus
-import models.notifications.queries.{DucrInfo, MovementInfo, MucrInfo, Transport}
+import models.notifications.queries.{MovementInfo, MucrInfo, Transport}
 import models.viewmodels.decoder.ROECode.UnknownRoe
 import models.viewmodels.decoder.{ICSCode, ROECode, SOECode}
 import play.api.mvc.{AnyContent, Request}
@@ -47,7 +47,7 @@ class MucrSummaryViewSpec extends ViewSpec with Injector {
 
     "render all routes of entry" in {
       ROECode.codes
-        .filterNot(_ == UnknownRoe)
+        .filterNot(_ == UnknownRoe())
         .foreach(roe => summaryElement(view(mucrInfo.copy(entryStatus = Some(status.copy(roe = Some(roe))))), 0) must containMessage(roe.messageKey))
     }
 

@@ -26,16 +26,13 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.confirmation_page
 
-import scala.concurrent.ExecutionContext
-
 @Singleton
 class DisassociateUcrConfirmationController @Inject()(
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
   flashExtractor: FlashExtractor,
   confirmationPage: confirmation_page
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage: Action[AnyContent] = authenticate { implicit request =>
     val journeyType = flashExtractor.extractMovementType(request).getOrElse(throw ReturnToStartException)

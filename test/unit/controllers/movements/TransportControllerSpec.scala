@@ -40,7 +40,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
   private val page = mock[transport]
   private val consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, "referenceValue"))
 
-  private def controller(answers: Answers = DepartureAnswers()) =
+  private def controller(answers: Answers) =
     new TransportController(SuccessfulAuth(), ValidJourney(answers), cacheRepository, formProvider, stubMessagesControllerComponents(), page)(global)
 
   override protected def beforeEach(): Unit = {
