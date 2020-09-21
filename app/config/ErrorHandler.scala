@@ -22,7 +22,7 @@ import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Request, RequestHeader, Result, Results}
 import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.error
 
 @Singleton

@@ -26,7 +26,7 @@ import play.api.mvc.Results
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.play.bootstrap.http.ApplicationException
+import uk.gov.hmrc.play.bootstrap.frontend.http.ApplicationException
 import views.html.error
 
 import scala.concurrent.Future

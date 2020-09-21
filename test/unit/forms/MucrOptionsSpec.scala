@@ -54,7 +54,7 @@ class MucrOptionsSpec extends UnitSpec {
       "provided with Create and newMucr" which {
         "is empty" in {
 
-          val inputData = Json.obj("createOrAdd" -> Create)
+          val inputData = Json.obj("createOrAdd" -> JsString(Create.value))
           val errors = MucrOptions.form.bind(inputData).errors
 
           errors mustBe Seq(FormError("newMucr", "mucrOptions.reference.value.empty"))
@@ -62,7 +62,7 @@ class MucrOptionsSpec extends UnitSpec {
 
         "is incorrect" in {
 
-          val inputData = Json.obj("createOrAdd" -> Create, "newMucr" -> "!@#$%^INVALID-MUCR*&^%$#")
+          val inputData = Json.obj("createOrAdd" -> JsString(Create.value), "newMucr" -> "!@#$%^INVALID-MUCR*&^%$#")
           val errors = MucrOptions.form.bind(inputData).errors
 
           errors mustBe Seq(FormError("newMucr", "mucrOptions.reference.value.error"))
@@ -72,7 +72,7 @@ class MucrOptionsSpec extends UnitSpec {
       "provided with Add and existingMucr" which {
         "is empty" in {
 
-          val inputData = Json.obj("createOrAdd" -> Add)
+          val inputData = Json.obj("createOrAdd" -> JsString(Add.value))
           val errors = MucrOptions.form.bind(inputData).errors
 
           errors mustBe Seq(FormError("existingMucr", "mucrOptions.reference.value.empty"))
@@ -80,7 +80,7 @@ class MucrOptionsSpec extends UnitSpec {
 
         "is incorrect" in {
 
-          val inputData = Json.obj("createOrAdd" -> Add, "existingMucr" -> "!@#$%^INVALID-MUCR*&^%$#")
+          val inputData = Json.obj("createOrAdd" -> JsString(Add.value), "existingMucr" -> "!@#$%^INVALID-MUCR*&^%$#")
           val errors = MucrOptions.form.bind(inputData).errors
 
           errors mustBe Seq(FormError("existingMucr", "mucrOptions.reference.value.error"))
@@ -112,8 +112,8 @@ class MucrOptionsSpec extends UnitSpec {
           JsObject(Map("createOrAdd" -> JsString("create"), "newMucr" -> JsString("gb/abced1234-15804test"), "existingMucr" -> JsString("")))
         )
 
-        form.errors mustBe (empty)
-        form.value.map(_.newMucr) must be(Some("GB/ABCED1234-15804TEST"))
+        form.errors mustBe empty
+        form.value.map(_.newMucr) mustBe Some("GB/ABCED1234-15804TEST")
       }
 
       "convert existing mucr to upper case" in {
@@ -122,8 +122,8 @@ class MucrOptionsSpec extends UnitSpec {
           JsObject(Map("createOrAdd" -> JsString("add"), "newMucr" -> JsString(""), "existingMucr" -> JsString("gb/abced1234-15804test")))
         )
 
-        form.errors mustBe (empty)
-        form.value.map(_.existingMucr) must be(Some("GB/ABCED1234-15804TEST"))
+        form.errors mustBe empty
+        form.value.map(_.existingMucr) mustBe Some("GB/ABCED1234-15804TEST")
       }
     }
   }

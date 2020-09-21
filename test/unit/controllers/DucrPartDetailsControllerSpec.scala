@@ -189,7 +189,7 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
 
           controller().submitDucrPartDetails()(postRequest(inputData)).futureValue
 
-          verifyZeroInteractions(cacheRepository)
+          verifyNoMoreInteractions(cacheRepository)
         }
       }
 
