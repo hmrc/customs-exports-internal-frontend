@@ -23,7 +23,7 @@ import testdata.MovementsTestData
 import views.ViewSpec
 import views.html.departure_details
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters.collectionAsScalaIterable
 
 class DepartureDetailsViewSpec extends ViewSpec with Injector {
 
@@ -44,7 +44,7 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
     "have date section" which {
 
       "contains label" in {
-        view.getElementsByTag("legend").exists { elem =>
+        collectionAsScalaIterable(view.getElementsByTag("legend")).exists { elem =>
           elem.text() == messages("departureDetails.date.question")
         }
       }
@@ -72,7 +72,7 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
     "have time section" which {
 
       "contains label" in {
-        view.getElementsByTag("legend").exists { elem =>
+        collectionAsScalaIterable(view.getElementsByTag("legend")).exists { elem =>
           elem.text() == messages("departureDetails.time.question")
         }
       }

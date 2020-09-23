@@ -21,7 +21,7 @@ import config.AppConfig
 import javax.inject.Singleton
 import uk.gov.hmrc.auth.core.PlayAuthConnector
 import uk.gov.hmrc.http.CorePost
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 @Singleton
 class StrideAuthConnector @Inject()(configuration: AppConfig, client: HttpClient) extends PlayAuthConnector {

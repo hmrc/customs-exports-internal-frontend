@@ -37,7 +37,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
 
   private val consignmentReferences = ConsignmentReferences(ConsignmentReferenceType.D, "referenceValue")
 
-  private def controller(answers: Answers = ArrivalAnswers(consignmentReferences = Some(consignmentReferences))) =
+  private def controller(answers: Answers) =
     new LocationController(SuccessfulAuth(), ValidJourney(answers), cacheRepository, stubMessagesControllerComponents(), page)(global)
 
   override protected def beforeEach(): Unit = {

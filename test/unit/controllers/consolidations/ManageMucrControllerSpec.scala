@@ -19,9 +19,9 @@ package controllers.consolidations
 import controllers.ControllerLayerSpec
 import forms.ManageMucrChoice.{AssociateAnotherUcrToThis, AssociateThisToMucr}
 import forms.{AssociateUcr, ManageMucrChoice, MucrOptions}
+import models.UcrBlock
 import models.UcrType._
 import models.cache.AssociateUcrAnswers
-import models.{UcrBlock, UcrType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}

@@ -16,27 +16,12 @@
 
 package models.cache
 
-import java.time.{Instant, ZoneOffset}
+import java.time.Instant
 
-import play.api.libs.json.{JsError, JsNumber, JsObject, JsResult, JsSuccess, JsValue, Json, OFormat}
+import play.api.libs.json.{Json, OFormat}
 
 case class IleQuery(sessionId: String, ucr: String, conversationId: String, createdAt: Instant = Instant.now())
 
 object IleQuery {
-
-  implicit private val formatInstant: OFormat[Instant] = new OFormat[Instant] {
-    override def writes(datetime: Instant): JsObject =
-      Json.obj("$date" -> datetime.toEpochMilli)
-
-    override def reads(json: JsValue): JsResult[Instant] =
-      json match {
-        case JsObject(map) if map.contains("$date") =>
-          map("$date") match {
-            case JsNumber(v) => JsSuccess(Instant.ofEpochMilli(v.toLong).atOffset(ZoneOffset.UTC).toInstant)
-            case _           => JsError("Unexpected Date Format. Expected a Number (Epoch Milliseconds)")
-          }
-        case _ => JsError("Unexpected Date Format. Expected an object containing a $date field.")
-      }
-  }
   implicit val format: OFormat[IleQuery] = Json.format[IleQuery]
 }

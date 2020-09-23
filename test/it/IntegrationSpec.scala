@@ -25,13 +25,14 @@ import modules.DateTimeModule
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Call, Request, Result}
 import play.api.test.Helpers._
 import play.api.test.{CSRFTokenHelper, FakeRequest}
-import play.api.{Application, Logger}
+import reactivemongo.play.json.ImplicitBSONHandlers
 import reactivemongo.play.json.ImplicitBSONHandlers._
 import reactivemongo.play.json.collection.JSONCollection
 import repositories.CacheRepository
@@ -43,8 +44,6 @@ import scala.concurrent.Future
 abstract class IntegrationSpec
     extends WordSpec with MustMatchers with BeforeAndAfterEach with GuiceOneServerPerSuite with AuthWiremockTestServer
     with MovementsBackendWiremockTestServer with AuditWiremockTestServer with Eventually with TestMongoDB {
-
-  private lazy val logger = Logger(classOf[IntegrationSpec])
 
   /*
     Intentionally NOT exposing the real CacheRepository as we shouldn't test our production code using our production classes.
@@ -77,12 +76,28 @@ abstract class IntegrationSpec
     route(app, request).get
   }
 
-  protected def theCacheFor(pid: String): Option[Cache] = await(cacheRepository.find(Json.obj("providerId" -> pid)).one[Cache])
-  protected def theAnswersFor(pid: String): Option[Answers] = await(cacheRepository.find(Json.obj("providerId" -> pid)).one[Cache]).flatMap(_.answers)
+  protected def theCacheFor(pid: String): Option[Cache] =
+    await(
+      cacheRepository
+        .find(Json.obj("providerId" -> pid), projection = None)(
+          ImplicitBSONHandlers.JsObjectDocumentWriter,
+          ImplicitBSONHandlers.JsObjectDocumentWriter
+        )
+        .one[Cache]
+    )
+  protected def theAnswersFor(pid: String): Option[Answers] =
+    await(
+      cacheRepository
+        .find(Json.obj("providerId" -> pid), projection = None)(
+          ImplicitBSONHandlers.JsObjectDocumentWriter,
+          ImplicitBSONHandlers.JsObjectDocumentWriter
+        )
+        .one[Cache]
+    ).flatMap(_.answers)
 
   protected def givenCacheFor(pid: String, answers: Answers): Unit = givenCacheFor(Cache(providerId = pid, answers = Some(answers), queryUcr = None))
   protected def givenCacheFor(pid: String, queryUcr: UcrBlock): Unit = givenCacheFor(Cache(pid, queryUcr = queryUcr))
-  protected def givenCacheFor(cache: Cache): Unit = await(cacheRepository.insert(Cache.format.writes(cache)))
+  protected def givenCacheFor(cache: Cache): Unit = await(cacheRepository.insert(ordered = false).one(Cache.format.writes(cache)))
 
   protected def verifyEventually(requestPatternBuilder: RequestPatternBuilder): Unit = eventually(WireMock.verify(requestPatternBuilder))
 

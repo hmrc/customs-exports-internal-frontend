@@ -31,7 +31,7 @@ import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResp
 import models.notifications.queries._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
-import org.mockito.Mockito.{reset, verify, verifyZeroInteractions, when}
+import org.mockito.Mockito.{reset, verify, verifyNoMoreInteractions, when}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import play.api.libs.json.Json
 import play.api.mvc.Headers
@@ -370,7 +370,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
             val optMucrInfoCaptor = newOptionalMucrInfoCaptor
             verify(ileQueryDucrResponsePage).apply(meq(ducrInfo), optMucrInfoCaptor.capture())(any(), any())
             optMucrInfoCaptor.getValue mustBe Some(parentMucrInfo)
-            verifyZeroInteractions(ileQueryMucrResponsePage)
+            verifyNoMoreInteractions(ileQueryMucrResponsePage)
           }
         }
 
@@ -409,7 +409,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
             val optMucrInfoCaptor = newOptionalMucrInfoCaptor
             verify(ileQueryMucrResponsePage).apply(meq(mucrInfo), optMucrInfoCaptor.capture(), meq(Seq.empty))(any(), any())
             optMucrInfoCaptor.getValue mustBe Some(parentMucrInfo)
-            verifyZeroInteractions(ileQueryDucrResponsePage)
+            verifyNoMoreInteractions(ileQueryDucrResponsePage)
           }
         }
       }

@@ -17,7 +17,6 @@
 package forms
 
 import base.UnitSpec
-import models.UcrBlock
 import play.api.libs.json.{JsObject, JsString}
 
 class AssociateUcrSpec extends UnitSpec {

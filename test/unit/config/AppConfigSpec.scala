@@ -18,9 +18,8 @@ package config
 
 import base.UnitSpec
 import com.typesafe.config.{Config, ConfigFactory}
-import play.api.Mode.Test
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class AppConfigSpec extends UnitSpec {
 
@@ -52,8 +51,7 @@ class AppConfigSpec extends UnitSpec {
 
   private val environment = Environment.simple()
   private def appConfig(conf: Configuration) = {
-    def runMode(conf: Configuration): RunMode = new RunMode(conf, Test)
-    def servicesConfig(conf: Configuration) = new ServicesConfig(conf, runMode(conf))
+    def servicesConfig(conf: Configuration) = new ServicesConfig(conf)
 
     new AppConfig(conf, servicesConfig(conf), environment, "AppName")
   }
@@ -95,7 +93,7 @@ class AppConfigSpec extends UnitSpec {
 
       "movements backend URL is missing" in {
         intercept[Exception](emptyAppConfig.customsDeclareExportsMovementsUrl).getMessage mustBe
-          "Could not find config customs-declare-exports-movements.host"
+          "Could not find config key 'customs-declare-exports-movements.host'"
       }
 
       "customsDeclarationsGoodsTakenOutOfEu URL is missing" in {

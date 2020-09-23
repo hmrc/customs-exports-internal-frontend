@@ -16,19 +16,16 @@
 
 package models.viewmodels.notificationspage.converters
 
-import base.{OverridableInjector, UnitSpec}
+import base.UnitSpec
 import models.notifications.ResponseType
 import models.viewmodels.decoder.{ActionCode, Decoder, ILEError}
-import modules.DateTimeModule
 import org.mockito.ArgumentMatchers.{anyString, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
-import play.api.inject.bind
 import play.api.test.Helpers.stubMessages
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import utils.DateTimeTestModule
 import views.ViewDates
 
 class ControlResponseBlockedConverterSpec extends UnitSpec with BeforeAndAfterEach {

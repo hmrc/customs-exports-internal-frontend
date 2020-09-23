@@ -32,8 +32,6 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import views.html.confirmation_page
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class ShutMucrConfirmationControllerSpec extends ControllerLayerSpec with ScalaFutures {
 
   private val flashExtractor = mock[FlashExtractor]

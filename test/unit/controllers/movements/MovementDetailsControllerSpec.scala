@@ -70,12 +70,6 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
     captor.getValue
   }
 
-  private def departureResponseForm: Form[DepartureDetails] = {
-    val captor = ArgumentCaptor.forClass(classOf[Form[DepartureDetails]])
-    verify(mockDepartureDetailsPage).apply(captor.capture(), any())(any(), any())
-    captor.getValue
-  }
-
   "Movement Details Controller" should {
 
     "return 200 (OK)" when {
