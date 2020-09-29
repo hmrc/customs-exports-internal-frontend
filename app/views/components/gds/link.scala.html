@@ -16,8 +16,13 @@
 
 @import play.twirl.api.HtmlFormat.empty
 
-@(content: Html = empty, href: Call, classes: String = "")
+@(content: Html = empty, textHidden: Option[String] = None, href: Call, classes: String = "")
 
 @allClasses = @{s"govuk-link $classes"}
 
-<a class="@allClasses" href="@href.url">@content</a>
+@hasHint = @{textHidden.exists(_.nonEmpty)}
+
+<a class="@allClasses" href="@href.url">
+ <span @if(hasHint){aria-hidden="true"}>@content</span>
+ @if(hasHint){<span class="govuk-visually-hidden">@{textHidden.getOrElse("")}</span>}
+</a>
