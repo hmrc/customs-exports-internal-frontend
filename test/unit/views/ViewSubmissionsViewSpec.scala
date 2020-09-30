@@ -144,10 +144,8 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
           timestampReceived = dateTime.plus(34, MINUTES),
           conversationId = conversationId_4,
           responseType = ResponseType.ControlResponse,
-          entries = Seq(
-            Entry(ucrBlock = Some(UcrBlock(ucr = validDucr, ucrType = "D"))),
-            Entry(ucrBlock = Some(UcrBlock(ucr = validMucr, ucrType = "M")))
-          )
+          entries =
+            Seq(Entry(ucrBlock = Some(UcrBlock(ucr = validDucr, ucrType = "D"))), Entry(ucrBlock = Some(UcrBlock(ucr = validMucr, ucrType = "M"))))
         )
       )
 
@@ -180,7 +178,9 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
       thirdDataRowElements.selectFirst(".date-of-request").text() mustBe viewDates.formatDateAtTime(LocalDateTime.of(2019, 10, 31, 0, 33))
       thirdDataRowElements.selectFirst(".submission-action") must containMessage("submissions.departure")
 
-      fourthDataRowElements.selectFirst(".ucr").text() mustBe s"$validDucr $validMucr ${messages("submissions.hidden.text", validDucr + ", " + validMucr)}"
+      fourthDataRowElements
+        .selectFirst(".ucr")
+        .text() mustBe s"$validDucr $validMucr ${messages("submissions.hidden.text", validDucr + ", " + validMucr)}"
       fourthDataRowElements.selectFirst(".submission-type") must containMessage("submissions.submissionType.D")
       fourthDataRowElements.selectFirst(".date-of-request").text() mustBe viewDates.formatDateAtTime(LocalDateTime.of(2019, 10, 31, 0, 30))
       fourthDataRowElements.selectFirst(".submission-action") must containMessage("submissions.ducrassociation")
