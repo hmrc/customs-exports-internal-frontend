@@ -263,6 +263,7 @@ submissions.conversationId = ConversationId
 submissions.ucr = UCR
 submissions.dateOfRequest = Date of request
 submissions.status = Status
+submissions.hidden.text = View consignment {0}
 
 submissions.shutmucr = Shut
 submissions.arrival = Arrive
