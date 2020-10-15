@@ -6,20 +6,20 @@ header.servicename.alt = Go to the Exports Declaration Service homepage
 date.day = Day
 date.month = Month
 date.year = Year
-date.day.error = Enter a day between 1 and 31
-date.month.error = Enter a month between 1 and 12
-date.year.error = Enter a year
-date.error.invalid = Date is incorrect
+date.day.error = Enter a day between 1 and 31.
+date.month.error = Enter a month between 1 and 12.
+date.year.error = Enter a year.
+date.error.invalid = Date is incorrect.
 
 time.hour = Hour
 time.minute = Minute
 time.ampm = am or pm
-time.hour.error = Enter an hour between 1 and 12
-time.minute.error = Enter a minute between 0 and 59
-time.ampm.error = Select am or pm
+time.hour.error = Enter an hour between 1 and 12.
+time.minute.error = Enter a minute between 0 and 59.
+time.ampm.error = Select am or pm.
 time.am = am
 time.pm = pm
-time.error.invalid = Time is incorrect
+time.error.invalid = Time is incorrect.
 
 feedback = This is a new service - your {0} will help us to improve it.
 feedback.link = feedback
@@ -42,17 +42,17 @@ site.accessibility.error = Error:
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
-error.unknown = Unknown error
-error.required = Please enter a value
+error.unknown = Unknown error.
+error.required = Please enter a value.
 
-error.summary.title = There is a problem
-error.summary.text = Check the following
+error.summary.title = There is a problem.
+error.summary.text = Check the following.
 
-error.mucr.empty = MUCR number cannot be empty
-error.mucr.format = MUCR number is in incorrect format
+error.mucr.empty = MUCR number cannot be empty.
+error.mucr.format = MUCR number is in incorrect format.
 
-global.error.title = There is a problem
-global.error.heading = There is a problem with a service
+global.error.title = There is a problem.
+global.error.heading = There is a problem with a service.
 global.error.message = Please try again later.
 
 movement.sectionHeading.ARRIVE = Arrive consignment {0}
@@ -67,8 +67,8 @@ movement.choice.disassociateDucr.label = Dissociate
 movement.choice.shutMucr.label = Shut a master consignment
 movement.choice.retrospectiveArrival.label = Retrospectively arrive
 
-choicePage.input.error.empty = Please, choose what do you want to do
-choicePage.input.error.incorrectValue = Please, choose valid option
+choicePage.input.error.empty = Please, choose what do you want to do.
+choicePage.input.error.incorrectValue = Please, choose valid option.
 
 ileQuery.link.ducrPart = Enter a DUCR Part
 
@@ -76,30 +76,30 @@ ducrPartDetails.title = DUCR Part details
 ducrPartDetails.heading = You can use this service if your original declaration was made in CHIEF.
 ducrPartDetails.ducr = Enter DUCR
 ducrPartDetails.ducr.hint = For example, 9GB123999746000-DUCR12345.
-ducrPartDetails.ducr.error = Enter a DUCR in the correct format
+ducrPartDetails.ducr.error = Enter a DUCR in the correct format.
 ducrPartDetails.ducrPartId = Enter DUCR Part ID
 ducrPartDetails.ducrPartId.hint = This can be up to 3 digits. For example, 123.
-ducrPartDetails.ducrPartId.error = Enter a DUCR Part ID in the correct format
+ducrPartDetails.ducrPartId.error = Enter a DUCR Part ID in the correct format.
 
 consignmentReferences.reference.ducr = Declaration Consignment Reference (DUCR)
 consignmentReferences.reference.ducrPart = DUCR Part
 consignmentReferences.reference.mucr = Master Consignment Reference (MUCR)
-consignmentReferences.reference.empty = Please choose reference
-consignmentReferences.reference.error = Incorrect reference
+consignmentReferences.reference.empty = Please choose reference.
+consignmentReferences.reference.error = Incorrect reference.
 consignmentReferences.reference.ducrValue = Declaration Unique Consignment Reference
 consignmentReferences.reference.mucrValue = Master Unique Consignment Reference
-consignmentReferences.reference.mucrValue.empty = Enter a Master Unique Consignment Reference
-consignmentReferences.reference.ducrValue.empty = Enter a Declaration Unique Consignment Reference
-consignmentReferences.reference.mucrValue.error = Master Unique Consignment Reference is incorrect
-consignmentReferences.reference.ducrValue.error = Declaration Unique Consignment Reference is incorrect
+consignmentReferences.reference.mucrValue.empty = Enter a Master Unique Consignment Reference.
+consignmentReferences.reference.ducrValue.empty = Enter a Declaration Unique Consignment Reference.
+consignmentReferences.reference.mucrValue.error = Master Unique Consignment Reference is incorrect.
+consignmentReferences.reference.ducrValue.error = Declaration Unique Consignment Reference is incorrect.
 
 specific.datetime.heading = Do you need to add a specific date and time for this request?
 specific.datetime.arrive.heading = Arrive consignment {0}
 specific.datetime.depart.heading = Depart consignment {0}
 specific.datetime.userDateTime = Yes
 specific.datetime.currentDateTime = No, use the current date and time
-specific.datetime.input.error.empty = Please, choose what do you want to do
-specific.datetime.input.error.incorrectValue = Please, choose valid option
+specific.datetime.input.error.empty = Please, choose what do you want to do.
+specific.datetime.input.error.incorrectValue = Please, choose valid option.
 
 arrivalDetails.title = Arrival date and time
 arrivalDetails.header = Enter date and time of arrival
@@ -109,8 +109,8 @@ arrivalDetails.time.question = Time of Arrival
 arrivalDetails.time.hint = Enter the time in 12 hour format. For example, 11 30 am.
 arrivalDetails.sectionHeading = Arrive consignment {0}
 
-arrival.details.error.overdue = Date and time of arrival cannot be more than 60 days in the past
-arrival.details.error.future = Date and time of arrival cannot be in the future
+arrival.details.error.overdue = Date and time of arrival cannot be more than 60 days in the past.
+arrival.details.error.future = Date and time of arrival cannot be in the future.
 
 departureDetails.title = Departure date and time
 departureDetails.sectionHeading = Depart consignment {0}
@@ -120,29 +120,29 @@ departureDetails.date.hint = For example, 01 08 2007.
 departureDetails.time.question = Time of departure
 departureDetails.time.hint = Enter the time in 12 hour format. For example, 11 30 am.
 
-departure.details.error.overdue = Date and time of departure cannot be more than 60 days in the past
-departure.details.error.future = Date and time of departure cannot be in the future
+departure.details.error.overdue = Date and time of departure cannot be more than 60 days in the past.
+departure.details.error.future = Date and time of departure cannot be in the future.
 
 location.title = Location
 location.question = What is the code for the location of the goods when they are declared?
 location.question.retrospectiveArrival = What was the code for the location of the goods when they are declared?
 location.hint = This is usually the port they are leaving from and is officially known as the Goods Location Code. For example, if they were at Felixstowe, it would be GBAUFXTFXTFXT.
 
-location.code.empty = Goods location code cannot be empty
-location.code.error = Goods location code is incorrect
+location.code.empty = Goods location code cannot be empty.
+location.code.error = Goods location code is incorrect.
 
 goodsDeparted.title = Goods departed
 goodsDeparted.header = Where are the goods going?
 goodsDeparted.departureLocation.outOfTheUk = Out of the UK
 goodsDeparted.departureLocation.backIntoTheUk = Back into the UK
-goodsDeparted.departureLocation.error.empty = Please select where your goods being departed to
-goodsDeparted.departureLocation.error.incorrect = Please select a valid option
+goodsDeparted.departureLocation.error.empty = Please select where your goods being departed to.
+goodsDeparted.departureLocation.error.incorrect = Please select a valid option.
 
 transport.title = Transport
 transport.heading = Depart consignment {0}
 transport.modeOfTransport.question = Which type of transport took the goods across the border?
-transport.modeOfTransport.empty = Select a mode of transport
-transport.modeOfTransport.error = Select a mode of transport
+transport.modeOfTransport.empty = Select a mode of transport.
+transport.modeOfTransport.error = Select a mode of transport.
 transport.modeOfTransport.1 = Sea transport
 transport.modeOfTransport.2 = Rail transport
 transport.modeOfTransport.3 = Road transport
@@ -153,13 +153,13 @@ transport.modeOfTransport.7 = Inland waterway transport
 transport.modeOfTransport.8 = Other, for example own propulsion
 transport.transportId.question = What is the ID for the selected transport type?
 transport.transportId.hint = This can be up to 35 characters. For example a vehicle registration number or an IATA flight number. If postal or fixed installation selected, type unknown in the box.
-transport.transportId.empty = Enter the transport ID
-transport.transportId.error = Enter the transport ID
+transport.transportId.empty = Enter the transport ID.
+transport.transportId.error = Enter the transport ID.
 transport.nationality.question = What country is the transport registered in?
-transport.nationality.empty = Select the country where the transport is registered
-transport.nationality.error = Select the country where the transport is registered
+transport.nationality.empty = Select the country where the transport is registered.
+transport.nationality.error = Select the country where the transport is registered.
 transport.nationality.country.help = Select a country from the list
-transport.backIntoTheUk.error.allFieldsEntered = You cannot answer all three fields for an export back into the UK
+transport.backIntoTheUk.error.allFieldsEntered = You cannot answer all three fields for an export back into the UK.
 
 summary.referenceType = Consignment type
 summary.referenceValue = Consignment reference
@@ -201,8 +201,8 @@ confirmation.redirect.query.link = Find another consignment
 
 manageMucr.title = What do you want to associate?
 manageMucr.heading = Associate consignment {0}
-manageMucr.input.error.empty = Please, choose what do you want to do
-manageMucr.input.error.incorrectValue = Please, choose valid option
+manageMucr.input.error.empty = Please, choose what do you want to do.
+manageMucr.input.error.incorrectValue = Please, choose valid option.
 manageMucr.associate.this.consignment = Associate this consignment to another
 manageMucr.associate.other.consignment = Associate another consignment to this one
 
@@ -210,9 +210,9 @@ mucrOptions.heading = Associate consignment {0}
 mucrOptions.title = Create or enter a Master Consignment Reference (MUCR) to associate with
 mucrOptions.create = Create a new MUCR
 mucrOptions.add = Add to an existing MUCR
-mucrOptions.createAdd.value.empty = Please select an option
-mucrOptions.reference.value.empty = Please enter a reference
-mucrOptions.reference.value.error = Please enter a valid reference
+mucrOptions.createAdd.value.empty = Please select an option.
+mucrOptions.reference.value.empty = Please enter a reference.
+mucrOptions.reference.value.error = Please enter a valid reference.
 
 associate.ucr.title = Which consignment do you want to add to MUCR {0}?
 associate.ucr.heading = Which consignment do you want to add?
@@ -221,8 +221,8 @@ associate.ucr.ducr = Declaration Consignment Reference (DUCR)
 associate.ucr.mucr = Master Consignment Reference (MUCR)
 associate.ucr.hint = You may want to keep a record of which consignments you have added to this MUCR.
 
-ducr.error.format = Declaration Unique Consignment Reference is in incorrect format
-mucr.error.format = Master Unique Consignment Reference is in incorrect format
+ducr.error.format = Declaration Unique Consignment Reference is in incorrect format.
+mucr.error.format = Master Unique Consignment Reference is in incorrect format.
 
 associate.ucr.summary.title = Is the information provided for this association request correct?
 associate.ucr.summary.consignmentReference = Consignment reference
@@ -238,10 +238,10 @@ disassociate.ucr.summary.kind.ducr = DUCR
 disassociate.ucr.summary.kind.ducrPart = DUCR Part
 disassociate.ucr.summary.title = Is the information provided for this dissociation request correct?
 disassociate.ucr.summary.table.caption = Remove consignment
-disassociate.ucr.ducr.error = Declaration Consignment Reference is incorrect
-disassociate.ucr.ducr.empty = Enter a Declaration Consignment Reference
-disassociate.ucr.mucr.error = Master Consignment Reference is incorrect
-disassociate.ucr.mucr.empty = Enter a Master Consignment Reference
+disassociate.ucr.ducr.error = Declaration Consignment Reference is incorrect.
+disassociate.ucr.ducr.empty = Enter a Declaration Consignment Reference.
+disassociate.ucr.mucr.error = Master Consignment Reference is incorrect.
+disassociate.ucr.mucr.empty = Enter a Master Consignment Reference.
 
 shutMucr.title = Which MUCR do you want to shut?
 
@@ -322,8 +322,8 @@ notifications.elem.content.inventoryLinkingMovementTotalsResponse.roe = Route of
 notifications.elem.content.inventoryLinkingMovementTotalsResponse.soe = Status of entry is:
 
 ileQuery.title = Find a consignment
-ileQuery.ucr.empty = Enter a Unique Consignment Reference
-ileQuery.ucr.incorrect = Unique Consignment Reference is incorrect
+ileQuery.ucr.empty = Enter a Unique Consignment Reference.
+ileQuery.ucr.incorrect = Unique Consignment Reference is incorrect.
 
 ileQuery.link.requests = View previous requests
 
