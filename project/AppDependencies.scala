@@ -11,6 +11,7 @@ object AppDependencies {
     "uk.gov.hmrc"          %% "play-ui"                       % "8.11.0-play-26",
     "uk.gov.hmrc"          %% "bootstrap-frontend-play-26"    % "2.24.0",
     "uk.gov.hmrc"          %% "play-frontend-govuk"           % "0.49.0-play-26",
+    "uk.gov.hmrc"          %% "play-frontend-hmrc"            % "0.26.0-play-26",
     "org.webjars.npm"      %  "govuk-frontend"                % "3.8.1",
     "uk.gov.hmrc"          %% "play-json-union-formatter"     % "1.10.0-play-26",
     "uk.gov.hmrc"          %% "simple-reactivemongo"          % "7.30.0-play-26",
@@ -18,7 +19,7 @@ object AppDependencies {
     "com.github.tototoshi" %% "scala-csv"                     % "1.3.6",
     "com.github.cloudyrock.mongock"  %  "mongock-core"        % "2.0.2",
     "org.mongodb"          %  "mongo-java-driver"             % "3.12.1",
-    "org.webjars.npm"      %  "hmrc-frontend"                 % "1.5.0",
+    "org.webjars.npm"      %  "hmrc-frontend"                 % "1.20.0",
     "org.webjars.npm"      %  "accessible-autocomplete"       % "2.0.3"
   ).map(_.withSources())
 
