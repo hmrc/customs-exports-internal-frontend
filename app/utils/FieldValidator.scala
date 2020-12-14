@@ -59,7 +59,7 @@ object FieldValidator {
   val validMucr: String => Boolean = (input: String) =>
     input.matches("""GB/[0-9A-Z]{3,4}-[0-9A-Z]{5,28}|GB/[0-9A-Z]{9,12}-[0-9A-Z]{1,23}|A:[0-9A-Z]{3}[0-9]{8}|C:[A-Z]{3}[0-9A-Z]{3,30}""")
 
-  val validMucrIgnoreCase: String => Boolean = (input: String) => validMucr(input.toUpperCase)
+  val validMucrIgnoreCase: String => Boolean = (input: String) => validMucr(input.toUpperCase) && noLongerThan(35)(input)
 
   private val zerosOnlyRegexValue = "[0]+"
   private val noMoreDecimalPlacesThanRegexValue: Int => String =

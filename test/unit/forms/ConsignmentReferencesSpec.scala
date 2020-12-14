@@ -65,6 +65,13 @@ class ConsignmentReferencesSpec extends UnitSpec {
       errors must be(Seq(FormError("mucrValue", "consignmentReferences.reference.mucrValue.error")))
     }
 
+    "have error for Mucr length > 35 characters" in {
+      val inputData = ConsignmentReferences(ConsignmentReferenceType.M, "GB/82F9-0N2F6500040010TO120P0A300689")
+      val errors = ConsignmentReferences.form().fillAndValidate(inputData).errors
+
+      errors must be(Seq(FormError("mucrValue", "consignmentReferences.reference.mucrValue.error")))
+    }
+
     "convert ducr to upper case" in {
 
       val form = ConsignmentReferences.form.bind(JsObject(Map("reference" -> JsString("D"), "ducrValue" -> JsString("8gb123457359100-test0001"))))
@@ -79,6 +86,15 @@ class ConsignmentReferencesSpec extends UnitSpec {
 
       form.errors mustBe empty
       form.value.map(_.referenceValue) must be(Some("GB/ABCED1234-15804TEST"))
+    }
+
+    "convert mucr that is 35 characters long to upper case" in {
+
+      val form =
+        ConsignmentReferences.form.bind(JsObject(Map("reference" -> JsString("M"), "mucrValue" -> JsString("gb/abced1234-15804test1234567890123"))))
+
+      form.errors mustBe empty
+      form.value.map(_.referenceValue) must be(Some("GB/ABCED1234-15804TEST1234567890123"))
     }
   }
 }
