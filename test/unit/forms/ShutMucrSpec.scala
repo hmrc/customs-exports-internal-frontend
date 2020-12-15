@@ -49,6 +49,14 @@ class ShutMucrSpec extends UnitSpec {
 
         errors mustBe Seq(FormError("mucr", "error.mucr.format"))
       }
+
+      "MUCR length is over 35 characters long" in {
+
+        val errors = ShutMucr.form().bind(JsObject(Map("mucr" -> JsString("gb/abced1234-15804test12345678901234")))).errors
+
+        errors.length must be(1)
+        errors.head must equal(FormError("mucr", "error.mucr.format"))
+      }
     }
 
     "not contain any errors" when {
@@ -64,11 +72,18 @@ class ShutMucrSpec extends UnitSpec {
 
     "convert to upper case" when {
 
-      "provided MUCR is lower case" in {
+      "MUCR is on lower case" in {
         val form = ShutMucr.form.bind(JsObject(Map("mucr" -> JsString("gb/abced1234-15804test"))))
 
         form.errors mustBe (empty)
         form.value.map(_.mucr) must be(Some("GB/ABCED1234-15804TEST"))
+      }
+
+      "MUCR is on lower case and is 35 characters long" in {
+        val form = ShutMucr.form.bind(JsObject(Map("mucr" -> JsString("gb/abced1234-15804test1234567890123"))))
+
+        form.errors mustBe (empty)
+        form.value.map(_.mucr) must be(Some("GB/ABCED1234-15804TEST1234567890123"))
       }
     }
   }

@@ -17,26 +17,47 @@
 package forms
 
 import base.UnitSpec
+import play.api.data.FormError
 import play.api.libs.json.{JsObject, JsString}
 
 class DisassociateUcrSpec extends UnitSpec {
 
   "DisassociateUcr" should {
 
-    "convert ducr to upper case" in {
+    "convert to upper case" when {
+      "provided with Ducr" in {
 
-      val form = DisassociateUcr.form.bind(JsObject(Map("kind" -> JsString("ducr"), "ducr" -> JsString("8gb123457359100-test0001"))))
+        val form = DisassociateUcr.form.bind(JsObject(Map("kind" -> JsString("ducr"), "ducr" -> JsString("8gb123457359100-test0001"))))
 
-      form.errors mustBe empty
-      form.value.map(_.ucr) must be(Some("8GB123457359100-TEST0001"))
-    }
+        form.errors mustBe empty
+        form.value.map(_.ucr) must be(Some("8GB123457359100-TEST0001"))
+      }
 
-    "convert mucr to upper case" in {
+      "provided with Mucr" in {
 
-      val form = DisassociateUcr.form.bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test"))))
+        val form = DisassociateUcr.form.bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test"))))
 
-      form.errors mustBe empty
-      form.value.map(_.ucr) must be(Some("GB/ABCED1234-15804TEST"))
+        form.errors mustBe empty
+        form.value.map(_.ucr) must be(Some("GB/ABCED1234-15804TEST"))
+      }
+
+      "provided with Mucr that is 35 characters long" in {
+
+        val form = DisassociateUcr.form.bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test1234567890123"))))
+
+        form.errors mustBe empty
+        form.value.map(_.ucr) must be(Some("GB/ABCED1234-15804TEST1234567890123"))
+      }
     }
   }
+
+  "return an error" when {
+    "provided with Mucr that is over 35 characters long" in {
+
+      val form = DisassociateUcr.form.bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test12345678901234"))))
+
+      form.errors mustBe Seq(FormError("mucr", "disassociate.ucr.mucr.error"))
+    }
+  }
+
 }
