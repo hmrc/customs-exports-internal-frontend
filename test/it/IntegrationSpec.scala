@@ -52,7 +52,6 @@ abstract class IntegrationSpec
 
   val dateTimeProvider = new DateTimeProvider(Clock.fixed(LocalDateTime.now().atZone(DateTimeModule.timezone).toInstant, DateTimeModule.timezone))
 
-  override lazy val port = 14681
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .disable[com.kenshoo.play.metrics.PlayModule]
