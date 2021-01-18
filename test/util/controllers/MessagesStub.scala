@@ -34,7 +34,7 @@ trait MessagesStub {
    */
   private class AllMessageKeysAreMandatoryMessages(msg: Messages) extends Messages {
 
-    override def asJava: play.i18n.Messages = msg.asJava
+    override def asJava: play.i18n.Messages = new play.i18n.MessagesImpl(lang.asJava, messagesApi.asJava)
 
     override def messages: Messages = msg.messages
 
