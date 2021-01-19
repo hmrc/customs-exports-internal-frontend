@@ -21,12 +21,13 @@ import controllers.{CSRFSupport, MessagesStub}
 import models.cache.{Answers, Cache}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData.providerId
 
-class ViewSpec extends WordSpec with MustMatchers with ViewTemplates with ViewMatchers with MessagesStub with CSRFSupport {
+class ViewSpec extends AnyWordSpec with Matchers with ViewTemplates with ViewMatchers with MessagesStub with CSRFSupport {
 
   implicit protected def htmlBodyOf(html: Html): Document = Jsoup.parse(html.toString())
 
