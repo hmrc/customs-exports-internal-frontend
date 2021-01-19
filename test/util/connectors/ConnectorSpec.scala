@@ -17,15 +17,17 @@
 package connectors
 
 import base.Injector
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{BeforeAndAfterEach, MustMatchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.ExecutionContext
 
-abstract class ConnectorSpec extends WordSpec with WiremockTestServer with Injector with MustMatchers with BeforeAndAfterEach with ScalaFutures {
+abstract class ConnectorSpec extends AnyWordSpec with WiremockTestServer with Injector with Matchers with BeforeAndAfterEach with ScalaFutures {
 
   def overrideConfig: Map[String, Any] = Map()
 

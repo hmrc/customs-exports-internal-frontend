@@ -17,10 +17,11 @@
 package forms
 
 import forms.ConsignmentReferenceType.ConsignmentReferenceType
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.{Format, JsString, JsSuccess, Json}
 
-class ConsignmentReferenceTypeSpec extends WordSpec with MustMatchers {
+class ConsignmentReferenceTypeSpec extends AnyWordSpec with Matchers {
 
   "Type" should {
     implicit val fmt: Format[ConsignmentReferenceType] = ConsignmentReferenceType.format

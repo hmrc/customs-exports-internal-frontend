@@ -19,7 +19,7 @@ package views
 import config.AppConfig
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
+import uk.gov.hmrc.play.config.{AccessibilityStatementConfig, AssetsConfig, GTMConfig, OptimizelyConfig}
 import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 import uk.gov.hmrc.play.views.html.layouts._
 import views.html.templates.{govuk_internal_template, govuk_wrapper, main_template}
@@ -55,6 +55,8 @@ trait ViewTemplates {
 
   private val footer: Footer = new Footer(new AssetsConfig(minimalConfiguration))
 
+  private val accessibilityStatementConfig = new AccessibilityStatementConfig(minimalConfiguration)
+
   private val govuk_wrapper: govuk_wrapper = new govuk_wrapper(
     head,
     new HeaderNav(),
@@ -62,7 +64,7 @@ trait ViewTemplates {
     new ServiceInfo(),
     new MainContentHeader(),
     new MainContent(),
-    new FooterLinks(),
+    new FooterLinks(accessibilityStatementConfig),
     new ReportAProblemLink(),
     new govuk_internal_template(),
     minimalAppConfig
