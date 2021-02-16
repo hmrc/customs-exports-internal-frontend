@@ -1,6 +1,10 @@
 # microservice specific routes
 GET         /assets/*file                          controllers.Assets.versioned(path="/public", file: Asset)
 
+#
+
+GET         /                                      controllers.RootController.displayPage()
+
 # ILE Query - entry point
 GET         /consignment-query                     controllers.ileQuery.FindConsignmentController.displayQueryForm()
 POST        /consignment-query                     controllers.ileQuery.FindConsignmentController.submitQueryForm()
