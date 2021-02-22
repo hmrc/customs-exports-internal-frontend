@@ -36,7 +36,7 @@
   <p class="govuk-body">
     @messages("userSignedOut.information") @link(
       content = Html(messages("userSignedOut.findConsignmentPageLink")),
-      href = controllers.ileQuery.routes.FindConsignmentController.displayQueryForm(),
+      href = controllers.routes.RootController.displayPage,
       classes = "govuk-link--no-visited-state"
     )
   </p>
