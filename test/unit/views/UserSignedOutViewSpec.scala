@@ -46,7 +46,7 @@ class UserSignedOutViewSpec extends ViewSpec with Injector {
       val link = view.getElementsByClass("govuk-link govuk-link--no-visited-state").first()
 
       link must containMessage("userSignedOut.findConsignmentPageLink", request.host)
-      link must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
+      link must haveHref(controllers.routes.RootController.displayPage())
     }
 
     "display link to gov.uk" in {
