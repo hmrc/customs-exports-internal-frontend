@@ -17,7 +17,7 @@
 @import config.TimeoutDialogConfig
 @import controllers.exchanges.{AuthenticatedRequest, JourneyRequest}
 @import components.gds.{phaseBanner, siteHeader}
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcStandardFooter
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcHead, HmrcTimeoutDialogHelper, hmrcStandardFooter}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.Title
@@ -31,6 +31,8 @@
   govukPhaseBanner: GovukPhaseBanner,
   govukBackLink: GovukBackLink,
   siteHeader: siteHeader,
+  hmrcHead: HmrcHead,
+  hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
   phaseBanner: phaseBanner,
   timeoutDialogConfig: TimeoutDialogConfig,
   hmrcFooter: hmrcStandardFooter,
@@ -45,6 +47,17 @@
 @useTimeoutDialog = @{ request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]] }
 
 @head = {
+    @if(useTimeoutDialog) {
+        @hmrcHead(
+            headBlock = Some(hmrcTimeoutDialogHelper(
+                signOutUrl = controllers.routes.SignOutController.signOut(models.SignOutReason.SessionTimeout).url,
+                keepAliveUrl = Some(request.uri),
+                timeout = Some(timeoutDialogConfig.timeout.toSeconds.toInt),
+                countdown = Some(timeoutDialogConfig.countdown.toSeconds.toInt)
+            ))
+        )
+    }
+
     <link rel="shortcut icon" href='@routes.Assets.versioned("/lib/govuk-frontend/govuk/assets/images/favicon.ico")' type="image/x-icon" />
     <link rel="shortcut icon" href='@routes.Assets.versioned("lib/accessible-autocomplete/dist/accessible-autocomplete.min.css")' rel="stylesheet" type="text/css" />
     <meta name="format-detection" content="telephone=no" />
@@ -56,21 +69,13 @@
   <script src='@routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
   <script src="@routes.Assets.versioned("javascripts/show-hide-content.js")" type="text/javascript"></script>
 
-  @if(useTimeoutDialog) {
-      <script src='@routes.Assets.versioned("javascripts/timeoutDialog.js")'> </script>
-  }
-
+  <script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
   <script>window.HMRCFrontend.initAll();</script>
   <script>window.GOVUKFrontend.initAll();</script>
 }
 
 @beforeContentBlock = {
     @phaseBanner("beta")
-
-    @if(useTimeoutDialog) {
-        @timeoutDialog(request.uri, timeoutDialogConfig.timeout, timeoutDialogConfig.countdown)
-    }
-
 }
 
 @content = {
