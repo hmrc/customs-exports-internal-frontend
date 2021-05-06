@@ -22,7 +22,6 @@ lazy val microservice = Project(appName, file("."))
   )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
-  .settings(resolvers += Resolver.jcenterRepo)
   .settings(publishingSettings: _*)
   .settings(
     unmanagedSourceDirectories in Test := Seq((baseDirectory in Test).value / "test/unit", (baseDirectory in Test).value / "test/util"),
