@@ -16,6 +16,8 @@
 
 package controllers.actions
 
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.AppConfig
 import connectors.StrideAuthConnector
 import controllers.exchanges.{AuthenticatedRequest, Operator}
@@ -25,13 +27,11 @@ import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.{AuthProviders, AuthorisationException, AuthorisedFunctions, Enrolment, NoActiveSession}
-import views.html.unauthorized
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
-
-import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import views.html.unauthorized
 
 @Singleton
 class AuthenticatedAction @Inject()(
@@ -49,8 +49,7 @@ class AuthenticatedAction @Inject()(
   private val logger = Logger(classOf[AuthenticatedAction])
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     lazy val forbidden = Forbidden(unauthorizedPage()(request, mcc.messagesApi.preferred(request)))
 
     authorised(AuthProviders(PrivilegedApplication) and Enrolment("write:customs-inventory-linking-exports")).retrieve(Retrievals.credentials) {

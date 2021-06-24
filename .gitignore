@@ -3,6 +3,7 @@
 !.gitignore
 !.scalafmt.conf
 .cache
+/.bsp
 /.classpath
 db
 dist

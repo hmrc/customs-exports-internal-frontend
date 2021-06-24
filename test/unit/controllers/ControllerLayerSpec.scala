@@ -16,6 +16,10 @@
 
 package controllers
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
+
+import akka.stream.testkit.NoMaterializer
 import base.UnitSpec
 import config.{AppConfig, DucrPartConfig}
 import connectors.StrideAuthConnector
@@ -30,17 +34,14 @@ import play.api.http.{DefaultFileMimeTypes, FileMimeTypes, FileMimeTypesConfigur
 import play.api.i18n.{Langs, Messages, MessagesApi}
 import play.api.libs.json.Writes
 import play.api.mvc._
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.test.{FakeRequest, NoMaterializer}
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import repositories.CacheRepository
 import testdata.CommonTestData.providerId
 import views.ViewTemplates
 import views.html.unauthorized
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionContext, Future}
 
 abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with BeforeAndAfterEach with CSRFSupport {
 
