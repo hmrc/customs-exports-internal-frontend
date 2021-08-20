@@ -1,0 +1,41 @@
+@*
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
+
+@import config.play_ui.AssetsConfig
+
+@this(assetsConfig: AssetsConfig)
+
+@(analyticsToken: Option[String],
+analyticsHost: String,
+ssoUrl: Option[String],
+scriptElem: Option[Html],
+gaCalls: Option[(String,String) => Html],
+analyticsAnonymizeIp: Boolean = true,
+analyticsAdditionalJs: Option[Html] = None,
+allowQueryStringInAnalytics: Boolean = false
+)
+
+@analyticsToken match {
+case Some(token@_) if !token.equals("N/A") => {
+<script type="text/javascript">
+          window.ga = window.ga || function() {}
+        </script>
+}
+case _ => {}
+}
+<script type="text/javascript">var ssoUrl = "@ssoUrl.getOrElse("")";</script>
+<script src="@assetsConfig.assetsPrefix/javascripts/application.min.js" type="text/javascript"></script>
+@scriptElem

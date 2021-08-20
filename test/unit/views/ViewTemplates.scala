@@ -19,8 +19,9 @@ package views
 import config.AppConfig
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.config.{AccessibilityStatementConfig, AssetsConfig, GTMConfig}
-import uk.gov.hmrc.play.views.html.layouts._
+import config.play_ui.{AssetsConfig, GTMConfig}
+import uk.gov.hmrc.hmrcfrontend.config.AccessibilityStatementConfig
+import views.html.layouts._
 import views.html.templates.{govuk_internal_template, govuk_wrapper, main_template}
 
 trait ViewTemplates {

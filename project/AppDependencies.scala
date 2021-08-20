@@ -4,12 +4,11 @@ import sbt._
 object AppDependencies {
 
   val compile = Seq(
-    "uk.gov.hmrc"          %% "bootstrap-frontend-play-28"    % "5.3.0",
+    "uk.gov.hmrc"          %% "bootstrap-frontend-play-28"    % "5.12.0",
     "uk.gov.hmrc"          %% "logback-json-logger"           % "5.1.0",
-    "uk.gov.hmrc"          %% "govuk-template"                % "5.68.0-play-28",
+    "uk.gov.hmrc"          %% "govuk-template"                % "5.69.0-play-28",
     "uk.gov.hmrc"          %% "play-conditional-form-mapping" % "1.9.0-play-28",
     "uk.gov.hmrc"          %% "play-frontend-hmrc"            % "0.72.0-play-28",
-    "uk.gov.hmrc"          %% "play-ui"                       % "9.6.0-play-28",
     "uk.gov.hmrc"          %%  "simple-reactivemongo"         % "8.0.0-play-28",
     "uk.gov.hmrc"          %% "play-json-union-formatter"     % "1.13.0-play-27",
     "ai.x"                 %% "play-json-extensions"          % "0.42.0",
