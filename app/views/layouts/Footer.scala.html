@@ -14,9 +14,7 @@
 * limitations under the License.
 *@
 
-@import config.play_ui.AssetsConfig
-
-@this(assetsConfig: AssetsConfig)
+@this()
 
 @(analyticsToken: Option[String],
 analyticsHost: String,
@@ -37,5 +35,5 @@ case Some(token@_) if !token.equals("N/A") => {
 case _ => {}
 }
 <script type="text/javascript">var ssoUrl = "@ssoUrl.getOrElse("")";</script>
-<script src="@assetsConfig.assetsPrefix/javascripts/application.min.js" type="text/javascript"></script>
+<script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/hmrc-frontend-2.2.0.min.js")' type="text/javascript"></script>
 @scriptElem

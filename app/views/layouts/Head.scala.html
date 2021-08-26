@@ -14,27 +14,20 @@
 * limitations under the License.
 *@
 
-@import config.play_ui.AssetsConfig
-
-@this(assetsConfig: AssetsConfig, gtmSnippet: GTMSnippet)
+@this(gtmSnippet: GTMSnippet)
 
 @(linkElem: Option[Html],
 headScripts: Option[Html]
 )
 
-<!--[if lt IE 8 ]>
-<link rel='stylesheet' href='@{assetsConfig.assetsPrefix}/stylesheets/application-ie7.min.css' />
-<![endif]-->
-<!--[if IE 8 ]>
-<link rel='stylesheet' href='@{assetsConfig.assetsPrefix}/stylesheets/application-ie.min.css' />
+<!--[if lte IE 8]>
+<link href='@controllers.routes.Assets.versioned("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" />
 <![endif]-->
 <!--[if gt IE 8]><!-->
-<link rel='stylesheet' href='@{assetsConfig.assetsPrefix}/stylesheets/application.min.css' />
+<link href='@routes.Assets.versioned("stylesheets/customsdecexfrontend-app.css")' media="all" rel="stylesheet" type="text/css" />
 <!--<![endif]-->
 
 @gtmSnippet()
-
-<script src='@{assetsConfig.assetsPrefix}/javascripts/vendor/modernizr.js' type='text/javascript'></script>
 
 @headScripts
 @linkElem
