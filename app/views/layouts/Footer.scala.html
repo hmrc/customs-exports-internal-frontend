@@ -16,23 +16,24 @@
 
 @this()
 
-@(analyticsToken: Option[String],
-analyticsHost: String,
-ssoUrl: Option[String],
-scriptElem: Option[Html],
-gaCalls: Option[(String,String) => Html],
-analyticsAnonymizeIp: Boolean = true,
-analyticsAdditionalJs: Option[Html] = None,
-allowQueryStringInAnalytics: Boolean = false
+@(
+  analyticsToken: Option[String],
+  analyticsHost: String,
+  ssoUrl: Option[String],
+  scriptElem: Option[Html],
+  gaCalls: Option[(String,String) => Html],
+  analyticsAnonymizeIp: Boolean = true,
+  analyticsAdditionalJs: Option[Html] = None,
+  allowQueryStringInAnalytics: Boolean = false
 )
 
 @analyticsToken match {
-case Some(token@_) if !token.equals("N/A") => {
-<script type="text/javascript">
-          window.ga = window.ga || function() {}
-        </script>
-}
-case _ => {}
+  case Some(token @ _) if ! token.equals("N/A") => {
+    <script type="text/javascript">
+      window.ga = window.ga || function() {}
+    </script>
+  }
+  case _ => {}
 }
 <script type="text/javascript">var ssoUrl = "@ssoUrl.getOrElse("")";</script>
 <script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/hmrc-frontend-2.2.0.min.js")' type="text/javascript"></script>

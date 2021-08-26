@@ -17,31 +17,44 @@
 @import layouts.{Article, Sidebar}
 @import views.Title
 
-@this(govuk_wrapper: govuk_wrapper, sidebar_di: Sidebar, article_di: Article)
+@this(
+  govuk_wrapper: govuk_wrapper,
+  sidebar_di: Sidebar,
+  article_di: Article
+)
 
-@(title: Title,
+@(
+  title: Title,
   sidebarLinks: Option[Html] = None,
   contentHeader: Option[Html] = None,
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
   scriptElem: Option[Html] = None,
-  fullWidth: Boolean = false)(mainContent: Html)(implicit request : Request[_], messages: Messages)
+  fullWidth: Boolean = false
+)
+(
+  mainContent: Html
+)
+(implicit
+  request : Request[_],
+  messages: Messages
+)
 
 @serviceInfoContent = {}
 
 @sidebar = {
-    @if(sidebarLinks.isDefined) {
-        @sidebar_di(sidebarLinks.get, Some("sidebar"))
-    }
+  @if(sidebarLinks.isDefined) {
+    @sidebar_di(sidebarLinks.get, Some("sidebar"))
+  }
 }
 
-
-@govuk_wrapper(title = title.format,
-               mainClass = mainClass,
-               bodyClasses = bodyClasses,
-               sidebar = sidebar,
-               contentHeader = contentHeader,
-               mainContent = article_di(mainContent, articleClasses = if(fullWidth) Some("full-width") else None),
-               serviceInfoContent = serviceInfoContent,
-               scriptElem = scriptElem
+@govuk_wrapper(
+  title = title.format,
+  mainClass = mainClass,
+  bodyClasses = bodyClasses,
+  sidebar = sidebar,
+  contentHeader = contentHeader,
+  mainContent = article_di(mainContent, articleClasses = if(fullWidth) Some("full-width") else None),
+  serviceInfoContent = serviceInfoContent,
+  scriptElem = scriptElem
 )

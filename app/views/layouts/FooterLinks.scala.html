@@ -18,51 +18,54 @@
 
 @this(accessibilityStatementConfig: AccessibilityStatementConfig)
 
-@(additionalLinks: Option[Html] = None, euExitLinks: Option[Html] = None, accessibilityFooterUrl: Option[String] = None)(implicit messages: Messages, request: RequestHeader)
+@(
+  additionalLinks: Option[Html] = None,
+  euExitLinks: Option[Html] = None,
+  accessibilityFooterUrl: Option[String] = None
+)(implicit
+  messages: Messages,
+  request: RequestHeader
+)
 
 @euExitLinks
-
 <h2 class="visually-hidden">@Messages("footer.links.support_links.text")</h2>
-
 <ul class="platform-help-links">
+  <li>
+    <a href='@Messages("footer.links.cookies.url")'
+       data-sso="false"
+       data-journey-click="footer:Click:Cookies">
+       @Messages("footer.links.cookies.text")
+    </a>
+  </li>
+  @accessibilityFooterUrl.orElse(accessibilityStatementConfig.url).map { url =>
     <li>
-        <a href='@Messages("footer.links.cookies.url")'
-           data-sso="false"
-           data-journey-click="footer:Click:Cookies">
-            @Messages("footer.links.cookies.text")
-        </a>
+      <a href='@url'
+         data-sso="false"
+         data-journey-click="footer:Click:Accessibility">
+         @Messages("footer.links.accessibility.text")
+      </a>
     </li>
-    @accessibilityFooterUrl.orElse(accessibilityStatementConfig.url).map { url =>
-    <li>
-        <a href='@url'
-           data-sso="false"
-           data-journey-click="footer:Click:Accessibility">
-            @Messages("footer.links.accessibility.text")
-        </a>
-    </li>
-    }
-    <li>
-        <a href='@Messages("footer.links.privacy_policy.url")'
-           data-sso="false"
-           data-journey-click="footer:Click:Privacy policy">
-            @Messages("footer.links.privacy_policy.text")
-        </a>
-    </li>
-    <li>
-        <a href='@Messages("footer.links.terms_and_conditions.url")'
-           data-sso="false"
-           data-journey-click="footer:Click:Terms and conditions">
-            @Messages("footer.links.terms_and_conditions.text")
-        </a>
-    </li>
-    <li>
-        <a href='@Messages("footer.links.help_page.url")'
-           data-sso="false"
-           data-journey-click="footer:Click:Help">
-            @Messages("footer.links.help_page.text")
-        </a>
-    </li>
-
-    @additionalLinks
-
+  }
+  <li>
+    <a href='@Messages("footer.links.privacy_policy.url")'
+       data-sso="false"
+       data-journey-click="footer:Click:Privacy policy">
+       @Messages("footer.links.privacy_policy.text")
+    </a>
+  </li>
+  <li>
+    <a href='@Messages("footer.links.terms_and_conditions.url")'
+       data-sso="false"
+       data-journey-click="footer:Click:Terms and conditions">
+       @Messages("footer.links.terms_and_conditions.text")
+    </a>
+  </li>
+  <li>
+    <a href='@Messages("footer.links.help_page.url")'
+       data-sso="false"
+       data-journey-click="footer:Click:Help">
+       @Messages("footer.links.help_page.text")
+    </a>
+  </li>
+  @additionalLinks
 </ul>

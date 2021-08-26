@@ -16,9 +16,11 @@
 
 @this()
 
-@(sidebarLinks: Html,
-sidebarClass: Option[String] = None)
+@(
+  sidebarLinks: Html,
+  sidebarClass: Option[String] = None
+)
 
 <aside @if( sidebarClass.isDefined ) {class="@sidebarClass.get"}>
-    @sidebarLinks
+  @sidebarLinks
 </aside>
