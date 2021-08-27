@@ -19,8 +19,9 @@ package views
 import config.AppConfig
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.config.{AccessibilityStatementConfig, AssetsConfig, GTMConfig}
-import uk.gov.hmrc.play.views.html.layouts._
+import config.play_ui.GTMConfig
+import uk.gov.hmrc.hmrcfrontend.config.AccessibilityStatementConfig
+import views.html.layouts._
 import views.html.templates.{govuk_internal_template, govuk_wrapper, main_template}
 
 trait ViewTemplates {
@@ -47,9 +48,9 @@ trait ViewTemplates {
   private val minimalAppConfig: AppConfig =
     new AppConfig(minimalConfiguration, new ServicesConfig(minimalConfiguration), Environment.simple(), "appName")
 
-  private val head: Head = new Head(new AssetsConfig(minimalConfiguration), new GTMSnippet(new GTMConfig(minimalConfiguration)))
+  private val head: Head = new Head(new GTMSnippet(new GTMConfig(minimalConfiguration)))
 
-  private val footer: Footer = new Footer(new AssetsConfig(minimalConfiguration))
+  private val footer: Footer = new Footer()
 
   private val accessibilityStatementConfig = new AccessibilityStatementConfig(minimalConfiguration)
 

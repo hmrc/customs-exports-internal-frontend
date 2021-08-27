@@ -16,22 +16,23 @@
 
 @import config.AppConfig
 @import play.twirl.api.HtmlFormat
-@import uk.gov.hmrc.play.views.html.layouts._
 @import views.html.templates.govuk_internal_template
+@import layouts._
 
 @this(
-    head_di: Head,
-    header_nav_di: HeaderNav,
-    footer_di: Footer,
-    service_info_di: ServiceInfo,
-    main_content_header_di: MainContentHeader,
-    main_content_di: MainContent,
-    footer_links_di: FooterLinks,
-    internal_template: govuk_internal_template,
-    appConfig: AppConfig
+  head_di: Head,
+  header_nav_di: HeaderNav,
+  footer_di: Footer,
+  service_info_di: ServiceInfo,
+  main_content_header_di: MainContentHeader,
+  main_content_di: MainContent,
+  footer_links_di: FooterLinks,
+  internal_template: govuk_internal_template,
+  appConfig: AppConfig
 )
 
-@(title: String,
+@(
+  title: String,
   mainClass: Option[String] = None,
   mainDataAttributes: Option[Html] = None,
   bodyClasses: Option[String] = None,
@@ -39,66 +40,72 @@
   contentHeader: Option[Html] = None,
   mainContent: Html = HtmlFormat.empty,
   serviceInfoContent: Html = HtmlFormat.empty,
-  scriptElem: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+  scriptElem: Option[Html] = None)(implicit request: Request[_],
+  messages: Messages
+)
 
 @head = {
-    @head_di(
-      linkElem = None,
-      headScripts = None)
-    <meta name="format-detection" content="telephone=no" />
-    <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/customsdecexfrontend-app.css")' />
+  @head_di(
+    linkElem = None,
+    headScripts = None
+  )
+  <meta name="format-detection" content="telephone=no" />
+  <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/customsdecexfrontend-app.css")' />
 }
 
 @headerNavLinks = {}
 
 @insideHeader = {
-    @header_nav_di(
-      navTitle = Some(messages("service.name")),
-      navTitleLink = Some(controllers.routes.ChoiceController.displayPage()),
-      showBetaLink = false,
-      navLinks = Some(headerNavLinks))
+  @header_nav_di(
+    navTitle = Some(messages("service.name")),
+    navTitleLink = Some(controllers.routes.ChoiceController.displayPage()),
+    showBetaLink = false,
+    navLinks = Some(headerNavLinks)
+  )
 }
 
 @afterHeader = {}
 
 @bodyEnd = {
-    @footer_di(
-      analyticsToken = Some(appConfig.analyticsToken),
-      analyticsHost = appConfig.analyticsHost,
-      ssoUrl = None,
-      scriptElem = scriptElem,
-      gaCalls = None)
+  @footer_di(
+    analyticsToken = Some(appConfig.analyticsToken),
+    analyticsHost = appConfig.analyticsHost,
+    ssoUrl = None,
+    scriptElem = scriptElem,
+    gaCalls = None
+  )
 }
 
 @footerTop = {}
 @footerLinks = {}
 
 @serviceInfo = {
-    @service_info_di(
-      betaBanner = HtmlFormat.empty,
-      includeGridWrapper = false,
-      includeHMRCBranding = false,
-      serviceInfoContent = Some(serviceInfoContent)
-    )
+  @service_info_di(
+    betaBanner = HtmlFormat.empty,
+    includeGridWrapper = false,
+    includeHMRCBranding = false,
+    serviceInfoContent = Some(serviceInfoContent)
+  )
 }
 
 @mainContentHeader = {
-    @if(contentHeader.isDefined) {
-        @main_content_header_di(contentHeader = contentHeader.get)
-    }
+  @if(contentHeader.isDefined) {
+    @main_content_header_di(contentHeader = contentHeader.get)
+  }
 }
 
 @getHelpForm = @{HtmlFormat.empty}
 
 @content = {
-    @main_content_di(
-      article = mainContent,
-      mainClass = mainClass,
-      mainDataAttributes = mainDataAttributes,
-      mainContentHeader = mainContentHeader,
-      serviceInfo = serviceInfo,
-      getHelpForm = getHelpForm,
-      sidebar = sidebar)
+  @main_content_di(
+    article = mainContent,
+    mainClass = mainClass,
+    mainDataAttributes = mainDataAttributes,
+    mainContentHeader = mainContentHeader,
+    serviceInfo = serviceInfo,
+    getHelpForm = getHelpForm,
+    sidebar = sidebar
+  )
 }
 
 @internal_template(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footer_links_di()), true)(content)
