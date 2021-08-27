@@ -30,15 +30,7 @@
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
   scriptElem: Option[Html] = None,
-  fullWidth: Boolean = false
-)
-(
-  mainContent: Html
-)
-(implicit
-  request : Request[_],
-  messages: Messages
-)
+  fullWidth: Boolean = false)(mainContent: Html)(implicit request : Request[_], messages: Messages)
 
 @serviceInfoContent = {}
 
