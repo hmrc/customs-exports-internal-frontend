@@ -27,7 +27,7 @@ class AssociateUcrSpec extends UnitSpec {
     "convert to upper case" when {
       "provided with Ducr" in {
 
-        val form = AssociateUcr.form.bind(JsObject(Map("kind" -> JsString("ducr"), "ducr" -> JsString("8gb123457359100-test0001"))))
+        val form = AssociateUcr.form.bind(JsObject(Map("kind" -> JsString("ducr"), "ducr" -> JsString("8gb123457359100-test0001"))), JsonBindMaxChars)
 
         form.errors mustBe empty
         form.value.map(_.ucr) must be(Some("8GB123457359100-TEST0001"))
@@ -35,7 +35,7 @@ class AssociateUcrSpec extends UnitSpec {
 
       "provided with Mucr" in {
 
-        val form = AssociateUcr.form.bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test"))))
+        val form = AssociateUcr.form.bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test"))), JsonBindMaxChars)
 
         form.errors mustBe empty
         form.value.map(_.ucr) must be(Some("GB/ABCED1234-15804TEST"))
@@ -43,7 +43,8 @@ class AssociateUcrSpec extends UnitSpec {
 
       "provided with Mucr that is 35 characters long" in {
 
-        val form = AssociateUcr.form.bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test1234567890123"))))
+        val form = AssociateUcr.form
+          .bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test1234567890123"))), JsonBindMaxChars)
 
         form.errors mustBe empty
         form.value.map(_.ucr) must be(Some("GB/ABCED1234-15804TEST1234567890123"))
@@ -53,7 +54,8 @@ class AssociateUcrSpec extends UnitSpec {
   "return an error" when {
     "provided with Mucr that is over 35 characters long" in {
 
-      val form = AssociateUcr.form.bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test12345678901234"))))
+      val form = AssociateUcr.form
+        .bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test12345678901234"))), JsonBindMaxChars)
 
       form.errors mustBe Seq(FormError("mucr", List("mucr.error.format")))
     }

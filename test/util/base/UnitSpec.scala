@@ -16,12 +16,16 @@
 
 package base
 
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.data.Form
 import reactivemongo.api.commands.{LastError, WriteResult}
 
 trait UnitSpec extends AnyWordSpec with Matchers with MockitoSugar {
+
   val dummyWriteResultSuccess: WriteResult =
     LastError(true, None, None, None, 0, None, false, None, None, false, None, None)
+
+  val JsonBindMaxChars: Long = Form.FromJsonMaxChars
 }

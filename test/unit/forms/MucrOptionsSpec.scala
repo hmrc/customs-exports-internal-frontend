@@ -38,7 +38,7 @@ class MucrOptionsSpec extends UnitSpec {
       "provided with an empty form" in {
 
         val inputData = Json.obj()
-        val errors = MucrOptions.form.bind(inputData).errors
+        val errors = MucrOptions.form.bind(inputData, JsonBindMaxChars).errors
 
         errors mustBe Seq(FormError("createOrAdd", "mucrOptions.createAdd.value.empty"))
       }
@@ -46,7 +46,7 @@ class MucrOptionsSpec extends UnitSpec {
       "provided with empty createOrAdd field" in {
 
         val inputData = Json.obj("createOrAdd" -> "")
-        val errors = MucrOptions.form.bind(inputData).errors
+        val errors = MucrOptions.form.bind(inputData, JsonBindMaxChars).errors
 
         errors mustBe Seq(FormError("createOrAdd", "mucrOptions.createAdd.value.empty"))
       }
@@ -55,7 +55,7 @@ class MucrOptionsSpec extends UnitSpec {
         "is empty" in {
 
           val inputData = Json.obj("createOrAdd" -> JsString(Create.value))
-          val errors = MucrOptions.form.bind(inputData).errors
+          val errors = MucrOptions.form.bind(inputData, JsonBindMaxChars).errors
 
           errors mustBe Seq(FormError("newMucr", "mucrOptions.reference.value.empty"))
         }
@@ -63,7 +63,7 @@ class MucrOptionsSpec extends UnitSpec {
         "is incorrect" in {
 
           val inputData = Json.obj("createOrAdd" -> JsString(Create.value), "newMucr" -> "!@#$%^INVALID-MUCR*&^%$#")
-          val errors = MucrOptions.form.bind(inputData).errors
+          val errors = MucrOptions.form.bind(inputData, JsonBindMaxChars).errors
 
           errors mustBe Seq(FormError("newMucr", "mucrOptions.reference.value.error"))
         }
@@ -73,7 +73,7 @@ class MucrOptionsSpec extends UnitSpec {
         "is empty" in {
 
           val inputData = Json.obj("createOrAdd" -> JsString(Add.value))
-          val errors = MucrOptions.form.bind(inputData).errors
+          val errors = MucrOptions.form.bind(inputData, JsonBindMaxChars).errors
 
           errors mustBe Seq(FormError("existingMucr", "mucrOptions.reference.value.empty"))
         }
@@ -81,7 +81,7 @@ class MucrOptionsSpec extends UnitSpec {
         "is incorrect" in {
 
           val inputData = Json.obj("createOrAdd" -> JsString(Add.value), "existingMucr" -> "!@#$%^INVALID-MUCR*&^%$#")
-          val errors = MucrOptions.form.bind(inputData).errors
+          val errors = MucrOptions.form.bind(inputData, JsonBindMaxChars).errors
 
           errors mustBe Seq(FormError("existingMucr", "mucrOptions.reference.value.error"))
         }
@@ -109,7 +109,8 @@ class MucrOptionsSpec extends UnitSpec {
       "convert new mucr to upper case" in {
 
         val form = MucrOptions.form.bind(
-          JsObject(Map("createOrAdd" -> JsString("create"), "newMucr" -> JsString("gb/abced1234-15804test"), "existingMucr" -> JsString("")))
+          JsObject(Map("createOrAdd" -> JsString("create"), "newMucr" -> JsString("gb/abced1234-15804test"), "existingMucr" -> JsString(""))),
+          JsonBindMaxChars
         )
 
         form.errors mustBe empty
@@ -119,7 +120,8 @@ class MucrOptionsSpec extends UnitSpec {
       "convert existing mucr to upper case" in {
 
         val form = MucrOptions.form.bind(
-          JsObject(Map("createOrAdd" -> JsString("add"), "newMucr" -> JsString(""), "existingMucr" -> JsString("gb/abced1234-15804test")))
+          JsObject(Map("createOrAdd" -> JsString("add"), "newMucr" -> JsString(""), "existingMucr" -> JsString("gb/abced1234-15804test"))),
+          JsonBindMaxChars
         )
 
         form.errors mustBe empty
