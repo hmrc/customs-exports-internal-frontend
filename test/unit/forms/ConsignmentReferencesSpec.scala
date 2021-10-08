@@ -74,7 +74,9 @@ class ConsignmentReferencesSpec extends UnitSpec {
 
     "convert ducr to upper case" in {
 
-      val form = ConsignmentReferences.form.bind(JsObject(Map("reference" -> JsString("D"), "ducrValue" -> JsString("8gb123457359100-test0001"))))
+      val form = ConsignmentReferences
+        .form()
+        .bind(JsObject(Map("reference" -> JsString("D"), "ducrValue" -> JsString("8gb123457359100-test0001"))), JsonBindMaxChars)
 
       form.errors mustBe empty
       form.value.map(_.referenceValue) must be(Some("8GB123457359100-TEST0001"))
@@ -82,7 +84,9 @@ class ConsignmentReferencesSpec extends UnitSpec {
 
     "convert mucr to upper case" in {
 
-      val form = ConsignmentReferences.form.bind(JsObject(Map("reference" -> JsString("M"), "mucrValue" -> JsString("gb/abced1234-15804test"))))
+      val form = ConsignmentReferences
+        .form()
+        .bind(JsObject(Map("reference" -> JsString("M"), "mucrValue" -> JsString("gb/abced1234-15804test"))), JsonBindMaxChars)
 
       form.errors mustBe empty
       form.value.map(_.referenceValue) must be(Some("GB/ABCED1234-15804TEST"))
@@ -91,7 +95,9 @@ class ConsignmentReferencesSpec extends UnitSpec {
     "convert mucr that is 35 characters long to upper case" in {
 
       val form =
-        ConsignmentReferences.form.bind(JsObject(Map("reference" -> JsString("M"), "mucrValue" -> JsString("gb/abced1234-15804test1234567890123"))))
+        ConsignmentReferences
+          .form()
+          .bind(JsObject(Map("reference" -> JsString("M"), "mucrValue" -> JsString("gb/abced1234-15804test1234567890123"))), JsonBindMaxChars)
 
       form.errors mustBe empty
       form.value.map(_.referenceValue) must be(Some("GB/ABCED1234-15804TEST1234567890123"))

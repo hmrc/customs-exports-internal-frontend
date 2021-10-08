@@ -30,7 +30,7 @@ class ChoiceSpec extends UnitSpec with OptionValues {
 
     "attach errors to form" when {
       "provided with empty input" in {
-        val form = Choice.form().bind(emptyChoiceJSON)
+        val form = Choice.form().bind(emptyChoiceJSON, JsonBindMaxChars)
 
         form.hasErrors mustBe true
         form.errors.length must equal(1)
@@ -38,7 +38,7 @@ class ChoiceSpec extends UnitSpec with OptionValues {
       }
 
       "provided with an incorrect value" in {
-        val form = Choice.form().bind(incorrectChoiceJSON)
+        val form = Choice.form().bind(incorrectChoiceJSON, JsonBindMaxChars)
 
         form.hasErrors mustBe true
         form.errors.length must equal(1)
@@ -48,7 +48,7 @@ class ChoiceSpec extends UnitSpec with OptionValues {
 
     "not attach any error" when {
       "provided with valid input" in {
-        val form = Choice.form().bind(correctChoiceJSON)
+        val form = Choice.form().bind(correctChoiceJSON, JsonBindMaxChars)
 
         form.hasErrors mustBe false
       }

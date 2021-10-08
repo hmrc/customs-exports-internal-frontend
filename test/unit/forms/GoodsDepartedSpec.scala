@@ -38,7 +38,7 @@ class GoodsDepartedSpec extends UnitSpec {
       "provided with empty departure location" in {
 
         val input = Json.obj("departureLocation" -> "")
-        val errors = GoodsDeparted.form.bind(input).errors
+        val errors = GoodsDeparted.form.bind(input, JsonBindMaxChars).errors
 
         errors mustBe Seq(FormError("departureLocation", "goodsDeparted.departureLocation.error.empty"))
       }
@@ -46,7 +46,7 @@ class GoodsDepartedSpec extends UnitSpec {
       "provided with incorrect departure location" in {
 
         val input = Json.obj("departureLocation" -> "INVALID")
-        val errors = GoodsDeparted.form.bind(input).errors
+        val errors = GoodsDeparted.form.bind(input, JsonBindMaxChars).errors
 
         errors mustBe Seq(FormError("departureLocation", "goodsDeparted.departureLocation.error.incorrect"))
       }
@@ -57,7 +57,7 @@ class GoodsDepartedSpec extends UnitSpec {
       "provided with OutOfTheUk departure location" in {
 
         val input = Json.obj("departureLocation" -> OutOfTheUk.value)
-        val errors = GoodsDeparted.form.bind(input).errors
+        val errors = GoodsDeparted.form.bind(input, JsonBindMaxChars).errors
 
         errors mustBe empty
       }
@@ -65,7 +65,7 @@ class GoodsDepartedSpec extends UnitSpec {
       "provided with BackIntoTheUk departure location" in {
 
         val input = Json.obj("departureLocation" -> BackIntoTheUk.value)
-        val errors = GoodsDeparted.form.bind(input).errors
+        val errors = GoodsDeparted.form.bind(input, JsonBindMaxChars).errors
 
         errors mustBe empty
       }
