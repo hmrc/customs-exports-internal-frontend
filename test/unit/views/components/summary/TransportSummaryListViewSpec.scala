@@ -69,7 +69,7 @@ class TransportSummaryListViewSpec extends ViewSpec with ViewMatchers with Mocki
       val transportTypeRow = transportList(Some(transport)).getElementsByClass("govuk-summary-list__row").get(2)
 
       transportTypeRow.getElementsByClass("govuk-summary-list__key").first() must containMessage("summary.nationality")
-      transportTypeRow.getElementsByClass("govuk-summary-list__value").first().text mustBe "United Kingdom, Great Britain, Northern Ireland (GB)"
+      transportTypeRow.getElementsByClass("govuk-summary-list__value").first().text mustBe "United Kingdom, Great Britain, Northern Ireland - GB"
 
       val changeLinkElement = transportTypeRow.getElementsByClass("govuk-link").first()
       changeLinkElement must haveHref(controllers.movements.routes.TransportController.displayPage())
