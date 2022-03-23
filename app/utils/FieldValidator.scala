@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,5 +137,6 @@ object FieldValidator {
 
   val ofPattern: String => String => Boolean = (pattern: String) => (input: String) => input.matches(pattern)
 
-  val isValidDucrPartId: String => Boolean = (input: String) => lengthInRange(1)(3)(input) && input.forall(_.isDigit)
+  def validRegex: String = "^[0-9]{0,3}[A-Z]?$"
+  val isValidDucrPartId: String => Boolean = (input: String) => lengthInRange(1)(4)(input) && input.matches(validRegex)
 }
