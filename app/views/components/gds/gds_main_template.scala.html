@@ -17,7 +17,7 @@
 @import config.TimeoutDialogConfig
 @import controllers.exchanges.{AuthenticatedRequest, JourneyRequest}
 @import components.gds.{phaseBanner, siteHeader}
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcHead, HmrcTimeoutDialogHelper, hmrcStandardFooter}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcHead, HmrcTimeoutDialogHelper, HmrcStandardFooter}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.Title
@@ -35,7 +35,7 @@
   hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
   phaseBanner: phaseBanner,
   timeoutDialogConfig: TimeoutDialogConfig,
-  hmrcFooter: hmrcStandardFooter,
+  hmrcFooter: HmrcStandardFooter,
 )
 
 @(
