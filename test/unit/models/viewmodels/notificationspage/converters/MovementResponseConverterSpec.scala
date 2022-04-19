@@ -20,14 +20,18 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 
 import base.UnitSpec
 import models.notifications.ResponseType
+import models.notifications.{Entry, EntryStatus, ResponseType}
 import models.viewmodels.decoder.{CRCCode, Decoder}
 import models.viewmodels.notificationspage.NotificationsPageSingleElement
+import models.viewmodels.notificationspage.converters.ERSResponseConverterSpec.{roeKeyFromDecoder, soeKeyFromDecoder}
+import models.UcrBlock
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 import play.twirl.api.HtmlFormat
+import testdata.CommonTestData.correctUcr
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import views.ViewDates
 
@@ -48,6 +52,8 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
     reset(decoder)
     when(decoder.crc(any[String])).thenReturn(Some(crcCodeKeyFromDecoder))
+    when(decoder.roe(any[String])).thenReturn(Some(roeKeyFromDecoder))
+    when(decoder.ducrSoe(any[String])).thenReturn(Some(soeKeyFromDecoder))
   }
 
   "MovementResponseConverter on build" when {
@@ -56,7 +62,16 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
       "call Decoder" in {
 
-        val input = exampleNotificationFrontendModel(responseType = ResponseType.MovementResponse, crcCode = Some(crcCodeKeyFromDecoder.code))
+        val input = exampleNotificationFrontendModel(
+          responseType = ResponseType.MovementResponse,
+          crcCode = Some(crcCodeKeyFromDecoder.code),
+          entries = Seq(
+            Entry(
+              ucrBlock = Some(UcrBlock(ucr = correctUcr, ucrType = "D")),
+              entryStatus = Some(EntryStatus(roe = Some(roeKeyFromDecoder), soe = Some(soeKeyFromDecoder.code)))
+            )
+          )
+        )
 
         converter.convert(input)
 
@@ -67,18 +82,28 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
         val input = exampleNotificationFrontendModel(
           responseType = ResponseType.MovementResponse,
+          entries = Seq(
+            Entry(
+              ucrBlock = Some(UcrBlock(ucr = correctUcr, ucrType = "D")),
+              entryStatus = Some(EntryStatus(roe = Some(roeKeyFromDecoder), soe = Some(soeKeyFromDecoder.code)))
+            )
+          ),
           timestampReceived = testTimestamp,
           crcCode = Some(crcCodeKeyFromDecoder.code)
         )
         val expectedTitle = messages("notifications.elem.title.inventoryLinkingMovementResponse")
         val expectedTimestampInfo = "31 October 2019 at 12:00am"
-        val expectedContent = s"${messages("notifications.elem.content.inventoryLinkingMovementResponse.crc")} ${crcCodeKeyFromDecoder.messageKey}"
+        val expectedCrcContent = s"${messages("notifications.elem.content.inventoryLinkingMovementResponse.crc")} ${crcCodeKeyFromDecoder.messageKey}"
+        val expectedSoeContent = s"${messages("notifications.elem.content.inventoryLinkingMovementTotalsResponse.soe")} ${soeKeyFromDecoder.code}"
+        val expectedRoeContent = s"${messages("notifications.elem.content.inventoryLinkingMovementTotalsResponse.roe")} ${roeKeyFromDecoder.code}"
 
         val result = converter.convert(input)
 
         result.title mustBe expectedTitle
         result.timestampInfo mustBe expectedTimestampInfo
-        result.content.toString must include(expectedContent)
+        result.content.toString must include(expectedCrcContent)
+        result.content.toString must include(expectedSoeContent)
+        result.content.toString must include(expectedRoeContent)
       }
     }
 
@@ -136,5 +161,4 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
       }
     }
   }
-
 }

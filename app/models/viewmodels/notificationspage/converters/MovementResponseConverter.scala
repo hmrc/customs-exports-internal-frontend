@@ -26,16 +26,24 @@ import views.ViewDates
 import views.html.components.paragraph
 
 @Singleton
-class MovementResponseConverter @Inject()(decoder: Decoder, viewDates: ViewDates) extends NotificationPageSingleElementConverter {
+class MovementResponseConverter @Inject()(val decoder: Decoder, viewDates: ViewDates)
+    extends NotificationPageSingleElementConverter with CommonResponseConverter {
 
   override def convert(notification: NotificationFrontendModel)(implicit messages: Messages): NotificationsPageSingleElement = {
 
     val crcCodeExplanation = notification.crcCode.flatMap(buildCrcCodeExplanation).getOrElse(HtmlFormat.empty)
 
+    val roeCodeExplanation =
+      findDucrEntry(notification.entries).flatMap(_.roe).flatMap(buildRoeCodeExplanation).getOrElse(HtmlFormat.empty)
+    val soeCodeExplanation =
+      findDucrEntry(notification.entries).flatMap(_.soe).flatMap(buildSoeCodeExplanation).getOrElse(HtmlFormat.empty)
+    val icsCodeExplanation =
+      findDucrEntry(notification.entries).flatMap(_.ics).flatMap(buildIcsCodeExplanation).getOrElse(HtmlFormat.empty)
+
     NotificationsPageSingleElement(
       title = messages("notifications.elem.title.inventoryLinkingMovementResponse"),
       timestampInfo = viewDates.formatDateAtTime(notification.timestampReceived),
-      content = crcCodeExplanation
+      content = new Html(List(crcCodeExplanation, roeCodeExplanation, soeCodeExplanation, icsCodeExplanation))
     )
   }
 
@@ -44,5 +52,4 @@ class MovementResponseConverter @Inject()(decoder: Decoder, viewDates: ViewDates
 
     decoder.crc(crcCode).map(code => paragraph(s"$CrcCodeHeader ${messages(code.messageKey)}"))
   }
-
 }
