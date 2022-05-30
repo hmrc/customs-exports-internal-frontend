@@ -48,6 +48,7 @@ class MovementDetailsController @Inject()(
     request.answers match {
       case arrivalAnswers: ArrivalAnswers     => Ok(arrivalPage(arrivalAnswers))
       case departureAnswers: DepartureAnswers => Ok(departurePage(departureAnswers))
+      case _                                  => BadRequest
     }
   }
 

@@ -45,11 +45,11 @@ class SubmissionService @Inject()(
 
   def submit(providerId: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
-    val ucr = answers.ucr.map(_.ucr).getOrElse(throw ReturnToStartException)
-    val exchange = answers.ucr.map(_.kind) match {
-      case Some(UcrType.Ducr)     => DisassociateDUCRExchange(providerId, eori, ucr)
-      case Some(UcrType.DucrPart) => DisassociateDUCRPartExchange(providerId, eori, ucr)
-      case Some(UcrType.Mucr)     => DisassociateMUCRExchange(providerId, eori, ucr)
+    val disUcr = answers.ucr.getOrElse(throw ReturnToStartException)
+    val exchange = disUcr.kind match {
+      case UcrType.Ducr     => DisassociateDUCRExchange(providerId, eori, disUcr.ucr)
+      case UcrType.DucrPart => DisassociateDUCRPartExchange(providerId, eori, disUcr.ucr)
+      case UcrType.Mucr     => DisassociateMUCRExchange(providerId, eori, disUcr.ucr)
     }
 
     connector
@@ -57,21 +57,21 @@ class SubmissionService @Inject()(
       .andThen {
         case Success(_) =>
           cacheRepository.removeByProviderId(providerId).flatMap { _ =>
-            auditService.auditDisassociate(providerId, ucr, success)
+            auditService.auditDisassociate(providerId, disUcr.ucr, success)
           }
         case Failure(_) =>
-          auditService.auditDisassociate(providerId, ucr, failed)
+          auditService.auditDisassociate(providerId, disUcr.ucr, failed)
       }
   }
 
   def submit(providerId: String, answers: AssociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
     val mucr = answers.parentMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
-    val ucr = answers.childUcr.map(_.ucr).getOrElse(throw ReturnToStartException)
-    val exchange = answers.childUcr.map(_.kind) match {
-      case Some(UcrType.Ducr)     => AssociateDUCRExchange(providerId, eori, mucr, ucr)
-      case Some(UcrType.DucrPart) => AssociateDUCRPartExchange(providerId, eori, mucr, ucr)
-      case Some(UcrType.Mucr)     => AssociateMUCRExchange(providerId, eori, mucr, ucr)
+    val assUcr = answers.childUcr.getOrElse(throw ReturnToStartException)
+    val exchange = assUcr.kind match {
+      case UcrType.Ducr     => AssociateDUCRExchange(providerId, eori, mucr, assUcr.ucr)
+      case UcrType.DucrPart => AssociateDUCRPartExchange(providerId, eori, mucr, assUcr.ucr)
+      case UcrType.Mucr     => AssociateMUCRExchange(providerId, eori, mucr, assUcr.ucr)
     }
 
     connector
@@ -79,10 +79,10 @@ class SubmissionService @Inject()(
       .andThen {
         case Success(_) =>
           cacheRepository.removeByProviderId(providerId).flatMap { _ =>
-            auditService.auditAssociate(providerId, mucr, ucr, success)
+            auditService.auditAssociate(providerId, mucr, assUcr.ucr, success)
           }
         case Failure(_) =>
-          auditService.auditAssociate(providerId, mucr, ucr, failed)
+          auditService.auditAssociate(providerId, mucr, assUcr.ucr, failed)
       }
   }
 

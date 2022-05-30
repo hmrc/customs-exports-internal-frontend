@@ -122,6 +122,8 @@ class IleQueryController @Inject()(
           case Some(UcrBlock(ucr, _, _)) => Future.successful(Ok(consignmentNotFound(ucr)))
           case _                         => Future.successful(InternalServerError(errorHandler.standardErrorTemplate()))
         }
+
+      case _ => Future.successful(loadingPageResult)
     }
 
   private def sendIleQuery(ucr: String)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
@@ -135,7 +137,7 @@ class IleQueryController @Inject()(
           connector.submit(ileQueryRequest).flatMap { conversationId =>
             val ileQuery = IleQuery(retrieveSessionId, validUcr, conversationId)
 
-            ileQueryRepository.insert(ileQuery).map { _ =>
+            ileQueryRepository.insertOne(ileQuery).map { _ =>
               Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr))
             }
           }

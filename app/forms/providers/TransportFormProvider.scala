@@ -27,5 +27,4 @@ class TransportFormProvider {
     case Some(GoodsDeparted(OutOfTheUk))    => Transport.outOfTheUkForm
     case Some(GoodsDeparted(BackIntoTheUk)) => Transport.backIntoTheUkForm
   }
-
 }

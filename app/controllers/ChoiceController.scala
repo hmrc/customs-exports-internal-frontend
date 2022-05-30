@@ -62,8 +62,10 @@ class ChoiceController @Inject()(
   private def proceed(choice: Choice, cache: Cache)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] = choice match {
     case Choice.Arrival =>
       saveAndRedirect(ArrivalAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage())
+
     case Choice.RetrospectiveArrival =>
       saveAndRedirect(RetrospectiveArrivalAnswers.fromQueryUcr, movements.routes.LocationController.displayPage())
+
     case Choice.Departure =>
       saveAndRedirect(DepartureAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage())
 
@@ -80,8 +82,11 @@ class ChoiceController @Inject()(
 
     case Choice.DisassociateUCR =>
       saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, consolidations.routes.DisassociateUcrSummaryController.displayPage())
+
     case Choice.ShutMUCR =>
       saveAndRedirect(ShutMucrAnswers.fromQueryUcr, consolidations.routes.ShutMucrSummaryController.displayPage())
+
+    case _ => Future.successful(BadRequest)
   }
 
   private def saveAndRedirect(answerProvider: Option[UcrBlock] => Answers, call: Call)(
