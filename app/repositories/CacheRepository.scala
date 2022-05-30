@@ -16,55 +16,33 @@
 
 package repositories
 
-import java.time.Duration
-
-import javax.inject.Inject
 import models.cache.Cache
-import play.api.libs.json.{JsObject, Json}
-import play.modules.reactivemongo.ReactiveMongoComponent
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
-import reactivemongo.play.json.collection.JSONCollection
-import uk.gov.hmrc.mongo.ReactiveRepository
-import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import org.mongodb.scala.model.Indexes.ascending
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
+import java.util.concurrent.TimeUnit.MINUTES
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 
-class CacheRepository @Inject()(mc: ReactiveMongoComponent)(implicit ec: ExecutionContext)
-    extends ReactiveRepository[Cache, BSONObjectID]("cache", mc.mongoConnector.db, Cache.format, objectIdFormats) {
+class CacheRepository @Inject()(mc: MongoComponent)(implicit val executionContext: ExecutionContext)
+    extends PlayMongoRepository[Cache](mc, "cache", Cache.format, CacheRepository.indexes) with RepositoryOps[Cache] {
 
-  override lazy val collection: JSONCollection =
-    mongo().collection[JSONCollection](collectionName, failoverStrategy = RepositorySettings.failoverStrategy)
+  override def classTag: ClassTag[Cache] = implicitly[ClassTag[Cache]]
 
-  override def indexes: Seq[Index] = super.indexes ++ Seq(
-    Index(Seq("providerId" -> IndexType.Ascending), name = Some("providerIdIdx")),
-    Index(
-      key = Seq("updated" -> IndexType.Ascending),
-      name = Some("ttl"),
-      options = BSONDocument("expireAfterSeconds" -> Duration.ofMinutes(60).getSeconds)
-    )
-  )
+  def findByProviderId(providerId: String): Future[Option[Cache]] = findOne("providerId", providerId).map(_.headOption)
 
-  def findByProviderId(providerId: String): Future[Option[Cache]] = find("providerId" -> providerId).map(_.headOption)
-
-  def removeByProviderId(providerId: String): Future[Unit] = remove("providerId" -> providerId).filter(_.ok).map(_ => (): Unit)
-
-  def findOrCreate(providerId: String, onMissing: Cache): Future[Cache] =
-    findByProviderId(providerId).flatMap {
-      case Some(movementCache) => Future.successful(movementCache)
-      case None                => save(onMissing)
-    }
-
-  private def save(movementCache: Cache): Future[Cache] = insert(movementCache).map { res =>
-    if (!res.ok) logger.error(s"Errors when persisting movement cache: ${res.writeErrors.mkString("--")}")
-    movementCache
-  }
+  def removeByProviderId(providerId: String): Future[Unit] = removeEvery("providerId", providerId)
 
   def upsert(movementCache: Cache): Future[Cache] =
-    findAndUpdate(Json.obj("providerId" -> movementCache.providerId), Json.toJson(movementCache).as[JsObject])
-      .map(_.value.map(_.as[Cache]))
-      .flatMap {
-        case Some(cache) => Future.successful(cache)
-        case None        => save(movementCache)
-      }
+    findOneAndReplace("providerId", movementCache.providerId, movementCache)
+}
+
+object CacheRepository {
+  val indexes: Seq[IndexModel] = Seq(
+    IndexModel(ascending("providerId"), IndexOptions().name("providerIdIdx")),
+    IndexModel(ascending("updated"), IndexOptions().name("ttl").expireAfter(60, MINUTES))
+  )
 }

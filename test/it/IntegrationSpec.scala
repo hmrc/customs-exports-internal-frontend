@@ -14,33 +14,27 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, LocalDateTime}
-
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import connectors.{AuditWiremockTestServer, AuthWiremockTestServer, MovementsBackendWiremockTestServer}
-import models.cache.{Answers, Cache}
 import models.{DateTimeProvider, UcrBlock}
+import models.cache.{Answers, Cache}
 import modules.DateTimeModule
 import org.scalatest.concurrent.Eventually
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Call, Request, Result}
-import play.api.test.Helpers._
 import play.api.test.{CSRFTokenHelper, FakeRequest}
-import reactivemongo.play.json.ImplicitBSONHandlers
-import reactivemongo.play.json.ImplicitBSONHandlers._
-import reactivemongo.play.json.collection.JSONCollection
+import play.api.test.Helpers._
 import repositories.CacheRepository
 import repository.TestMongoDB
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import java.time.{Clock, LocalDateTime}
 import scala.concurrent.Future
 
 abstract class IntegrationSpec
@@ -50,7 +44,7 @@ abstract class IntegrationSpec
   /*
     Intentionally NOT exposing the real CacheRepository as we shouldn't test our production code using our production classes.
    */
-  private lazy val cacheRepository: JSONCollection = app.injector.instanceOf[CacheRepository].collection
+  private lazy val cacheRepository = app.injector.instanceOf[CacheRepository]
 
   val dateTimeProvider = new DateTimeProvider(Clock.fixed(LocalDateTime.now().atZone(DateTimeModule.timezone).toInstant, DateTimeModule.timezone))
 
@@ -66,7 +60,7 @@ abstract class IntegrationSpec
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    await(cacheRepository.drop(failIfNotFound = false))
+    await(cacheRepository.removeAll)
   }
 
   protected def get(call: Call): Future[Result] =
@@ -78,27 +72,14 @@ abstract class IntegrationSpec
   }
 
   protected def theCacheFor(pid: String): Option[Cache] =
-    await(
-      cacheRepository
-        .find(Json.obj("providerId" -> pid), projection = None)(
-          ImplicitBSONHandlers.JsObjectDocumentWriter,
-          ImplicitBSONHandlers.JsObjectDocumentWriter
-        )
-        .one[Cache]
-    )
-  protected def theAnswersFor(pid: String): Option[Answers] =
-    await(
-      cacheRepository
-        .find(Json.obj("providerId" -> pid), projection = None)(
-          ImplicitBSONHandlers.JsObjectDocumentWriter,
-          ImplicitBSONHandlers.JsObjectDocumentWriter
-        )
-        .one[Cache]
-    ).flatMap(_.answers)
+    await(cacheRepository.findOne("providerId", pid))
 
-  protected def givenCacheFor(pid: String, answers: Answers): Unit = givenCacheFor(Cache(providerId = pid, answers = Some(answers), queryUcr = None))
+  protected def theAnswersFor(pid: String): Option[Answers] = theCacheFor(pid).flatMap(_.answers)
+
+  protected def givenCacheFor(pid: String, answers: Answers): Unit =
+    cacheRepository.insertOne(Cache(providerId = pid, answers = Some(answers), queryUcr = None))
   protected def givenCacheFor(pid: String, queryUcr: UcrBlock): Unit = givenCacheFor(Cache(pid, queryUcr = queryUcr))
-  protected def givenCacheFor(cache: Cache): Unit = await(cacheRepository.insert(ordered = false).one(Cache.format.writes(cache)))
+  protected def givenCacheFor(cache: Cache): Unit = await(cacheRepository.insertOne(cache))
 
   protected def verifyEventually(requestPatternBuilder: RequestPatternBuilder): Unit = eventually(WireMock.verify(requestPatternBuilder))
 

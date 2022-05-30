@@ -146,7 +146,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         "call Backend Connector to submit IleQuery, passing constructed IleQuery object" in {
 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString())).thenReturn(Future.successful(None))
-          when(ileQueryRepository.insert(any[IleQuery])(any())).thenReturn(Future.successful(dummyWriteResultSuccess))
+          when(ileQueryRepository.insertOne(any[IleQuery])).thenReturn(Future.successful(Right(exampleIleQuery())))
           when(connector.submit(any[IleQueryExchange])(any())).thenReturn(Future.successful(conversationId))
 
           controller.getConsignmentInformation(correctDucr)(request).futureValue
@@ -163,13 +163,13 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         "call IleQueryRepository to insert cache document" in {
 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString())).thenReturn(Future.successful(None))
-          when(ileQueryRepository.insert(any[IleQuery])(any())).thenReturn(Future.successful(dummyWriteResultSuccess))
+          when(ileQueryRepository.insertOne(any[IleQuery])).thenReturn(Future.successful(Right(exampleIleQuery())))
           when(connector.submit(any[IleQueryExchange])(any())).thenReturn(Future.successful(conversationId))
 
           controller.getConsignmentInformation(correctDucr)(request).futureValue
 
           val ileQueryCaptor = newIleQueryCaptor
-          verify(ileQueryRepository).insert(ileQueryCaptor.capture())(any())
+          verify(ileQueryRepository).insertOne(ileQueryCaptor.capture())
           val actualIleQuery = ileQueryCaptor.getValue
 
           actualIleQuery.sessionId mustBe "sessionId"
@@ -180,7 +180,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         "redirect to the same endpoint" in {
 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString())).thenReturn(Future.successful(None))
-          when(ileQueryRepository.insert(any[IleQuery])(any())).thenReturn(Future.successful(dummyWriteResultSuccess))
+          when(ileQueryRepository.insertOne(any[IleQuery])).thenReturn(Future.successful(Right(exampleIleQuery())))
           when(connector.submit(any[IleQueryExchange])(any())).thenReturn(Future.successful(conversationId))
 
           val result = controller.getConsignmentInformation(correctDucr)(request)
@@ -197,7 +197,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         "call Backend Connector to submit IleQuery, passing constructed IleQuery object" in {
 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString())).thenReturn(Future.successful(None))
-          when(ileQueryRepository.insert(any[IleQuery])(any())).thenReturn(Future.successful(dummyWriteResultSuccess))
+          when(ileQueryRepository.insertOne(any[IleQuery])).thenReturn(Future.successful(Right(exampleIleQuery())))
           when(connector.submit(any[IleQueryExchange])(any())).thenReturn(Future.successful(conversationId))
 
           controller.getConsignmentInformation(correctMucr)(request).futureValue
@@ -214,13 +214,13 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         "call IleQueryRepository to insert cache document" in {
 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString())).thenReturn(Future.successful(None))
-          when(ileQueryRepository.insert(any[IleQuery])(any())).thenReturn(Future.successful(dummyWriteResultSuccess))
+          when(ileQueryRepository.insertOne(any[IleQuery])).thenReturn(Future.successful(Right(exampleIleQuery())))
           when(connector.submit(any[IleQueryExchange])(any())).thenReturn(Future.successful(conversationId))
 
           controller.getConsignmentInformation(correctMucr)(request).futureValue
 
           val ileQueryCaptor = newIleQueryCaptor
-          verify(ileQueryRepository).insert(ileQueryCaptor.capture())(any())
+          verify(ileQueryRepository).insertOne(ileQueryCaptor.capture())
           val actualIleQuery = ileQueryCaptor.getValue
 
           actualIleQuery.sessionId mustBe "sessionId"
@@ -231,7 +231,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         "redirect to the same endpoint" in {
 
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString())).thenReturn(Future.successful(None))
-          when(ileQueryRepository.insert(any[IleQuery])(any())).thenReturn(Future.successful(dummyWriteResultSuccess))
+          when(ileQueryRepository.insertOne(any[IleQuery])).thenReturn(Future.successful(Right(exampleIleQuery())))
           when(connector.submit(any[IleQueryExchange])(any())).thenReturn(Future.successful(conversationId))
 
           val result = controller.getConsignmentInformation(correctMucr)(request)
@@ -480,4 +480,11 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
   private def newIleQueryCaptor: ArgumentCaptor[IleQuery] = ArgumentCaptor.forClass(classOf[IleQuery])
   private def newCacheCaptor: ArgumentCaptor[Cache] = ArgumentCaptor.forClass(classOf[Cache])
 
+  def exampleIleQuery(
+    sessionId: String = "sessionId",
+    ucr: String = correctUcr,
+    conversationId: String = conversationId,
+    createdAt: Instant = Instant.now()
+  ): IleQuery =
+    IleQuery(sessionId = sessionId, ucr = ucr, conversationId = conversationId, createdAt = createdAt)
 }

@@ -16,14 +16,14 @@
 
 package models.viewmodels.notificationspage.converters
 
-import javax.inject.{Inject, Singleton}
-import models.notifications.{Entry, NotificationFrontendModel}
+import models.notifications.NotificationFrontendModel
 import models.viewmodels.decoder.Decoder
 import models.viewmodels.notificationspage.NotificationsPageSingleElement
 import play.api.i18n.Messages
 import play.twirl.api.{Html, HtmlFormat}
 import views.ViewDates
-import views.html.components.code_explanation
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ERSResponseConverter @Inject()(val decoder: Decoder, viewDates: ViewDates)

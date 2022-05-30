@@ -71,6 +71,7 @@ class LocationController @Inject()(
                 cacheRepository.upsert(request.cache.update(departureAnswers.copy(location = Some(validLocation)))).map { _ =>
                   Redirect(controllers.movements.routes.GoodsDepartedController.displayPage())
                 }
+              case _ => Future.successful(BadRequest)
             }
           }
         )
