@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,12 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.govuk_wrapper
+@import views.html.components.gds._
+@import views.Title
 
-@this(govuk_wrapper: govuk_wrapper)
+@this(
+    govukLayout: gds_main_template,
+)
 
 @(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages)
 
@@ -28,4 +31,7 @@
   <p>@messages(message)</p>
 }
 
-@govuk_wrapper(title = messages(pageTitle), contentHeader = Some(contentHeader), mainContent = mainContent)
+@govukLayout(title = Title(pageTitle)) {
+  @contentHeader
+  @mainContent
+}

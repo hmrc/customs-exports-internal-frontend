@@ -51,7 +51,7 @@ object ConsignmentReferences {
         case ConsignmentReferenceType.D => Some((model.reference, Some(model.referenceValue), None))
         case ConsignmentReferenceType.M => Some((model.reference, None, Some(model.referenceValue)))
         case _                          => Some((model.reference, None, None))
-    }
+      }
 
   val mapping = Forms
     .mapping(

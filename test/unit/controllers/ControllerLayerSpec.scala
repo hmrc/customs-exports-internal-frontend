@@ -16,9 +16,6 @@
 
 package controllers
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionContext, Future}
-
 import akka.stream.testkit.NoMaterializer
 import base.UnitSpec
 import config.{AppConfig, DucrPartConfig}
@@ -40,10 +37,12 @@ import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import repositories.CacheRepository
 import testdata.CommonTestData.providerId
-import views.ViewTemplates
 import views.html.unauthorized
 
-abstract class ControllerLayerSpec extends UnitSpec with ViewTemplates with BeforeAndAfterEach with CSRFSupport {
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
+
+abstract class ControllerLayerSpec extends UnitSpec with BeforeAndAfterEach with CSRFSupport {
 
   protected val operator = Operator(providerId)
 

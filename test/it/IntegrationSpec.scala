@@ -64,10 +64,11 @@ abstract class IntegrationSpec
   }
 
   protected def get(call: Call): Future[Result] =
-    route(app, FakeRequest("GET", call.url)).get
+    route(app, FakeRequest("GET", call.url).withSession("authToken" -> "Token some-token")).get
 
   protected def post[T](call: Call, payload: (String, String)*): Future[Result] = {
-    val request: Request[AnyContentAsFormUrlEncoded] = CSRFTokenHelper.addCSRFToken(FakeRequest("POST", call.url).withFormUrlEncodedBody(payload: _*))
+    val request: Request[AnyContentAsFormUrlEncoded] =
+      CSRFTokenHelper.addCSRFToken(FakeRequest("POST", call.url).withSession("authToken" -> "Token some-token").withFormUrlEncodedBody(payload: _*))
     route(app, request).get
   }
 

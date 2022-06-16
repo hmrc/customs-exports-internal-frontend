@@ -24,7 +24,7 @@ import javax.inject.Inject
 import models.ReturnToStartException
 import models.cache.{ArrivalAnswers, DepartureAnswers, MovementAnswers, RetrospectiveArrivalAnswers}
 
-class MovementBuilder @Inject()(zoneId: ZoneId) {
+class MovementBuilder @Inject() (zoneId: ZoneId) {
 
   private val movementDateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 

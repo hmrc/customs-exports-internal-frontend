@@ -65,9 +65,8 @@ object Time {
     def unbind(time: Time): (Try[Int], Try[Int], String) =
       (Try(time.getClockHour), Try(time.getMinute), time.getAmPm)
 
-    val hourMapping: Mapping[Try[Int]] = {
+    val hourMapping: Mapping[Try[Int]] =
       text().verifying("time.hour.error", isInRange(1, 12)).transform(value => Try(value.toInt), _.map(_.toString).getOrElse(""))
-    }
 
     val minuteMapping: Mapping[Try[Int]] = {
       val formatter = new DecimalFormat("00")

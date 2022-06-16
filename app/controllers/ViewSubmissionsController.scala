@@ -31,7 +31,7 @@ import views.html.view_submissions
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ViewSubmissionsController @Inject()(
+class ViewSubmissionsController @Inject() (
   authenticate: AuthenticatedAction,
   connector: CustomsDeclareExportsMovementsConnector,
   mcc: MessagesControllerComponents,

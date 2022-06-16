@@ -20,6 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.JourneyRequest
 import forms.SpecificDateTimeChoice.form
 import forms.{ArrivalDetails, DepartureDetails, SpecificDateTimeChoice}
+
 import javax.inject.{Inject, Singleton}
 import models.cache.{ArrivalAnswers, DepartureAnswers, JourneyType, MovementAnswers}
 import models.{DateTimeProvider, ReturnToStartException}
@@ -27,13 +28,14 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.specific_date_and_time
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SpecificDateTimeController @Inject()(
+class SpecificDateTimeController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   cache: CacheRepository,
@@ -41,7 +43,7 @@ class SpecificDateTimeController @Inject()(
   specificDateTimePage: specific_date_and_time,
   dateTimeProvider: DateTimeProvider
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)) { implicit request =>
     val choice = request.answersAs[MovementAnswers].specificDateTimeChoice

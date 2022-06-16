@@ -23,7 +23,7 @@ import metrics.MetricIdentifiers._
 import models.cache.JourneyType._
 
 @Singleton
-class MovementsMetrics @Inject()(metrics: Metrics) {
+class MovementsMetrics @Inject() (metrics: Metrics) {
 
   val timers = Map(
     ARRIVE -> metrics.defaultRegistry.timer(s"$arrivalMetric.timer"),

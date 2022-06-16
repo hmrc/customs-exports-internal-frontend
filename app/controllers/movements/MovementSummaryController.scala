@@ -28,7 +28,7 @@ import views.html.summary.{arrival_summary_page, departure_summary_page, retrosp
 
 import scala.concurrent.ExecutionContext
 
-class MovementSummaryController @Inject()(
+class MovementSummaryController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   submissionService: SubmissionService,

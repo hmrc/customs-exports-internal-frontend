@@ -20,6 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.JourneyRequest
 import forms.Transport
 import forms.providers.TransportFormProvider
+
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
 import models.cache.{DepartureAnswers, JourneyType}
@@ -27,13 +28,14 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.transport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TransportController @Inject()(
+class TransportController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   cacheRepository: CacheRepository,
@@ -41,7 +43,7 @@ class TransportController @Inject()(
   mcc: MessagesControllerComponents,
   transportPage: transport
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)) { implicit request =>
     val answers = request.answersAs[DepartureAnswers]

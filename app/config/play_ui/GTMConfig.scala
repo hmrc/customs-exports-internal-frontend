@@ -19,7 +19,7 @@ package config.play_ui
 import javax.inject.Inject
 import play.api.Configuration
 
-class GTMConfig @Inject()(configuration: Configuration) {
+class GTMConfig @Inject() (configuration: Configuration) {
   val url: Option[String] =
     readConfig(container => s"gtm.$container.url")
 

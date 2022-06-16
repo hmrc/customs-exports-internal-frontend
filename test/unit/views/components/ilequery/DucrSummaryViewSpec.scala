@@ -57,8 +57,8 @@ class DucrSummaryViewSpec extends ViewSpec with Injector {
     }
 
     "render all ducr status of entry" in {
-      SOECode.DucrCodes.foreach(
-        soe => summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(soe = Some(soe.code))))), 1) must containMessage(soe.messageKey)
+      SOECode.DucrCodes.foreach(soe =>
+        summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(soe = Some(soe.code))))), 1) must containMessage(soe.messageKey)
       )
     }
 
@@ -72,8 +72,8 @@ class DucrSummaryViewSpec extends ViewSpec with Injector {
     }
 
     "render all input customs status" in {
-      ICSCode.codes.foreach(
-        ics => summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(ics = Some(ics.code))))), 3) must containMessage(ics.messageKey)
+      ICSCode.codes.foreach(ics =>
+        summaryElement(view(ducrInfo.copy(entryStatus = Some(status.copy(ics = Some(ics.code))))), 3) must containMessage(ics.messageKey)
       )
     }
 
@@ -97,10 +97,10 @@ class DucrSummaryViewSpec extends ViewSpec with Injector {
 
     "not render rows when codes and transport missing" in {
       val summaryText = view(ducrInfo.copy(entryStatus = None, movements = Seq.empty)).text()
-      summaryText must not include ("Route")
-      summaryText must not include ("Status")
-      summaryText must not include ("Transport")
-      summaryText must not include ("Input status")
+      summaryText must not include "Route"
+      summaryText must not include "Status"
+      summaryText must not include "Transport"
+      summaryText must not include "Input status"
     }
 
   }

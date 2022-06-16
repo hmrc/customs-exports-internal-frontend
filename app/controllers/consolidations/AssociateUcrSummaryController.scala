@@ -29,7 +29,7 @@ import views.html.associateucr.associate_ucr_summary
 
 import scala.concurrent.ExecutionContext
 
-class AssociateUcrSummaryController @Inject()(
+class AssociateUcrSummaryController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,

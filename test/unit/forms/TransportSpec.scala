@@ -229,7 +229,7 @@ class TransportSpec extends UnitSpec {
             JsonBindMaxChars
           )
 
-          form.errors mustBe (empty)
+          form.errors mustBe empty
           form.value.flatMap(_.modeOfTransport) must be(Some("2"))
           form.value.flatMap(_.transportId) must be(Some("xwercwrxwy"))
           form.value.flatMap(_.nationality) must be(Some("PL"))
@@ -385,7 +385,7 @@ class TransportSpec extends UnitSpec {
           val form =
             Transport.backIntoTheUkForm.bind(JsObject(Map("modeOfTransport" -> JsString("2"), "nationality" -> JsString("pl"))), JsonBindMaxChars)
 
-          form.errors mustBe (empty)
+          form.errors mustBe empty
           form.value.flatMap(_.modeOfTransport) must be(Some("2"))
           form.value.flatMap(_.nationality) must be(Some("PL"))
         }

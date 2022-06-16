@@ -16,7 +16,7 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    dependencyOverrides += "commons-codec" % "commons-codec" % "1.12",
+    dependencyOverrides += "commons-codec" % "commons-codec" % "1.15",
     majorVersion := 0,
     scalaVersion := "2.12.12"
   )

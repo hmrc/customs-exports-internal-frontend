@@ -19,6 +19,7 @@ package controllers
 import controllers.actions.AuthenticatedAction
 import controllers.exchanges.AuthenticatedRequest
 import forms.Choice
+
 import javax.inject.{Inject, Singleton}
 import models.UcrType.{Ducr, DucrPart, Mucr}
 import models.cache._
@@ -26,19 +27,20 @@ import models.{ReturnToStartException, UcrBlock}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.CacheRepository
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.choice_page
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ChoiceController @Inject()(
+class ChoiceController @Inject() (
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
   cacheRepository: CacheRepository,
   choicePage: choice_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
 
   def displayPage: Action[AnyContent] = authenticate.async { implicit request =>
     cacheRepository.findByProviderId(request.providerId).map {
@@ -69,7 +71,7 @@ class ChoiceController @Inject()(
     case Choice.Departure =>
       saveAndRedirect(DepartureAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage())
 
-    case Choice.AssociateUCR => {
+    case Choice.AssociateUCR =>
       val redirectionCall = cache.queryUcr
         .map(_.ucrType match {
           case Ducr.codeValue | DucrPart.codeValue => consolidations.routes.MucrOptionsController.displayPage()
@@ -78,7 +80,6 @@ class ChoiceController @Inject()(
         .getOrElse(throw ReturnToStartException)
 
       saveAndRedirect(AssociateUcrAnswers.fromQueryUcr, redirectionCall)
-    }
 
     case Choice.DisassociateUCR =>
       saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, consolidations.routes.DisassociateUcrSummaryController.displayPage())
@@ -98,6 +99,6 @@ class ChoiceController @Inject()(
         case None        => Cache(request.providerId, Some(answerProvider.apply(None)), None)
       }
       result <- cacheRepository.upsert(updatedCache).map(_ => Redirect(call))
-    } yield (result)
+    } yield result
 
 }

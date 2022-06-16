@@ -93,17 +93,17 @@ class CHIEFErrorSpec extends UnitSpec with ViewMatchers with CSRFSupport {
 
       "list is empty" in {
 
-        intercept[IllegalArgumentException] { CHIEFError(List.empty) }
+        intercept[IllegalArgumentException](CHIEFError(List.empty))
       }
 
       "list contains only one element" in {
 
-        intercept[IllegalArgumentException] { CHIEFError(List("code")) }
+        intercept[IllegalArgumentException](CHIEFError(List("code")))
       }
 
       "list contains more than two elements" in {
 
-        intercept[IllegalArgumentException] { CHIEFError(List("code", "description", "incorrect")) }
+        intercept[IllegalArgumentException](CHIEFError(List("code", "description", "incorrect")))
       }
     }
   }

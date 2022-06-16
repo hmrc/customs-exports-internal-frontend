@@ -1,1 +1,1 @@
-sbt clean scalafmt test:scalafmt coverage test it:test scalafmt::test test:scalafmt::test coverageReport
+sbt clean scalafmt test:scalafmt it:test::scalafmt coverage test it:test scalafmtCheckAll coverageReport

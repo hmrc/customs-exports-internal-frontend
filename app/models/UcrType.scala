@@ -34,11 +34,13 @@ object UcrType {
   }
 
   val formatter: Formatter[UcrType] = new Formatter[UcrType] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], UcrType] = {
-      data.get(key).map { typ =>
-        lookup.andThen(Right.apply).applyOrElse(typ, (_: String) => Left(Seq(FormError(key, "error.unknown"))))
-      }
-    }.getOrElse(Left(Seq(FormError(key, "error.required"))))
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], UcrType] =
+      data
+        .get(key)
+        .map { typ =>
+          lookup.andThen(Right.apply).applyOrElse(typ, (_: String) => Left(Seq(FormError(key, "error.unknown"))))
+        }
+        .getOrElse(Left(Seq(FormError(key, "error.required"))))
 
     override def unbind(key: String, value: UcrType): Map[String, String] = Map(key -> value.formValue)
   }

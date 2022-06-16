@@ -34,7 +34,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.unauthorized
 
 @Singleton
-class AuthenticatedAction @Inject()(
+class AuthenticatedAction @Inject() (
   appConfig: AppConfig,
   override val config: Configuration,
   override val env: Environment,

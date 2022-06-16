@@ -30,7 +30,7 @@ import views.html.disassociateucr.disassociate_ucr_summary
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DisassociateUcrSummaryController @Inject()(
+class DisassociateUcrSummaryController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,

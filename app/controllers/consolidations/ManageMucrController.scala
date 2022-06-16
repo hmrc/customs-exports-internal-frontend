@@ -20,6 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.JourneyRequest
 import forms.ManageMucrChoice._
 import forms.{AssociateUcr, ManageMucrChoice, MucrOptions}
+
 import javax.inject.{Inject, Singleton}
 import models.UcrType.Mucr
 import models.cache.AssociateUcrAnswers
@@ -27,20 +28,21 @@ import models.cache.JourneyType.ASSOCIATE_UCR
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.associateucr.manage_mucr
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageMucrController @Inject()(
+class ManageMucrController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
   cacheRepository: CacheRepository,
   manageMucrPage: manage_mucr
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(ASSOCIATE_UCR)) { implicit request =>
     request.cache.queryUcr.map(_.ucrType) match {
