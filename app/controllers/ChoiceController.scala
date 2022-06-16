@@ -19,6 +19,7 @@ package controllers
 import controllers.actions.AuthenticatedAction
 import controllers.exchanges.AuthenticatedRequest
 import forms.Choice
+
 import javax.inject.{Inject, Singleton}
 import models.UcrType.{Ducr, DucrPart, Mucr}
 import models.cache._
@@ -26,6 +27,7 @@ import models.{ReturnToStartException, UcrBlock}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.CacheRepository
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.choice_page
 
@@ -38,7 +40,7 @@ class ChoiceController @Inject()(
   cacheRepository: CacheRepository,
   choicePage: choice_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
 
   def displayPage: Action[AnyContent] = authenticate.async { implicit request =>
     cacheRepository.findByProviderId(request.providerId).map {

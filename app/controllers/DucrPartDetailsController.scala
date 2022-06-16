@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions.{AuthenticatedAction, DucrPartAction}
 import forms.DucrPartDetails
+
 import javax.inject.Inject
 import models.UcrType
 import models.cache.Cache
@@ -25,6 +26,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.ducr_part_details
 
@@ -37,7 +39,7 @@ class DucrPartDetailsController @Inject()(
   cacheRepository: CacheRepository,
   ducrPartsDetailsPage: ducr_part_details
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
 
   def displayPage(): Action[AnyContent] = (authenticate andThen isDucrPartsFeatureEnabled).async { implicit request =>
     cacheRepository
