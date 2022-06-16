@@ -35,7 +35,7 @@ import views.html.transport
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TransportController @Inject()(
+class TransportController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   cacheRepository: CacheRepository,

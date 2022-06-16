@@ -26,7 +26,7 @@ import views.ViewDates
 import views.html.components.paragraph
 
 @Singleton
-class MovementResponseConverter @Inject()(val decoder: Decoder, viewDates: ViewDates)
+class MovementResponseConverter @Inject() (val decoder: Decoder, viewDates: ViewDates)
     extends NotificationPageSingleElementConverter with CommonResponseConverter {
 
   override def convert(notification: NotificationFrontendModel)(implicit messages: Messages): NotificationsPageSingleElement = {

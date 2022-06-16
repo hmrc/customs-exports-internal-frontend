@@ -35,12 +35,11 @@ object MucrOptions {
 
   val formId = "MucrOptions"
 
-  def form2Model: (String, String, String) => MucrOptions = {
-    case (createOrAdd, newMucr, existingMucr) =>
-      createOrAdd match {
-        case Create.value => MucrOptions(newMucr.toUpperCase, "", Create)
-        case Add.value    => MucrOptions("", existingMucr.toUpperCase, Add)
-      }
+  def form2Model: (String, String, String) => MucrOptions = { case (createOrAdd, newMucr, existingMucr) =>
+    createOrAdd match {
+      case Create.value => MucrOptions(newMucr.toUpperCase, "", Create)
+      case Add.value    => MucrOptions("", existingMucr.toUpperCase, Add)
+    }
   }
 
   def model2Form: MucrOptions => Option[(String, String, String)] =

@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class SubmissionService @Inject()(
+class SubmissionService @Inject() (
   cacheRepository: CacheRepository,
   connector: CustomsDeclareExportsMovementsConnector,
   auditService: AuditService,
@@ -117,10 +117,9 @@ class SubmissionService @Inject()(
         case Success(_) => auditService.auditMovements(data, success, movementAuditType(journeyType))
         case Failure(_) => auditService.auditMovements(data, failed, movementAuditType(journeyType))
       }
-      .andThen {
-        case _ =>
-          metrics.incrementCounter(journeyType)
-          timer.stop()
+      .andThen { case _ =>
+        metrics.incrementCounter(journeyType)
+        timer.stop()
       }
   }
 

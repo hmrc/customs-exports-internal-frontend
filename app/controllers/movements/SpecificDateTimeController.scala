@@ -35,7 +35,7 @@ import views.html.specific_date_and_time
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SpecificDateTimeController @Inject()(
+class SpecificDateTimeController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   cache: CacheRepository,

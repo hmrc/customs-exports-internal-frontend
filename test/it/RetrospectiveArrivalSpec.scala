@@ -28,8 +28,8 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         givenAuthSuccess("pid")
         givenCacheFor(
           "pid",
-          RetrospectiveArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345"))
+          RetrospectiveArrivalAnswers(consignmentReferences =
+            Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345"))
           )
         )
 
@@ -47,8 +47,8 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         givenAuthSuccess("pid")
         givenCacheFor(
           "pid",
-          RetrospectiveArrivalAnswers(
-            consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345"))
+          RetrospectiveArrivalAnswers(consignmentReferences =
+            Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345"))
           )
         )
 

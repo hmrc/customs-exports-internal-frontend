@@ -31,7 +31,7 @@ import views.html.associateucr.mucr_options
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MucrOptionsController @Inject()(
+class MucrOptionsController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,

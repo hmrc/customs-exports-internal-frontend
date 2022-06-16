@@ -32,7 +32,7 @@ import views.html.ducr_part_details
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DucrPartDetailsController @Inject()(
+class DucrPartDetailsController @Inject() (
   mcc: MessagesControllerComponents,
   authenticate: AuthenticatedAction,
   isDucrPartsFeatureEnabled: DucrPartAction,
@@ -61,7 +61,7 @@ class DucrPartDetailsController @Inject()(
         validDucrPartDetails =>
           cacheRepository.upsert(Cache(request.providerId, validDucrPartDetails.toUcrBlock)).map { _ =>
             Redirect(controllers.routes.ChoiceController.displayPage())
-        }
+          }
       )
   }
 

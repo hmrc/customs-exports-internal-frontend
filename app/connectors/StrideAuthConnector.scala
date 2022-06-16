@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.CorePost
 import uk.gov.hmrc.http.HttpClient
 
 @Singleton
-class StrideAuthConnector @Inject()(configuration: AppConfig, client: HttpClient) extends PlayAuthConnector {
+class StrideAuthConnector @Inject() (configuration: AppConfig, client: HttpClient) extends PlayAuthConnector {
   override val serviceUrl: String = configuration.authBaseUrl
   override def http: CorePost = client
 }

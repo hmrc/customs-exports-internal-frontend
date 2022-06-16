@@ -30,7 +30,7 @@ import views.html.shutmucr.shut_mucr_summary
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ShutMucrSummaryController @Inject()(
+class ShutMucrSummaryController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,

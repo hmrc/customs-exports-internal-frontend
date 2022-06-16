@@ -94,8 +94,8 @@ object RetrospectiveArrivalAnswers {
 
   def fromQueryUcr(queryUcr: Option[UcrBlock]): RetrospectiveArrivalAnswers = queryUcr match {
     case Some(ucrBlock) if ucrBlock.ucrType.equals(Mucr.codeValue) =>
-      RetrospectiveArrivalAnswers(
-        consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = ucrBlock.ucr))
+      RetrospectiveArrivalAnswers(consignmentReferences =
+        Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = ucrBlock.ucr))
       )
     case Some(ucrBlock) if ucrBlock.ucrType.equals(Ducr.codeValue) =>
       RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, ucrBlock.ucr)))

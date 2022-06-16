@@ -35,7 +35,7 @@ import views.html.associateucr.manage_mucr
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageMucrController @Inject()(
+class ManageMucrController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,

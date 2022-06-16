@@ -34,7 +34,7 @@ import views.html.choice_page
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ChoiceController @Inject()(
+class ChoiceController @Inject() (
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
   cacheRepository: CacheRepository,
@@ -71,7 +71,7 @@ class ChoiceController @Inject()(
     case Choice.Departure =>
       saveAndRedirect(DepartureAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage())
 
-    case Choice.AssociateUCR => {
+    case Choice.AssociateUCR =>
       val redirectionCall = cache.queryUcr
         .map(_.ucrType match {
           case Ducr.codeValue | DucrPart.codeValue => consolidations.routes.MucrOptionsController.displayPage()
@@ -80,7 +80,6 @@ class ChoiceController @Inject()(
         .getOrElse(throw ReturnToStartException)
 
       saveAndRedirect(AssociateUcrAnswers.fromQueryUcr, redirectionCall)
-    }
 
     case Choice.DisassociateUCR =>
       saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, consolidations.routes.DisassociateUcrSummaryController.displayPage())
@@ -100,6 +99,6 @@ class ChoiceController @Inject()(
         case None        => Cache(request.providerId, Some(answerProvider.apply(None)), None)
       }
       result <- cacheRepository.upsert(updatedCache).map(_ => Redirect(call))
-    } yield (result)
+    } yield result
 
 }

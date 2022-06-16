@@ -35,7 +35,7 @@ import views.html.location
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LocationController @Inject()(
+class LocationController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   cacheRepository: CacheRepository,
@@ -59,7 +59,7 @@ class LocationController @Inject()(
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[Location]) => Future.successful(BadRequest(buildPage(formWithErrors))),
-          validLocation => {
+          validLocation =>
             request.answers match {
               case arrivalAnswers: ArrivalAnswers =>
                 cacheRepository.upsert(request.cache.update(arrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
@@ -75,7 +75,6 @@ class LocationController @Inject()(
                 }
               case _ => Future.successful(BadRequest)
             }
-          }
         )
     }
 

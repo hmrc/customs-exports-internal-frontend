@@ -35,7 +35,7 @@ import views.html.{arrival_details, departure_details}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class MovementDetailsController @Inject()(
+class MovementDetailsController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   cacheRepository: CacheRepository,
@@ -85,7 +85,7 @@ class MovementDetailsController @Inject()(
         validForm =>
           cacheRepository.upsert(request.cache.update(arrivalAnswers.copy(arrivalDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
-        }
+          }
       )
   }
 
@@ -102,7 +102,7 @@ class MovementDetailsController @Inject()(
         validForm =>
           cacheRepository.upsert(request.cache.update(departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
             Right(controllers.movements.routes.LocationController.displayPage())
-        }
+          }
       )
   }
 

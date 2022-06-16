@@ -75,23 +75,20 @@ object Date {
       (Try(value.getDayOfMonth), Try(value.getMonthValue), Try(value.getYear))
     }
 
-    val dayMapping: Mapping[Try[Int]] = {
+    val dayMapping: Mapping[Try[Int]] =
       text()
         .verifying("date.day.error", isInRange(1, 31))
         .transform[Try[Int]](value => Try(value.toInt), _.map(value => twoDigitFormatter.format(value)).getOrElse(""))
-    }
 
-    val monthMapping: Mapping[Try[Int]] = {
+    val monthMapping: Mapping[Try[Int]] =
       text()
         .verifying("date.month.error", isInRange(1, 12))
         .transform[Try[Int]](value => Try(value.toInt), _.map(value => twoDigitFormatter.format(value)).getOrElse(""))
-    }
 
-    val yearMapping: Mapping[Try[Int]] = {
+    val yearMapping: Mapping[Try[Int]] =
       text()
         .verifying("date.year.error", isInRange(2000, 3000))
         .transform[Try[Int]](value => Try(value.toInt), _.map(value => fourDigitFormatter.format(value)).getOrElse(""))
-    }
 
     Forms
       .tuple(dayKey -> dayMapping, monthKey -> monthMapping, yearKey -> yearMapping)

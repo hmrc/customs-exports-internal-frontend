@@ -25,7 +25,7 @@ import repositories.CacheRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyRefiner @Inject()(cacheRepository: CacheRepository)(implicit val exc: ExecutionContext)
+class JourneyRefiner @Inject() (cacheRepository: CacheRepository)(implicit val exc: ExecutionContext)
     extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
   override protected def executionContext: ExecutionContext = exc

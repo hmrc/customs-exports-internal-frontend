@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.ile_query
 
 @Singleton
-class FindConsignmentController @Inject()(authenticate: AuthenticatedAction, mcc: MessagesControllerComponents, ileQueryPage: ile_query)
+class FindConsignmentController @Inject() (authenticate: AuthenticatedAction, mcc: MessagesControllerComponents, ileQueryPage: ile_query)
     extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
 
   def displayQueryForm(): Action[AnyContent] = authenticate { implicit request =>

@@ -34,7 +34,7 @@ import views.html.goods_departed
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class GoodsDepartedController @Inject()(
+class GoodsDepartedController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   cacheRepository: CacheRepository,

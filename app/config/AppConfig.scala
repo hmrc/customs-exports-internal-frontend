@@ -21,19 +21,18 @@ import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class AppConfig @Inject()(
+class AppConfig @Inject() (
   runModeConfiguration: Configuration,
   servicesConfig: ServicesConfig,
   environment: Environment,
   @Named("appName") serviceIdentifier: String
 ) {
 
-  val runningAsDev: Boolean = {
+  val runningAsDev: Boolean =
     runModeConfiguration
       .getOptional[String]("run.mode")
       .map(_.equals(Mode.Dev.toString))
       .getOrElse(Mode.Dev.equals(environment.mode))
-  }
   val analyticsToken: String = runModeConfiguration.get[String](s"google-analytics.token")
   val analyticsHost: String = runModeConfiguration.get[String](s"google-analytics.host")
   val authBaseUrl: String = servicesConfig.baseUrl("auth")

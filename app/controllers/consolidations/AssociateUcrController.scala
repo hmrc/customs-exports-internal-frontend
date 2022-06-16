@@ -32,7 +32,7 @@ import views.html.associateucr.associate_ucr
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AssociateUcrController @Inject()(
+class AssociateUcrController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   mcc: MessagesControllerComponents,
