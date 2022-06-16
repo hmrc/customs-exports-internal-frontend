@@ -23,11 +23,12 @@ import controllers.exchanges.AuthenticatedRequest
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.{verify, when}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment, Mode}
+import play.twirl.api.HtmlFormat
 import testdata.CommonTestData.providerId
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core.authorise.Predicate
@@ -39,7 +40,7 @@ import scala.concurrent.Future
 
 class AuthenticatedActionSpec extends ControllerLayerSpec {
 
-  private val unauthorizedPage: unauthorized = new unauthorized(main_template)
+  private val unauthorizedPage: unauthorized = mock[unauthorized]
   private val appConfig = mock[AppConfig]
   private val config = mock[Configuration]
   private val environment = mock[Environment]
@@ -76,6 +77,7 @@ class AuthenticatedActionSpec extends ControllerLayerSpec {
       "auth successful without credentials" in {
         given(block.apply(any())).willReturn(Future.successful(controllerResponse))
         given(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any())).willReturn(Future.successful(None))
+        when(unauthorizedPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
 
         val result = action.invokeBlock(request, block)
 
@@ -86,6 +88,7 @@ class AuthenticatedActionSpec extends ControllerLayerSpec {
         given(block.apply(any())).willReturn(Future.successful(controllerResponse))
         given(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any()))
           .willReturn(Future.failed(new AuthorisationException("error") {}))
+        when(unauthorizedPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
 
         val result = action.invokeBlock(request, block)
 

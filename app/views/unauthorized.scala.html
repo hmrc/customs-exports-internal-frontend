@@ -14,13 +14,13 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.main_template
+@import views.html.components.gds._
 @import views.Title
 
-@this(main_template: main_template)
+@this(govukLayout: gds_main_template)
 
 @()(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Title("view.unauthorized.title")) {
+@govukLayout(title = Title("view.unauthorized.title")) {
     <h1>@messages("view.unauthorized.title")</h1>
 }

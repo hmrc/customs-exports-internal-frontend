@@ -27,7 +27,7 @@ import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData.providerId
 
-class ViewSpec extends AnyWordSpec with Matchers with ViewTemplates with ViewMatchers with MessagesStub with CSRFSupport {
+class ViewSpec extends AnyWordSpec with Matchers with ViewMatchers with MessagesStub with CSRFSupport {
 
   implicit protected def htmlBodyOf(html: Html): Document = Jsoup.parse(html.toString())
 
