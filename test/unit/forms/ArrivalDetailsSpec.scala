@@ -16,24 +16,24 @@
 
 package forms
 
-import java.time.{LocalDate, LocalTime}
-
+import java.time.{LocalDate, LocalTime, ZoneId}
 import base.UnitSpec
 import forms.common.{Date, Time}
 import play.api.data.Mapping
-import testdata.MovementsTestData
 
 class ArrivalDetailsSpec extends UnitSpec {
 
   private val date = LocalDate.now().minusDays(1)
 
-  private val timeMapping = Time.mapping.withPrefix("timeOfArrival")
+  private val timeMapping = Time.mapping("timeOfArrival.").withPrefix("timeOfArrival")
+
   private val timeInputData = timeMapping.unbind(Time(LocalTime.of(1, 1)))
 
-  private val dateMapping: Mapping[Date] = Date.mapping.withPrefix("dateOfArrival")
+  private val dateMapping: Mapping[Date] = Date.mapping("dateOfArrival.").withPrefix("dateOfArrival")
+
   private val dateInputData = dateMapping.unbind(Date(date))
 
-  val movementDetails = MovementsTestData.movementDetails
+  val movementDetails = new MovementDetails(ZoneId.of("UTC"))
 
   "Arrival mapping" should {
 

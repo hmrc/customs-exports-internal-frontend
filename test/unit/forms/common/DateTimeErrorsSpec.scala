@@ -21,7 +21,7 @@ import play.api.data.{Form, FormError}
 
 class DateTimeErrorsSpec extends UnitSpec {
 
-  val form: Form[Date] = Form(Date.mapping)
+  val form: Form[Date] = Form(Date.mapping(""))
 
   "DateTimeError" should {
 

@@ -26,7 +26,7 @@ import play.api.data.{Form, FormError}
 
 class TimeSpec extends UnitSpec with FormMatchers {
 
-  val form: Form[Time] = Form(Time.mapping)
+  val form: Form[Time] = Form(Time.mapping(""))
 
   "Time object" should {
 

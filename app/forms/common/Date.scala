@@ -16,15 +16,16 @@
 
 package forms.common
 
-import java.text.DecimalFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
+import forms.{AdditionalConstraintsMapping, ConditionalConstraint}
 import play.api.data.Forms._
 import play.api.data.{Forms, Mapping}
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.voa.play.form.Condition
 import utils.FieldValidator._
 
+import java.text.DecimalFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.util.Try
 
 case class Date(date: LocalDate) {
@@ -51,48 +52,53 @@ object Date {
   val monthKey = "month"
   val dayKey = "day"
 
-  val mapping: Mapping[Date] = {
+  val twoDigitFormatter = new DecimalFormat("00")
+  val fourDigitFormatter = new DecimalFormat("0000")
 
-    val twoDigitFormatter = new DecimalFormat("00")
-    val fourDigitFormatter = new DecimalFormat("0000")
+  def isValidDateOrAnyEmptyFields(day: String, month: String, year: String): Boolean =
+    if (isAnyFieldEmpty(Seq(day, month, year))) true
+    else Try(LocalDate.of(year.toInt, month.toInt, day.toInt)).isSuccess
+  def isAnyFieldPopulated(fields: Seq[String]): Boolean = fields.exists(_.nonEmpty)
+  def isAnyFieldEmpty(fields: Seq[String]): Boolean = fields.exists(_.isEmpty)
+  def isAnyFieldPopulatedCondition(fields: Seq[String]): Condition = mapping => fields.exists(field => mapping.getOrElse(field, "").nonEmpty)
 
-    def build(day: Try[Int], month: Try[Int], year: Try[Int]): Try[LocalDate] =
-      for {
-        d <- day
-        m <- month
-        y <- year
-      } yield LocalDate.of(y, m, d)
-
-    def validate(day: Try[Int], month: Try[Int], year: Try[Int]): Boolean = build(day, month, year).isSuccess
-
-    def bind(day: Try[Int], month: Try[Int], year: Try[Int]): Date =
-      build(day, month, year)
-        .map(apply)
-        .getOrElse(throw new IllegalArgumentException("Could not bind local date when any is empty"))
-
-    def unbind(date: Date): (Try[Int], Try[Int], Try[Int]) = {
-      val value = date.date
-      (Try(value.getDayOfMonth), Try(value.getMonthValue), Try(value.getYear))
-    }
-
-    val dayMapping: Mapping[Try[Int]] =
-      text()
-        .verifying("date.day.error", isInRange(1, 31))
-        .transform[Try[Int]](value => Try(value.toInt), _.map(value => twoDigitFormatter.format(value)).getOrElse(""))
-
-    val monthMapping: Mapping[Try[Int]] =
-      text()
-        .verifying("date.month.error", isInRange(1, 12))
-        .transform[Try[Int]](value => Try(value.toInt), _.map(value => twoDigitFormatter.format(value)).getOrElse(""))
-
-    val yearMapping: Mapping[Try[Int]] =
-      text()
-        .verifying("date.year.error", isInRange(2000, 3000))
-        .transform[Try[Int]](value => Try(value.toInt), _.map(value => fourDigitFormatter.format(value)).getOrElse(""))
-
+  def mapping(prefix: String): Mapping[Date] =
     Forms
-      .tuple(dayKey -> dayMapping, monthKey -> monthMapping, yearKey -> yearMapping)
-      .verifying("date.error.invalid", (validate _).tupled)
-      .transform((bind _).tupled, unbind)
+      .tuple(dayKey -> dayMapping(prefix), monthKey -> monthMapping(prefix), yearKey -> yearMapping(prefix))
+      // Fire error if all date fields are empty (isAnyFieldNotEmpty fails)
+      // This will never fire if any individual field-level "missing" errors have fired (see dayMapping below)
+      .verifying("date.error.allEmpty", date => isAnyFieldPopulated(Seq(date._1, date._2, date._3)))
+      // This error only fires if all fields have a value to check it's a valid date
+      .verifying("date.error.invalid", date => isValidDateOrAnyEmptyFields(date._1, date._2, date._3))
+      .transform((form2model _).tupled, model2form)
+
+  private def dayMapping(prefix: String): Mapping[String] = AdditionalConstraintsMapping(
+    text()
+      .verifying("date.day.error", isEmptyOr(isInRange(1, 31))),
+    // Apply constraint if any field other than this one has a value (this stops field-level errors firing when all fields are empty)
+    // Then fire error if this field is empty (nonEmpty constraint fails)
+    // If all given fields are empty and constraint is not applied, this field either has a value
+    // or will be caught downstream by "allEmpty" validation (see mapping above)
+    Seq(ConditionalConstraint(isAnyFieldPopulatedCondition(Seq(prefix + monthKey, prefix + yearKey)), "date.day.missing", nonEmpty))
+  )
+
+  private def monthMapping(prefix: String): Mapping[String] = AdditionalConstraintsMapping(
+    text()
+      .verifying("date.month.error", isEmptyOr(isInRange(1, 12))),
+    Seq(ConditionalConstraint(isAnyFieldPopulatedCondition(Seq(prefix + dayKey, prefix + yearKey)), "date.month.missing", nonEmpty))
+  )
+
+  private def yearMapping(prefix: String): Mapping[String] = AdditionalConstraintsMapping(
+    text()
+      .verifying("date.year.error", isEmptyOr(isInRange(2000, 3000))),
+    Seq(ConditionalConstraint(isAnyFieldPopulatedCondition(Seq(prefix + monthKey, prefix + dayKey)), "date.year.missing", nonEmpty))
+  )
+
+  private def form2model(day: String, month: String, year: String): Date =
+    Date(LocalDate.of(year.toInt, month.toInt, day.toInt))
+
+  private def model2form(date: Date): (String, String, String) = {
+    val value = date.date
+    (twoDigitFormatter.format(value.getDayOfMonth), twoDigitFormatter.format(value.getMonthValue), fourDigitFormatter.format(value.getYear))
   }
 }
