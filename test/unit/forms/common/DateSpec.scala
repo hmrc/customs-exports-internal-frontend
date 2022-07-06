@@ -123,7 +123,7 @@ class DateSpec extends UnitSpec {
         val errors = form.bind(dateInput).errors
 
         errors.length must be(1)
-        errors.head must be(FormError("", "date.error.allEmpty"))
+        errors.head must be(FormError("", "date.error.arrival.allEmpty"))
       }
     }
 
