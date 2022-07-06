@@ -13,7 +13,8 @@ date.month.error = Month must be between 1 and 12
 date.year.missing = The date must include a year
 date.year.error = Year must be between 2000 and 3000
 date.error.invalid = Date must be in the correct format
-date.error.allEmpty = Enter a date
+date.error.arrival.allEmpty = Enter the date of arrival
+date.error.departure.allEmpty = Enter the date of departure
 
 time.hour = Hour
 time.minute = Minute
@@ -26,7 +27,8 @@ time.ampm.error = Select am or pm
 time.am = am
 time.pm = pm
 time.error.invalid = Time must be in the correct format
-time.error.allEmpty = Enter a time
+time.error.arrival.allEmpty = Enter the time of arrival
+time.error.departure.allEmpty = Enter the time of departure
 
 feedback = This is a new service - your {0} will help us to improve it.
 feedback.link = feedback

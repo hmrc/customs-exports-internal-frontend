@@ -67,7 +67,7 @@ object Date {
       .tuple(dayKey -> dayMapping(prefix), monthKey -> monthMapping(prefix), yearKey -> yearMapping(prefix))
       // Fire error if all date fields are empty (isAnyFieldNotEmpty fails)
       // This will never fire if any individual field-level "missing" errors have fired (see dayMapping below)
-      .verifying("date.error.allEmpty", date => isAnyFieldPopulated(Seq(date._1, date._2, date._3)))
+      .verifying(getAllEmptyError(prefix), date => isAnyFieldPopulated(Seq(date._1, date._2, date._3)))
       // This error only fires if all fields have a value to check it's a valid date
       .verifying("date.error.invalid", date => isValidDateOrAnyEmptyFields(date._1, date._2, date._3))
       .transform((form2model _).tupled, model2form)
@@ -93,6 +93,10 @@ object Date {
       .verifying("date.year.error", isEmptyOr(isInRange(2000, 3000))),
     Seq(ConditionalConstraint(isAnyFieldPopulatedCondition(Seq(prefix + monthKey, prefix + dayKey)), "date.year.missing", nonEmpty))
   )
+
+  private def getAllEmptyError(prefix: String): String =
+    if (prefix.contains("Departure")) "date.error.departure.allEmpty"
+    else "date.error.arrival.allEmpty"
 
   private def form2model(day: String, month: String, year: String): Date =
     Date(LocalDate.of(year.toInt, month.toInt, day.toInt))

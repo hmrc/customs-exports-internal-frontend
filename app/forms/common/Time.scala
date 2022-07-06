@@ -62,7 +62,7 @@ object Time {
   def mapping(prefix: String): Mapping[Time] =
     Forms
       .tuple(hourKey -> hourMapping(prefix), minuteKey -> minuteMapping(prefix), ampmKey -> amPmMapping(prefix))
-      .verifying("time.error.allEmpty", time => isAnyFieldPopulated(Seq(time._1, time._2, time._3)))
+      .verifying(getAllEmptyError(prefix), time => isAnyFieldPopulated(Seq(time._1, time._2, time._3)))
       .verifying("time.error.invalid", time => isValidTimeOrAnyEmptyFields(time._1, time._2, time._3))
       .transform((bind _).tupled, unbind)
 
@@ -83,6 +83,10 @@ object Time {
       .verifying("time.ampm.error", isEmptyOr(isContainedIn(Seq(Time.am, Time.pm)))),
     Seq(ConditionalConstraint(isAnyFieldPopulatedCondition(Seq(prefix + minuteKey, prefix + hourKey)), "time.ampm.error", nonEmpty))
   )
+
+  private def getAllEmptyError(prefix: String): String =
+    if (prefix.contains("Departure")) "time.error.departure.allEmpty"
+    else "time.error.arrival.allEmpty"
 
   private def bind(hour: String, minutes: String, ampm: String): Time = Time(LocalTime.parse(timeString(hour, minutes, ampm), time12HourFormatter))
 
