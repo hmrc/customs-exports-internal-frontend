@@ -29,14 +29,18 @@ import models.notifications.queries.IleQueryResponseExchangeData.SuccessfulRespo
 import org.mockito.BDDMockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{Format, Json}
 import play.api.test.Helpers._
 import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+
+import java.time.Instant
 
 class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with MockitoSugar {
 
+  implicit val formatInstant: Format[Instant] = MongoJavatimeFormats.instantFormat
   private val config = mock[AppConfig]
   given(config.customsDeclareExportsMovementsUrl).willReturn(downstreamURL)
 
@@ -196,7 +200,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
            |      }
            |    ],
            |    "actionType":"Arrival",
-           |    "requestTimestamp":"${expectedSubmission.requestTimestamp}"
+           |    "requestTimestamp": ${Json.toJson(expectedSubmission.requestTimestamp)}
            |  }
            |]""".stripMargin
 
@@ -232,7 +236,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
            |      }
            |    ],
            |    "actionType":"Arrival",
-           |    "requestTimestamp":"${expectedSubmission.requestTimestamp}"
+           |    "requestTimestamp":${Json.toJson(expectedSubmission.requestTimestamp)}
            |  }
            |""".stripMargin
 
@@ -258,7 +262,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec with Moc
       val notificationsJson =
         s"""[
           |   {
-          |     "timestampReceived":"${expectedNotification.timestampReceived}",
+          |     "timestampReceived":${Json.toJson(expectedNotification.timestampReceived)},
           |     "conversationId":"$conversationId",
           |     "responseType":"${ControlResponse.value}",
           |     "entries":[
