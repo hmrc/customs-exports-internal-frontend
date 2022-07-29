@@ -18,10 +18,9 @@ package controllers
 
 import akka.stream.testkit.NoMaterializer
 import base.UnitSpec
-import config.{AppConfig, DucrPartConfig}
+import config.AppConfig
 import connectors.StrideAuthConnector
-import controllers.actions.{AuthenticatedAction, DucrPartAction, JourneyRefiner}
-import controllers.exceptions.InvalidFeatureStateException
+import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
 import models.UcrBlock
 import models.cache.JourneyType.JourneyType
@@ -93,15 +92,6 @@ abstract class ControllerLayerSpec extends UnitSpec with BeforeAndAfterEach with
   case object InValidJourney extends JourneyRefiner(mock[CacheRepository]) {
     override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
       Future.successful(Left(Results.Forbidden))
-  }
-
-  case object DucrPartsEnabled extends DucrPartAction(mock[DucrPartConfig]) {
-    override def invokeBlock[A](request: AuthenticatedRequest[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = block(request)
-  }
-
-  case object DucrPartsDisabled extends DucrPartAction(mock[DucrPartConfig]) {
-    override def invokeBlock[A](request: AuthenticatedRequest[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-      throw InvalidFeatureStateException
   }
 
   def stubMessagesControllerComponents(

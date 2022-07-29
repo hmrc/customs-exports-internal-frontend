@@ -16,11 +16,10 @@
 
 package controllers
 
-import controllers.actions.DucrPartAction
-import controllers.exceptions.InvalidFeatureStateException
+import controllers.routes.ChoiceController
 import forms.DucrPartDetails
-import models.{UcrBlock, UcrType}
 import models.cache.Cache
+import models.{UcrBlock, UcrType}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -37,195 +36,136 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
 
   private val ducrPartDetailsPage = mock[ducr_part_details]
 
-  private def controller(ducrPartsAction: DucrPartAction = DucrPartsEnabled) =
-    new DucrPartDetailsController(stubMessagesControllerComponents(), SuccessfulAuth(), ducrPartsAction, cacheRepository, ducrPartDetailsPage)(global)
+  private def controller = new DucrPartDetailsController(stubMessagesControllerComponents(), SuccessfulAuth(), cacheRepository, ducrPartDetailsPage)(
+    global
+  )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-
     reset(ducrPartDetailsPage)
     when(ducrPartDetailsPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override def afterEach(): Unit = {
     reset(ducrPartDetailsPage)
-
     super.afterEach()
+  }
+
+  "DucrPartDetailsController on displayPage" should {
+
+    "call CacheRepository" in {
+      givenTheCacheIsEmpty()
+      controller.displayPage()(getRequest).futureValue
+      verify(cacheRepository).findByProviderId(any())
+    }
+
+    "return Ok (200) response" in {
+      givenTheCacheIsEmpty()
+      val result = controller.displayPage()(getRequest)
+      status(result) mustBe OK
+    }
   }
 
   "DucrPartDetailsController on displayPage" when {
 
-    "ducrParts feature is disabled" should {
+    "cache is empty" should {
 
-      "throw InvalidFeatureStateException" in {
+      "call DucrPartDetails view" in {
+        givenTheCacheIsEmpty()
+        controller.displayPage()(getRequest).futureValue
+        verify(ducrPartDetailsPage).apply(any())(any(), any())
+      }
 
-        intercept[InvalidFeatureStateException](controller(DucrPartsDisabled).displayPage()(getRequest).futureValue)
+      "pass empty form to DucrPartDetails view" in {
+        givenTheCacheIsEmpty()
+        controller.displayPage()(getRequest).futureValue
+
+        val expectedForm = DucrPartDetails.form()
+        verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
       }
     }
 
-    "ducrParts feature is enabled" should {
+    "cache contains queryUcr of DucrParts type" should {
 
-      "call CacheRepository" in {
-
-        givenTheCacheIsEmpty()
-
-        controller().displayPage()(getRequest).futureValue
-
-        verify(cacheRepository).findByProviderId(any())
+      "call DucrPartDetails view" in {
+        val cacheContents =
+          Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts)))
+        givenTheCacheContains(cacheContents)
+        controller.displayPage()(getRequest).futureValue
+        verify(ducrPartDetailsPage).apply(any())(any(), any())
       }
 
-      "return Ok (200) response" in {
+      "pass data from CacheRepository to DucrPartDetails view" in {
+        val cacheContents =
+          Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts)))
+        givenTheCacheContains(cacheContents)
+        controller.displayPage()(getRequest).futureValue
 
-        givenTheCacheIsEmpty()
-
-        val result = controller().displayPage()(getRequest)
-
-        status(result) mustBe OK
+        val expectedForm = DucrPartDetails.form().fill(DucrPartDetails(ducr = validDucr, ducrPartId = validDucrPartId))
+        verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
       }
     }
 
-    "ducrParts feature is enabled" when {
+    "cache contains queryUcr of different type" should {
 
-      "cache is empty" should {
-
-        "call DucrPartDetails view" in {
-
-          givenTheCacheIsEmpty()
-
-          controller().displayPage()(getRequest).futureValue
-
-          verify(ducrPartDetailsPage).apply(any())(any(), any())
-        }
-
-        "pass empty form to DucrPartDetails view" in {
-
-          givenTheCacheIsEmpty()
-
-          controller().displayPage()(getRequest).futureValue
-
-          val expectedForm = DucrPartDetails.form()
-          verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
-        }
+      "call DucrPartDetails view" in {
+        val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
+        givenTheCacheContains(cacheContents)
+        controller.displayPage()(getRequest).futureValue
+        verify(ducrPartDetailsPage).apply(any())(any(), any())
       }
 
-      "cache contains queryUcr of DucrParts type" should {
+      "pass empty form to DucrPartDetails view" in {
+        val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
+        givenTheCacheContains(cacheContents)
+        controller.displayPage()(getRequest).futureValue
 
-        "call DucrPartDetails view" in {
-
-          val cacheContents =
-            Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts)))
-          givenTheCacheContains(cacheContents)
-
-          controller().displayPage()(getRequest).futureValue
-
-          verify(ducrPartDetailsPage).apply(any())(any(), any())
-        }
-
-        "pass data from CacheRepository to DucrPartDetails view" in {
-
-          val cacheContents =
-            Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts)))
-          givenTheCacheContains(cacheContents)
-
-          controller().displayPage()(getRequest).futureValue
-
-          val expectedForm = DucrPartDetails.form().fill(DucrPartDetails(ducr = validDucr, ducrPartId = validDucrPartId))
-          verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
-        }
-      }
-
-      "cache contains queryUcr of different type" should {
-
-        "call DucrPartDetails view" in {
-
-          val cacheContents =
-            Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
-          givenTheCacheContains(cacheContents)
-
-          controller().displayPage()(getRequest).futureValue
-
-          verify(ducrPartDetailsPage).apply(any())(any(), any())
-        }
-
-        "pass empty form to DucrPartDetails view" in {
-
-          val cacheContents =
-            Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
-          givenTheCacheContains(cacheContents)
-
-          controller().displayPage()(getRequest).futureValue
-
-          val expectedForm = DucrPartDetails.form()
-          verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
-        }
+        val expectedForm = DucrPartDetails.form()
+        verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
       }
     }
   }
 
   "DucrPartDetailsController on submitDucrPartDetails" when {
 
-    "ducrParts feature is disabled" should {
+    "provided with incorrect data" should {
+      val inputData = Json.obj("ducr" -> "InvalidDucr!@#", "ducrPartId" -> "InvalidDucrPartId!@#")
 
-      "throw InvalidFeatureStateException" in {
+      "return BadRequest (400) response" in {
+        val result = controller.submitDucrPartDetails()(postRequest(inputData))
+        status(result) mustBe BAD_REQUEST
+      }
 
-        intercept[InvalidFeatureStateException](controller(DucrPartsDisabled).submitDucrPartDetails()(postRequest).futureValue)
+      "not call CacheRepository" in {
+        controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
+        verifyNoMoreInteractions(cacheRepository)
       }
     }
 
-    "ducrParts feature is enabled" when {
+    "provided with correct data" should {
+      val inputData = Json.obj("ducr" -> validDucr, "ducrPartId" -> validDucrPartId)
 
-      "provided with incorrect data" should {
-
-        val inputData = Json.obj("ducr" -> "InvalidDucr!@#", "ducrPartId" -> "InvalidDucrPartId!@#")
-
-        "return BadRequest (400) response" in {
-
-          val result = controller().submitDucrPartDetails()(postRequest(inputData))
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "not call CacheRepository" in {
-
-          controller().submitDucrPartDetails()(postRequest(inputData)).futureValue
-
-          verifyNoMoreInteractions(cacheRepository)
-        }
+      "call CacheRepository upsert" in {
+        controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
+        verify(cacheRepository).upsert(any[Cache])
       }
 
-      "provided with correct data" should {
+      "provide CacheRepository with correct UcrBlock object" in {
+        controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
 
-        val inputData = Json.obj("ducr" -> validDucr, "ducrPartId" -> validDucrPartId)
+        val expectedUcrBlock = UcrBlock(ucrType = UcrType.DucrPart, ucr = validWholeDucrParts)
+        theCacheUpserted.queryUcr mustBe defined
+        theCacheUpserted.queryUcr.get mustBe expectedUcrBlock
+      }
 
-        "call CacheRepository upsert" in {
+      "return SeeOther (303) response" in {
+        val result = controller.submitDucrPartDetails()(postRequest(inputData))
+        status(result) mustBe SEE_OTHER
+      }
 
-          controller().submitDucrPartDetails()(postRequest(inputData)).futureValue
-
-          verify(cacheRepository).upsert(any[Cache])
-        }
-
-        "provide CacheRepository with correct UcrBlock object" in {
-
-          controller().submitDucrPartDetails()(postRequest(inputData)).futureValue
-
-          val expectedUcrBlock = UcrBlock(ucrType = UcrType.DucrPart, ucr = validWholeDucrParts)
-          theCacheUpserted.queryUcr mustBe defined
-          theCacheUpserted.queryUcr.get mustBe expectedUcrBlock
-        }
-
-        "return SeeOther (303) response" in {
-
-          val result = controller().submitDucrPartDetails()(postRequest(inputData))
-
-          status(result) mustBe SEE_OTHER
-        }
-
-        "redirect to Choice page" in {
-
-          val result = controller().submitDucrPartDetails()(postRequest(inputData))
-
-          redirectLocation(result) mustBe Some(controllers.routes.ChoiceController.displayPage().url)
-        }
+      "redirect to Choice page" in {
+        val result = controller.submitDucrPartDetails()(postRequest(inputData))
+        redirectLocation(result) mustBe Some(ChoiceController.displayPage().url)
       }
     }
   }

@@ -16,10 +16,8 @@
 
 package controllers
 
-import controllers.actions.{AuthenticatedAction, DucrPartAction}
+import controllers.actions.AuthenticatedAction
 import forms.DucrPartDetails
-
-import javax.inject.Inject
 import models.UcrType
 import models.cache.Cache
 import play.api.data.Form
@@ -30,18 +28,18 @@ import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.ducr_part_details
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DucrPartDetailsController @Inject() (
   mcc: MessagesControllerComponents,
   authenticate: AuthenticatedAction,
-  isDucrPartsFeatureEnabled: DucrPartAction,
   cacheRepository: CacheRepository,
   ducrPartsDetailsPage: ducr_part_details
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen isDucrPartsFeatureEnabled).async { implicit request =>
+  def displayPage(): Action[AnyContent] = authenticate.async { implicit request =>
     cacheRepository
       .findByProviderId(request.providerId)
       .map {
@@ -53,7 +51,7 @@ class DucrPartDetailsController @Inject() (
       .map(form => Ok(ducrPartsDetailsPage(form)))
   }
 
-  def submitDucrPartDetails(): Action[AnyContent] = (authenticate andThen isDucrPartsFeatureEnabled).async { implicit request =>
+  def submitDucrPartDetails(): Action[AnyContent] = authenticate.async { implicit request =>
     getEmptyForm
       .bindFromRequest()
       .fold(
