@@ -153,7 +153,7 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
       "provide CacheRepository with correct UcrBlock object" in {
         controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
 
-        val expectedUcrBlock = UcrBlock(ucrType = UcrType.DucrPart, ucr = validWholeDucrParts)
+        val expectedUcrBlock = UcrBlock(ucrType = UcrType.DucrPart, ucr = validWholeDucrParts.toUpperCase)
         theCacheUpserted.queryUcr mustBe defined
         theCacheUpserted.queryUcr.get mustBe expectedUcrBlock
       }

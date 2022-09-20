@@ -51,11 +51,13 @@ object DucrPartDetails {
     def bind(ducr: String, ducrPartId: String): DucrPartDetails = DucrPartDetails(ducr.toUpperCase, ducrPartId.toUpperCase)
 
     Forms.mapping(
-      "ducr" -> text().verifying("ducrPartDetails.ducr.error", validDucrIgnoreCase),
-      "ducrPartId" -> text().verifying("ducrPartDetails.ducrPartId.error", isValidDucrPartId)
+      "ducr" -> text()
+        .verifying("ducrPartDetails.ducr.error", validDucrIgnoreCase),
+      "ducrPartId" -> text()
+        .transform(_.toUpperCase, (o: String) => o)
+        .verifying("ducrPartDetails.ducrPartId.error", isValidDucrPartId)
     )(bind)(unapply)
   }
 
   def form(): Form[DucrPartDetails] = Form(mapping)
-
 }
