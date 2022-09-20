@@ -20,7 +20,7 @@ import java.time.Instant
 import java.util.UUID
 import connectors.exchanges.ActionType
 import models.UcrBlock
-import models.UcrType.{DucrPart, Mucr}
+import models.UcrType.{Ducr, DucrPart, Mucr}
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
@@ -33,13 +33,16 @@ case class Submission(
   requestTimestamp: Instant = Instant.now()
 ) {
 
-  def hasMucr: Boolean = ucrBlocks.exists(_.ucrType == Mucr.codeValue)
+  def hasMucr: Boolean = ucrBlocks.exists(_ is Mucr)
 
-  def hasDucrPart: Boolean = ucrBlocks.exists(_.ucrType == DucrPart.codeValue)
+  def hasDucr: Boolean = ucrBlocks.exists(_ is Ducr)
 
-  def extractMucr: Option[String] = ucrBlocks.find(_.ucrType == Mucr.codeValue).map(_.fullUcr)
+  def hasDucrPart: Boolean = ucrBlocks.exists(_ is DucrPart)
 
-  def extractFirstUcr: Option[String] = ucrBlocks.headOption.map(_.fullUcr)
+  lazy val extractUcr: Option[(String, String)] =
+    ucrBlocks
+      .find(_ is Mucr) // Mucr has priority over Ducr and Ducr Part
+      .fold(ucrBlocks.headOption.flatMap(_.typeAndValue))(_.typeAndValue)
 }
 
 object Submission {

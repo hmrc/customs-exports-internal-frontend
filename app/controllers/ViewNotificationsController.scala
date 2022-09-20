@@ -48,18 +48,16 @@ class ViewNotificationsController @Inject() (
       submissionNotifications: Seq[NotificationFrontendModel] <- connector.fetchNotifications(conversationId, providerId)
       notificationElements: Seq[NotificationsPageSingleElement] = submissionNotifications.sorted.map(factory.build)
 
-      submissionUcr: Option[String] = submission.flatMap(extractUcr)
+      submissionUcr = submission.flatMap(_.extractUcr)
     } yield (submissionUcr, submissionElement, notificationElements)
 
     params.map {
       case (Some(submissionUcr), Some(submissionElement), notificationElements) =>
-        Ok(viewNotificationPage(submissionUcr, submissionElement, notificationElements))
+        val elementsToDisplay = submissionElement +: notificationElements
+        Ok(viewNotificationPage(submissionUcr, elementsToDisplay.reverse))
+
       case _ =>
         Redirect(routes.ViewSubmissionsController.displayPage())
     }
   }
-
-  private def extractUcr(submission: Submission): Option[String] =
-    if (submission.hasMucr) submission.extractMucr else submission.extractFirstUcr
-
 }

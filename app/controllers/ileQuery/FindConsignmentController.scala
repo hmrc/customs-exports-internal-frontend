@@ -42,5 +42,4 @@ class FindConsignmentController @Inject() (authenticate: AuthenticatedAction, mc
         validUcr => Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(validUcr))
       )
   }
-
 }
