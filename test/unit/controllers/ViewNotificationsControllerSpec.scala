@@ -63,7 +63,7 @@ class ViewNotificationsControllerSpec extends ControllerLayerSpec with ScalaFutu
     when(customsExportsMovementsConnectorMock.fetchNotifications(any(), any())(any())).thenReturn(Future.successful(expectedNotifications))
     when(notificationPageSingleElementFactoryMock.build(any[Submission])(any())).thenReturn(singleElementForSubmission)
     when(notificationPageSingleElementFactoryMock.build(any[NotificationFrontendModel])(any())).thenReturn(singleElementForNotification)
-    when(notificationsPageMock.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(notificationsPageMock.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -77,21 +77,18 @@ class ViewNotificationsControllerSpec extends ControllerLayerSpec with ScalaFutu
     "everything works correctly" should {
 
       "call CustomsExportsMovementsConnector.fetchSingleSubmission, passing conversation ID and EORI provided" in {
-
         controller.listOfNotifications(conversationId)(FakeRequest()).futureValue
 
         verify(customsExportsMovementsConnectorMock).fetchSingleSubmission(meq(conversationId), meq(providerId))(any())
       }
 
       "call CustomsExportsMovementsConnector.fetchNotifications, passing conversation ID and EORI provided" in {
-
         controller.listOfNotifications(conversationId)(FakeRequest()).futureValue
 
         verify(customsExportsMovementsConnectorMock).fetchNotifications(meq(conversationId), meq(providerId))(any())
       }
 
       "call NotificationPageSingleElementFactory, passing models returned by Connector" in {
-
         controller.listOfNotifications(conversationId)(FakeRequest()).futureValue
 
         verify(notificationPageSingleElementFactoryMock).build(meq(expectedSubmission))(any())
@@ -99,29 +96,22 @@ class ViewNotificationsControllerSpec extends ControllerLayerSpec with ScalaFutu
       }
 
       "call notification view template, passing UCR related to the submission" in {
-
         controller.listOfNotifications(conversationId)(FakeRequest()).futureValue
 
-        val expectedUcr: String = expectedSubmission.ucrBlocks.head.ucr
+        val expectedUcr = ("DUCR", expectedSubmission.ucrBlocks.head.ucr)
 
-        verify(notificationsPageMock).apply(meq(expectedUcr), any[NotificationsPageSingleElement], any[Seq[NotificationsPageSingleElement]])(
-          any(),
-          any()
-        )
+        verify(notificationsPageMock).apply(meq(expectedUcr), any[Seq[NotificationsPageSingleElement]])(any(), any())
       }
 
       "call notification view template, passing data returned by NotificationsPageSingleElementFactory" in {
-
-        val expectedViewInput: Seq[NotificationsPageSingleElement] =
-          expectedNotifications.map(_ => singleElementForNotification)
+        val expectedViewInput = expectedNotifications.map(_ => singleElementForNotification) :+ singleElementForSubmission
 
         controller.listOfNotifications(conversationId)(FakeRequest()).futureValue
 
-        verify(notificationsPageMock).apply(any[String], meq(singleElementForSubmission), meq(expectedViewInput))(any(), any())
+        verify(notificationsPageMock).apply(any[(String, String)], meq(expectedViewInput))(any(), any())
       }
 
       "return 200 (OK)" in {
-
         val result = controller.listOfNotifications(conversationId)(FakeRequest())
 
         status(result) must be(OK)
@@ -129,16 +119,9 @@ class ViewNotificationsControllerSpec extends ControllerLayerSpec with ScalaFutu
     }
 
     "submission is missing UCR" should {
-
       "redirect back to movements" in {
-
-        when(customsExportsMovementsConnectorMock.fetchSingleSubmission(any(), any())(any()))
-          .thenReturn(
-            Future
-              .successful(
-                Some(Submission(eori = validEori, conversationId = conversationId, ucrBlocks = Seq.empty, actionType = MovementType.Arrival))
-              )
-          )
+        val submission = Some(Submission(eori = validEori, conversationId = conversationId, ucrBlocks = Seq.empty, actionType = MovementType.Arrival))
+        when(customsExportsMovementsConnectorMock.fetchSingleSubmission(any(), any())(any())).thenReturn(Future.successful(submission))
 
         val result = controller.listOfNotifications(conversationId)(FakeRequest())
         status(result) mustBe SEE_OTHER
@@ -146,5 +129,4 @@ class ViewNotificationsControllerSpec extends ControllerLayerSpec with ScalaFutu
       }
     }
   }
-
 }

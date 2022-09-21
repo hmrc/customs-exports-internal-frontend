@@ -22,7 +22,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData
-import testdata.CommonTestData.exampleNotificationPageSingleElement
+import testdata.CommonTestData.aNotificationElement
 import views.html.view_notifications
 
 class ViewNotificationsViewSpec extends ViewSpec with Injector {
@@ -31,58 +31,67 @@ class ViewNotificationsViewSpec extends ViewSpec with Injector {
 
   private val page = instanceOf[view_notifications]
 
+  private val submissionUcr = ("MUCR", CommonTestData.correctUcr)
+
   "Notification page" should {
 
-    val title = "REQUEST TITLE"
-    val timestamp = "TIMESTAMP"
-    val content = Html("<span>CONTENT</span>")
-    val pageWithoutNotifications = page(
-      submissionUcr = CommonTestData.correctUcr,
-      submissionElement = NotificationsPageSingleElement(title, timestamp, content),
-      elementsToDisplay = Seq.empty
-    )
-
-    "contain title" in {
-      pageWithoutNotifications.getTitle must containText(messages("notifications.title", CommonTestData.correctUcr))
+    "contain the expected title" in {
+      page(submissionUcr, Seq.empty).getTitle must containText(messages("notifications.title"))
     }
 
-    "contain header" in {
-      pageWithoutNotifications.getElementById("title") must containText(messages("notifications.title", CommonTestData.correctUcr))
+    "contain the expected header" in {
+      page(submissionUcr, Seq.empty).getElementById("title").text mustBe messages("notifications.title")
     }
 
-    "contain only request element if no notifications are present" in {
-
-      val pageWithData: Html = page(
-        submissionUcr = CommonTestData.correctUcr,
-        submissionElement = NotificationsPageSingleElement(title, timestamp, content),
-        elementsToDisplay = Seq.empty
-      )
-
-      pageWithData.getElementById("notifications-request-title") must containText(title)
-      pageWithData.getElementById("notifications-request-timestamp") must containText(timestamp)
-      pageWithData.getElementById("notifications-request-content") must containHtml(content.toString)
+    "contain the expected caption" in {
+      val caption = page(submissionUcr, Seq.empty).getElementsByClass("govuk-caption-l").get(0)
+      caption.text mustBe s"MUCR: ${CommonTestData.correctUcr}"
     }
 
-    "contain elements for request and all notifications in correct order" in {
-
-      val requestTitle = "REQUEST TITLE"
-      val responseTitle_1 = "RESPONSE TITLE 1"
-      val responseTitle_2 = "RESPONSE TITLE 2"
-      val elementsToDisplay =
-        Seq(exampleNotificationPageSingleElement(title = responseTitle_1), exampleNotificationPageSingleElement(title = responseTitle_2))
-
-      val pageWithData: Html = page(
-        submissionUcr = CommonTestData.correctUcr,
-        submissionElement = exampleNotificationPageSingleElement(title = requestTitle),
-        elementsToDisplay = elementsToDisplay
-      )
-
-      pageWithData.getElementById("notifications-request-title") must containText(requestTitle)
-      pageWithData.getElementById("title-1") must containText(responseTitle_1)
-      pageWithData.getElementById("index-1") must containText("1")
-      pageWithData.getElementById("title-2") must containText(responseTitle_2)
-      pageWithData.getElementById("index-2") must containText("2")
+    "not contain a timeline when there are no timeline events" in {
+      page(submissionUcr, Seq.empty).getElementsByClass("hmrc-timeline").size mustBe 0
     }
 
+    "contain a timeline with the expected timeline event" in {
+      verifyTimeline(aNotificationElement)
+    }
+
+    "contain a timeline with the timeline events in the expected order" in {
+      verifyTimeline(aNotificationElement, aNotificationElement.copy("TITLE1", "TIMESTAMP1", Html("<span>CONTENT1</span>")))
+    }
+  }
+
+  def verifyTimeline(notificationElements: NotificationsPageSingleElement*): Unit = {
+    val view = page(submissionUcr, Seq(notificationElements: _*))
+    val timeline = view.getElementsByClass("hmrc-timeline")
+    timeline.size mustBe 1
+
+    val events = timeline.get(0).getElementsByClass("hmrc-timeline__event")
+    events.size mustBe notificationElements.size
+
+    for (ix <- 0 to notificationElements.size - 1) {
+      val event = events.get(ix)
+      event.tagName mustBe "li"
+
+      val data = event.children
+      data.size mustBe 3
+
+      val notificationElement = notificationElements(ix)
+
+      val title = data.get(0)
+      title.tagName mustBe "h2"
+      title.className mustBe "hmrc-timeline__event-title"
+      title.text mustBe notificationElement.title
+
+      val timestamp = data.get(1)
+      timestamp.tagName mustBe "time"
+      timestamp.className mustBe "hmrc-timeline__event-meta"
+      timestamp.text mustBe notificationElement.timestampInfo
+
+      val content = data.get(2)
+      content.tagName mustBe "div"
+      content.className mustBe "hmrc-timeline__event-content"
+      content.text mustBe notificationElement.content.text()
+    }
   }
 }

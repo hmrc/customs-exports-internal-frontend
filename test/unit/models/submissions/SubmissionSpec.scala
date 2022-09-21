@@ -26,34 +26,50 @@ import testdata.CommonTestData._
 
 class SubmissionSpec extends UnitSpec with OptionValues {
 
-  val submission = Submission(
-    eori = validEori,
-    conversationId = conversationId,
-    ucrBlocks = Seq(UcrBlock(ucr = correctUcr, ucrType = "M"), UcrBlock(ucr = correctUcr_2, ucrType = "DP")),
-    actionType = MovementType.Arrival,
-    requestTimestamp = Instant.now()
-  )
+  def submission(ucrBlocks: UcrBlock*) =
+    Submission(
+      eori = validEori,
+      conversationId = conversationId,
+      ucrBlocks = Seq(ucrBlocks: _*),
+      actionType = MovementType.Arrival,
+      requestTimestamp = Instant.now()
+    )
+
+  private val mucrBlock = UcrBlock(ucr = validMucr, ucrType = "M")
+  private val ducrBlock = UcrBlock(ucr = validDucr, ucrType = "D")
+  private val ducrPartBlock = UcrBlock(ucr = validWholeDucrParts, ucrType = "DP")
 
   "Submission Frontend Model" should {
 
-    "return correct value for hasMucr method" in {
-
-      submission.hasMucr mustBe true
+    "return  the expected result from the hasMucr method" in {
+      submission(mucrBlock).hasMucr mustBe true
+      submission(ducrBlock, mucrBlock).hasMucr mustBe true
+      submission(ducrBlock).hasMucr mustBe false
     }
 
-    "return correct value for hasDucrPart method" in {
-
-      submission.hasDucrPart mustBe true
+    "return  the expected result from the hasDucr method" in {
+      submission(ducrBlock).hasDucr mustBe true
+      submission(mucrBlock, ducrBlock).hasDucr mustBe true
+      submission(mucrBlock).hasDucr mustBe false
     }
 
-    "extract MUCR correctly" in {
-
-      submission.extractMucr.value mustBe correctUcr
+    "return  the expected result from the hasDucrPart method" in {
+      submission(ducrPartBlock).hasDucrPart mustBe true
+      submission(ducrPartBlock, ducrBlock).hasDucrPart mustBe true
+      submission(ducrBlock).hasDucrPart mustBe false
     }
 
-    "extract first UCR" in {
+    "return  the expected result from the extractUcr method" in {
+      submission().extractUcr mustBe None
 
-      submission.extractFirstUcr.value mustBe correctUcr
+      submission(mucrBlock).extractUcr.get mustBe "MUCR" -> validMucr
+      submission(ducrBlock, mucrBlock).extractUcr.get mustBe "MUCR" -> validMucr
+
+      submission(ducrBlock).extractUcr.get mustBe "DUCR" -> validDucr
+      submission(ducrBlock, ducrPartBlock).extractUcr.get mustBe "DUCR" -> validDucr
+
+      submission(ducrPartBlock).extractUcr.get mustBe "DUCR Part" -> validWholeDucrParts
+      submission(ducrPartBlock, ducrBlock).extractUcr.get mustBe "DUCR Part" -> validWholeDucrParts
     }
   }
 }
