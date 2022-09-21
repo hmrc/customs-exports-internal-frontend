@@ -32,6 +32,11 @@ import views.html.components.paragraph
 @Singleton
 class NotificationPageSingleElementFactory @Inject() (responseConverterProvider: ResponseConverterProvider, viewDates: ViewDates) {
 
+  def build(notification: NotificationFrontendModel)(implicit messages: Messages): NotificationsPageSingleElement = {
+    val responseConverter = responseConverterProvider.provideResponseConverter(notification)
+    responseConverter.convert(notification)
+  }
+
   def build(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement =
     submission.actionType match {
       case Arrival | RetrospectiveArrival | Departure | DucrDisassociation | DucrPartDisassociation | MucrAssociation | MucrDisassociation |
@@ -42,12 +47,11 @@ class NotificationPageSingleElementFactory @Inject() (responseConverterProvider:
     }
 
   private def buildForRequest(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement = {
-
-    val ucrMessage = if (submission.hasMucr) "MUCR" else if (submission.hasDucrPart) "DUCR Part" else "DUCR"
+    val ucrType = if (submission.hasMucr) "MUCR" else if (submission.hasDucrPart) "DUCR Part" else "DUCR"
 
     val content = HtmlFormat.fill(
       List(
-        paragraph(messages(s"notifications.elem.content.${submission.actionType.typeName}", ucrMessage)),
+        paragraph(messages(s"notifications.elem.content.${submission.actionType.typeName}", ucrType)),
         paragraph(messages("notifications.elem.content.footer"))
       )
     )
@@ -79,10 +83,5 @@ class NotificationPageSingleElementFactory @Inject() (responseConverterProvider:
     )
 
     buildForRequest(submission).copy(content = content)
-  }
-
-  def build(notification: NotificationFrontendModel)(implicit messages: Messages): NotificationsPageSingleElement = {
-    val responseConverter = responseConverterProvider.provideResponseConverter(notification)
-    responseConverter.convert(notification)
   }
 }

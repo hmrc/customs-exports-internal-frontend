@@ -287,7 +287,7 @@ submissions.mucrdisassociation = Disassociate MUCR
 
 # This part uses ActionType instances' values to differentiate between messages
 
-notifications.title = Notifications relating to {0}
+notifications.title = Notifications details
 
 notifications.elem.title.Arrival = Request to arrive has been received
 notifications.elem.title.RetrospectiveArrival = Request to retrospectively arrive has been received
