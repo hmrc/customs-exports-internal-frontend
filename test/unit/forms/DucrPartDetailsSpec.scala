@@ -37,8 +37,8 @@ class DucrPartDetailsSpec extends UnitSpec {
         val result = DucrPartDetails.mapping.bind(input)
 
         result.isLeft mustBe true
-        result.left.get.size mustBe 2
-        result.left.get must contain(expectedDucrError)
+        result.swap.toOption.get.size mustBe 2
+        result.swap.toOption.get must contain(expectedDucrError)
       }
 
       "provided with incorrect DUCR" in {
@@ -48,8 +48,8 @@ class DucrPartDetailsSpec extends UnitSpec {
         val result = DucrPartDetails.mapping.bind(input)
 
         result.isLeft mustBe true
-        result.left.get.size mustBe 2
-        result.left.get must contain(expectedDucrError)
+        result.swap.toOption.get.size mustBe 2
+        result.swap.toOption.get must contain(expectedDucrError)
       }
 
       "provided with empty DUCR Part ID" in {
@@ -59,8 +59,8 @@ class DucrPartDetailsSpec extends UnitSpec {
         val result = DucrPartDetails.mapping.bind(input)
 
         result.isLeft mustBe true
-        result.left.get.size mustBe 2
-        result.left.get must contain(expectedDucrPartIdError)
+        result.swap.toOption.get.size mustBe 2
+        result.swap.toOption.get must contain(expectedDucrPartIdError)
       }
 
       "provided with incorrect DUCR Part ID" in {
@@ -70,8 +70,8 @@ class DucrPartDetailsSpec extends UnitSpec {
         val result = DucrPartDetails.mapping.bind(input)
 
         result.isLeft mustBe true
-        result.left.get.size mustBe 2
-        result.left.get must contain(expectedDucrPartIdError)
+        result.swap.toOption.get.size mustBe 2
+        result.swap.toOption.get must contain(expectedDucrPartIdError)
       }
     }
 
@@ -105,7 +105,7 @@ class DucrPartDetailsSpec extends UnitSpec {
         val result = DucrPartDetails.mapping.bind(input)
 
         result.isRight mustBe true
-        result.right.get.ducr mustBe validDucr.toUpperCase
+        result.toOption.get.ducr mustBe validDucr.toUpperCase
       }
 
       "provided with DUCR Part ID containing lower case characters" in {
@@ -115,7 +115,7 @@ class DucrPartDetailsSpec extends UnitSpec {
         val result = DucrPartDetails.mapping.bind(input)
 
         result.isRight mustBe true
-        result.right.get.ducrPartId mustBe validDucrPartId.toUpperCase
+        result.toOption.get.ducrPartId mustBe validDucrPartId.toUpperCase
       }
     }
   }

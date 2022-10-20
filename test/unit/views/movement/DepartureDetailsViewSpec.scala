@@ -23,7 +23,7 @@ import testdata.MovementsTestData
 import views.ViewSpec
 import views.html.departure_details
 
-import scala.collection.JavaConverters.collectionAsScalaIterable
+import scala.jdk.CollectionConverters.IterableHasAsScala
 
 class DepartureDetailsViewSpec extends ViewSpec with Injector {
 
@@ -34,7 +34,7 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
   private val page = instanceOf[departure_details]
   private val consignmentReferences = "M-ref"
 
-  private val view = page(movementDetails.departureForm(), consignmentReferences)
+  private val view = page(movementDetails.departureForm, consignmentReferences)
 
   "Departure View" should {
     "render title" in {
@@ -44,7 +44,7 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
     "have date section" which {
 
       "contains label" in {
-        collectionAsScalaIterable(view.getElementsByTag("legend")).exists { elem =>
+        view.getElementsByTag("legend").asScala.exists { elem =>
           elem.text() == messages("departureDetails.date.question")
         }
       }
@@ -72,7 +72,7 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
     "have time section" which {
 
       "contains label" in {
-        collectionAsScalaIterable(view.getElementsByTag("legend")).exists { elem =>
+        view.getElementsByTag("legend").asScala.exists { elem =>
           elem.text() == messages("departureDetails.time.question")
         }
       }
@@ -105,14 +105,14 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
       }
 
       "some errors" in {
-        val viewWithError = page(movementDetails.departureForm().withError("error", "error.required"), consignmentReferences)
+        val viewWithError = page(movementDetails.departureForm.withError("error", "error.required"), consignmentReferences)
         viewWithError.getElementById("error-summary-title").text() mustBe messages("error.summary.title")
       }
     }
 
     "provided with Date error" should {
       val viewWithDateError: Document =
-        page(movementDetails.departureForm().withError("dateOfDeparture", "date.error.invalid"), consignmentReferences)
+        page(movementDetails.departureForm.withError("dateOfDeparture", "date.error.invalid"), consignmentReferences)
 
       "have error summary" in {
         viewWithDateError must haveGovUkGlobalErrorSummary
@@ -126,7 +126,7 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
 
     "provided with Time error" should {
       val viewWithTimeError: Document =
-        page(movementDetails.departureForm().withError("timeOfDeparture", "time.error.invalid"), consignmentReferences)
+        page(movementDetails.departureForm.withError("timeOfDeparture", "time.error.invalid"), consignmentReferences)
 
       "have error summary" in {
         viewWithTimeError must haveGovUkGlobalErrorSummary
@@ -139,8 +139,7 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
 
     "provided with form level DateTime error" should {
       val viewWithDateError: Document = page(
-        movementDetails
-          .departureForm()
+        movementDetails.departureForm
           .withError("dateOfDeparture", "departure.details.error.future")
           .withError("timeOfDeparture", "departure.details.error.future"),
         consignmentReferences

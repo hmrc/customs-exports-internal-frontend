@@ -41,19 +41,19 @@ class DepartureDetailsSpec extends UnitSpec with FormMatchers {
 
       "there is no data" in {
         val inputData = Map.empty[String, String]
-        val errors = movementDetails.departureForm().bind(inputData).errors
+        val errors = movementDetails.departureForm.bind(inputData).errors
         errors must have length 6
       }
 
       "time is missing" in {
         val inputData = Date.mapping("dateOfDeparture.").withPrefix("dateOfDeparture").unbind(Date(LocalDate.now()))
-        val errors = movementDetails.departureForm().bind(inputData).errors
+        val errors = movementDetails.departureForm.bind(inputData).errors
         errors must have length 3
       }
 
       "date is missing" in {
         val inputData = Time.mapping("timeOfDeparture.").withPrefix("timeOfDeparture").unbind(Time(LocalTime.now()))
-        val errors = movementDetails.departureForm().bind(inputData).errors
+        val errors = movementDetails.departureForm.bind(inputData).errors
         errors must have length 3
       }
     }
@@ -63,7 +63,7 @@ class DepartureDetailsSpec extends UnitSpec with FormMatchers {
       "date is correct" in {
         val inputData = Date.mapping("dateOfDeparture.").withPrefix("dateOfDeparture").unbind(Date(LocalDate.now().minusDays(1))) ++
           Time.mapping("timeOfDeparture.").withPrefix("timeOfDeparture").unbind(Time(LocalTime.now()))
-        val form = movementDetails.departureForm().bind(inputData)
+        val form = movementDetails.departureForm.bind(inputData)
         form mustBe withoutErrors
       }
     }

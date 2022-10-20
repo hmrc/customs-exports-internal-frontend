@@ -131,7 +131,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
       controller.getConsignmentInformation("mucr")(request).futureValue
 
-      verify(ileQueryRepository) findBySessionIdAndUcr (meq("sessionId"), meq("mucr"))
+      verify(ileQueryRepository).findBySessionIdAndUcr(meq("sessionId"), meq("mucr"))
     }
   }
 

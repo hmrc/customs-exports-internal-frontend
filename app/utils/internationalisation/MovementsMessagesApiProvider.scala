@@ -21,8 +21,6 @@ import play.api.http.HttpConfiguration
 import play.api.i18n.{DefaultMessagesApiProvider, Langs}
 import play.api.{Configuration, Environment}
 
-import scala.collection.breakOut
-
 @Singleton
 class MovementsMessagesApiProvider @Inject() (environment: Environment, config: Configuration, langs: Langs, httpConfiguration: HttpConfiguration)
     extends DefaultMessagesApiProvider(environment, config, langs, httpConfiguration) {
@@ -32,7 +30,8 @@ class MovementsMessagesApiProvider @Inject() (environment: Environment, config: 
       .map(_.code)
       .map { code =>
         (code, loadMessageFiles(s".$code"))
-      }(breakOut): Map[String, Map[String, String]])
+      }
+      .toMap: Map[String, Map[String, String]])
       .+("default" -> loadMessageFiles("")) + ("default.play" -> loadMessageFiles(".default"))
 
   private def loadMessageFiles(suffix: String): Map[String, String] =

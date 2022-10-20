@@ -41,26 +41,26 @@ class ArrivalDetailsSpec extends UnitSpec {
 
       "date is missing" in {
 
-        val errors = movementDetails.arrivalForm().bind(timeInputData).errors
+        val errors = movementDetails.arrivalForm.bind(timeInputData).errors
 
         errors.length must be(3)
       }
 
       "time is missing" in {
 
-        val errors = movementDetails.arrivalForm().bind(dateInputData).errors
+        val errors = movementDetails.arrivalForm.bind(dateInputData).errors
 
         errors.length must be(3)
       }
 
       "moment of arrival is in future" in {
-        val form = movementDetails.arrivalForm().bind(dateMapping.unbind(Date(LocalDate.now().plusDays(1))) ++ timeInputData)
+        val form = movementDetails.arrivalForm.bind(dateMapping.unbind(Date(LocalDate.now().plusDays(1))) ++ timeInputData)
 
         form.errors.flatMap(_.messages) must contain("arrival.details.error.future")
       }
 
       "moment of arrival is more then 60 days in past" in {
-        val form = movementDetails.arrivalForm().bind(dateMapping.unbind(Date(LocalDate.now().minusDays(61))) ++ timeInputData)
+        val form = movementDetails.arrivalForm.bind(dateMapping.unbind(Date(LocalDate.now().minusDays(61))) ++ timeInputData)
 
         form.errors.flatMap(_.messages) must contain("arrival.details.error.overdue")
       }
@@ -70,7 +70,7 @@ class ArrivalDetailsSpec extends UnitSpec {
 
       "date and time are provided" in {
         val inputData = timeInputData ++ dateInputData
-        val errors = movementDetails.arrivalForm().bind(inputData).errors
+        val errors = movementDetails.arrivalForm.bind(inputData).errors
 
         errors.length must be(0)
       }

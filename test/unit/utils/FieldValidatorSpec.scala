@@ -521,7 +521,7 @@ class FieldValidatorSpec extends UnitSpec {
 
     "return true" when {
       "input contains only one character" in {
-        isTailNumeric("0") mustBe true
+        isTailNumeric("0") mustBe false
       }
 
       "input contains all numeric characters starts from 2nd char" in {

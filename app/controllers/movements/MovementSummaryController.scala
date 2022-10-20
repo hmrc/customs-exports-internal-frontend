@@ -45,6 +45,7 @@ class MovementSummaryController @Inject() (
         case arrivalAnswers: ArrivalAnswers                   => Ok(arrivalSummaryPage(arrivalAnswers))
         case retroArrivalAnswers: RetrospectiveArrivalAnswers => Ok(retrospectiveArrivalSummaryPage(retroArrivalAnswers))
         case departureAnswers: DepartureAnswers               => Ok(departureSummaryPage(departureAnswers))
+        case _                                                => throw new IllegalArgumentException("Invalid answers type")
       }
     }
 

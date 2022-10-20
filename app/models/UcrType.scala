@@ -38,7 +38,7 @@ object UcrType {
       data
         .get(key)
         .map { typ =>
-          lookup.andThen(Right.apply).applyOrElse(typ, (_: String) => Left(Seq(FormError(key, "error.unknown"))))
+          lookup.andThen(Right.apply(_)).applyOrElse(typ, (_: String) => Left(Seq(FormError(key, "error.unknown"))))
         }
         .getOrElse(Left(Seq(FormError(key, "error.required"))))
 

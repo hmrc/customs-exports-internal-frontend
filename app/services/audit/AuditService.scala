@@ -142,6 +142,7 @@ class AuditService @Inject() (connector: AuditConnector, @Named("appName") appNa
           MovementDetails.formId -> Json.toJson(departureAnswers.departureDetails),
           Transport.formId -> Json.toJson(departureAnswers.transport)
         )
+      case _ => throw new IllegalArgumentException("Invalid answers type")
     }
 
     Json.toJson(userInput).as[JsObject]
