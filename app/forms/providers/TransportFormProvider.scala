@@ -26,5 +26,6 @@ class TransportFormProvider {
   def provideForm(answers: DepartureAnswers): Form[Transport] = answers.goodsDeparted match {
     case Some(GoodsDeparted(OutOfTheUk))    => Transport.outOfTheUkForm
     case Some(GoodsDeparted(BackIntoTheUk)) => Transport.backIntoTheUkForm
+    case _                                  => throw new IllegalArgumentException("No GoodsDeparted provided")
   }
 }

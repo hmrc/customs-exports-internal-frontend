@@ -18,7 +18,6 @@ package views.movement
 
 import java.text.DecimalFormat
 import java.time.{LocalDate, LocalTime}
-
 import base.Injector
 import forms.common.{Date, Time}
 import forms.{ArrivalDetails, ConsignmentReferenceType, ConsignmentReferences}
@@ -31,7 +30,7 @@ import testdata.MovementsTestData
 import views.ViewSpec
 import views.html.arrival_details
 
-import scala.collection.JavaConverters.collectionAsScalaIterable
+import scala.jdk.CollectionConverters.IterableHasAsScala
 
 class ArrivalDetailsViewSpec extends ViewSpec with Injector {
 
@@ -55,7 +54,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
   "ArrivalDetails View" when {
 
     "provided with empty form" should {
-      val emptyView = createView(movementDetails.arrivalForm())
+      val emptyView = createView(movementDetails.arrivalForm)
 
       "have title" in {
         emptyView.getTitle must containMessage("arrivalDetails.header")
@@ -79,7 +78,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
       "have date section" which {
 
         "contains label" in {
-          collectionAsScalaIterable(emptyView.getElementsByTag("legend")).exists { elem =>
+          emptyView.getElementsByTag("legend").asScala.exists { elem =>
             elem.text() == messages("arrivalDetails.date.question")
           }
         }
@@ -107,7 +106,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
       "have time section" which {
 
         "contains label" in {
-          collectionAsScalaIterable(emptyView.getElementsByTag("legend")).exists { elem =>
+          emptyView.getElementsByTag("legend").asScala.exists { elem =>
             elem.text() == messages("arrivalDetails.time.question")
           }
         }
@@ -135,7 +134,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
     "provided with form containing data" should {
       val date = LocalDate.now().minusDays(1)
       val time = LocalTime.of(1, 2)
-      val viewWithData = createView(movementDetails.arrivalForm().fill(ArrivalDetails(Date(date), Time(time))))
+      val viewWithData = createView(movementDetails.arrivalForm.fill(ArrivalDetails(Date(date), Time(time))))
 
       "have value in day field" in {
         viewWithData.getElementById("dateOfArrival_day").`val`() mustBe convertIntoTwoDigitFormat(date.getDayOfMonth)
@@ -159,7 +158,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
     }
 
     "provided with Date error" should {
-      val viewWithDateError: Document = createView(movementDetails.arrivalForm().withError("dateOfArrival", "date.error.invalid"))
+      val viewWithDateError: Document = createView(movementDetails.arrivalForm.withError("dateOfArrival", "date.error.invalid"))
 
       "have error summary" in {
         viewWithDateError must haveGovUkGlobalErrorSummary
@@ -172,7 +171,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
     }
 
     "provided with Time error" should {
-      val viewWithTimeError: Document = createView(movementDetails.arrivalForm().withError("timeOfArrival", "time.error.invalid"))
+      val viewWithTimeError: Document = createView(movementDetails.arrivalForm.withError("timeOfArrival", "time.error.invalid"))
 
       "have error summary" in {
         viewWithTimeError must haveGovUkGlobalErrorSummary
@@ -185,8 +184,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
 
     "provided with form level DateTime error" should {
       val viewWithDateError: Document = createView(
-        movementDetails
-          .arrivalForm()
+        movementDetails.arrivalForm
           .withError("dateOfArrival", "arrival.details.error.overdue")
           .withError("timeOfArrival", "arrival.details.error.overdue")
       )

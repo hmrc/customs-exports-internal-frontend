@@ -60,6 +60,7 @@ class SpecificDateTimeController @Inject() (
             val answers = request.answers match {
               case arrivalAnswers: ArrivalAnswers     => updateArrivalAnswers(arrivalAnswers, validForm)
               case departureAnswers: DepartureAnswers => updateDepartureAnswers(departureAnswers, validForm)
+              case _                                  => throw new IllegalArgumentException("Invalid answers type")
             }
             cache.upsert(request.cache.update(answers)).map { _ =>
               validForm.choice match {

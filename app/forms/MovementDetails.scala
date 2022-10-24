@@ -23,9 +23,9 @@ import play.api.data.Form
 
 class MovementDetails @Inject() (zoneId: ZoneId) {
 
-  def arrivalForm(): Form[ArrivalDetails] = Form(ArrivalDetails.mapping(zoneId))
+  def arrivalForm: Form[ArrivalDetails] = Form(ArrivalDetails.mapping(zoneId))
 
-  def departureForm(): Form[DepartureDetails] = Form(DepartureDetails.mapping(zoneId))
+  def departureForm: Form[DepartureDetails] = Form(DepartureDetails.mapping(zoneId))
 }
 
 object MovementDetails {

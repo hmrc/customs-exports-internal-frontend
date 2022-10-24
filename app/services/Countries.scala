@@ -46,7 +46,7 @@ object Countries {
     def fromJsonFile: List[Country] =
       Json.parse(jsonFile) match {
         case JsArray(cs) =>
-          cs.toList.collect { case JsArray(Seq(c: JsString, cc: JsString)) =>
+          cs.toList.collect { case JsArray(collection.Seq(c: JsString, cc: JsString)) =>
             Country(c.value, countryCode(cc.value))
           }
         case _ =>

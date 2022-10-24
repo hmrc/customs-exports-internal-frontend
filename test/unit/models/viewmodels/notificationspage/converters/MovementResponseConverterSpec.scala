@@ -16,15 +16,12 @@
 
 package models.viewmodels.notificationspage.converters
 
-import java.time.{Instant, LocalDate, ZoneOffset}
-
 import base.UnitSpec
-import models.notifications.ResponseType
+import models.UcrBlock
 import models.notifications.{Entry, EntryStatus, ResponseType}
 import models.viewmodels.decoder.{CRCCode, Decoder}
 import models.viewmodels.notificationspage.NotificationsPageSingleElement
 import models.viewmodels.notificationspage.converters.ERSResponseConverterSpec.{roeKeyFromDecoder, soeKeyFromDecoder}
-import models.UcrBlock
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -34,6 +31,8 @@ import play.twirl.api.HtmlFormat
 import testdata.CommonTestData.correctUcr
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import views.ViewDates
+
+import java.time.{Instant, LocalDate, ZoneOffset}
 
 class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 

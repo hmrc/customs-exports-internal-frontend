@@ -59,7 +59,7 @@ class MovementDetailsController @Inject() (
 
   private def departurePage(departureAnswers: DepartureAnswers)(implicit request: JourneyRequest[AnyContent]): Html =
     departureDetailsPage(
-      departureAnswers.departureDetails.fold(details.departureForm())(details.departureForm().fill(_)),
+      departureAnswers.departureDetails.fold(details.departureForm)(details.departureForm.fill(_)),
       departureAnswers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
     )
 
@@ -68,6 +68,7 @@ class MovementDetailsController @Inject() (
       (request.answers match {
         case arrivalAnswers: ArrivalAnswers     => handleSavingArrival(arrivalAnswers)
         case departureAnswers: DepartureAnswers => handleSavingDeparture(departureAnswers)
+        case _                                  => throw new IllegalArgumentException("Invalid answers type")
       }).flatMap {
         case Left(resultView) => Future.successful(BadRequest(resultView))
         case Right(call)      => Future.successful(Redirect(call))
@@ -76,8 +77,7 @@ class MovementDetailsController @Inject() (
 
   private def handleSavingArrival(arrivalAnswers: ArrivalAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] = {
     def withDateSpecificErrors(formWithErrors: Form[ArrivalDetails]) = formWithErrors.copy(errors = formLevelErrors("Arrival", formWithErrors.errors))
-    details
-      .arrivalForm()
+    details.arrivalForm
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[ArrivalDetails]) =>
@@ -93,8 +93,7 @@ class MovementDetailsController @Inject() (
     def consignmentReference = departureAnswers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
     def withDateSpecificErrors(formWithErrors: Form[DepartureDetails]) =
       formWithErrors.copy(errors = formLevelErrors("Departure", formWithErrors.errors))
-    details
-      .departureForm()
+    details.departureForm
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[DepartureDetails]) =>
