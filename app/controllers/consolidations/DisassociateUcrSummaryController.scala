@@ -17,7 +17,7 @@
 package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashKeys
+import controllers.storage.FlashExtractor
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
 import models.cache.{DisassociateUcrAnswers, JourneyType}
@@ -48,10 +48,11 @@ class DisassociateUcrSummaryController @Inject() (
 
   def submit: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)).async { implicit request =>
     val answers = request.answersAs[DisassociateUcrAnswers]
+    val disassociateUcr = answers.ucr.getOrElse(throw ReturnToStartException)
 
     submissionService.submit(request.providerId, answers).map { _ =>
       Redirect(controllers.consolidations.routes.DisassociateUcrConfirmationController.displayPage())
-        .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString)
+        .flashing(FlashExtractor.MOVEMENT_TYPE -> request.answers.`type`.toString, FlashExtractor.UCR -> disassociateUcr.ucr)
     }
   }
 

@@ -61,7 +61,7 @@ class FlashExtractorSpec extends UnitSpec {
     "the flash contains MOVEMENT_TYPE key" should {
       "return corresponding JourneyType" in {
 
-        val request = FakeRequest().withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString)
+        val request = FakeRequest().withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString)
 
         flashValuesExtractor.extractMovementType(request) mustBe Some(JourneyType.ARRIVE)
       }

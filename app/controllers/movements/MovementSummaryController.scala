@@ -17,7 +17,9 @@
 package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashKeys
+import controllers.storage.FlashExtractor
+import models.ReturnToStartException
+
 import javax.inject.Inject
 import models.cache._
 import play.api.i18n.I18nSupport
@@ -51,9 +53,11 @@ class MovementSummaryController @Inject() (
 
   def submitMovementRequest(): Action[AnyContent] =
     (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)).async { implicit request =>
+      val answers = request.answersAs[MovementAnswers]
+      val ucr = answers.consignmentReferences.getOrElse(throw ReturnToStartException).referenceValue
       submissionService.submit(request.providerId, request.answersAs[MovementAnswers]).map { _ =>
         Redirect(controllers.movements.routes.MovementConfirmationController.displayPage())
-          .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString)
+          .flashing(FlashExtractor.MOVEMENT_TYPE -> request.answers.`type`.toString, FlashExtractor.UCR -> ucr)
       }
     }
 }

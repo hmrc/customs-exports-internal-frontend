@@ -17,7 +17,7 @@
 package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashKeys
+import controllers.storage.FlashExtractor
 import javax.inject.Inject
 import models.ReturnToStartException
 import models.cache.{AssociateUcrAnswers, JourneyType}
@@ -50,10 +50,11 @@ class AssociateUcrSummaryController @Inject() (
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ASSOCIATE_UCR)).async { implicit request =>
     val answers = request.answersAs[AssociateUcrAnswers]
+    val associateUcr = answers.childUcr.getOrElse(throw ReturnToStartException)
 
     submissionService.submit(request.providerId, answers).map { _ =>
       Redirect(controllers.consolidations.routes.AssociateUcrConfirmationController.displayPage())
-        .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString)
+        .flashing(FlashExtractor.MOVEMENT_TYPE -> request.answers.`type`.toString, FlashExtractor.UCR -> associateUcr.ucr)
     }
   }
 }
