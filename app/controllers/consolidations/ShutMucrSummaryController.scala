@@ -46,10 +46,11 @@ class ShutMucrSummaryController @Inject() (
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)).async { implicit request =>
     val answers = request.answersAs[ShutMucrAnswers]
+    val shutMucr = answers.shutMucr.getOrElse(throw ReturnToStartException)
 
     submissionService.submit(request.providerId, answers).map { _ =>
       Redirect(controllers.consolidations.routes.ShutMucrConfirmationController.displayPage())
-        .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString)
+        .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString, FlashKeys.UCR -> shutMucr.mucr)
     }
   }
 }

@@ -36,6 +36,7 @@ class MovementConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
 
   private val flashExtractor = mock[FlashExtractor]
   private val confirmationPage = mock[confirmation_page]
+  private val dummyUcr = "dummyUCR"
 
   private def controller(auth: AuthenticatedAction = SuccessfulAuth()) =
     new MovementConfirmationController(auth, stubMessagesControllerComponents(), flashExtractor, confirmationPage)
@@ -45,7 +46,7 @@ class MovementConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
 
     reset(flashExtractor, confirmationPage)
     when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(None)
-    when(confirmationPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(confirmationPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -62,68 +63,50 @@ class MovementConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
       "journey type is ARRIVE" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.ARRIVE))
-        val result = controller().displayPage()(getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString))
+        when(flashExtractor.extractUcr(any[Request[_]])).thenReturn(None)
+        val result = controller().displayPage(getRequest)
 
         status(result) mustBe Status.OK
-        verify(confirmationPage).apply(meq(JourneyType.ARRIVE))(any(), any())
+        verify(confirmationPage).apply(meq(JourneyType.ARRIVE), meq(None))(any(), any())
       }
 
       "journey type is RETROSPECTIVE_ARRIVE" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.RETROSPECTIVE_ARRIVE))
-        val result = controller().displayPage()(getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.RETROSPECTIVE_ARRIVE.toString))
+        when(flashExtractor.extractUcr(any[Request[_]])).thenReturn(None)
+        val result = controller().displayPage()(getRequest)
 
         status(result) mustBe Status.OK
-        verify(confirmationPage).apply(meq(JourneyType.RETROSPECTIVE_ARRIVE))(any(), any())
+        verify(confirmationPage).apply(meq(JourneyType.RETROSPECTIVE_ARRIVE), meq(None))(any(), any())
       }
 
       "journey type is DEPART" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.DEPART))
-        val result = controller().displayPage()(getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.DEPART.toString))
+        when(flashExtractor.extractUcr(any[Request[_]])).thenReturn(None)
+        val result = controller().displayPage(getRequest)
 
         status(result) mustBe Status.OK
-        verify(confirmationPage).apply(meq(JourneyType.DEPART))(any(), any())
+        verify(confirmationPage).apply(meq(JourneyType.DEPART), meq(None))(any(), any())
       }
     }
 
     "call FlashValuesExtractor" when {
 
-      "journey type is ARRIVE" in {
+      for (journeyType <- List(JourneyType.ARRIVE, JourneyType.DEPART, JourneyType.RETROSPECTIVE_ARRIVE))
+        s"journey type is ${journeyType.toString}" in {
+          when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(journeyType))
+          val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> journeyType.toString, FlashKeys.UCR -> dummyUcr)
 
-        when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.ARRIVE))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString)
+          controller().displayPage(request).futureValue
 
-        controller().displayPage()(request).futureValue
-
-        val requestCaptor: ArgumentCaptor[Request[_]] = ArgumentCaptor.forClass(classOf[Request[_]])
-        verify(flashExtractor).extractMovementType(requestCaptor.capture())
-        requestCaptor.getValue.flash.get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.ARRIVE.toString)
-      }
-
-      "journey type is RETROSPECTIVE_ARRIVE" in {
-
-        when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.RETROSPECTIVE_ARRIVE))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.RETROSPECTIVE_ARRIVE.toString)
-
-        controller().displayPage()(request).futureValue
-
-        val requestCaptor: ArgumentCaptor[Request[_]] = ArgumentCaptor.forClass(classOf[Request[_]])
-        verify(flashExtractor).extractMovementType(requestCaptor.capture())
-        requestCaptor.getValue.flash.get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.RETROSPECTIVE_ARRIVE.toString)
-      }
-
-      "journey type is DEPART" in {
-
-        when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.DEPART))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.DEPART.toString)
-
-        controller().displayPage()(request).futureValue
-
-        val requestCaptor: ArgumentCaptor[Request[_]] = ArgumentCaptor.forClass(classOf[Request[_]])
-        verify(flashExtractor).extractMovementType(requestCaptor.capture())
-        requestCaptor.getValue.flash.get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.DEPART.toString)
-      }
+          val requestCaptorMovementType: ArgumentCaptor[Request[_]] = ArgumentCaptor.forClass(classOf[Request[_]])
+          val requestCaptorUcr: ArgumentCaptor[Request[_]] = ArgumentCaptor.forClass(classOf[Request[_]])
+          verify(flashExtractor).extractMovementType(requestCaptorMovementType.capture())
+          verify(flashExtractor).extractUcr(requestCaptorUcr.capture())
+          requestCaptorMovementType.getValue.flash.get(FlashKeys.MOVEMENT_TYPE) mustBe Some(journeyType.toString)
+          requestCaptorUcr.getValue.flash.get(FlashKeys.UCR) mustBe Some(dummyUcr)
+        }
     }
 
     "throw ReturnToStartException" when {

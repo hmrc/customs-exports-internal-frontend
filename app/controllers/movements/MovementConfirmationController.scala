@@ -36,8 +36,9 @@ class MovementConfirmationController @Inject() (
 
   def displayPage: Action[AnyContent] = authenticate { implicit request =>
     val movementType = flashExtractor.extractMovementType(request).getOrElse(throw ReturnToStartException)
+    val ucr = flashExtractor.extractUcr(request)
     movementType match {
-      case ARRIVE | RETROSPECTIVE_ARRIVE | DEPART => Ok(confirmationPage(movementType))
+      case ARRIVE | RETROSPECTIVE_ARRIVE | DEPART => Ok(confirmationPage(movementType, ucr))
       case _                                      => throw ReturnToStartException
     }
   }

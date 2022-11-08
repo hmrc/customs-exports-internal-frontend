@@ -14,12 +14,8 @@
  * limitations under the License.
  *@
 
-@import views.html.components.gds.link
-
 @this()
 
-@()(implicit messages: Messages)
+@(message: String, classes: String = "govuk-heading-xl", tier: String = "h1")
 
-<p class="govuk-body">
-    @link(content = Html(messages("confirmation.redirect.query.link")), href = ileQuery.routes.FindConsignmentController.displayQueryForm())
-</p>
+<@tier class="@classes">@message</@tier>

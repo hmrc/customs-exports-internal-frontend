@@ -17,7 +17,7 @@
 package views
 
 import base.Injector
-import models.cache.JourneyType
+import models.cache.JourneyType._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import views.html.confirmation_page
@@ -27,104 +27,54 @@ class ConfirmationPageViewSpec extends ViewSpec with MockitoSugar with Injector 
   private implicit val request = FakeRequest().withCSRFToken
 
   private val page = instanceOf[confirmation_page]
+  private val dummyUcr = "dummyUcr"
 
   "ConfirmationPageView" should {
+    for (journeyType <- List(ARRIVE, DEPART, RETROSPECTIVE_ARRIVE, ASSOCIATE_UCR, DISSOCIATE_UCR, SHUT_MUCR))
+      s"provided with ${journeyType.toString} Journey Type" when {
 
-    "render title" when {
+        val view = page(journeyType, Some(dummyUcr))
 
-      "provided with ARRIVE Journey Type" in {
+        "render title" in {
+          view.getTitle must containMessage(s"confirmation.title.${journeyType.toString}")
+        }
 
-        page(JourneyType.ARRIVE).getTitle must containMessage("confirmation.title.ARRIVE")
+        "render header" in {
+          view
+            .getElementsByClass("govuk-heading-xl")
+            .first() must containMessage(s"confirmation.title.${journeyType.toString}")
+        }
+
+        "render inset text with link to View Requests page" in {
+
+          val inset = view.getElementsByClass("govuk-inset-text").first()
+          inset must containMessage("confirmation.insetText", messages("confirmation.notification.timeline.link"))
+
+          val link = inset.getElementsByClass("govuk-link").first()
+          link must containMessage("confirmation.notification.timeline.link")
+          link must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
+        }
+
+        "render sub-heading" in {
+          val subHeading = view.getElementsByClass("govuk-heading-m").first()
+          subHeading must containMessage("confirmation.subheading")
+        }
+
+        "render link to consignment information" in {
+          val link = view.getElementById("summary-link")
+
+          link must containMessage("confirmation.redirect.summary.link")
+          link must haveHref(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(dummyUcr))
+        }
+
+        "render link to choice page" in {
+          val link = view.getElementById("choice-link")
+
+          link must containMessage("confirmation.redirect.choice.link")
+          link must haveHref(controllers.routes.ChoiceController.displayPage)
+        }
       }
 
-      "provided with DEPART Journey Type" in {
-
-        page(JourneyType.DEPART).getTitle must containMessage("confirmation.title.DEPART")
-      }
-
-      "provided with RETROSPECTIVE_ARRIVE Journey Type" in {
-
-        page(JourneyType.RETROSPECTIVE_ARRIVE).getTitle must containMessage("confirmation.title.RETROSPECTIVE_ARRIVE")
-      }
-
-      "provided with ASSOCIATE_UCR Journey Type" in {
-
-        page(JourneyType.ASSOCIATE_UCR).getTitle must containMessage("confirmation.title.ASSOCIATE_UCR")
-      }
-
-      "provided with DISSOCIATE_UCR Journey Type" in {
-
-        page(JourneyType.DISSOCIATE_UCR).getTitle must containMessage("confirmation.title.DISSOCIATE_UCR")
-      }
-
-      "provided with SHUT_MUCR Journey Type" in {
-
-        page(JourneyType.SHUT_MUCR).getTitle must containMessage("confirmation.title.SHUT_MUCR")
-      }
-    }
-
-    "render header" when {
-
-      "provided with ARRIVE Journey Type" in {
-
-        page(JourneyType.ARRIVE)
-          .getElementsByClass("govuk-heading-xl")
-          .first() must containMessage("confirmation.title.ARRIVE")
-      }
-
-      "provided with DEPART Journey Type" in {
-
-        page(JourneyType.DEPART)
-          .getElementsByClass("govuk-heading-xl")
-          .first() must containMessage("confirmation.title.DEPART")
-      }
-
-      "provided with RETROSPECTIVE_ARRIVE Journey Type" in {
-
-        page(JourneyType.RETROSPECTIVE_ARRIVE)
-          .getElementsByClass("govuk-heading-xl")
-          .first() must containMessage("confirmation.title.RETROSPECTIVE_ARRIVE")
-      }
-
-      "provided with ASSOCIATE_UCR Journey Type" in {
-
-        page(JourneyType.ASSOCIATE_UCR)
-          .getElementsByClass("govuk-heading-xl")
-          .first() must containMessage("confirmation.title.ASSOCIATE_UCR")
-      }
-
-      "provided with DISSOCIATE_UCR Journey Type" in {
-
-        page(JourneyType.DISSOCIATE_UCR)
-          .getElementsByClass("govuk-heading-xl")
-          .first() must containMessage("confirmation.title.DISSOCIATE_UCR")
-      }
-
-      "provided with SHUT_MUCR Journey Type" in {
-
-        page(JourneyType.SHUT_MUCR)
-          .getElementsByClass("govuk-heading-xl")
-          .first() must containMessage("confirmation.title.SHUT_MUCR")
-      }
-    }
-
-    "render inset text with link to View Requests page" in {
-
-      val inset = page(JourneyType.ARRIVE).getElementsByClass("govuk-inset-text").first()
-      inset must containMessage("confirmation.insetText")
-
-      val link = inset.getElementsByClass("govuk-link").first()
-      link must containMessage("confirmation.notification.timeline.link")
-      link must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
-    }
-
-    "render 'Find another consignment' link to Find Consignment page" in {
-
-      val link = page(JourneyType.ARRIVE).getElementsByClass("govuk-link").get(1)
-
-      link must containMessage("confirmation.redirect.query.link")
-      link must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
-    }
   }
 
 }

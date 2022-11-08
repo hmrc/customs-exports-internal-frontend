@@ -48,12 +48,6 @@ class AssociateUCRConfirmationViewSpec extends ViewSpec with Injector {
           .getElementsByClass("govuk-link")
           .first() must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
       }
-
-      "have 'find another consignment' link" in {
-        page()
-          .getElementsByClass("govuk-link")
-          .get(1) must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
-      }
     }
   }
 
