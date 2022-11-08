@@ -17,7 +17,7 @@
 package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashKeys
+import controllers.storage.FlashExtractor
 import javax.inject.Inject
 import models.ReturnToStartException
 import models.cache.{AssociateUcrAnswers, JourneyType}
@@ -54,7 +54,7 @@ class AssociateUcrSummaryController @Inject() (
 
     submissionService.submit(request.providerId, answers).map { _ =>
       Redirect(controllers.consolidations.routes.AssociateUcrConfirmationController.displayPage())
-        .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString, FlashKeys.UCR -> associateUcr.ucr)
+        .flashing(FlashExtractor.MOVEMENT_TYPE -> request.answers.`type`.toString, FlashExtractor.UCR -> associateUcr.ucr)
     }
   }
 }

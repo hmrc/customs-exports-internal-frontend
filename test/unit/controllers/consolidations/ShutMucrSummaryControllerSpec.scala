@@ -17,7 +17,7 @@
 package controllers.consolidations
 
 import controllers.ControllerLayerSpec
-import controllers.storage.FlashKeys
+import controllers.storage.FlashExtractor
 import forms.ShutMucr
 import models.ReturnToStartException
 import models.cache.{Answers, JourneyType, ShutMucrAnswers}
@@ -110,7 +110,7 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with ScalaFuture
 
         val result = controller(ShutMucrAnswers(shutMucr = Some(shutMucr))).submit()(postRequest(JsString("")))
 
-        flash(result).get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.SHUT_MUCR.toString)
+        flash(result).get(FlashExtractor.MOVEMENT_TYPE) mustBe Some(JourneyType.SHUT_MUCR.toString)
       }
     }
   }

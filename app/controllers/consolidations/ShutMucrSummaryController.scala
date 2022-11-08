@@ -17,7 +17,7 @@
 package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashKeys
+import controllers.storage.FlashExtractor
 import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
 import models.cache.{JourneyType, ShutMucrAnswers}
@@ -50,7 +50,7 @@ class ShutMucrSummaryController @Inject() (
 
     submissionService.submit(request.providerId, answers).map { _ =>
       Redirect(controllers.consolidations.routes.ShutMucrConfirmationController.displayPage())
-        .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString, FlashKeys.UCR -> shutMucr.mucr)
+        .flashing(FlashExtractor.MOVEMENT_TYPE -> request.answers.`type`.toString, FlashExtractor.UCR -> shutMucr.mucr)
     }
   }
 }

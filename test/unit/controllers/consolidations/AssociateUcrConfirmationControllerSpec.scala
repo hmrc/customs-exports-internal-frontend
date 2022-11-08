@@ -18,7 +18,7 @@ package controllers.consolidations
 
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
-import controllers.storage.{FlashExtractor, FlashKeys}
+import controllers.storage.FlashExtractor
 import models.ReturnToStartException
 import models.cache.JourneyType
 import org.mockito.ArgumentCaptor
@@ -75,13 +75,13 @@ class AssociateUcrConfirmationControllerSpec extends ControllerLayerSpec with Sc
       "journey type is ASSOCIATE_UCR" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.ASSOCIATE_UCR))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ASSOCIATE_UCR.toString)
+        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.ASSOCIATE_UCR.toString)
 
         controller().displayPage()(request).futureValue
 
         val requestCaptor: ArgumentCaptor[Request[_]] = ArgumentCaptor.forClass(classOf[Request[_]])
         verify(flashExtractor).extractMovementType(requestCaptor.capture())
-        requestCaptor.getValue.flash.get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.ASSOCIATE_UCR.toString)
+        requestCaptor.getValue.flash.get(FlashExtractor.MOVEMENT_TYPE) mustBe Some(JourneyType.ASSOCIATE_UCR.toString)
       }
     }
 
@@ -99,7 +99,7 @@ class AssociateUcrConfirmationControllerSpec extends ControllerLayerSpec with Sc
       "journey type is ARRIVE" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.ARRIVE))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString)
+        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString)
 
         intercept[RuntimeException] {
           await(controller().displayPage()(request))
@@ -109,7 +109,7 @@ class AssociateUcrConfirmationControllerSpec extends ControllerLayerSpec with Sc
       "journey type is RETROSPECTIVE_ARRIVE" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.RETROSPECTIVE_ARRIVE))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.RETROSPECTIVE_ARRIVE.toString)
+        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.RETROSPECTIVE_ARRIVE.toString)
 
         intercept[RuntimeException] {
           await(controller().displayPage()(request))
@@ -119,7 +119,7 @@ class AssociateUcrConfirmationControllerSpec extends ControllerLayerSpec with Sc
       "journey type is DEPART" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.DEPART))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.DEPART.toString)
+        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.DEPART.toString)
 
         intercept[RuntimeException] {
           await(controller().displayPage()(request))
@@ -129,7 +129,7 @@ class AssociateUcrConfirmationControllerSpec extends ControllerLayerSpec with Sc
       "journey type is DISSOCIATE_UCR" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.DISSOCIATE_UCR))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.DISSOCIATE_UCR.toString)
+        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.DISSOCIATE_UCR.toString)
 
         intercept[RuntimeException] {
           await(controller().displayPage()(request))
@@ -139,7 +139,7 @@ class AssociateUcrConfirmationControllerSpec extends ControllerLayerSpec with Sc
       "journey type is SHUT_MUCR" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.SHUT_MUCR))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.SHUT_MUCR.toString)
+        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.SHUT_MUCR.toString)
 
         intercept[RuntimeException] {
           await(controller().displayPage()(request))

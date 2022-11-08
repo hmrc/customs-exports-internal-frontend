@@ -17,7 +17,7 @@
 package controllers.movements
 
 import controllers.ControllerLayerSpec
-import controllers.storage.FlashKeys
+import controllers.storage.FlashExtractor
 import forms.ConsignmentReferenceType.D
 import forms.{ConsignmentReferenceType, ConsignmentReferences}
 import models.cache._
@@ -137,8 +137,8 @@ class MovementSummaryControllerSpec extends ControllerLayerSpec with ScalaFuture
 
         val result = controller(ArrivalAnswers(consignmentReferences = consignmentRefs)).submitMovementRequest()(postRequest(JsString("")))
 
-        flash(result).get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.ARRIVE.toString)
-        flash(result).get(FlashKeys.UCR) mustBe Some(dummyUcr)
+        flash(result).get(FlashExtractor.MOVEMENT_TYPE) mustBe Some(JourneyType.ARRIVE.toString)
+        flash(result).get(FlashExtractor.UCR) mustBe Some(dummyUcr)
       }
     }
 
@@ -168,8 +168,8 @@ class MovementSummaryControllerSpec extends ControllerLayerSpec with ScalaFuture
         val result =
           controller(RetrospectiveArrivalAnswers(consignmentReferences = consignmentRefs)).submitMovementRequest()(postRequest(JsString("")))
 
-        flash(result).get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.RETROSPECTIVE_ARRIVE.toString)
-        flash(result).get(FlashKeys.UCR) mustBe Some(dummyUcr)
+        flash(result).get(FlashExtractor.MOVEMENT_TYPE) mustBe Some(JourneyType.RETROSPECTIVE_ARRIVE.toString)
+        flash(result).get(FlashExtractor.UCR) mustBe Some(dummyUcr)
       }
     }
 
@@ -197,8 +197,8 @@ class MovementSummaryControllerSpec extends ControllerLayerSpec with ScalaFuture
 
         val result = controller(DepartureAnswers(consignmentReferences = consignmentRefs)).submitMovementRequest()(postRequest(JsString("")))
 
-        flash(result).get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.DEPART.toString)
-        flash(result).get(FlashKeys.UCR) mustBe Some(dummyUcr)
+        flash(result).get(FlashExtractor.MOVEMENT_TYPE) mustBe Some(JourneyType.DEPART.toString)
+        flash(result).get(FlashExtractor.UCR) mustBe Some(dummyUcr)
       }
     }
   }

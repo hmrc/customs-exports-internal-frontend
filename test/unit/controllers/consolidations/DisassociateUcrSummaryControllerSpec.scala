@@ -18,7 +18,7 @@ package controllers.consolidations
 
 import base.Injector
 import controllers.ControllerLayerSpec
-import controllers.storage.FlashKeys
+import controllers.storage.FlashExtractor
 import forms.DisassociateUcr
 import models.{ReturnToStartException, UcrType}
 import models.cache.{Answers, DisassociateUcrAnswers, JourneyType}
@@ -118,7 +118,7 @@ class DisassociateUcrSummaryControllerSpec extends ControllerLayerSpec with Scal
 
         val result = controller(DisassociateUcrAnswers(ucr = Some(ucr))).submit()(postRequest(Json.obj()))
 
-        flash(result).get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.DISSOCIATE_UCR.toString)
+        flash(result).get(FlashExtractor.MOVEMENT_TYPE) mustBe Some(JourneyType.DISSOCIATE_UCR.toString)
 
       }
     }

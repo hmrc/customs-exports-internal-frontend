@@ -17,7 +17,7 @@
 package controllers.consolidations
 
 import controllers.ControllerLayerSpec
-import controllers.storage.FlashKeys
+import controllers.storage.FlashExtractor
 import forms.{AssociateUcr, MucrOptions}
 import models.{ReturnToStartException, UcrType}
 import models.cache.{Answers, AssociateUcrAnswers, JourneyType}
@@ -127,7 +127,7 @@ class AssociateUcrSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
         val result =
           controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
 
-        flash(result).get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.ASSOCIATE_UCR.toString)
+        flash(result).get(FlashExtractor.MOVEMENT_TYPE) mustBe Some(JourneyType.ASSOCIATE_UCR.toString)
       }
     }
   }

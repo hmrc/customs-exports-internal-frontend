@@ -17,7 +17,7 @@
 package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashKeys
+import controllers.storage.FlashExtractor
 import models.ReturnToStartException
 
 import javax.inject.Inject
@@ -57,7 +57,7 @@ class MovementSummaryController @Inject() (
       val ucr = answers.consignmentReferences.getOrElse(throw ReturnToStartException).referenceValue
       submissionService.submit(request.providerId, request.answersAs[MovementAnswers]).map { _ =>
         Redirect(controllers.movements.routes.MovementConfirmationController.displayPage())
-          .flashing(FlashKeys.MOVEMENT_TYPE -> request.answers.`type`.toString, FlashKeys.UCR -> ucr)
+          .flashing(FlashExtractor.MOVEMENT_TYPE -> request.answers.`type`.toString, FlashExtractor.UCR -> ucr)
       }
     }
 }

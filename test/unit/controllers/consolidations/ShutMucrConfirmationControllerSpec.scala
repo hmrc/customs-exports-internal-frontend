@@ -18,7 +18,7 @@ package controllers.consolidations
 
 import controllers.ControllerLayerSpec
 import controllers.actions.AuthenticatedAction
-import controllers.storage.{FlashExtractor, FlashKeys}
+import controllers.storage.FlashExtractor
 import models.ReturnToStartException
 import models.cache.JourneyType
 import org.mockito.ArgumentCaptor
@@ -78,7 +78,7 @@ class ShutMucrConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.SHUT_MUCR))
         when(flashExtractor.extractUcr(any[Request[_]])).thenReturn(Some(dummyUcr))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.SHUT_MUCR.toString, FlashKeys.UCR -> dummyUcr)
+        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.SHUT_MUCR.toString, FlashExtractor.UCR -> dummyUcr)
 
         controller().displayPage()(request).futureValue
 
@@ -86,8 +86,8 @@ class ShutMucrConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
         val requestCaptorUcr: ArgumentCaptor[Request[_]] = ArgumentCaptor.forClass(classOf[Request[_]])
         verify(flashExtractor).extractMovementType(requestCaptorMovementType.capture())
         verify(flashExtractor).extractUcr(requestCaptorUcr.capture())
-        requestCaptorMovementType.getValue.flash.get(FlashKeys.MOVEMENT_TYPE) mustBe Some(JourneyType.SHUT_MUCR.toString)
-        requestCaptorUcr.getValue.flash.get(FlashKeys.UCR) mustBe Some(dummyUcr)
+        requestCaptorMovementType.getValue.flash.get(FlashExtractor.MOVEMENT_TYPE) mustBe Some(JourneyType.SHUT_MUCR.toString)
+        requestCaptorUcr.getValue.flash.get(FlashExtractor.UCR) mustBe Some(dummyUcr)
       }
     }
 
@@ -96,7 +96,7 @@ class ShutMucrConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
       "journey type is ARRIVE" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.ARRIVE))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString)
+        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.ARRIVE.toString)
 
         intercept[RuntimeException] {
           await(controller().displayPage()(request))
@@ -106,7 +106,7 @@ class ShutMucrConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
       "journey type is RETROSPECTIVE_ARRIVE" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.RETROSPECTIVE_ARRIVE))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.RETROSPECTIVE_ARRIVE.toString)
+        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.RETROSPECTIVE_ARRIVE.toString)
 
         intercept[RuntimeException] {
           await(controller().displayPage()(request))
@@ -116,7 +116,7 @@ class ShutMucrConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
       "journey type is DEPART" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.DEPART))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.DEPART.toString)
+        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.DEPART.toString)
 
         intercept[RuntimeException] {
           await(controller().displayPage()(request))
@@ -126,7 +126,7 @@ class ShutMucrConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
       "journey type is ASSOCIATE_UCR" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.ASSOCIATE_UCR))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.ASSOCIATE_UCR.toString)
+        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.ASSOCIATE_UCR.toString)
 
         intercept[RuntimeException] {
           await(controller().displayPage()(request))
@@ -136,7 +136,7 @@ class ShutMucrConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
       "journey type is DISSOCIATE_UCR" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.DISSOCIATE_UCR))
-        val request = getRequest.withFlash(FlashKeys.MOVEMENT_TYPE -> JourneyType.DISSOCIATE_UCR.toString)
+        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.DISSOCIATE_UCR.toString)
 
         intercept[RuntimeException] {
           await(controller().displayPage()(request))
