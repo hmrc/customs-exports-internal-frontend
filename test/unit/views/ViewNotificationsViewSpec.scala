@@ -80,12 +80,12 @@ class ViewNotificationsViewSpec extends ViewSpec with Injector {
 
       val title = data.get(0)
       title.tagName mustBe "h2"
-      title.className mustBe "hmrc-timeline__event-title"
+      title.className mustBe "hmrc-timeline__event-title govuk-heading"
       title.text mustBe notificationElement.title
 
       val timestamp = data.get(1)
       timestamp.tagName mustBe "time"
-      timestamp.className mustBe "hmrc-timeline__event-meta"
+      timestamp.className mustBe "hmrc-timeline__event-meta govuk-body"
       timestamp.text mustBe notificationElement.timestampInfo
 
       val content = data.get(2)
