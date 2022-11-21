@@ -17,19 +17,24 @@
 @import components.gds.gds_main_template
 @import components.gds.pageTitle
 @import models.cache.JourneyType.JourneyType
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-@import views.html.components.gds.{link, heading}
+@import views.html.components.gds.{link, heading, paragraphBody, summaryList}
 @import controllers.ileQuery.routes.IleQueryController
 @import controllers.routes.ChoiceController
 @import views.Title
+
 
 @this(
   govukLayout: gds_main_template,
   pageTitle: pageTitle,
   govukInsetText: GovukInsetText,
-  heading: heading
+  heading: heading,
+    govukPanel: GovukPanel,
+    govukTable: GovukTable,
+    paragraphBody: paragraphBody,
+    summaryList: summaryList
 )
 
 @(journeyType: JourneyType, maybeUcr: Option[String] = None)(implicit request: Request[_], messages: Messages)
@@ -45,11 +50,31 @@
 
 @govukLayout(title = Title(s"confirmation.title.$journeyType")) {
 
-  @pageTitle(text = messages(s"confirmation.title.$journeyType"), classes = "govuk-heading-xl")
+  @govukPanel(Panel(title = Text(messages(s"confirmation.title.$journeyType"))))
 
-  @govukInsetText(InsetText(
-    content = HtmlContent(messages("confirmation.insetText", gotoTimelineLink))
-  ))
+  @govukTable(Table(
+    rows = Seq(
+        Seq(
+            TableRow(
+                content = Text("1st column")
+            ),
+            TableRow(
+                content = Text("2nd column")
+            )
+        ),
+        Seq(
+            TableRow(
+                content = Text("1st column")
+            ),
+            TableRow(
+                content = Text("2nd column")
+            )
+        )
+    )
+    ))
+
+
+  @paragraphBody(messages("confirmation.bodyText", gotoTimelineLink))
 
     @heading(
         messages("confirmation.subheading"), "govuk-heading-m", "h2"

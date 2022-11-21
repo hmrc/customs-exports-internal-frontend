@@ -33,6 +33,16 @@ object ConsignmentReferenceType extends Enumeration {
 }
 
 object ConsignmentReferences {
+
+  def apply(ucrType: String, ucr: String) = {
+    ucrType match {
+      case "D" => new ConsignmentReferences(ConsignmentReferenceType.D, ucr)
+      case "M" => new ConsignmentReferences(ConsignmentReferenceType.M, ucr)
+      case "DP" => new ConsignmentReferences(ConsignmentReferenceType.DP, ucr)
+    }
+  }
+
+
   implicit val format = Json.format[ConsignmentReferences]
 
   val formId = "ConsignmentReferences"
