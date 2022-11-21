@@ -27,7 +27,7 @@ import models.viewmodels.notificationspage.converters._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import views.ViewDates
-import views.html.components.paragraph
+import views.html.components.gds.paragraphBody
 
 @Singleton
 class NotificationPageSingleElementFactory @Inject() (responseConverterProvider: ResponseConverterProvider, viewDates: ViewDates) {
@@ -51,8 +51,8 @@ class NotificationPageSingleElementFactory @Inject() (responseConverterProvider:
 
     val content = HtmlFormat.fill(
       List(
-        paragraph(messages(s"notifications.elem.content.${submission.actionType.typeName}", ucrType)),
-        paragraph(messages("notifications.elem.content.footer"))
+        paragraphBody(messages(s"notifications.elem.content.${submission.actionType.typeName}", ucrType)),
+        paragraphBody(messages("notifications.elem.content.footer"))
       )
     )
 
@@ -66,9 +66,9 @@ class NotificationPageSingleElementFactory @Inject() (responseConverterProvider:
   private def buildForDucrAssociation(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement = {
     val ducrs: List[UcrBlock] = submission.ucrBlocks.filter(_.ucrType == Ducr.codeValue).toList
     val content = HtmlFormat.fill(
-      paragraph(messages(s"notifications.elem.content.${submission.actionType.typeName}")) +:
-        ducrs.map(block => paragraph(block.ucr)) :+
-        paragraph(messages("notifications.elem.content.footer"))
+      paragraphBody(messages(s"notifications.elem.content.${submission.actionType.typeName}")) +:
+        ducrs.map(block => paragraphBody(block.ucr)) :+
+        paragraphBody(messages("notifications.elem.content.footer"))
     )
 
     buildForRequest(submission).copy(content = content)
@@ -77,9 +77,9 @@ class NotificationPageSingleElementFactory @Inject() (responseConverterProvider:
   private def buildForDucrPartAssociation(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement = {
     val ducrs: List[UcrBlock] = submission.ucrBlocks.filter(_.ucrType == DucrPart.codeValue).toList
     val content = HtmlFormat.fill(
-      paragraph(messages(s"notifications.elem.content.${submission.actionType.typeName}")) +:
-        ducrs.map(block => paragraph(block.fullUcr)) :+
-        paragraph(messages("notifications.elem.content.footer"))
+      paragraphBody(messages(s"notifications.elem.content.${submission.actionType.typeName}")) +:
+        ducrs.map(block => paragraphBody(block.fullUcr)) :+
+        paragraphBody(messages("notifications.elem.content.footer"))
     )
 
     buildForRequest(submission).copy(content = content)
