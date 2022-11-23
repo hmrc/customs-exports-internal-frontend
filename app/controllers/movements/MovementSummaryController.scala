@@ -18,8 +18,6 @@ package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.storage.FlashExtractor
-import models.ReturnToStartException
-
 import javax.inject.Inject
 import models.cache._
 import play.api.i18n.I18nSupport

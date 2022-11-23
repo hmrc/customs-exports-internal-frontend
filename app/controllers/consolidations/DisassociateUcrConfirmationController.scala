@@ -37,7 +37,6 @@ class DisassociateUcrConfirmationController @Inject() (
   def displayPage: Action[AnyContent] = authenticate { implicit request =>
     val journeyType = flashExtractor.extractMovementType(request).getOrElse(throw ReturnToStartException)
     val consignmentRefs = flashExtractor.extractConsignmentRefs(request)
-    val mucrToAssociate = flashExtractor.extractMucrToAssociate(request)
 
     journeyType match {
       case DISSOCIATE_UCR => Ok(confirmationPage(journeyType, consignmentRefs))

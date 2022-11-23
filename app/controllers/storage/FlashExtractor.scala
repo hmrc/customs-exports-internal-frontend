@@ -31,7 +31,7 @@ class FlashExtractor {
   def extractUcr(request: Request[_]): Option[String] =
     extractValue(FlashExtractor.UCR, request)
 
-  def extractUcrType(request: Request[_]): Option[String]=
+  def extractUcrType(request: Request[_]): Option[String] =
     extractValue(FlashExtractor.UCR_TYPE, request)
 
   def extractMucrToAssociate(request: Request[_]): Option[String] =

@@ -47,7 +47,7 @@ class ShutMucrConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
 
     reset(flashExtractor, confirmationPage)
     when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(None)
-    when(confirmationPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(confirmationPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -64,11 +64,11 @@ class ShutMucrConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
       "journey type is SHUT_MUCR" in {
 
         when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.SHUT_MUCR))
-        when(flashExtractor.extractUcr(any[Request[_]])).thenReturn(None)
+        when(flashExtractor.extractConsignmentRefs(any[Request[_]])).thenReturn(None)
         val result = controller().displayPage()(getRequest)
 
         status(result) mustBe Status.OK
-        verify(confirmationPage).apply(meq(JourneyType.SHUT_MUCR), meq(None))(any(), any())
+        verify(confirmationPage).apply(meq(JourneyType.SHUT_MUCR), meq(None), any())(any(), any())
       }
     }
 
@@ -85,7 +85,7 @@ class ShutMucrConfirmationControllerSpec extends ControllerLayerSpec with ScalaF
         val requestCaptorMovementType: ArgumentCaptor[Request[_]] = ArgumentCaptor.forClass(classOf[Request[_]])
         val requestCaptorUcr: ArgumentCaptor[Request[_]] = ArgumentCaptor.forClass(classOf[Request[_]])
         verify(flashExtractor).extractMovementType(requestCaptorMovementType.capture())
-        verify(flashExtractor).extractUcr(requestCaptorUcr.capture())
+        verify(flashExtractor).extractConsignmentRefs(requestCaptorUcr.capture())
         requestCaptorMovementType.getValue.flash.get(FlashExtractor.MOVEMENT_TYPE) mustBe Some(JourneyType.SHUT_MUCR.toString)
         requestCaptorUcr.getValue.flash.get(FlashExtractor.UCR) mustBe Some(dummyUcr)
       }

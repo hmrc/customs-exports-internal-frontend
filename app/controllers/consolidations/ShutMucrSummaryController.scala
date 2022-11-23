@@ -21,7 +21,7 @@ import controllers.storage.FlashExtractor
 import forms.ConsignmentReferenceType
 
 import javax.inject.{Inject, Singleton}
-import models.{ReturnToStartException, UcrType}
+import models.ReturnToStartException
 import models.cache.{JourneyType, ShutMucrAnswers}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
