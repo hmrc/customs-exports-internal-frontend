@@ -36,9 +36,11 @@ class AssociateUcrConfirmationController @Inject() (
 
   def displayPage: Action[AnyContent] = authenticate { implicit request =>
     val journeyType = flashExtractor.extractMovementType(request).getOrElse(throw ReturnToStartException)
-    val ucr = flashExtractor.extractUcr(request)
+    val consignmentRefs = flashExtractor.extractConsignmentRefs(request)
+    val mucrToAssociate = flashExtractor.extractMucrToAssociate(request)
+
     journeyType match {
-      case ASSOCIATE_UCR => Ok(confirmationPage(journeyType, ucr))
+      case ASSOCIATE_UCR => Ok(confirmationPage(journeyType, consignmentRefs, mucrToAssociate))
       case _             => throw ReturnToStartException
     }
   }

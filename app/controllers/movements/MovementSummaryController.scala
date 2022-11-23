@@ -54,10 +54,17 @@ class MovementSummaryController @Inject() (
   def submitMovementRequest(): Action[AnyContent] =
     (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)).async { implicit request =>
       val answers = request.answersAs[MovementAnswers]
-      val ucr = answers.consignmentReferences.getOrElse(throw ReturnToStartException).referenceValue
+      val ucrType = answers.consignmentReferences.map(_.reference.toString)
+      val ucr = answers.consignmentReferences.map(_.referenceValue)
+      val flash = Seq(
+        Some(FlashExtractor.MOVEMENT_TYPE -> answers.`type`.toString),
+        ucr.map(ucr => FlashExtractor.UCR -> ucr),
+        ucrType.map(ucrType => FlashExtractor.UCR_TYPE -> ucrType)
+      ).flatten
+
       submissionService.submit(request.providerId, request.answersAs[MovementAnswers]).map { _ =>
         Redirect(controllers.movements.routes.MovementConfirmationController.displayPage())
-          .flashing(FlashExtractor.MOVEMENT_TYPE -> request.answers.`type`.toString, FlashExtractor.UCR -> ucr)
+          .flashing(flash: _*)
       }
     }
 }

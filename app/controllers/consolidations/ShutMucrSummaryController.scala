@@ -18,8 +18,10 @@ package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.storage.FlashExtractor
+import forms.ConsignmentReferenceType
+
 import javax.inject.{Inject, Singleton}
-import models.ReturnToStartException
+import models.{ReturnToStartException, UcrType}
 import models.cache.{JourneyType, ShutMucrAnswers}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -46,11 +48,18 @@ class ShutMucrSummaryController @Inject() (
 
   def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)).async { implicit request =>
     val answers = request.answersAs[ShutMucrAnswers]
-    val shutMucr = answers.shutMucr.getOrElse(throw ReturnToStartException)
+    val ucrType = Some(ConsignmentReferenceType.M.toString)
+    val ucr = answers.shutMucr.map(_.mucr)
+
+    val flash = Seq(
+      Some(FlashExtractor.MOVEMENT_TYPE -> answers.`type`.toString),
+      ucr.map(ucr => FlashExtractor.UCR -> ucr),
+      ucrType.map(ucrType => FlashExtractor.UCR_TYPE -> ucrType)
+    ).flatten
 
     submissionService.submit(request.providerId, answers).map { _ =>
       Redirect(controllers.consolidations.routes.ShutMucrConfirmationController.displayPage())
-        .flashing(FlashExtractor.MOVEMENT_TYPE -> request.answers.`type`.toString, FlashExtractor.UCR -> shutMucr.mucr)
+        .flashing(flash: _*)
     }
   }
 }

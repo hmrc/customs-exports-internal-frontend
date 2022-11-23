@@ -24,6 +24,7 @@
 @import controllers.ileQuery.routes.IleQueryController
 @import controllers.routes.ChoiceController
 @import views.Title
+@import forms.ConsignmentReferences
 
 
 @this(
@@ -37,7 +38,7 @@
     summaryList: summaryList
 )
 
-@(journeyType: JourneyType, maybeUcr: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(journeyType: JourneyType, consignmentRefs: Option[ConsignmentReferences], mucrToAssociate: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @gotoTimelineLink = @{
   link(
@@ -52,25 +53,34 @@
 
   @govukPanel(Panel(title = Text(messages(s"confirmation.title.$journeyType"))))
 
-  @govukTable(Table(
-    rows = Seq(
-        Seq(
-            TableRow(
-                content = Text("1st column")
-            ),
-            TableRow(
-                content = Text("2nd column")
-            )
-        ),
-        Seq(
-            TableRow(
-                content = Text("1st column")
-            ),
-            TableRow(
-                content = Text("2nd column")
-            )
-        )
-    )
+    @govukTable(Table(
+        rows = Seq(
+            consignmentRefs.map { case ConsignmentReferences(ucrType, ucrValue) =>
+                Seq(
+                    TableRow(
+                        content = Text(messages(s"confirmation.${ucrType.toString.toUpperCase}")), classes = "govuk-!-font-weight-bold"
+                    ),
+                    TableRow(
+                        content = HtmlContent(link(content = Html(ucrValue),
+                        href = IleQueryController.getConsignmentInformation(ucrValue),
+                        id = Some("summary-link")
+                    ))
+                )
+                )
+            },
+            mucrToAssociate.map { mucr =>
+                Seq(
+                    TableRow(
+                        content = Text(messages("confirmation.MUCR")), classes = "govuk-!-font-weight-bold"
+                    ),
+                    TableRow(
+                        content = HtmlContent(link(content = Html(mucr),
+                        href = IleQueryController.getConsignmentInformation(mucr)
+                    ))
+                )
+                )
+            }
+        ).flatten
     ))
 
 
@@ -81,13 +91,6 @@
     )
 
 <ul>
-    @maybeUcr.map { ucr =>
-    <li class="govuk-body">
-        @link(content = Html(messages("confirmation.redirect.summary.link")), href = IleQueryController.getConsignmentInformation(ucr), id = Some("summary-link"))
-    </li>
-    }
-
-
     <li class="govuk-body">
         @link(content = Html(messages("confirmation.redirect.choice.link")), href = ChoiceController.displayPage, id = Some("choice-link"))
     </li>
