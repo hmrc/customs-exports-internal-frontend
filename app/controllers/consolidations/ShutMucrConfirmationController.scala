@@ -36,9 +36,10 @@ class ShutMucrConfirmationController @Inject() (
 
   def displayPage: Action[AnyContent] = authenticate { implicit request =>
     val journeyType = flashExtractor.extractMovementType(request).getOrElse(throw ReturnToStartException)
-    val ucr = flashExtractor.extractUcr(request)
+    val consignmentRefs = flashExtractor.extractConsignmentRefs(request)
+
     journeyType match {
-      case SHUT_MUCR => Ok(confirmationPage(journeyType, ucr))
+      case SHUT_MUCR => Ok(confirmationPage(journeyType, consignmentRefs))
       case _         => throw ReturnToStartException
     }
   }

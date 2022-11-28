@@ -17,10 +17,15 @@
 package views
 
 import base.Injector
+import forms.ConsignmentReferences
+import models.UcrType
+import models.UcrType.{Ducr, DucrPart, Mucr}
+import models.cache.{ArrivalAnswers, AssociateUcrAnswers, DepartureAnswers, DisassociateUcrAnswers, RetrospectiveArrivalAnswers, ShutMucrAnswers}
 import models.cache.JourneyType._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import views.html.confirmation_page
+import controllers.ileQuery.routes.IleQueryController
 
 class ConfirmationPageViewSpec extends ViewSpec with MockitoSugar with Injector {
 
@@ -28,29 +33,30 @@ class ConfirmationPageViewSpec extends ViewSpec with MockitoSugar with Injector 
 
   private val page = instanceOf[confirmation_page]
   private val dummyUcr = "dummyUcr"
+  private val call = IleQueryController.getConsignmentInformation(dummyUcr)
+
+  private def consignmentRefs(ucrType: UcrType = Ducr) = ConsignmentReferences(ucrType.codeValue, dummyUcr)
 
   "ConfirmationPageView" should {
     for (journeyType <- List(ARRIVE, DEPART, RETROSPECTIVE_ARRIVE, ASSOCIATE_UCR, DISSOCIATE_UCR, SHUT_MUCR))
       s"provided with ${journeyType.toString} Journey Type" when {
 
-        val view = page(journeyType, Some(dummyUcr))
+        val view = page(journeyType, Some(consignmentRefs()))
 
         "render title" in {
           view.getTitle must containMessage(s"confirmation.title.${journeyType.toString}")
         }
 
-        "render header" in {
-          view
-            .getElementsByClass("govuk-heading-xl")
-            .first() must containMessage(s"confirmation.title.${journeyType.toString}")
+        "render panel with heading" in {
+          Option(view.getElementsByClass("govuk-panel").first()) mustBe defined
+          view.getElementsByTag("h1").first() must containMessage(s"confirmation.title.${journeyType.toString}")
         }
 
-        "render inset text with link to View Requests page" in {
+        "render body text with link to View Requests page" in {
+          val bodyText = view.getElementsByClass("govuk-body").first()
+          bodyText must containMessage("confirmation.bodyText", messages("confirmation.notification.timeline.link"))
 
-          val inset = view.getElementsByClass("govuk-inset-text").first()
-          inset must containMessage("confirmation.insetText", messages("confirmation.notification.timeline.link"))
-
-          val link = inset.getElementsByClass("govuk-link").first()
+          val link = bodyText.getElementsByClass("govuk-link").first()
           link must containMessage("confirmation.notification.timeline.link")
           link must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
         }
@@ -60,13 +66,6 @@ class ConfirmationPageViewSpec extends ViewSpec with MockitoSugar with Injector 
           subHeading must containMessage("confirmation.subheading")
         }
 
-        "render link to consignment information" in {
-          val link = view.getElementById("summary-link")
-
-          link must containMessage("confirmation.redirect.summary.link")
-          link must haveHref(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(dummyUcr))
-        }
-
         "render link to choice page" in {
           val link = view.getElementById("choice-link")
 
@@ -74,6 +73,75 @@ class ConfirmationPageViewSpec extends ViewSpec with MockitoSugar with Injector 
           link must haveHref(controllers.routes.ChoiceController.displayPage)
         }
       }
+
+    for {
+      ucrType <- List(Mucr, Ducr, DucrPart)
+      answers <- List(ArrivalAnswers(), DepartureAnswers(), DisassociateUcrAnswers(), RetrospectiveArrivalAnswers())
+    }
+      s"provided with ${answers.`type`} Journey Type and $ucrType" should {
+        implicit val request = journeyRequest(answers)
+        val view = page(answers.`type`, Some(consignmentRefs(ucrType)))
+
+        "render table with one row" in {
+          view.getElementsByClass("govuk-table__row").size mustBe 1
+        }
+
+        "render a row with DUCR or MUCR based on input" in {
+          ucrType match {
+            case Ducr | DucrPart => view.getElementsByClass("govuk-table__cell").first must containMessage("confirmation.D")
+            case Mucr            => view.getElementsByClass("govuk-table__cell").first() must containMessage("confirmation.MUCR")
+          }
+
+          view.getElementsByClass("govuk-table__cell").get(1) must containText(dummyUcr)
+          view.getElementsByClass("govuk-table__cell").get(1).child(0) must haveHref(call)
+        }
+      }
+
+    for {
+      ucrType <- List(Mucr, Ducr, DucrPart)
+      answer <- List(AssociateUcrAnswers())
+    } s"provided with ${answer.`type`} Journey Type and $ucrType" should {
+      implicit val request = journeyRequest(answer)
+      val view = page(answer.`type`, Some(consignmentRefs(ucrType)), Some(dummyUcr))
+
+      "render table with two rows" in {
+        view.getElementsByClass("govuk-table__row").size mustBe 2
+      }
+
+      "render a row with DUCR or MUCR based on input" in {
+        ucrType match {
+          case Ducr | DucrPart => view.getElementsByClass("govuk-table__cell").first must containMessage("confirmation.D")
+          case Mucr            => view.getElementsByClass("govuk-table__cell").first() must containMessage("confirmation.MUCR")
+        }
+
+        view.getElementsByClass("govuk-table__cell").get(1) must containText(dummyUcr)
+        view.getElementsByClass("govuk-table__cell").get(1).child(0) must haveHref(call)
+      }
+
+      "render a second row with MUCR" in {
+        view.getElementsByClass("govuk-table__cell").get(2) must containMessage("confirmation.MUCR")
+        view.getElementsByClass("govuk-table__cell").get(3) must containText(dummyUcr)
+        view.getElementsByClass("govuk-table__cell").get(3).child(0) must haveHref(call)
+      }
+    }
+  }
+
+  for {
+    ucrType <- List(Mucr)
+    answer <- List(ShutMucrAnswers())
+  } s"provided with ${answer.`type`} Journey Type" should {
+    implicit val request = journeyRequest(answer)
+    val view = page(answer.`type`, Some(consignmentRefs(ucrType)))
+
+    "render table with one row" in {
+      view.getElementsByClass("govuk-table__row").size mustBe 1
+    }
+
+    "render a row with MUCR based on input" in {
+      view.getElementsByClass("govuk-table__cell").first() must containMessage("confirmation.MUCR")
+      view.getElementsByClass("govuk-table__cell").get(1) must containText(dummyUcr)
+      view.getElementsByClass("govuk-table__cell").get(1).child(0) must haveHref(call)
+    }
 
   }
 
