@@ -16,7 +16,7 @@
 
 @import components.gds.{gds_main_template, linkContent, pageTitle}
 @import components.summary._
-@import controllers.movements.routes
+@import controllers.summary.routes
 @import models.cache.DepartureAnswers
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.Title
@@ -41,11 +41,11 @@
 
 @govukLayout(
   title = Title("summary.departure.title"),
-  backButton = Some(BackButton(messages("site.back"), routes.TransportController.displayPage)),
+  backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.TransportController.displayPage)),
   useCustomContentWidth = true
 ) {
 
-    @formHelper(action = routes.MovementSummaryController.submitMovementRequest(), 'autoComplete -> "off") {
+    @formHelper(action = routes.ArriveDepartSummaryController.submitMovementRequest(), 'autoComplete -> "off") {
 
     @pageTitle(messages("summary.departure.title"))
 
@@ -64,7 +64,7 @@
             actions = Some(Actions(
               items = Seq(
                 ActionItem(
-                  href = s"${routes.MovementDetailsController.displayPage}",
+                  href = s"${controllers.movements.routes.MovementDetailsController.displayPage}",
                   content = HtmlContent(linkContent(messages("site.change"))),
                   visuallyHiddenText = Some(messages("summary.departure.date.change"))
                 )
@@ -81,7 +81,7 @@
             actions = Some(Actions(
               items = Seq(
                 ActionItem(
-                  href = s"${routes.MovementDetailsController.displayPage}",
+                  href = s"${controllers.movements.routes.MovementDetailsController.displayPage}",
                   content = HtmlContent(linkContent(messages("site.change"))),
                   visuallyHiddenText = Some(messages("summary.departure.time.change"))
                 )

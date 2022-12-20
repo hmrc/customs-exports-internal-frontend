@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package controllers.movements
+package controllers.summary
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashExtractor
-import javax.inject.Inject
 import models.cache._
+import controllers.summary.routes.MovementConfirmationController
+import models.summary.FlashKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.summary.{arrival_summary_page, departure_summary_page, retrospective_arrival_summary_page}
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class MovementSummaryController @Inject() (
+class ArriveDepartSummaryController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
   submissionService: SubmissionService,
@@ -54,14 +55,15 @@ class MovementSummaryController @Inject() (
       val answers = request.answersAs[MovementAnswers]
       val ucrType = answers.consignmentReferences.map(_.reference.toString)
       val ucr = answers.consignmentReferences.map(_.referenceValue)
-      val flash = Seq(
-        Some(FlashExtractor.MOVEMENT_TYPE -> answers.`type`.toString),
-        ucr.map(ucr => FlashExtractor.UCR -> ucr),
-        ucrType.map(ucrType => FlashExtractor.UCR_TYPE -> ucrType)
-      ).flatten
 
-      submissionService.submit(request.providerId, request.answersAs[MovementAnswers]).map { _ =>
-        Redirect(controllers.movements.routes.MovementConfirmationController.displayPage())
+      submissionService.submit(request.providerId, request.answersAs[MovementAnswers]).map { conversationId =>
+        val flash = Seq(
+          Some(FlashKeys.JOURNEY_TYPE -> answers.`type`.toString),
+          ucr.map(ucr => FlashKeys.UCR -> ucr),
+          ucrType.map(ucrType => FlashKeys.UCR_TYPE -> ucrType),
+          Some(FlashKeys.CONVERSATION_ID -> conversationId)
+        ).flatten
+        Redirect(MovementConfirmationController.displayPage())
           .flashing(flash: _*)
       }
     }

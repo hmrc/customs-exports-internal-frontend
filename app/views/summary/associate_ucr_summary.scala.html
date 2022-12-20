@@ -15,6 +15,7 @@
  *@
 
 @import components.gds.{gds_main_template, linkContent, pageTitle}
+@import controllers.summary.routes.AssociateUcrSummaryController
 @import forms.ManageMucrChoice
 @import models.cache.AssociateUcrAnswers
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -79,7 +80,7 @@
   useCustomContentWidth = true
 ) {
 
-  @formHelper(action = consolidations.routes.AssociateUcrSummaryController.submit(), 'autoComplete -> "off") {
+  @formHelper(action = AssociateUcrSummaryController.submit(), 'autoComplete -> "off") {
 
     @pageTitle(messages("associate.ucr.summary.title"))
 

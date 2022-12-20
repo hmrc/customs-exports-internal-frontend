@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package controllers.consolidations
+package controllers.summary
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashExtractor
 import forms.ConsignmentReferenceType
-
-import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
 import models.cache.{JourneyType, ShutMucrAnswers}
+import models.summary.FlashKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.shutmucr.shut_mucr_summary
+import views.html.summary.shut_mucr_summary
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -51,14 +50,15 @@ class ShutMucrSummaryController @Inject() (
     val ucrType = Some(ConsignmentReferenceType.M.toString)
     val ucr = answers.shutMucr.map(_.mucr)
 
-    val flash = Seq(
-      Some(FlashExtractor.MOVEMENT_TYPE -> answers.`type`.toString),
-      ucr.map(ucr => FlashExtractor.UCR -> ucr),
-      ucrType.map(ucrType => FlashExtractor.UCR_TYPE -> ucrType)
-    ).flatten
+    submissionService.submit(request.providerId, answers).map { conversationId =>
+      val flash = Seq(
+        Some(FlashKeys.JOURNEY_TYPE -> answers.`type`.toString),
+        ucr.map(ucr => FlashKeys.UCR -> ucr),
+        ucrType.map(ucrType => FlashKeys.UCR_TYPE -> ucrType),
+        Some(FlashKeys.CONVERSATION_ID -> conversationId)
+      ).flatten
 
-    submissionService.submit(request.providerId, answers).map { _ =>
-      Redirect(controllers.consolidations.routes.ShutMucrConfirmationController.displayPage())
+      Redirect(controllers.summary.routes.MovementConfirmationController.displayPage())
         .flashing(flash: _*)
     }
   }

@@ -17,6 +17,7 @@
 package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.summary.routes._
 import controllers.exchanges.JourneyRequest
 import forms.Location
 import forms.Location.form
@@ -63,11 +64,11 @@ class LocationController @Inject() (
             request.answers match {
               case arrivalAnswers: ArrivalAnswers =>
                 cacheRepository.upsert(request.cache.update(arrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
-                  Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
+                  Redirect(ArriveDepartSummaryController.displayPage())
                 }
               case retroArrivalAnswers: RetrospectiveArrivalAnswers =>
                 cacheRepository.upsert(request.cache.update(retroArrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
-                  Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
+                  Redirect(ArriveDepartSummaryController.displayPage())
                 }
               case departureAnswers: DepartureAnswers =>
                 cacheRepository.upsert(request.cache.update(departureAnswers.copy(location = Some(validLocation)))).map { _ =>

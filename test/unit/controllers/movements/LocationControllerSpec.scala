@@ -145,7 +145,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller(ArrivalAnswers(consignmentReferences = Some(consignmentReferences))).saveLocation()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.movements.routes.MovementSummaryController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.summary.routes.ArriveDepartSummaryController.displayPage().url)
       }
     }
 
@@ -172,7 +172,7 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
           controller(RetrospectiveArrivalAnswers(consignmentReferences = Some(consignmentReferences))).saveLocation()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.movements.routes.MovementSummaryController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.summary.routes.ArriveDepartSummaryController.displayPage().url)
       }
     }
 

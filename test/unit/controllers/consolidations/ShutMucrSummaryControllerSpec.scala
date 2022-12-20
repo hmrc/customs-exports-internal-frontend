@@ -17,10 +17,11 @@
 package controllers.consolidations
 
 import controllers.ControllerLayerSpec
-import controllers.storage.FlashExtractor
+import controllers.summary.ShutMucrSummaryController
 import forms.ShutMucr
 import models.ReturnToStartException
 import models.cache.{Answers, JourneyType, ShutMucrAnswers}
+import models.summary.FlashKeys
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
@@ -28,8 +29,8 @@ import play.api.libs.json.JsString
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.SubmissionService
-import testdata.CommonTestData.validMucr
-import views.html.shutmucr.shut_mucr_summary
+import testdata.CommonTestData.{conversationId, validMucr}
+import views.html.summary.shut_mucr_summary
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
@@ -47,7 +48,7 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with ScalaFuture
 
     reset(summaryPage, submissionService)
     when(summaryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
-    when(submissionService.submit(any(), any[ShutMucrAnswers])(any())).thenReturn(Future.successful((): Unit))
+    when(submissionService.submit(any(), any[ShutMucrAnswers])(any())).thenReturn(Future.successful(conversationId))
   }
 
   override protected def afterEach(): Unit = {
@@ -103,14 +104,14 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with ScalaFuture
         val result = controller(ShutMucrAnswers(shutMucr = Some(shutMucr))).submit()(postRequest(JsString("")))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.consolidations.routes.ShutMucrConfirmationController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
       }
 
       "return response with Movement Type in flash" in {
 
         val result = controller(ShutMucrAnswers(shutMucr = Some(shutMucr))).submit()(postRequest(JsString("")))
 
-        flash(result).get(FlashExtractor.MOVEMENT_TYPE) mustBe Some(JourneyType.SHUT_MUCR.toString)
+        flash(result).get(FlashKeys.JOURNEY_TYPE) mustBe Some(JourneyType.SHUT_MUCR.toString)
       }
     }
   }

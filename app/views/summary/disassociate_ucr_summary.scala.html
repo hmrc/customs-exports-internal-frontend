@@ -15,6 +15,7 @@
  *@
 
 @import components.gds.{gds_main_template, pageTitle}
+@import controllers.summary.routes.DisassociateUcrSummaryController
 @import forms.DisassociateUcr
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.Title
@@ -35,7 +36,7 @@ formHelper: FormWithCSRF)
     useCustomContentWidth = true
 ) {
 
-    @formHelper(action = consolidations.routes.DisassociateUcrSummaryController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = DisassociateUcrSummaryController.submit(), 'autoComplete -> "off") {
 
         @pageTitle(messages("disassociate.ucr.summary.title"))
 

@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.consolidations
+package controllers.summary
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashExtractor
-import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
 import models.cache.{DisassociateUcrAnswers, JourneyType}
+import models.summary.FlashKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.disassociateucr.disassociate_ucr_summary
+import views.html.summary.disassociate_ucr_summary
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -50,14 +50,16 @@ class DisassociateUcrSummaryController @Inject() (
     val answers = request.answersAs[DisassociateUcrAnswers]
     val ucrType = answers.ucr.map(_.kind.codeValue)
     val ucr = answers.ucr.map(_.ucr)
-    val flash = Seq(
-      Some(FlashExtractor.MOVEMENT_TYPE -> answers.`type`.toString),
-      ucr.map(ucr => FlashExtractor.UCR -> ucr),
-      ucrType.map(ucrType => FlashExtractor.UCR_TYPE -> ucrType)
-    ).flatten
 
-    submissionService.submit(request.providerId, answers).map { _ =>
-      Redirect(controllers.consolidations.routes.DisassociateUcrConfirmationController.displayPage())
+    submissionService.submit(request.providerId, answers).map { conversationId =>
+      val flash = Seq(
+        Some(FlashKeys.JOURNEY_TYPE -> answers.`type`.toString),
+        ucr.map(ucr => FlashKeys.UCR -> ucr),
+        ucrType.map(ucrType => FlashKeys.UCR_TYPE -> ucrType),
+        Some(FlashKeys.CONVERSATION_ID -> conversationId)
+      ).flatten
+
+      Redirect(controllers.summary.routes.MovementConfirmationController.displayPage())
         .flashing(flash: _*)
     }
   }

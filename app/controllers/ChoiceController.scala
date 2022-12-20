@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions.AuthenticatedAction
 import controllers.exchanges.AuthenticatedRequest
+import controllers.summary.routes._
 import forms.Choice
 
 import javax.inject.{Inject, Singleton}
@@ -82,10 +83,10 @@ class ChoiceController @Inject() (
       saveAndRedirect(AssociateUcrAnswers.fromQueryUcr, redirectionCall)
 
     case Choice.DisassociateUCR =>
-      saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, consolidations.routes.DisassociateUcrSummaryController.displayPage())
+      saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, DisassociateUcrSummaryController.displayPage())
 
     case Choice.ShutMUCR =>
-      saveAndRedirect(ShutMucrAnswers.fromQueryUcr, consolidations.routes.ShutMucrSummaryController.displayPage())
+      saveAndRedirect(ShutMucrAnswers.fromQueryUcr, ShutMucrSummaryController.displayPage())
 
     case _ => Future.successful(BadRequest)
   }

@@ -17,22 +17,23 @@
 package views
 
 import base.Injector
+import controllers.ileQuery.routes.IleQueryController
 import forms.ConsignmentReferences
 import models.UcrType
 import models.UcrType.{Ducr, DucrPart, Mucr}
-import models.cache.{ArrivalAnswers, AssociateUcrAnswers, DepartureAnswers, DisassociateUcrAnswers, RetrospectiveArrivalAnswers, ShutMucrAnswers}
 import models.cache.JourneyType._
-import org.scalatestplus.mockito.MockitoSugar
+import models.cache._
+import models.summary.Confirmation
 import play.api.test.FakeRequest
-import views.html.confirmation_page
-import controllers.ileQuery.routes.IleQueryController
+import views.html.summary.confirmation_page
 
-class ConfirmationPageViewSpec extends ViewSpec with MockitoSugar with Injector {
+class ConfirmationPageViewSpec extends ViewSpec with Injector {
 
   private implicit val request = FakeRequest().withCSRFToken
 
   private val page = instanceOf[confirmation_page]
   private val dummyUcr = "dummyUcr"
+  private val conversationId = "conversationId"
   private val call = IleQueryController.getConsignmentInformation(dummyUcr)
 
   private def consignmentRefs(ucrType: UcrType = Ducr) = ConsignmentReferences(ucrType.codeValue, dummyUcr)
@@ -41,7 +42,7 @@ class ConfirmationPageViewSpec extends ViewSpec with MockitoSugar with Injector 
     for (journeyType <- List(ARRIVE, DEPART, RETROSPECTIVE_ARRIVE, ASSOCIATE_UCR, DISSOCIATE_UCR, SHUT_MUCR))
       s"provided with ${journeyType.toString} Journey Type" when {
 
-        val view = page(journeyType, Some(consignmentRefs()))
+        val view = page(Confirmation(journeyType, conversationId, Some(consignmentRefs()), None))
 
         "render title" in {
           view.getTitle must containMessage(s"confirmation.title.${journeyType.toString}")
@@ -58,7 +59,7 @@ class ConfirmationPageViewSpec extends ViewSpec with MockitoSugar with Injector 
 
           val link = bodyText.getElementsByClass("govuk-link").first()
           link must containMessage("confirmation.notification.timeline.link")
-          link must haveHref(controllers.routes.ViewSubmissionsController.displayPage())
+          link must haveHref(controllers.routes.ViewNotificationsController.listOfNotifications(conversationId))
         }
 
         "render sub-heading" in {
@@ -76,11 +77,11 @@ class ConfirmationPageViewSpec extends ViewSpec with MockitoSugar with Injector 
 
     for {
       ucrType <- List(Mucr, Ducr, DucrPart)
-      answers <- List(ArrivalAnswers(), DepartureAnswers(), DisassociateUcrAnswers(), RetrospectiveArrivalAnswers())
+      answer <- List(ArrivalAnswers(), DepartureAnswers(), DisassociateUcrAnswers(), RetrospectiveArrivalAnswers())
     }
-      s"provided with ${answers.`type`} Journey Type and $ucrType" should {
-        implicit val request = journeyRequest(answers)
-        val view = page(answers.`type`, Some(consignmentRefs(ucrType)))
+      s"provided with ${answer.`type`} Journey Type and $ucrType" should {
+        implicit val request = journeyRequest(answer)
+        val view = page(Confirmation(answer.`type`, conversationId, Some(consignmentRefs(ucrType)), None))
 
         "render table with one row" in {
           view.getElementsByClass("govuk-table__row").size mustBe 1
@@ -102,7 +103,7 @@ class ConfirmationPageViewSpec extends ViewSpec with MockitoSugar with Injector 
       answer <- List(AssociateUcrAnswers())
     } s"provided with ${answer.`type`} Journey Type and $ucrType" should {
       implicit val request = journeyRequest(answer)
-      val view = page(answer.`type`, Some(consignmentRefs(ucrType)), Some(dummyUcr))
+      val view = page(Confirmation(answer.`type`, conversationId, Some(consignmentRefs(ucrType)), Some(dummyUcr)))
 
       "render table with two rows" in {
         view.getElementsByClass("govuk-table__row").size mustBe 2
@@ -131,7 +132,7 @@ class ConfirmationPageViewSpec extends ViewSpec with MockitoSugar with Injector 
     answer <- List(ShutMucrAnswers())
   } s"provided with ${answer.`type`} Journey Type" should {
     implicit val request = journeyRequest(answer)
-    val view = page(answer.`type`, Some(consignmentRefs(ucrType)))
+    val view = page(Confirmation(answer.`type`, conversationId, Some(consignmentRefs(ucrType)), None))
 
     "render table with one row" in {
       view.getElementsByClass("govuk-table__row").size mustBe 1

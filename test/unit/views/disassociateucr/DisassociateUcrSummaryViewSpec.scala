@@ -22,7 +22,7 @@ import models.UcrType
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import views.ViewSpec
-import views.html.disassociateucr.disassociate_ucr_summary
+import views.html.summary.disassociate_ucr_summary
 
 class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
 
@@ -40,7 +40,7 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
     "render form" in {
       val form = page(answersDUCR).getForm
       form mustBe defined
-      form.get must haveAttribute("action", controllers.consolidations.routes.DisassociateUcrSummaryController.submit().url)
+      form.get must haveAttribute("action", controllers.summary.routes.DisassociateUcrSummaryController.submit().url)
     }
 
     "render back button" when {

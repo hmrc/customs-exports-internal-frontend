@@ -17,7 +17,7 @@
 package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.consolidations.{routes => consolidationRoutes}
+import controllers.summary.routes.AssociateUcrSummaryController
 import forms.AssociateUcr.form
 
 import javax.inject.Inject
@@ -59,7 +59,7 @@ class AssociateUcrController @Inject() (
         formData => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(childUcr = Some(formData))
           cacheRepository.upsert(request.cache.update(updatedCache)).map { _ =>
-            Redirect(consolidationRoutes.AssociateUcrSummaryController.displayPage())
+            Redirect(AssociateUcrSummaryController.displayPage())
           }
         }
       )
