@@ -26,7 +26,7 @@ import play.api.mvc.{AnyContent, Call, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import views.ViewSpec
-import views.html.associateucr.associate_ucr_summary
+import views.html.summary.associate_ucr_summary
 
 class AssociateUcrSummaryViewSpec extends ViewSpec with Injector {
 

@@ -78,7 +78,7 @@ class AssociateUcrControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller(cachedData).submit()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUcrSummaryController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.summary.routes.AssociateUcrSummaryController.displayPage().url)
       }
     }
 

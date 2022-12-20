@@ -42,23 +42,23 @@ class CustomsDeclareExportsMovementsConnector @Inject() (appConfig: AppConfig, h
 
   private val JsonHeaders = Seq(HeaderNames.CONTENT_TYPE -> ContentTypes.JSON, HeaderNames.ACCEPT -> ContentTypes.JSON)
 
-  def submit(request: MovementExchange)(implicit hc: HeaderCarrier): Future[Unit] =
+  def submit(request: MovementExchange)(implicit hc: HeaderCarrier): Future[String] =
     httpClient
       .POST[MovementExchange, HttpResponse](appConfig.customsDeclareExportsMovementsUrl + Movements, request, JsonHeaders)
       .andThen {
         case Success(response)  => logSuccessfulExchange("Submit Movement", response.body)
         case Failure(exception) => logFailedExchange("Submit Movement", exception)
       }
-      .map(handleResponse(_, (): Unit))
+      .map(response => handleResponse(response, response.body))
 
-  def submit(request: ConsolidationExchange)(implicit hc: HeaderCarrier): Future[Unit] =
+  def submit(request: ConsolidationExchange)(implicit hc: HeaderCarrier): Future[String] =
     httpClient
       .POST[ConsolidationExchange, HttpResponse](appConfig.customsDeclareExportsMovementsUrl + Consolidations, request, JsonHeaders)
       .andThen {
         case Success(response)  => logSuccessfulExchange("Submit Consolidation", response.body)
         case Failure(exception) => logFailedExchange("Submit Consolidation", exception)
       }
-      .map(handleResponse(_, (): Unit))
+      .map(response => handleResponse(response, response.body))
 
   def submit(request: IleQueryExchange)(implicit hc: HeaderCarrier): Future[String] =
     httpClient

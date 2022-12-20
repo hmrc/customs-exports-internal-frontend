@@ -62,7 +62,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
     "delegate to connector" when {
       "Associate DUCR" in {
-        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
+        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful(conversationId))
         given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
         val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(UcrType.Ducr, ucr)))
@@ -74,7 +74,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       }
 
       "Associate MUCR" in {
-        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
+        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful(conversationId))
         given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
         val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(UcrType.Mucr, ucr)))
@@ -131,7 +131,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
     "delegate to connector" when {
 
       "Disassociate MUCR" in {
-        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
+        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful(conversationId))
         given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
         val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(UcrType.Mucr, None, Some(mucr))))
@@ -143,7 +143,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       }
 
       "Disassociate DUCR" in {
-        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
+        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful(conversationId))
         given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
         val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(UcrType.Ducr, Some(ucr), None)))
@@ -224,7 +224,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
   "Submit ShutMUCR" should {
 
     "delegate to connector" in {
-      given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful((): Unit))
+      given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful(conversationId))
       given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
 
       val answers = ShutMucrAnswers(Some(validEori), Some(ShutMucr(mucr)))
@@ -281,24 +281,9 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
       "everything works correctly" should {
 
-        "return same UCR as in the answers" in {
-          given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful((): Unit))
-          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
-          given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
-            .willReturn(Future.successful(AuditResult.Success))
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(validArrivalExchange)
-
-          val answers = validArrivalAnswers
-
-          val consignmentReferences = await(service.submit(providerId, answers))
-
-          consignmentReferences mustBe answers.consignmentReferences.get
-        }
-
         "call MovementBuilder, AuditService, backend Connector, CacheRepository and AuditService again" in {
           given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful((): Unit))
+          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful(conversationId))
           given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
@@ -385,24 +370,9 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
       "everything works correctly" should {
 
-        "return same UCR as in the answers" in {
-          given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful((): Unit))
-          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
-          given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
-            .willReturn(Future.successful(AuditResult.Success))
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(validRetrospectiveArrivalExchange)
-
-          val answers = validRetrospectiveArrivalAnswers
-
-          val consignmentReferences = await(service.submit(providerId, answers))
-
-          consignmentReferences mustBe answers.consignmentReferences.get
-        }
-
         "call MovementBuilder, AuditService, backend Connector, CacheRepository and AuditService again" in {
           given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful((): Unit))
+          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful(conversationId))
           given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))
@@ -489,24 +459,9 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
       "everything works correctly" should {
 
-        "return same UCR as in the answers" in {
-          given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful((): Unit))
-          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
-          given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
-            .willReturn(Future.successful(AuditResult.Success))
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(validDepartureExchange)
-
-          val answers = validDepartureAnswers
-
-          val consignmentReferences = await(service.submit(providerId, answers))
-
-          consignmentReferences mustBe answers.consignmentReferences.get
-        }
-
         "call MovementBuilder, AuditService, backend Connector, CacheRepository and AuditService again" in {
           given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful((): Unit))
+          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful(conversationId))
           given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
           given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit])(any()))
             .willReturn(Future.successful(AuditResult.Success))

@@ -18,6 +18,7 @@ package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.JourneyRequest
+import controllers.summary.routes.ArriveDepartSummaryController
 import forms.Transport
 import forms.providers.TransportFormProvider
 
@@ -64,7 +65,7 @@ class TransportController @Inject() (
         validForm => {
           val movementAnswers = answers.copy(transport = Some(validForm))
           cacheRepository.upsert(request.cache.update(movementAnswers)).map { _ =>
-            Redirect(controllers.movements.routes.MovementSummaryController.displayPage())
+            Redirect(ArriveDepartSummaryController.displayPage())
           }
         }
       )

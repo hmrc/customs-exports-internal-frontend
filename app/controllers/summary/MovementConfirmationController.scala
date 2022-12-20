@@ -14,34 +14,28 @@
  * limitations under the License.
  */
 
-package controllers.consolidations
+package controllers.summary
 
 import controllers.actions.AuthenticatedAction
-import controllers.storage.FlashExtractor
-import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
-import models.cache.JourneyType.DISSOCIATE_UCR
+import models.summary.Confirmation
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.confirmation_page
+import views.html.summary.confirmation_page
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DisassociateUcrConfirmationController @Inject() (
+class MovementConfirmationController @Inject() (
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
-  flashExtractor: FlashExtractor,
   confirmationPage: confirmation_page
 ) extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage: Action[AnyContent] = authenticate { implicit request =>
-    val journeyType = flashExtractor.extractMovementType(request).getOrElse(throw ReturnToStartException)
-    val consignmentRefs = flashExtractor.extractConsignmentRefs(request)
-
-    journeyType match {
-      case DISSOCIATE_UCR => Ok(confirmationPage(journeyType, consignmentRefs))
-      case _              => throw ReturnToStartException
-    }
+  val displayPage: Action[AnyContent] = authenticate { implicit request =>
+    Confirmation()
+      .map(confirmation => Ok(confirmationPage(confirmation)))
+      .getOrElse(throw ReturnToStartException)
   }
-
 }

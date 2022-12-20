@@ -17,7 +17,7 @@
 package controllers.consolidations
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.consolidations.{routes => consolidationsRoutes}
+import controllers.summary.routes.AssociateUcrSummaryController
 import forms.MucrOptions.form
 
 import javax.inject.Inject
@@ -59,7 +59,7 @@ class MucrOptionsController @Inject() (
         validForm => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(parentMucr = Some(validForm))
           cacheRepository.upsert(request.cache.update(updatedCache)).map { _ =>
-            Redirect(consolidationsRoutes.AssociateUcrSummaryController.displayPage())
+            Redirect(AssociateUcrSummaryController.displayPage())
           }
         }
       )

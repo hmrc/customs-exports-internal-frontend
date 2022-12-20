@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.consolidations
+package controllers.summary
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.storage.FlashExtractor
-
-import javax.inject.Inject
 import models.ReturnToStartException
 import models.cache.{AssociateUcrAnswers, JourneyType}
+import models.summary.FlashKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.associateucr.associate_ucr_summary
+import views.html.summary.associate_ucr_summary
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class AssociateUcrSummaryController @Inject() (
@@ -55,15 +54,16 @@ class AssociateUcrSummaryController @Inject() (
     val ucr = answers.childUcr.map(_.ucr)
     val mucrToAssociate = answers.parentMucr.map(_.mucr)
 
-    val flash = Seq(
-      Some(FlashExtractor.MOVEMENT_TYPE -> answers.`type`.toString),
-      ucr.map(ucr => FlashExtractor.UCR -> ucr),
-      ucrType.map(ucrType => FlashExtractor.UCR_TYPE -> ucrType),
-      mucrToAssociate.map(mucr => FlashExtractor.MUCR_TO_ASSOCIATE -> mucr)
-    ).flatten
+    submissionService.submit(request.providerId, answers).map { conversationId =>
+      val flash = Seq(
+        Some(FlashKeys.JOURNEY_TYPE -> answers.`type`.toString),
+        ucr.map(ucr => FlashKeys.UCR -> ucr),
+        ucrType.map(ucrType => FlashKeys.UCR_TYPE -> ucrType),
+        mucrToAssociate.map(mucr => FlashKeys.MUCR_TO_ASSOCIATE -> mucr),
+        Some(FlashKeys.CONVERSATION_ID -> conversationId)
+      ).flatten
 
-    submissionService.submit(request.providerId, answers).map { _ =>
-      Redirect(controllers.consolidations.routes.AssociateUcrConfirmationController.displayPage())
+      Redirect(controllers.summary.routes.MovementConfirmationController.displayPage())
         .flashing(flash: _*)
     }
   }

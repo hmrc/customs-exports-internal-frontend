@@ -19,15 +19,15 @@ package services
 import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges._
 import forms._
-import javax.inject.{Inject, Singleton}
 import metrics.MovementsMetrics
-import models.{ReturnToStartException, UcrType}
 import models.cache.JourneyType.JourneyType
 import models.cache._
+import models.{ReturnToStartException, UcrType}
 import repositories.CacheRepository
 import services.audit.{AuditService, AuditType}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
@@ -43,7 +43,7 @@ class SubmissionService @Inject() (
   private val success = "Success"
   private val failed = "Failed"
 
-  def submit(providerId: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
+  def submit(providerId: String, answers: DisassociateUcrAnswers)(implicit hc: HeaderCarrier): Future[String] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
     val disUcr = answers.ucr.getOrElse(throw ReturnToStartException)
     val exchange = disUcr.kind match {
@@ -64,7 +64,7 @@ class SubmissionService @Inject() (
       }
   }
 
-  def submit(providerId: String, answers: AssociateUcrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
+  def submit(providerId: String, answers: AssociateUcrAnswers)(implicit hc: HeaderCarrier): Future[String] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
     val mucr = answers.parentMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
     val assUcr = answers.childUcr.getOrElse(throw ReturnToStartException)
@@ -86,7 +86,7 @@ class SubmissionService @Inject() (
       }
   }
 
-  def submit(providerId: String, answers: ShutMucrAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
+  def submit(providerId: String, answers: ShutMucrAnswers)(implicit hc: HeaderCarrier): Future[String] = {
     val eori = answers.eori.getOrElse(throw ReturnToStartException)
     val mucr = answers.shutMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
 
@@ -102,25 +102,23 @@ class SubmissionService @Inject() (
       }
   }
 
-  def submit(providerId: String, answers: MovementAnswers)(implicit hc: HeaderCarrier): Future[ConsignmentReferences] = {
+  def submit(providerId: String, answers: MovementAnswers)(implicit hc: HeaderCarrier): Future[String] = {
     val journeyType = answers.`type`
     val data = movementBuilder.createMovementExchange(providerId, answers)
     val timer = metrics.startTimer(journeyType)
 
     auditService.auditAllPagesUserInput(providerId, answers)
 
-    connector
-      .submit(data)
-      .map(_ => cacheRepository.removeByProviderId(providerId))
-      .map(_ => data.consignmentReference)
-      .andThen {
-        case Success(_) => auditService.auditMovements(data, success, movementAuditType(journeyType))
-        case Failure(_) => auditService.auditMovements(data, failed, movementAuditType(journeyType))
-      }
-      .andThen { case _ =>
-        metrics.incrementCounter(journeyType)
-        timer.stop()
-      }
+    (for {
+      conversationId <- connector.submit(data)
+      _ <- cacheRepository.removeByProviderId(providerId)
+    } yield conversationId).andThen {
+      case Success(_) => auditService.auditMovements(data, success, movementAuditType(journeyType))
+      case Failure(_) => auditService.auditMovements(data, failed, movementAuditType(journeyType))
+    }.andThen { case _ =>
+      metrics.incrementCounter(journeyType)
+      timer.stop()
+    }
   }
 
   private def movementAuditType(journeyType: JourneyType): AuditType.Value = journeyType match {

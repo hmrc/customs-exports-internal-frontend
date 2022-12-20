@@ -17,7 +17,6 @@
 package controllers
 
 import controllers.actions.AuthenticatedAction
-import controllers.consolidations.{routes => consolidationRoutes}
 import forms.Choice._
 import forms._
 import models.UcrType.{Ducr, DucrPart, Mucr}
@@ -173,7 +172,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
           val result = controller().submit(postWithChoice(AssociateUCR))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
+          redirectLocation(result) mustBe Some(consolidations.routes.MucrOptionsController.displayPage().url)
           theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(queryResultDucr))))
           theCacheUpserted.queryUcr mustBe Some(queryResultDucr)
         }
@@ -186,7 +185,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
           val result = controller().submit(postWithChoice(AssociateUCR))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(consolidationRoutes.MucrOptionsController.displayPage().url)
+          redirectLocation(result) mustBe Some(consolidations.routes.MucrOptionsController.displayPage().url)
           theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.DucrPart, "ucr-123"))))
           theCacheUpserted.queryUcr mustBe Some(queryResultDucr)
         }
@@ -198,7 +197,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
           val result = controller().submit(postWithChoice(AssociateUCR))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(consolidationRoutes.ManageMucrController.displayPage().url)
+          redirectLocation(result) mustBe Some(consolidations.routes.ManageMucrController.displayPage().url)
           theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(queryResult))))
           theCacheUpserted.queryUcr mustBe Some(queryResult)
         }
@@ -211,7 +210,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(DisassociateUCR))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(consolidationRoutes.DisassociateUcrSummaryController.displayPage().url)
+        redirectLocation(result) mustBe Some(summary.routes.DisassociateUcrSummaryController.displayPage().url)
         theCacheUpserted.answers mustBe Some(DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Mucr, None, Some("mucr")))))
         theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
@@ -223,7 +222,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller().submit(postWithChoice(ShutMUCR))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(consolidations.routes.ShutMucrSummaryController.displayPage().url)
+        redirectLocation(result) mustBe Some(summary.routes.ShutMucrSummaryController.displayPage().url)
         theCacheUpserted.answers mustBe Some(ShutMucrAnswers(shutMucr = Some(ShutMucr("mucr"))))
         theCacheUpserted.queryUcr mustBe Some(queryResult)
       }

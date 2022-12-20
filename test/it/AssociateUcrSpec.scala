@@ -105,7 +105,7 @@ class AssociateUcrSpec extends IntegrationSpec {
         val response = post(controllers.consolidations.routes.MucrOptionsController.submit(), "createOrAdd" -> "create", "newMucr" -> "GB/123-12345")
 
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUcrSummaryController.displayPage().url)
+        redirectLocation(response) mustBe Some(controllers.summary.routes.AssociateUcrSummaryController.displayPage().url)
         theAnswersFor("pid") mustBe Some(AssociateUcrAnswers(parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345"))))
       }
     }
@@ -137,7 +137,7 @@ class AssociateUcrSpec extends IntegrationSpec {
         val response = post(controllers.consolidations.routes.AssociateUcrController.submit(), "kind" -> "mucr", "mucr" -> "GB/321-54321")
 
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUcrSummaryController.displayPage().url)
+        redirectLocation(response) mustBe Some(controllers.summary.routes.AssociateUcrSummaryController.displayPage().url)
         theAnswersFor("pid") mustBe Some(
           AssociateUcrAnswers(
             parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
@@ -166,7 +166,7 @@ class AssociateUcrSpec extends IntegrationSpec {
           )
         )
 
-        val response = get(controllers.consolidations.routes.AssociateUcrSummaryController.displayPage())
+        val response = get(controllers.summary.routes.AssociateUcrSummaryController.displayPage())
 
         status(response) mustBe OK
       }
@@ -190,10 +190,10 @@ class AssociateUcrSpec extends IntegrationSpec {
         )
         givenMovementsBackendAcceptsTheConsolidation()
 
-        val response = post(controllers.consolidations.routes.AssociateUcrSummaryController.submit())
+        val response = post(controllers.summary.routes.AssociateUcrSummaryController.submit())
 
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUcrConfirmationController.displayPage().url)
+        redirectLocation(response) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
         theAnswersFor("pid") mustBe None
         verify(
           postRequestedForConsolidation()

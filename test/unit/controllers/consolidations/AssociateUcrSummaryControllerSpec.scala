@@ -17,10 +17,11 @@
 package controllers.consolidations
 
 import controllers.ControllerLayerSpec
-import controllers.storage.FlashExtractor
+import controllers.summary.AssociateUcrSummaryController
 import forms.{AssociateUcr, MucrOptions}
-import models.{ReturnToStartException, UcrType}
 import models.cache.{Answers, AssociateUcrAnswers, JourneyType}
+import models.summary.FlashKeys
+import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
@@ -29,7 +30,8 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.SubmissionService
-import views.html.associateucr.associate_ucr_summary
+import testdata.CommonTestData.conversationId
+import views.html.summary.associate_ucr_summary
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -47,7 +49,7 @@ class AssociateUcrSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
 
     reset(submissionService, summaryPage)
     when(summaryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
-    when(submissionService.submit(any(), any[AssociateUcrAnswers])(any())).thenReturn(Future.successful((): Unit))
+    when(submissionService.submit(any(), any[AssociateUcrAnswers])(any())).thenReturn(Future.successful(conversationId))
   }
 
   override protected def afterEach(): Unit = {
@@ -119,7 +121,7 @@ class AssociateUcrSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
           controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.consolidations.routes.AssociateUcrConfirmationController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
       }
 
       "return response with Movement Type in flash" in {
@@ -127,7 +129,7 @@ class AssociateUcrSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
         val result =
           controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
 
-        flash(result).get(FlashExtractor.MOVEMENT_TYPE) mustBe Some(JourneyType.ASSOCIATE_UCR.toString)
+        flash(result).get(FlashKeys.JOURNEY_TYPE) mustBe Some(JourneyType.ASSOCIATE_UCR.toString)
       }
     }
   }

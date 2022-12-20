@@ -14,153 +14,89 @@
  * limitations under the License.
  */
 
-package controllers.movements
+package controllers.summary
 
 import controllers.ControllerLayerSpec
-import controllers.actions.AuthenticatedAction
-import controllers.storage.FlashExtractor
 import forms.ConsignmentReferences
 import models.ReturnToStartException
-import models.cache.JourneyType
-import org.mockito.ArgumentCaptor
+import models.summary.FlashKeys._
+import models.cache.JourneyType._
+import models.summary.Confirmation
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
+import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
-import play.api.mvc.Request
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import views.html.confirmation_page
+import views.html.summary.confirmation_page
 
-class MovementConfirmationControllerSpec extends ControllerLayerSpec with ScalaFutures {
+class MovementConfirmationControllerSpec extends ControllerLayerSpec with GivenWhenThen with ScalaFutures {
 
-  private val flashExtractor = mock[FlashExtractor]
   private val confirmationPage = mock[confirmation_page]
+
+  private val conversationId = "conversationId"
+  private val dummyMucr = "dummyMuCR"
   private val dummyUcr = "dummyUCR"
-  private val dummyUcrType = "dummyUcrType"
+  private val dummyUcrType = "D"
+  private val consignmentReferences = ConsignmentReferences(dummyUcrType, dummyUcr)
 
-  private def controller(auth: AuthenticatedAction = SuccessfulAuth()) =
-    new MovementConfirmationController(auth, stubMessagesControllerComponents(), flashExtractor, confirmationPage)
+  private val controller = new MovementConfirmationController(SuccessfulAuth(), stubMessagesControllerComponents(), confirmationPage)
 
-  override protected def beforeEach(): Unit = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(flashExtractor, confirmationPage)
-    when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(None)
-    when(confirmationPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    reset(confirmationPage)
+    when(confirmationPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
-  override protected def afterEach(): Unit = {
-    reset(flashExtractor, confirmationPage)
-
+  override def afterEach(): Unit = {
+    reset(confirmationPage)
     super.afterEach()
   }
 
-  "Movement Confirmation Controller on displayPage" should {
-    val getRequest = FakeRequest("GET", "/")
+  "MovementConfirmationController.displayPage" should {
+    def getRequest(
+      maybeJourneyType: Option[JourneyType],
+      maybeConversationId: Option[String] = Some(conversationId)
+    ): FakeRequest[AnyContentAsEmpty.type] = {
+      val flash = List(
+        maybeConversationId.map(conversationId => CONVERSATION_ID -> conversationId),
+        maybeJourneyType.map(journeyType => JOURNEY_TYPE -> journeyType.toString),
+        Some(MUCR_TO_ASSOCIATE -> dummyMucr),
+        Some(UCR -> dummyUcr),
+        Some(UCR_TYPE -> dummyUcrType)
+      ).flatten
 
-    "return 200 when authenticated" when {
-
-      "journey type is ARRIVE" in {
-
-        when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.ARRIVE))
-        when(flashExtractor.extractConsignmentRefs(any[Request[_]])).thenReturn(None)
-        val result = controller().displayPage(getRequest)
-
-        status(result) mustBe Status.OK
-        verify(confirmationPage).apply(meq(JourneyType.ARRIVE), meq(None), any())(any(), any())
-      }
-
-      "journey type is RETROSPECTIVE_ARRIVE" in {
-
-        when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.RETROSPECTIVE_ARRIVE))
-        when(flashExtractor.extractConsignmentRefs(any[Request[_]])).thenReturn(None)
-        val result = controller().displayPage()(getRequest)
-
-        status(result) mustBe Status.OK
-        verify(confirmationPage).apply(meq(JourneyType.RETROSPECTIVE_ARRIVE), meq(None), any())(any(), any())
-      }
-
-      "journey type is DEPART" in {
-
-        when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.DEPART))
-        when(flashExtractor.extractConsignmentRefs(any[Request[_]])).thenReturn(None)
-        val result = controller().displayPage(getRequest)
-
-        status(result) mustBe Status.OK
-        verify(confirmationPage).apply(meq(JourneyType.DEPART), meq(None), any())(any(), any())
-      }
+      FakeRequest("GET", "/").withFlash(flash: _*)
     }
 
-    "call FlashValuesExtractor" when {
+    "return 200 when authenticated" in {
+      List(ARRIVE, DEPART, ASSOCIATE_UCR, DISSOCIATE_UCR, SHUT_MUCR, RETROSPECTIVE_ARRIVE).foreach { journeyType =>
+        And(s"journey type is $journeyType")
+        val result = controller.displayPage(getRequest(Some(journeyType)))
 
-      for (journeyType <- List(JourneyType.ARRIVE, JourneyType.DEPART, JourneyType.RETROSPECTIVE_ARRIVE))
-        s"journey type is ${journeyType.toString}" in {
-          when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(journeyType))
-          val request = getRequest.withFlash(
-            FlashExtractor.MOVEMENT_TYPE -> journeyType.toString,
-            FlashExtractor.UCR -> dummyUcr,
-            FlashExtractor.UCR_TYPE -> dummyUcrType
-          )
-
-          controller().displayPage(request).futureValue
-
-          val requestCaptor: ArgumentCaptor[Request[_]] = ArgumentCaptor.forClass(classOf[Request[_]])
-          verify(flashExtractor).extractMovementType(requestCaptor.capture())
-          verify(flashExtractor).extractConsignmentRefs(requestCaptor.capture())
-          requestCaptor.getValue.flash.get(FlashExtractor.MOVEMENT_TYPE) mustBe Some(journeyType.toString)
-          requestCaptor.getValue.flash.get(FlashExtractor.UCR) mustBe Some(dummyUcr)
-          requestCaptor.getValue.flash.get(FlashExtractor.UCR_TYPE) mustBe Some(dummyUcrType)
-        }
+        status(result) mustBe Status.OK
+        val confirmation = Confirmation(journeyType, conversationId, Some(consignmentReferences), Some(dummyMucr))
+        verify(confirmationPage).apply(meq(confirmation))(any(), any())
+      }
     }
 
     "throw ReturnToStartException" when {
 
       "journey type is missing" in {
-
-        when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(None)
-
         intercept[RuntimeException] {
-          await(controller().displayPage()(getRequest))
+          await(controller.displayPage(getRequest(None)))
         } mustBe ReturnToStartException
       }
 
-      "journey type is ASSOCIATE_UCR" in {
-
-        when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.ASSOCIATE_UCR))
-        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.ASSOCIATE_UCR.toString)
-
+      "conversationId is missing" in {
         intercept[RuntimeException] {
-          await(controller().displayPage()(request))
+          await(controller.displayPage(getRequest(Some(ARRIVE), None)))
         } mustBe ReturnToStartException
       }
-
-      "journey type is DISSOCIATE_UCR" in {
-
-        when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.DISSOCIATE_UCR))
-        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.DISSOCIATE_UCR.toString)
-
-        intercept[RuntimeException] {
-          await(controller().displayPage()(request))
-        } mustBe ReturnToStartException
-      }
-
-      "journey type is SHUT_MUCR" in {
-
-        when(flashExtractor.extractMovementType(any[Request[_]])).thenReturn(Some(JourneyType.SHUT_MUCR))
-        val request = getRequest.withFlash(FlashExtractor.MOVEMENT_TYPE -> JourneyType.SHUT_MUCR.toString)
-
-        intercept[RuntimeException] {
-          await(controller().displayPage()(request))
-        } mustBe ReturnToStartException
-      }
-    }
-
-    "return 403 when unauthenticated" in {
-      val result = controller(UnsuccessfulAuth).displayPage(getRequest)
-
-      status(result) mustBe Status.FORBIDDEN
     }
   }
 }

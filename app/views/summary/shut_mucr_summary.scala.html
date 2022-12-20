@@ -15,6 +15,7 @@
  *@
 
 @import views.Title
+@import controllers.summary.routes.ShutMucrSummaryController
 @import views.components.BackButton
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import components.gds.{gds_main_template, pageTitle}
@@ -33,7 +34,7 @@
     useCustomContentWidth = true
 ) {
 
-    @formHelper(action = consolidations.routes.ShutMucrSummaryController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = ShutMucrSummaryController.submit(), 'autoComplete -> "off") {
 
         @pageTitle(messages("shutMucr.summary.title"))
 

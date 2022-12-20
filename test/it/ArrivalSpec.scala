@@ -173,7 +173,7 @@ class ArrivalSpec extends IntegrationSpec {
 
         // Then
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.movements.routes.MovementSummaryController.displayPage().url)
+        redirectLocation(response) mustBe Some(controllers.summary.routes.ArriveDepartSummaryController.displayPage().url)
         theAnswersFor("pid") mustBe Some(
           ArrivalAnswers(
             consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
@@ -200,7 +200,7 @@ class ArrivalSpec extends IntegrationSpec {
         )
 
         // When
-        val response = get(controllers.movements.routes.MovementSummaryController.displayPage())
+        val response = get(controllers.summary.routes.ArriveDepartSummaryController.displayPage())
 
         // Then
         status(response) mustBe OK
@@ -222,11 +222,11 @@ class ArrivalSpec extends IntegrationSpec {
         givenTheMovementsBackendAcceptsTheMovement()
 
         // When
-        val response = post(controllers.movements.routes.MovementSummaryController.submitMovementRequest())
+        val response = post(controllers.summary.routes.ArriveDepartSummaryController.submitMovementRequest())
 
         // Then
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.movements.routes.MovementConfirmationController.displayPage().url)
+        redirectLocation(response) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
         theAnswersFor("pid") mustBe None
         verify(
           postRequestedForMovement()

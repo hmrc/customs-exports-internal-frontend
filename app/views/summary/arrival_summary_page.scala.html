@@ -39,11 +39,11 @@
 
 @govukLayout(
   title = Title("summary.arrival.title"),
-  backButton = Some(BackButton(messages("site.back"), routes.LocationController.displayPage)),
+  backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.LocationController.displayPage)),
   useCustomContentWidth = true
 ) {
 
-    @formHelper(action = routes.MovementSummaryController.submitMovementRequest(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.summary.routes.ArriveDepartSummaryController.submitMovementRequest(), 'autoComplete -> "off") {
 
     @pageTitle(messages("summary.arrival.title"))
 

@@ -16,7 +16,7 @@
 
 @import components.gds.{gds_main_template, pageTitle}
 @import components.summary._
-@import controllers.movements.routes
+@import controllers.summary.routes
 @import models.cache.RetrospectiveArrivalAnswers
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.Title
@@ -36,11 +36,11 @@
 
 @govukLayout(
   title = Title("summary.retrospectiveArrival.title"),
-  backButton = Some(BackButton(messages("site.back"), routes.LocationController.displayPage)),
+  backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.LocationController.displayPage)),
   useCustomContentWidth = true
 ) {
 
-    @formHelper(action = routes.MovementSummaryController.submitMovementRequest(), 'autoComplete -> "off") {
+    @formHelper(action = routes.ArriveDepartSummaryController.submitMovementRequest(), 'autoComplete -> "off") {
 
     @pageTitle(messages("summary.retrospectiveArrival.title"))
 
