@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,9 +121,10 @@ class SubmissionService @Inject() (
     }
   }
 
-  private def movementAuditType(journeyType: JourneyType): AuditType.Value = journeyType match {
-    case JourneyType.ARRIVE               => AuditType.AuditArrival
-    case JourneyType.RETROSPECTIVE_ARRIVE => AuditType.AuditRetrospectiveArrival
-    case JourneyType.DEPART               => AuditType.AuditDeparture
-  }
+  private def movementAuditType(journeyType: JourneyType): AuditType.Value =
+    (journeyType: @unchecked) match {
+      case JourneyType.ARRIVE               => AuditType.AuditArrival
+      case JourneyType.RETROSPECTIVE_ARRIVE => AuditType.AuditRetrospectiveArrival
+      case JourneyType.DEPART               => AuditType.AuditDeparture
+    }
 }

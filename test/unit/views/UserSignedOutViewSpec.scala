@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ class UserSignedOutViewSpec extends ViewSpec with Injector {
       val link = view.getElementsByClass("govuk-link govuk-link--no-visited-state").first()
 
       link must containMessage("userSignedOut.findConsignmentPageLink", request.host)
-      link must haveHref(controllers.routes.RootController.displayPage())
+      link must haveHref(controllers.routes.RootController.displayPage)
     }
 
     "display link to gov.uk" in {

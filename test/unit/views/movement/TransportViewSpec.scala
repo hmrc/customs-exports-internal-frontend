@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ class TransportViewSpec extends ViewSpec with Injector {
       val backButton = createPage.getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.GoodsDepartedController.displayPage())
+      backButton.get must haveHref(controllers.movements.routes.GoodsDepartedController.displayPage)
     }
 
     "render error summary" when {
@@ -72,9 +72,8 @@ class TransportViewSpec extends ViewSpec with Injector {
 
       "some errors" in {
         val viewWithError = page(Transport.outOfTheUkForm.withError("error", "error.required"), "some-reference")
-        viewWithError.getElementById("error-summary-title").text() mustBe messages("error.summary.title")
+        viewWithError.getElementsByClass("govuk-error-summary__title").text() mustBe messages("error.summary.title")
       }
     }
   }
-
 }

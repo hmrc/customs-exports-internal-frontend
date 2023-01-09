@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,6 +103,10 @@ object Date {
 
   private def model2form(date: Date): (String, String, String) = {
     val value = date.date
-    (twoDigitFormatter.format(value.getDayOfMonth), twoDigitFormatter.format(value.getMonthValue), fourDigitFormatter.format(value.getYear))
+    (
+      twoDigitFormatter.format(value.getDayOfMonth.toLong),
+      twoDigitFormatter.format(value.getMonthValue.toLong),
+      fourDigitFormatter.format(value.getYear.toLong)
+    )
   }
 }

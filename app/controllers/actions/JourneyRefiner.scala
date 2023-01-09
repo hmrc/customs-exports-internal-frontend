@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,9 @@ class JourneyRefiner @Inject() (cacheRepository: CacheRepository)(implicit val e
           case Some(answers: Answers) if types.isEmpty || types.contains(answers.`type`) =>
             Right(JourneyRequest(cache, request))
           case _ =>
-            Left(Results.Redirect(controllers.routes.ChoiceController.displayPage()))
+            Left(Results.Redirect(controllers.routes.ChoiceController.displayPage))
         }
-      case _ => Left(Results.Redirect(controllers.routes.ChoiceController.displayPage()))
+      case _ => Left(Results.Redirect(controllers.routes.ChoiceController.displayPage))
     }
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =

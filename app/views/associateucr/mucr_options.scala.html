@@ -1,5 +1,5 @@
 @*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  *@
 
 @import components.gds.{errorSummary, exportsInputText, gds_main_template, sectionHeader}
+@import controllers.consolidations.routes.{ManageMucrController, MucrOptionsController}
+@import controllers.routes.ChoiceController
 @import forms.{ManageMucrChoice, MucrOptions}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.Title
@@ -24,7 +26,6 @@
     govukLayout: gds_main_template,
     govukButton: GovukButton,
     govukRadios: GovukRadios,
-    govukInput: GovukInput,
     errorSummary: errorSummary,
     exportsInputText: exportsInputText,
     sectionHeader: sectionHeader,
@@ -34,17 +35,13 @@
 @(form: Form[MucrOptions], queryUcr: Option[UcrBlock], manageMucrChoice: Option[ManageMucrChoice])(implicit request: Request[_], messages: Messages)
 
 @backCall = @{
-  if (manageMucrChoice.isDefined)
-    controllers.consolidations.routes.ManageMucrController.displayPage()
-  else
-    controllers.routes.ChoiceController.displayPage()
+  if (manageMucrChoice.isDefined) ManageMucrController.displayPage
+  else ChoiceController.displayPage
 }
 
-@govukLayout(
-    title = Title("mucrOptions.title"),
-    backButton = Some(BackButton(messages("site.back"), backCall))) {
+@govukLayout(title = Title("mucrOptions.title"), backButton = Some(BackButton(messages("site.back"), backCall))) {
 
-    @formHelper(action = consolidations.routes.MucrOptionsController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = MucrOptionsController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)
 
         @sectionHeader(messages("mucrOptions.heading", queryUcr.map(_.ucr).getOrElse("")))
@@ -87,7 +84,6 @@
             ),
             errorMessage = form("createOrAdd").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
         ))
-
 
         @govukButton(Button(content = Text(messages("site.continue"))))
     }

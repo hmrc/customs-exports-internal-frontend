@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ class SpecificDateTimeViewSpec extends ViewSpec with Injector {
       val backButton = createView.getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
+      backButton.get must haveHref(controllers.routes.ChoiceController.displayPage)
     }
 
     "display 'Continue' button on page" in {

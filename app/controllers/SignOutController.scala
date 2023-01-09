@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,31 +16,32 @@
 
 package controllers
 
+import controllers.routes.SignOutController
 import models.SignOutReason
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{session_timed_out, user_signed_out}
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class SignOutController @Inject() (mcc: MessagesControllerComponents, sessionTimedOut: session_timed_out, userSignedOutPage: user_signed_out)
     extends FrontendController(mcc) with I18nSupport {
 
   def signOut(signOutReason: SignOutReason): Action[AnyContent] = Action { _ =>
-    val redirectionTarget: Call = signOutReason match {
-      case SignOutReason.SessionTimeout => routes.SignOutController.sessionTimeoutSignedOut()
-      case SignOutReason.UserAction     => routes.SignOutController.userSignedOut()
+    val redirectionTarget = signOutReason match {
+      case SignOutReason.SessionTimeout => SignOutController.sessionTimeoutSignedOut
+      case SignOutReason.UserAction     => SignOutController.userSignedOut
     }
     Redirect(redirectionTarget).withNewSession
   }
 
-  def sessionTimeoutSignedOut(): Action[AnyContent] = Action { implicit request =>
+  val sessionTimeoutSignedOut: Action[AnyContent] = Action { implicit request =>
     Ok(sessionTimedOut())
   }
 
-  def userSignedOut(): Action[AnyContent] = Action { implicit request =>
+  val userSignedOut: Action[AnyContent] = Action { implicit request =>
     Ok(userSignedOutPage())
   }
-
 }

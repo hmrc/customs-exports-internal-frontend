@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package models.submissions
 
-import java.time.Instant
-
 import base.UnitSpec
 import connectors.exchanges.ActionType.MovementType
 import models.UcrBlock
@@ -32,7 +30,7 @@ class SubmissionSpec extends UnitSpec with OptionValues {
       conversationId = conversationId,
       ucrBlocks = Seq(ucrBlocks: _*),
       actionType = MovementType.Arrival,
-      requestTimestamp = Instant.now()
+      requestTimestamp = models.now
     )
 
   private val mucrBlock = UcrBlock(ucr = validMucr, ucrType = "M")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ class ArrivalSummaryViewSpec extends ViewSpec with Injector {
       val backButton = page(answers).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.LocationController.displayPage())
+      backButton.get must haveHref(controllers.movements.routes.LocationController.displayPage)
     }
 
     "render sub-headers for summary sections" in {

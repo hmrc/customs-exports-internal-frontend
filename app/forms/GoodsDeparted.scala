@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,10 +46,11 @@ object GoodsDeparted {
     case object OutOfTheUk extends DepartureLocation("outOfTheUk")
     case object BackIntoTheUk extends DepartureLocation("backIntoTheUk")
 
-    def apply(input: String): DepartureLocation = input match {
-      case OutOfTheUk.value    => OutOfTheUk
-      case BackIntoTheUk.value => BackIntoTheUk
-    }
+    def apply(input: String): DepartureLocation =
+      (input: @unchecked) match {
+        case OutOfTheUk.value    => OutOfTheUk
+        case BackIntoTheUk.value => BackIntoTheUk
+      }
 
     implicit object DepartureLocationFormat extends Format[DepartureLocation] {
       override def reads(json: JsValue): JsResult[DepartureLocation] = json match {

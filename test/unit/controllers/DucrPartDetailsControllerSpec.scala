@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import forms.DucrPartDetails
 import models.cache.Cache
 import models.{UcrBlock, UcrType}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito._
+import org.mockito.MockitoSugar.{mock, reset, verify, verifyZeroInteractions, when}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -55,13 +55,13 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
 
     "call CacheRepository" in {
       givenTheCacheIsEmpty()
-      controller.displayPage()(getRequest).futureValue
+      controller.displayPage(getRequest).futureValue
       verify(cacheRepository).findByProviderId(any())
     }
 
     "return Ok (200) response" in {
       givenTheCacheIsEmpty()
-      val result = controller.displayPage()(getRequest)
+      val result = controller.displayPage(getRequest)
       status(result) mustBe OK
     }
   }
@@ -72,13 +72,13 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
 
       "call DucrPartDetails view" in {
         givenTheCacheIsEmpty()
-        controller.displayPage()(getRequest).futureValue
+        controller.displayPage(getRequest).futureValue
         verify(ducrPartDetailsPage).apply(any())(any(), any())
       }
 
       "pass empty form to DucrPartDetails view" in {
         givenTheCacheIsEmpty()
-        controller.displayPage()(getRequest).futureValue
+        controller.displayPage(getRequest).futureValue
 
         val expectedForm = DucrPartDetails.form()
         verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
@@ -91,7 +91,7 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
         val cacheContents =
           Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts)))
         givenTheCacheContains(cacheContents)
-        controller.displayPage()(getRequest).futureValue
+        controller.displayPage(getRequest).futureValue
         verify(ducrPartDetailsPage).apply(any())(any(), any())
       }
 
@@ -99,7 +99,7 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
         val cacheContents =
           Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts)))
         givenTheCacheContains(cacheContents)
-        controller.displayPage()(getRequest).futureValue
+        controller.displayPage(getRequest).futureValue
 
         val expectedForm = DucrPartDetails.form().fill(DucrPartDetails(ducr = validDucr, ducrPartId = validDucrPartId))
         verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
@@ -111,14 +111,14 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
       "call DucrPartDetails view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
         givenTheCacheContains(cacheContents)
-        controller.displayPage()(getRequest).futureValue
+        controller.displayPage(getRequest).futureValue
         verify(ducrPartDetailsPage).apply(any())(any(), any())
       }
 
       "pass empty form to DucrPartDetails view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
         givenTheCacheContains(cacheContents)
-        controller.displayPage()(getRequest).futureValue
+        controller.displayPage(getRequest).futureValue
 
         val expectedForm = DucrPartDetails.form()
         verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
@@ -138,7 +138,7 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
 
       "not call CacheRepository" in {
         controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
-        verifyNoMoreInteractions(cacheRepository)
+        verifyZeroInteractions(cacheRepository)
       }
     }
 
@@ -165,7 +165,7 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
 
       "redirect to Choice page" in {
         val result = controller.submitDucrPartDetails()(postRequest(inputData))
-        redirectLocation(result) mustBe Some(ChoiceController.displayPage().url)
+        redirectLocation(result) mustBe Some(ChoiceController.displayPage.url)
       }
     }
   }

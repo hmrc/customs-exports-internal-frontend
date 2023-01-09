@@ -15,11 +15,13 @@
  */
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
+import controllers.movements.routes.LocationController
+import controllers.summary.routes.{ArriveDepartSummaryController, MovementConfirmationController}
 import forms.{ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.cache.RetrospectiveArrivalAnswers
 import play.api.test.Helpers._
 
-class RetrospectiveArrivalSpec extends IntegrationSpec {
+class RetrospectiveArrivalISpec extends IntegrationSpec {
 
   "Location Page" when {
     "GET" should {
@@ -34,7 +36,7 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         )
 
         // When
-        val response = get(controllers.movements.routes.LocationController.displayPage())
+        val response = get(LocationController.displayPage)
 
         // Then
         status(response) mustBe OK
@@ -53,11 +55,11 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         )
 
         // When
-        val response = post(controllers.movements.routes.LocationController.saveLocation(), "code" -> "GBAUEMAEMAEMA")
+        val response = post(LocationController.saveLocation, "code" -> "GBAUEMAEMAEMA")
 
         // Then
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.summary.routes.ArriveDepartSummaryController.displayPage().url)
+        redirectLocation(response) mustBe Some(ArriveDepartSummaryController.displayPage.url)
         theAnswersFor("pid") mustBe Some(
           RetrospectiveArrivalAnswers(
             consignmentReferences = Some(ConsignmentReferences(reference = ConsignmentReferenceType.M, referenceValue = "GB/123-12345")),
@@ -82,7 +84,7 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         )
 
         // When
-        val response = get(controllers.summary.routes.ArriveDepartSummaryController.displayPage())
+        val response = get(ArriveDepartSummaryController.displayPage)
 
         // Then
         status(response) mustBe OK
@@ -103,11 +105,11 @@ class RetrospectiveArrivalSpec extends IntegrationSpec {
         givenTheMovementsBackendAcceptsTheMovement()
 
         // When
-        val response = post(controllers.summary.routes.ArriveDepartSummaryController.submitMovementRequest())
+        val response = post(ArriveDepartSummaryController.submitMovementRequest)
 
         // Then
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
+        redirectLocation(response) mustBe Some(MovementConfirmationController.displayPage.url)
         theAnswersFor("pid") mustBe None
         verify(
           postRequestedForMovement()

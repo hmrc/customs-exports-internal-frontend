@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,10 @@ import services.SubmissionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.summary.associate_ucr_summary
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class AssociateUcrSummaryController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
@@ -38,7 +39,7 @@ class AssociateUcrSummaryController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ASSOCIATE_UCR)) { implicit request =>
+  val displayPage: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ASSOCIATE_UCR)) { implicit request =>
     val answers = request.answersAs[AssociateUcrAnswers]
     if (isCacheDataValid(answers))
       Ok(associateUcrSummaryPage(answers))
@@ -48,7 +49,7 @@ class AssociateUcrSummaryController @Inject() (
 
   private def isCacheDataValid(answers: AssociateUcrAnswers): Boolean = answers.parentMucr.isDefined && answers.childUcr.isDefined
 
-  def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ASSOCIATE_UCR)).async { implicit request =>
+  val submit: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ASSOCIATE_UCR)).async { implicit request =>
     val answers = request.answersAs[AssociateUcrAnswers]
     val ucrType = answers.childUcr.map(_.kind.codeValue)
     val ucr = answers.childUcr.map(_.ucr)
@@ -63,7 +64,7 @@ class AssociateUcrSummaryController @Inject() (
         Some(FlashKeys.CONVERSATION_ID -> conversationId)
       ).flatten
 
-      Redirect(controllers.summary.routes.MovementConfirmationController.displayPage())
+      Redirect(controllers.summary.routes.MovementConfirmationController.displayPage)
         .flashing(flash: _*)
     }
   }

@@ -4,75 +4,75 @@ GET         /assets/*file                          controllers.Assets.versioned(
 
 #
 
-GET         /                                      controllers.RootController.displayPage()
+GET         /                                      controllers.RootController.displayPage
 
 # ILE Query - entry point
-GET         /consignment-query                     controllers.ileQuery.FindConsignmentController.displayQueryForm()
-POST        /consignment-query                     controllers.ileQuery.FindConsignmentController.submitQueryForm()
+GET         /consignment-query                     controllers.ileQuery.FindConsignmentController.displayQueryForm
+POST        /consignment-query                     controllers.ileQuery.FindConsignmentController.submitQueryForm
 
 GET         /consignment-query/:ucr                controllers.ileQuery.IleQueryController.getConsignmentInformation(ucr: String)
 
 # Declaration choice page
-GET         /choice                                controllers.ChoiceController.displayPage()
-POST        /choice                                controllers.ChoiceController.submit()
+GET         /choice                                controllers.ChoiceController.displayPage
+POST        /choice                                controllers.ChoiceController.submit
 
 # DUCR Part details page
-GET         /ducr-part-details                     controllers.DucrPartDetailsController.displayPage()
-POST        /ducr-part-details                     controllers.DucrPartDetailsController.submitDucrPartDetails()
+GET         /ducr-part-details                     controllers.DucrPartDetailsController.displayPage
+POST        /ducr-part-details                     controllers.DucrPartDetailsController.submitDucrPartDetails
 
 #Manage MUCR
-GET         /manage-mucr                          controllers.consolidations.ManageMucrController.displayPage()
-POST        /manage-mucr                          controllers.consolidations.ManageMucrController.submit()
+GET         /manage-mucr                          controllers.consolidations.ManageMucrController.displayPage
+POST        /manage-mucr                          controllers.consolidations.ManageMucrController.submit
 
 # MUCR options page
-GET         /mucr-options                          controllers.consolidations.MucrOptionsController.displayPage()
-POST        /mucr-options                          controllers.consolidations.MucrOptionsController.submit()
+GET         /mucr-options                          controllers.consolidations.MucrOptionsController.displayPage
+POST        /mucr-options                          controllers.consolidations.MucrOptionsController.submit
 
 # Associate UCR page
-GET         /associate-ucr                         controllers.consolidations.AssociateUcrController.displayPage()
-POST        /associate-ucr                         controllers.consolidations.AssociateUcrController.submit()
+GET         /associate-ucr                         controllers.consolidations.AssociateUcrController.displayPage
+POST        /associate-ucr                         controllers.consolidations.AssociateUcrController.submit
 
 # Associate UCR summary page
-GET         /associate-ucr-summary                 controllers.summary.AssociateUcrSummaryController.displayPage()
-POST        /associate-ucr-summary                 controllers.summary.AssociateUcrSummaryController.submit()
+GET         /associate-ucr-summary                 controllers.summary.AssociateUcrSummaryController.displayPage
+POST        /associate-ucr-summary                 controllers.summary.AssociateUcrSummaryController.submit
 
 # Disassociate UCR summary page
-GET         /dissociate-ucr-summary                controllers.summary.DisassociateUcrSummaryController.displayPage()
-POST        /dissociate-ucr-summary                controllers.summary.DisassociateUcrSummaryController.submit()
+GET         /dissociate-ucr-summary                controllers.summary.DisassociateUcrSummaryController.displayPage
+POST        /dissociate-ucr-summary                controllers.summary.DisassociateUcrSummaryController.submit
 
 # Specific date-time page
-GET         /specific-date-and-time               controllers.movements.SpecificDateTimeController.displayPage()
-POST        /specific-date-and-time               controllers.movements.SpecificDateTimeController.submit()
+GET         /specific-date-and-time               controllers.movements.SpecificDateTimeController.displayPage
+POST        /specific-date-and-time               controllers.movements.SpecificDateTimeController.submit
 
 # Movement details page
-GET         /movement-details                      controllers.movements.MovementDetailsController.displayPage()
-POST        /movement-details                      controllers.movements.MovementDetailsController.saveMovementDetails()
+GET         /movement-details                      controllers.movements.MovementDetailsController.displayPage
+POST        /movement-details                      controllers.movements.MovementDetailsController.saveMovementDetails
 
 # Goods location page
-GET         /location                              controllers.movements.LocationController.displayPage()
-POST        /location                              controllers.movements.LocationController.saveLocation()
+GET         /location                              controllers.movements.LocationController.displayPage
+POST        /location                              controllers.movements.LocationController.saveLocation
 
 # Goods Departed page
-GET         /goods-departed                        controllers.movements.GoodsDepartedController.displayPage()
-POST        /goods-departed                        controllers.movements.GoodsDepartedController.saveGoodsDeparted()
+GET         /goods-departed                        controllers.movements.GoodsDepartedController.displayPage
+POST        /goods-departed                        controllers.movements.GoodsDepartedController.saveGoodsDeparted
 
 # Transport page
-GET         /transport                             controllers.movements.TransportController.displayPage()
-POST        /transport                             controllers.movements.TransportController.saveTransport()
+GET         /transport                             controllers.movements.TransportController.displayPage
+POST        /transport                             controllers.movements.TransportController.saveTransport
 
 # Summary
-GET         /summary                               controllers.summary.ArriveDepartSummaryController.displayPage()
-POST        /summary                               controllers.summary.ArriveDepartSummaryController.submitMovementRequest()
+GET         /summary                               controllers.summary.ArriveDepartSummaryController.displayPage
+POST        /summary                               controllers.summary.ArriveDepartSummaryController.submitMovementRequest
 
 # Movement confirmation page
-GET         /movement-confirmation                 controllers.summary.MovementConfirmationController.displayPage()
+GET         /movement-confirmation                 controllers.summary.MovementConfirmationController.displayPage
 
 # Shut a MUCR summary page
-GET         /shut-mucr-summary                     controllers.summary.ShutMucrSummaryController.displayPage()
-POST        /shut-mucr-summary                     controllers.summary.ShutMucrSummaryController.submit()
+GET         /shut-mucr-summary                     controllers.summary.ShutMucrSummaryController.displayPage
+POST        /shut-mucr-summary                     controllers.summary.ShutMucrSummaryController.submit
 
 # Submissions page
-GET         /submissions                           controllers.ViewSubmissionsController.displayPage()
+GET         /submissions                           controllers.ViewSubmissionsController.displayPage
 
 # Notifications page
 GET         /notifications/:conversationId         controllers.ViewNotificationsController.listOfNotifications(conversationId)
@@ -80,5 +80,5 @@ GET         /notifications/:conversationId         controllers.ViewNotifications
 # Sign out
 GET         /sign-out                              controllers.SignOutController.signOut(signOutReason: models.SignOutReason)
 
-GET         /we-signed-you-out                     controllers.SignOutController.sessionTimeoutSignedOut()
-GET         /you-have-signed-out                   controllers.SignOutController.userSignedOut()
+GET         /we-signed-you-out                     controllers.SignOutController.sessionTimeoutSignedOut
+GET         /you-have-signed-out                   controllers.SignOutController.userSignedOut

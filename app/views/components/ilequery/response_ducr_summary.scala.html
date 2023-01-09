@@ -1,5 +1,5 @@
 @*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
 
 @this(converter: IleQueryCodeConverter, govukSummaryList : GovukSummaryList)
 
-@(info: DucrInfo)(implicit request: Request[_], messages: Messages)
+@(info: DucrInfo)(implicit messages: Messages)
 
 <div class="govuk-grid-column-two-thirds" id="summary">
     <h2 class="govuk-heading-m">@messages("ileQueryResponse.details")</h2>

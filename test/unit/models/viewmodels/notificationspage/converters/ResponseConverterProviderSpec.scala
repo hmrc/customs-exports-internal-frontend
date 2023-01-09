@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import base.UnitSpec
 import models.notifications.ResponseType._
 import models.viewmodels.decoder.ActionCode
 import models.viewmodels.notificationspage.MovementTotalsResponseType.{EMR, ERS}
+import org.mockito.MockitoSugar.mock
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
@@ -52,7 +53,6 @@ class ResponseConverterProviderSpec extends UnitSpec with BeforeAndAfterEach {
     "return correct Response Converter" when {
 
       "provided with MovementResponse" in {
-
         val input = exampleNotificationFrontendModel(responseType = MovementResponse)
 
         val converter = provider.provideResponseConverter(input)
@@ -61,7 +61,6 @@ class ResponseConverterProviderSpec extends UnitSpec with BeforeAndAfterEach {
       }
 
       "provided with ERS MovementTotalsResponse" in {
-
         val input =
           exampleNotificationFrontendModel(responseType = MovementTotalsResponse, messageCode = ERS.code)
 
@@ -71,7 +70,6 @@ class ResponseConverterProviderSpec extends UnitSpec with BeforeAndAfterEach {
       }
 
       "provided with EMR MovementTotalsResponse" in {
-
         val input =
           exampleNotificationFrontendModel(responseType = MovementTotalsResponse, messageCode = EMR.code)
 
@@ -83,7 +81,6 @@ class ResponseConverterProviderSpec extends UnitSpec with BeforeAndAfterEach {
       "provided with ControlResponse" which {
 
         "is Acknowledged" in {
-
           val input = exampleNotificationFrontendModel(responseType = ControlResponse, actionCode = Some(ActionCode.AcknowledgedAndProcessed.code))
 
           val converter = provider.provideResponseConverter(input)
@@ -92,7 +89,6 @@ class ResponseConverterProviderSpec extends UnitSpec with BeforeAndAfterEach {
         }
 
         "is Blocked" in {
-
           val input =
             exampleNotificationFrontendModel(responseType = ControlResponse, actionCode = Some(ActionCode.PartiallyAcknowledgedAndProcessed.code))
 
@@ -102,7 +98,6 @@ class ResponseConverterProviderSpec extends UnitSpec with BeforeAndAfterEach {
         }
 
         "is Rejected" in {
-
           val input = exampleNotificationFrontendModel(responseType = ControlResponse, actionCode = Some(ActionCode.Rejected.code))
 
           val converter = provider.provideResponseConverter(input)
@@ -115,7 +110,6 @@ class ResponseConverterProviderSpec extends UnitSpec with BeforeAndAfterEach {
     "return Unknown Response Converter" when {
 
       "provided with unknown response" in {
-
         val input = exampleNotificationFrontendModel(responseType = MovementTotalsResponse, messageCode = "UNKNOWN")
 
         val converter = provider.provideResponseConverter(input)
@@ -124,7 +118,6 @@ class ResponseConverterProviderSpec extends UnitSpec with BeforeAndAfterEach {
       }
 
       "provided with ControlResponse with unknown ActionCode" in {
-
         val input = exampleNotificationFrontendModel(responseType = ControlResponse, actionCode = Some("UNKNOWN"))
 
         val converter = provider.provideResponseConverter(input)
@@ -133,5 +126,4 @@ class ResponseConverterProviderSpec extends UnitSpec with BeforeAndAfterEach {
       }
     }
   }
-
 }

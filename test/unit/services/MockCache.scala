@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,16 @@ import models.cache.Cache
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.verify
+import org.mockito.MockitoSugar.mock
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatestplus.mockito.MockitoSugar
 import repositories.CacheRepository
 
 import scala.concurrent.Future
 
-trait MockCache extends MockitoSugar with BeforeAndAfterEach {
+trait MockCache extends BeforeAndAfterEach {
   this: Suite =>
 
   protected val cacheRepository: CacheRepository = mock[CacheRepository]

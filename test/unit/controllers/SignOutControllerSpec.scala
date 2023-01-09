@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 
 package controllers
 
+import controllers.routes.SignOutController
 import models.SignOutReason
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -51,34 +52,30 @@ class SignOutControllerSpec extends ControllerLayerSpec with ScalaFutures {
     "provided with SessionTimeout parameter" should {
 
       "return 303 (SEE_OTHER) status" in {
-
         val result = controller.signOut(SignOutReason.SessionTimeout)(getRequest)
 
         status(result) mustBe SEE_OTHER
       }
 
       "redirect to /we-signed-you-out" in {
-
         val result = controller.signOut(SignOutReason.SessionTimeout)(getRequest)
 
-        redirectLocation(result) mustBe Some(controllers.routes.SignOutController.sessionTimeoutSignedOut().url)
+        redirectLocation(result) mustBe Some(SignOutController.sessionTimeoutSignedOut.url)
       }
     }
 
     "provided with UserAction parameter" should {
 
       "return 303 (SEE_OTHER) status" in {
-
         val result = controller.signOut(SignOutReason.UserAction)(getRequest)
 
         status(result) mustBe SEE_OTHER
       }
 
       "redirect to /you-have-signed-out" in {
-
         val result = controller.signOut(SignOutReason.UserAction)(getRequest)
 
-        redirectLocation(result) mustBe Some(controllers.routes.SignOutController.userSignedOut().url)
+        redirectLocation(result) mustBe Some(SignOutController.userSignedOut.url)
       }
     }
   }
@@ -88,14 +85,12 @@ class SignOutControllerSpec extends ControllerLayerSpec with ScalaFutures {
     val controller = new SignOutController(mcc, sessionTimedOutPage, userSignedOutPage)
 
     "call sessionTimedOutPage" in {
-
       controller.sessionTimeoutSignedOut()(getRequest).futureValue
 
       verify(sessionTimedOutPage).apply()(any(), any())
     }
 
     "return 200 status" in {
-
       val result = controller.sessionTimeoutSignedOut()(getRequest)
 
       status(result) mustBe OK
@@ -107,18 +102,15 @@ class SignOutControllerSpec extends ControllerLayerSpec with ScalaFutures {
     val controller = new SignOutController(mcc, sessionTimedOutPage, userSignedOutPage)
 
     "call userSignedOutPage" in {
-
       controller.userSignedOut()(getRequest).futureValue
 
       verify(userSignedOutPage).apply()(any(), any())
     }
 
     "return 200 status" in {
-
       val result = controller.userSignedOut()(getRequest)
 
       status(result) mustBe OK
     }
   }
-
 }

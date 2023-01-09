@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package models.viewmodels.notificationspage.converters
 
-import java.time.{Instant, LocalDate, ZoneOffset}
-
 import base.UnitSpec
 import models.UcrBlock
 import models.notifications.{Entry, EntryStatus, ResponseType}
@@ -25,7 +23,8 @@ import models.viewmodels.decoder.{Decoder, ICSCode, ROECode, SOECode}
 import models.viewmodels.notificationspage.MovementTotalsResponseType.ERS
 import models.viewmodels.notificationspage.NotificationsPageSingleElement
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.times
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
@@ -33,6 +32,8 @@ import play.twirl.api.Html
 import testdata.CommonTestData._
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import views.ViewDates
+
+import java.time.{Instant, LocalDate, ZoneOffset}
 
 class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
@@ -57,7 +58,6 @@ class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
     "provided with ERS MovementTotalsResponse with all codes" should {
 
       "call Decoder" in {
-
         val input = ersResponseAllCodes
 
         contentBuilder.convert(input)
@@ -70,7 +70,6 @@ class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
       }
 
       "return NotificationsPageSingleElement with values returned by Messages" in {
-
         val input = ersResponseAllCodes
         val expectedTitle = messages("notifications.elem.title.inventoryLinkingMovementTotalsResponse")
         val expectedTimestampInfo = "31 October 2019 at 12:00am"
@@ -100,7 +99,6 @@ class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
     "provided with ERS MovementTotalsResponse with empty codes" should {
 
       "call Decoder only for existing codes" in {
-
         val input = ersResponseMissingCodes
 
         contentBuilder.convert(input)
@@ -111,7 +109,6 @@ class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
       }
 
       "return NotificationsPageSingleElement without content for missing codes" in {
-
         val input = ersResponseMissingCodes
         val expectedTitle = messages("notifications.elem.title.inventoryLinkingMovementTotalsResponse")
         val expectedTimestampInfo = "31 October 2019 at 12:00am"
@@ -133,7 +130,6 @@ class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
     "provided with ERS MovementTotalsResponse with unknown codes" should {
 
       "call Decoder for all codes" in {
-
         val input = ersResponseUnknownCodes
 
         contentBuilder.convert(input)
@@ -144,7 +140,6 @@ class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
       }
 
       "return NotificationsPageSingleElement without content for unknown codes" in {
-
         when(decoder.ics(meq(UnknownIcsCode))).thenReturn(None)
         when(decoder.roe(meq(UnknownRoeCode().code))).thenReturn(None)
         when(decoder.ducrSoe(meq(UnknownSoeCode))).thenReturn(None)
@@ -160,7 +155,6 @@ class ERSResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
       }
     }
   }
-
 }
 
 object ERSResponseConverterSpec {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import models.notifications.NotificationFrontendModel
 import models.submissions.Submission
 import models.viewmodels.notificationspage.converters._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
@@ -63,7 +63,6 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
     "return NotificationsPageSingleElement with values returned by Messages" when {
 
       "provided with Arrival Submission" in {
-
         val input: Submission =
           exampleSubmission(actionType = MovementType.Arrival, requestTimestamp = testTimestamp)
 
@@ -77,7 +76,6 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       }
 
       "provided with RetrospectiveArrival Submission" in {
-
         val input: Submission =
           exampleSubmission(actionType = MovementType.RetrospectiveArrival, requestTimestamp = testTimestamp)
 
@@ -91,7 +89,6 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       }
 
       "provided with Departure Submission" in {
-
         val input: Submission =
           exampleSubmission(actionType = MovementType.Departure, requestTimestamp = testTimestamp)
 
@@ -105,7 +102,6 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       }
 
       "provided with DucrAssociation Submission" in {
-
         val input: Submission = Submission(
           eori = validEori,
           conversationId = conversationId,
@@ -125,7 +121,6 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       }
 
       "provided with DucrPartAssociation Submission" in {
-
         val input: Submission = Submission(
           eori = validEori,
           conversationId = conversationId,
@@ -144,7 +139,6 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       }
 
       "provided with MucrAssociation Submission" in {
-
         val input: Submission = Submission(
           eori = validEori,
           conversationId = conversationId,
@@ -163,7 +157,6 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       }
 
       "provided with DucrDisassociation Submission" in {
-
         val input: Submission = exampleSubmission(
           actionType = ConsolidationType.DucrDisassociation,
           requestTimestamp = testTimestamp,
@@ -180,7 +173,6 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       }
 
       "provided with MucrDisassociation Submission" in {
-
         val input: Submission = exampleSubmission(
           actionType = ConsolidationType.MucrDisassociation,
           requestTimestamp = testTimestamp,
@@ -197,7 +189,6 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       }
 
       "provided with ShutMucr Submission" in {
-
         val input: Submission =
           exampleSubmission(
             actionType = ConsolidationType.ShutMucr,
@@ -221,7 +212,6 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
     "provided with NotificationFrontendModel" should {
 
       "call ResponseConverterProvider" in {
-
         val input = exampleNotificationFrontendModel()
 
         factory.build(input)
@@ -230,10 +220,11 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       }
 
       "call converter returned by ResponseConverterProvider" in {
-
         val exampleNotificationPageElement =
           NotificationsPageSingleElement(title = "TITLE", timestampInfo = "TIMESTAMP", content = Html("<test>HTML</test>"))
+
         val responseConverter = mock[NotificationPageSingleElementConverter]
+
         when(responseConverter.convert(any[NotificationFrontendModel])(any()))
           .thenReturn(exampleNotificationPageElement)
 
@@ -248,10 +239,11 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       }
 
       "return NotificationsPageSingleElement returned by converter" in {
-
         val exampleNotificationPageElement =
           NotificationsPageSingleElement(title = "TITLE", timestampInfo = "TIMESTAMP", content = Html("<test>HTML</test>"))
+
         val responseConverter = mock[NotificationPageSingleElementConverter]
+
         when(responseConverter.convert(any[NotificationFrontendModel])(any()))
           .thenReturn(exampleNotificationPageElement)
 
@@ -281,5 +273,4 @@ class NotificationPageSingleElementFactorySpec extends UnitSpec with MessagesStu
       contentAsString must include(contentElement)
     }
   }
-
 }

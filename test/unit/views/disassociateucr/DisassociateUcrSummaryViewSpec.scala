@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package views.disassociateucr
 
 import base.Injector
+import controllers.routes.ChoiceController
+import controllers.summary.routes.DisassociateUcrSummaryController
 import forms.DisassociateUcr
 import models.UcrType
 import play.api.mvc.{AnyContentAsEmpty, Request}
@@ -40,7 +42,7 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
     "render form" in {
       val form = page(answersDUCR).getForm
       form mustBe defined
-      form.get must haveAttribute("action", controllers.summary.routes.DisassociateUcrSummaryController.submit().url)
+      form.get must haveAttribute("action", DisassociateUcrSummaryController.submit.url)
     }
 
     "render back button" when {
@@ -48,14 +50,14 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
         val backButton = page(answersDUCR).getBackButton
 
         backButton mustBe defined
-        backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
+        backButton.get must haveHref(ChoiceController.displayPage)
       }
 
       "mucr" in {
         val backButton = page(answersMUCR).getBackButton
 
         backButton mustBe defined
-        backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
+        backButton.get must haveHref(ChoiceController.displayPage)
       }
     }
 
@@ -89,5 +91,4 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
       }
     }
   }
-
 }

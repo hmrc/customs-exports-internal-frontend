@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package views
 
 import base.Injector
+import controllers.ileQuery.routes.FindConsignmentController
 import models.cache.AssociateUcrAnswers
 import play.api.i18n.MessagesApi
 import play.twirl.api.Html
@@ -31,7 +32,6 @@ class SessionTimedOutViewSpec extends ViewSpec with Injector {
   "SessionTimedOut View" should {
 
     "have proper messages for labels" in {
-
       val messages = instanceOf[MessagesApi].preferred(request)
 
       messages must haveTranslationFor("sessionTimout.title")
@@ -43,20 +43,17 @@ class SessionTimedOutViewSpec extends ViewSpec with Injector {
     val view = createView()
 
     "display same page header" in {
-
       view.getElementsByTag("h1").text() mustBe messages("sessionTimout.title")
     }
 
     "display sign-in button" in {
-
       val button = view.getElementsByClass("govuk-button").first()
 
       button.text() mustBe messages("sessionTimout.signin.button")
-      button.attr("href") mustBe controllers.ileQuery.routes.FindConsignmentController.displayQueryForm().url
+      button.attr("href") mustBe FindConsignmentController.displayQueryForm.url
     }
 
     "display back to gov.uk link" in {
-
       val link = view.getElementsByClass("govuk-link").first()
 
       link.text() mustBe messages("site.link.backToGovUk")

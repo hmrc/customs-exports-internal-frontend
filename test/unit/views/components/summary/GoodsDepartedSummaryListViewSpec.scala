@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,15 @@
 package views.components.summary
 
 import base.Injector
+import controllers.movements.routes.GoodsDepartedController
 import forms.GoodsDeparted
 import forms.GoodsDeparted.DepartureLocation
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import views.html.components.summary.goods_departed_summary_list
 import views.{ViewMatchers, ViewSpec}
 
-class GoodsDepartedSummaryListViewSpec extends ViewSpec with ViewMatchers with MockitoSugar with Injector {
+class GoodsDepartedSummaryListViewSpec extends ViewSpec with ViewMatchers with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
@@ -36,21 +36,18 @@ class GoodsDepartedSummaryListViewSpec extends ViewSpec with ViewMatchers with M
   "GoodsDepartedSummaryList" should {
 
     "have heading" in {
-
       goodsDepartedList(Some(goodsDeparted)).getElementsByClass("govuk-heading-m").first() must containMessage("goodsDeparted.title")
     }
 
     "have 'Where are the goods going?' row with 'Change' link" in {
-
       val goodsDepartedRow = goodsDepartedList(Some(goodsDeparted)).getElementsByClass("govuk-summary-list__row").get(0)
 
       goodsDepartedRow.getElementsByClass("govuk-summary-list__key").first() must containMessage("goodsDeparted.header")
       goodsDepartedRow.getElementsByClass("govuk-summary-list__value").first() must containMessage("goodsDeparted.departureLocation.outOfTheUk")
 
       val changeLinkElement = goodsDepartedRow.getElementsByClass("govuk-link").first()
-      changeLinkElement must haveHref(controllers.movements.routes.GoodsDepartedController.displayPage())
+      changeLinkElement must haveHref(GoodsDepartedController.displayPage)
       changeLinkElement must containMessage("summary.goodsDeparted.change")
     }
   }
-
 }

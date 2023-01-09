@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 package controllers
 
+import controllers.ileQuery.routes.FindConsignmentController
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class RootController @Inject() (mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = Action {
-    Redirect(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
+  val displayPage: Action[AnyContent] = Action {
+    Redirect(FindConsignmentController.displayQueryForm)
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,13 @@ package controllers.consolidations
 
 import controllers.ControllerLayerSpec
 import controllers.summary.ShutMucrSummaryController
+import controllers.summary.routes.MovementConfirmationController
 import forms.ShutMucr
 import models.ReturnToStartException
 import models.cache.{Answers, JourneyType, ShutMucrAnswers}
 import models.summary.FlashKeys
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.JsString
 import play.api.test.Helpers._
@@ -62,10 +63,8 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with ScalaFuture
   "Shut Mucr Summary Controller on displayPage" should {
 
     "return 200 (OK)" when {
-
       "the cache contains information from shut mucr page" in {
-
-        val result = controller(ShutMucrAnswers(shutMucr = Some(shutMucr))).displayPage()(getRequest)
+        val result = controller(ShutMucrAnswers(shutMucr = Some(shutMucr))).displayPage(getRequest)
 
         status(result) mustBe OK
         verify(summaryPage).apply(any())(any(), any())
@@ -73,22 +72,18 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with ScalaFuture
     }
 
     "throw ReturnToStartException" when {
-
       "the cache is empty" in {
-
         intercept[RuntimeException] {
-          await(controller().displayPage()(getRequest))
+          await(controller().displayPage(getRequest))
         } mustBe ReturnToStartException
       }
     }
   }
 
   "Shut Mucr Summary Controller on submit" should {
-
     "everything works correctly" should {
 
       "call SubmissionService" in {
-
         val cachedAnswers = ShutMucrAnswers(shutMucr = Some(shutMucr))
 
         val result = controller(cachedAnswers).submit()(postRequest(JsString("")))
@@ -100,20 +95,17 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with ScalaFuture
       }
 
       "return 303 (SEE_OTHER) that redirects to ShutMucrConfirmationController" in {
-
         val result = controller(ShutMucrAnswers(shutMucr = Some(shutMucr))).submit()(postRequest(JsString("")))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
+        redirectLocation(result) mustBe Some(MovementConfirmationController.displayPage.url)
       }
 
       "return response with Movement Type in flash" in {
-
         val result = controller(ShutMucrAnswers(shutMucr = Some(shutMucr))).submit()(postRequest(JsString("")))
 
         flash(result).get(FlashKeys.JOURNEY_TYPE) mustBe Some(JourneyType.SHUT_MUCR.toString)
       }
     }
   }
-
 }

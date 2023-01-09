@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import models.ReturnToStartException
 import models.cache.{Answers, Cache}
 import play.api.mvc.WrappedRequest
 
+import scala.reflect.ClassTag
+
 case class JourneyRequest[T](cache: Cache, request: AuthenticatedRequest[T]) extends WrappedRequest(request) {
 
   val operator: Operator = request.operator
@@ -27,10 +29,9 @@ case class JourneyRequest[T](cache: Cache, request: AuthenticatedRequest[T]) ext
 
   def answers: Answers = cache.answers.getOrElse(throw ReturnToStartException)
 
-  def answersAre[J <: Answers]: Boolean = answers.isInstanceOf[J]
-
-  def answersAs[J <: Answers]: J = answers match {
-    case ans: J => ans
-    case _      => throw ReturnToStartException
-  }
+  def answersAs[J <: Answers](implicit tag: ClassTag[J]): J =
+    answers match {
+      case ans: J => ans
+      case _      => throw ReturnToStartException
+    }
 }

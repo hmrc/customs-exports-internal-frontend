@@ -1,5 +1,5 @@
 @*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 @import components.gds.{errorSummary, gds_main_template, pageTitle}
 @import controllers.ileQuery.routes.IleQueryController
-@import controllers.routes.DucrPartDetailsController
+@import controllers.routes.{ChoiceController, DucrPartDetailsController}
 @import forms.Choice
 @import forms.Choice._
 @import models.UcrType.{Ducr, DucrPart}
@@ -39,14 +39,14 @@
 
 @backLink = @{
   queryUcr.map { block =>
-    if (block.is(DucrPart)) BackButton(messages("site.back"), DucrPartDetailsController.displayPage())
+    if (block.is(DucrPart)) BackButton(messages("site.back"), DucrPartDetailsController.displayPage)
     else BackButton(messages("site.back"), IleQueryController.getConsignmentInformation(block.ucr))
   }
 }
 
 @govukLayout(title = Title("movement.choice.title"), backButton = backLink) {
 
-    @formHelper(action = routes.ChoiceController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = ChoiceController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)
 
         @sectionHeader(messages("movement.choice.sectionHeading", queryUcr.map(_.ucr).getOrElse("")))

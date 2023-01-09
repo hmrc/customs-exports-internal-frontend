@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,15 @@
 package controllers.actions
 
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
+import controllers.routes.ChoiceController
 import models.cache.{AssociateUcrAnswers, Cache}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito._
+import org.mockito.MockitoSugar.{mock, reset, verify}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatestplus.mockito.MockitoSugar
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.{Result, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -35,7 +35,7 @@ import testdata.CommonTestData.providerId
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class JourneyRefinerSpec extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterEach {
+class JourneyRefinerSpec extends AnyWordSpec with Matchers with BeforeAndAfterEach {
 
   private val repository = mock[CacheRepository]
   private val block = mock[JourneyRequest[_] => Future[Result]]
@@ -73,7 +73,7 @@ class JourneyRefinerSpec extends AnyWordSpec with Matchers with MockitoSugar wit
       "answers not found" in {
         given(repository.findByProviderId(providerId)).willReturn(Future.successful(None))
 
-        await(refiner.invokeBlock(request, block)) mustBe Results.Redirect(controllers.routes.ChoiceController.displayPage())
+        await(refiner.invokeBlock(request, block)) mustBe Results.Redirect(ChoiceController.displayPage)
       }
     }
   }

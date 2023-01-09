@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package models.cache
 
-import java.time.Instant
-
-import models.UcrBlock
+import models.{now, UcrBlock}
 import play.api.libs.json._
 
-case class Cache(providerId: String, answers: Option[Answers], queryUcr: Option[UcrBlock], updated: Option[Instant] = Some(Instant.now())) {
+import java.time.Instant
 
-  def update(answers: Answers) = this.copy(answers = Some(answers), updated = Some(Instant.now()))
+case class Cache(providerId: String, answers: Option[Answers], queryUcr: Option[UcrBlock], updated: Option[Instant] = Some(now)) {
+  def update(answers: Answers): Cache = this.copy(answers = Some(answers), updated = Some(now))
 }
 
 object Cache {

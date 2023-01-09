@@ -17,11 +17,11 @@
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import connectors.{AuditWiremockTestServer, AuthWiremockTestServer, MovementsBackendWiremockTestServer}
-import models.{DateTimeProvider, UcrBlock}
 import models.cache.{Answers, Cache}
+import models.{DateTimeProvider, UcrBlock}
 import modules.DateTimeModule
-import org.scalatest.concurrent.Eventually
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.concurrent.Eventually
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -29,8 +29,8 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Call, Request, Result}
-import play.api.test.{CSRFTokenHelper, FakeRequest}
 import play.api.test.Helpers._
+import play.api.test.{CSRFTokenHelper, FakeRequest}
 import repositories.CacheRepository
 import repository.TestMongoDB
 
@@ -83,5 +83,4 @@ abstract class IntegrationSpec
   protected def givenCacheFor(cache: Cache): Unit = await(cacheRepository.insertOne(cache))
 
   protected def verifyEventually(requestPatternBuilder: RequestPatternBuilder): Unit = eventually(WireMock.verify(requestPatternBuilder))
-
 }

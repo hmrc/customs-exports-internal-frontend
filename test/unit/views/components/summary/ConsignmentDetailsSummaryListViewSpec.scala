@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,13 @@ package views.components.summary
 
 import base.Injector
 import forms.{ConsignmentReferenceType, ConsignmentReferences}
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import testdata.CommonTestData.{validDucr, validMucr}
 import views.html.components.summary.consignment_details_summary_list
 import views.{ViewMatchers, ViewSpec}
 
-class ConsignmentDetailsSummaryListViewSpec extends ViewSpec with ViewMatchers with MockitoSugar with Injector {
+class ConsignmentDetailsSummaryListViewSpec extends ViewSpec with ViewMatchers with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
@@ -37,7 +36,6 @@ class ConsignmentDetailsSummaryListViewSpec extends ViewSpec with ViewMatchers w
   "ConsignmentDetailsSummaryList" should {
 
     "have heading" in {
-
       consignmentDetailsList(Some(Ducr)).getElementsByClass("govuk-heading-m").first() must containMessage("summary.consignmentDetails")
     }
   }
@@ -47,7 +45,6 @@ class ConsignmentDetailsSummaryListViewSpec extends ViewSpec with ViewMatchers w
     "provided with DUCR" should {
 
       "have Consignment Type row" in {
-
         val consignmentTypeRow = consignmentDetailsList(Some(Ducr)).getElementsByClass("govuk-summary-list__row").get(0)
 
         consignmentTypeRow.getElementsByClass("govuk-summary-list__key").first() must containMessage("summary.referenceType")
@@ -55,7 +52,6 @@ class ConsignmentDetailsSummaryListViewSpec extends ViewSpec with ViewMatchers w
       }
 
       "have Consignment Reference row" in {
-
         val consignmentTypeRow = consignmentDetailsList(Some(Ducr)).getElementsByClass("govuk-summary-list__row").get(1)
 
         consignmentTypeRow.getElementsByClass("govuk-summary-list__key").first() must containMessage("summary.referenceValue")
@@ -66,7 +62,6 @@ class ConsignmentDetailsSummaryListViewSpec extends ViewSpec with ViewMatchers w
     "provided with MUCR" should {
 
       "have Consignment Type row" in {
-
         val consignmentTypeRow = consignmentDetailsList(Some(Mucr)).getElementsByClass("govuk-summary-list__row").get(0)
 
         consignmentTypeRow.getElementsByClass("govuk-summary-list__key").first() must containMessage("summary.referenceType")
@@ -74,7 +69,6 @@ class ConsignmentDetailsSummaryListViewSpec extends ViewSpec with ViewMatchers w
       }
 
       "have Consignment Reference row" in {
-
         val consignmentTypeRow = consignmentDetailsList(Some(Mucr)).getElementsByClass("govuk-summary-list__row").get(1)
 
         consignmentTypeRow.getElementsByClass("govuk-summary-list__key").first() must containMessage("summary.referenceValue")
@@ -82,5 +76,4 @@ class ConsignmentDetailsSummaryListViewSpec extends ViewSpec with ViewMatchers w
       }
     }
   }
-
 }

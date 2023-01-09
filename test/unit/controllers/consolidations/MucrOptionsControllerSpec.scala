@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package controllers.consolidations
 
 import controllers.ControllerLayerSpec
+import controllers.summary.routes.AssociateUcrSummaryController
 import forms.ManageMucrChoice.AssociateAnotherUcrToThis
 import forms.{ManageMucrChoice, MucrOptions}
 import models.UcrBlock
@@ -24,7 +25,7 @@ import models.UcrType.Ducr
 import models.cache.AssociateUcrAnswers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.{JsString, Json}
@@ -76,63 +77,54 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
     "GET displayPage is invoked without data in cache" should {
 
       "return 200 (OK) response" in {
-
-        val result = controller().displayPage()(getRequest)
+        val result = controller().displayPage(getRequest)
         status(result) mustBe OK
       }
 
       "pass empty form to view" in {
-
-        controller().displayPage()(getRequest).futureValue
+        controller().displayPage(getRequest).futureValue
         theResponseForm.value mustBe empty
       }
 
       "pass empty queryUcr to view" in {
-
-        controller().displayPage()(getRequest).futureValue
+        controller().displayPage(getRequest).futureValue
         theQueryUcr mustNot be(defined)
       }
 
       "pass empty ManageMucrChoice to view" in {
-
-        controller().displayPage()(getRequest).futureValue
+        controller().displayPage(getRequest).futureValue
         theManageMucrChoice mustNot be(defined)
       }
     }
 
     "GET displayPage is invoked with data in cache" should {
-
       val cachedForm = MucrOptions("123")
       val cachedManageMucrChoice = ManageMucrChoice(AssociateAnotherUcrToThis)
       val cachedAnswers = AssociateUcrAnswers(parentMucr = Some(cachedForm), manageMucrChoice = Some(cachedManageMucrChoice))
       val queryUcr = UcrBlock(ucr = validDucr, ucrType = Ducr)
 
       "return 200 (OK) response" in {
-
-        val result = controller(cachedAnswers, Some(queryUcr)).displayPage()(getRequest)
+        val result = controller(cachedAnswers, Some(queryUcr)).displayPage(getRequest)
 
         status(result) mustBe OK
       }
 
       "pass form to view" in {
-
-        controller(cachedAnswers, Some(queryUcr)).displayPage()(getRequest).futureValue
+        controller(cachedAnswers, Some(queryUcr)).displayPage(getRequest).futureValue
 
         theResponseForm.value mustBe defined
         theResponseForm.value.get mustBe cachedForm
       }
 
       "pass QueryUcr to view" in {
-
-        controller(cachedAnswers, Some(queryUcr)).displayPage()(getRequest).futureValue
+        controller(cachedAnswers, Some(queryUcr)).displayPage(getRequest).futureValue
 
         theQueryUcr mustBe defined
         theQueryUcr.get mustBe queryUcr
       }
 
       "pass ManageMucrChoice to view" in {
-
-        controller(cachedAnswers, Some(queryUcr)).displayPage()(getRequest).futureValue
+        controller(cachedAnswers, Some(queryUcr)).displayPage(getRequest).futureValue
 
         theManageMucrChoice mustBe defined
         theManageMucrChoice.get mustBe cachedManageMucrChoice
@@ -141,11 +133,9 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
   }
 
   "MucrOptionsController on submit" when {
-
     "provided with correct form" should {
 
       "return 303 (SEE_OTHER) response" in {
-
         val correctForm = Json.toJson(MucrOptions("GB/12SD-123455ASD"))
 
         val result = controller().submit()(postRequest(correctForm))
@@ -154,25 +144,22 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
       }
 
       "redirect to Associate UCR Summary controller" in {
-
         val correctForm = Json.toJson(MucrOptions("GB/12SD-123455ASD"))
 
         val result = controller().submit()(postRequest(correctForm))
 
-        redirectLocation(result) mustBe Some(controllers.summary.routes.AssociateUcrSummaryController.displayPage().url)
+        redirectLocation(result) mustBe Some(AssociateUcrSummaryController.displayPage.url)
       }
     }
 
     "provided with incorrect form" should {
 
       "return 400 (BAD_REQUEST)" in {
-
         val result = controller().submit()(postRequest(JsString("")))
         status(result) mustBe BAD_REQUEST
       }
 
       "pass form with errors to view" in {
-
         val cachedManageMucrChoice = ManageMucrChoice(AssociateAnotherUcrToThis)
         val cachedAnswers = AssociateUcrAnswers(manageMucrChoice = Some(cachedManageMucrChoice))
         val incorrectForm = JsString("")
@@ -183,7 +170,6 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
       }
 
       "pass ManageMucrChoice to view" in {
-
         val cachedManageMucrChoice = ManageMucrChoice(AssociateAnotherUcrToThis)
         val cachedAnswers = AssociateUcrAnswers(manageMucrChoice = Some(cachedManageMucrChoice))
         val incorrectForm = JsString("")
@@ -195,5 +181,4 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
       }
     }
   }
-
 }

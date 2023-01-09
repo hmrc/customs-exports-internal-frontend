@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package controllers
 
-import java.time.Instant
-
 import connectors.CustomsDeclareExportsMovementsConnector
 import models.notifications.NotificationFrontendModel
+import models.now
 import models.submissions.Submission
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -59,7 +58,6 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
   "SubmissionController on displayPage" should {
 
     "return 200 (OK)" in {
-
       when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq.empty))
       when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
@@ -69,7 +67,6 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
     }
 
     "call connector for all Submissions" in {
-
       when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq.empty))
       when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
@@ -80,7 +77,6 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
     }
 
     "call connector for all Notifications" in {
-
       val submission = MovementsTestData.exampleSubmission()
       when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq(submission)))
       when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
@@ -94,10 +90,9 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
     "call submissions view, passing Submissions in descending order" when {
 
       "there are no Notifications for the Submissions" in {
-
-        val submission1 = exampleSubmission(requestTimestamp = Instant.now().minusSeconds(60))
-        val submission2 = exampleSubmission(requestTimestamp = Instant.now().minusSeconds(30))
-        val submission3 = exampleSubmission(requestTimestamp = Instant.now())
+        val submission1 = exampleSubmission(requestTimestamp = now.minusSeconds(60))
+        val submission2 = exampleSubmission(requestTimestamp = now.minusSeconds(30))
+        val submission3 = exampleSubmission(requestTimestamp = now)
 
         when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any()))
           .thenReturn(Future.successful(Seq(submission1, submission2, submission3)))
@@ -112,10 +107,9 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
       }
 
       "there are Notifications for the Submissions" in {
-
-        val submission1 = exampleSubmission(conversationId = conversationId, requestTimestamp = Instant.now().minusSeconds(60))
-        val submission2 = exampleSubmission(conversationId = conversationId_2, requestTimestamp = Instant.now().minusSeconds(30))
-        val submission3 = exampleSubmission(conversationId = conversationId_3, requestTimestamp = Instant.now())
+        val submission1 = exampleSubmission(conversationId = conversationId, requestTimestamp = now.minusSeconds(60))
+        val submission2 = exampleSubmission(conversationId = conversationId_2, requestTimestamp = now.minusSeconds(30))
+        val submission3 = exampleSubmission(conversationId = conversationId_3, requestTimestamp = now)
 
         val notification1 = exampleNotificationFrontendModel(conversationId = conversationId)
         val notification2 = exampleNotificationFrontendModel(conversationId = conversationId_2)
@@ -124,6 +118,7 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
         when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any()))
           .thenReturn(Future.successful(Seq(submission1, submission2, submission3)))
+
         when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any()))
           .thenReturn(Future.successful(Seq(notification1, notification2, notification3, notification4)))
 
@@ -145,5 +140,4 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
     verify(submissionsPage).apply(captor.capture())(any(), any())
     captor.getValue
   }
-
 }

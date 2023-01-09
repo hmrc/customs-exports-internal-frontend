@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package controllers.summary
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.summary.routes.MovementConfirmationController
 import models.ReturnToStartException
 import models.cache.{DisassociateUcrAnswers, JourneyType}
 import models.summary.FlashKeys
@@ -39,14 +40,14 @@ class DisassociateUcrSummaryController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)) { implicit request =>
+  val displayPage: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)) { implicit request =>
     request.answersAs[DisassociateUcrAnswers].ucr match {
       case Some(ucr) => Ok(page(ucr))
       case _         => throw ReturnToStartException
     }
   }
 
-  def submit: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)).async { implicit request =>
+  val submit: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DISSOCIATE_UCR)).async { implicit request =>
     val answers = request.answersAs[DisassociateUcrAnswers]
     val ucrType = answers.ucr.map(_.kind.codeValue)
     val ucr = answers.ucr.map(_.ucr)
@@ -59,9 +60,7 @@ class DisassociateUcrSummaryController @Inject() (
         Some(FlashKeys.CONVERSATION_ID -> conversationId)
       ).flatten
 
-      Redirect(controllers.summary.routes.MovementConfirmationController.displayPage())
-        .flashing(flash: _*)
+      Redirect(MovementConfirmationController.displayPage).flashing(flash: _*)
     }
   }
-
 }

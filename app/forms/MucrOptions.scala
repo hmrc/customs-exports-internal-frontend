@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ object MucrOptions {
   val formId = "MucrOptions"
 
   def form2Model: (String, String, String) => MucrOptions = { case (createOrAdd, newMucr, existingMucr) =>
-    createOrAdd match {
+    (createOrAdd: @unchecked) match {
       case Create.value => MucrOptions(newMucr.toUpperCase, "", Create)
       case Add.value    => MucrOptions("", existingMucr.toUpperCase, Add)
     }
@@ -58,10 +58,11 @@ object MucrOptions {
     case object Create extends CreateOrAddValues(value = "create")
     case object Add extends CreateOrAddValues(value = "add")
 
-    def apply(input: String): CreateOrAddValues = input match {
-      case Create.value => Create
-      case Add.value    => Add
-    }
+    def apply(input: String): CreateOrAddValues =
+      (input: @unchecked) match {
+        case Create.value => Create
+        case Add.value    => Add
+      }
 
     implicit object CreateOrAddValuesFormat extends Format[CreateOrAddValues] {
       override def reads(json: JsValue): JsResult[CreateOrAddValues] = json match {

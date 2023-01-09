@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package config
 
-import javax.inject.{Inject, Singleton}
+import controllers.routes.ChoiceController
 import models.ReturnToStartException
 import play.api.Logger
 import play.api.i18n.MessagesApi
@@ -24,6 +24,8 @@ import play.api.mvc.{Request, RequestHeader, Result, Results}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.error
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ErrorHandler @Inject() (val messagesApi: MessagesApi, errorTemplate: error) extends FrontendErrorHandler {
@@ -36,7 +38,7 @@ class ErrorHandler @Inject() (val messagesApi: MessagesApi, errorTemplate: error
   override def resolveError(request: RequestHeader, exception: Throwable): Result = exception match {
     case ReturnToStartException =>
       logger.warn(s"User Answers was in an invalid state, returning them to the Start Page from [${request.uri}]")
-      Results.Redirect(controllers.routes.ChoiceController.displayPage())
+      Results.Redirect(ChoiceController.displayPage)
     case _ =>
       logger.warn(s"Unexpected Exception was thrown accessing [${request.uri}]", exception)
       super.resolveError(request, exception)

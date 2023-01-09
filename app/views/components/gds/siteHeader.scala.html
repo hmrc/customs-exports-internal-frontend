@@ -1,5 +1,5 @@
 @*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 @import controllers.exchanges.JourneyRequest
 @import controllers.exchanges.AuthenticatedRequest
+@import controllers.ileQuery.routes.FindConsignmentController
+@import controllers.routes.SignOutController
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukHeader
 
 @this()
@@ -25,7 +27,7 @@
 @signOutHref = {
   @if(request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]]){
       <nav class="hmrc-header hmrc-header--with-additional-navigation hmrc-sign-out-nav">
-        <a href="@{controllers.routes.SignOutController.signOut(models.SignOutReason.UserAction).url}" class="hmrc-sign-out-nav__link">
+        <a href="@{SignOutController.signOut(models.SignOutReason.UserAction).url}" class="hmrc-sign-out-nav__link">
           @messages("site.link.signOut")
         </a>
       </nav>
@@ -41,7 +43,7 @@
         </div>
 
         <div class="hmrc-internal-service-name">
-            <a href="@{controllers.ileQuery.routes.FindConsignmentController.displayQueryForm().url}" title="@messages("header.servicename.alt")" class="hmrc-internal-service-name__link">
+            <a href="@{FindConsignmentController.displayQueryForm.url}" title="@messages("header.servicename.alt")" class="hmrc-internal-service-name__link">
                 @messages("service.name")
             </a>
 

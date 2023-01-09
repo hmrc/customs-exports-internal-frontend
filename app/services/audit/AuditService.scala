@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,11 +112,12 @@ class AuditService @Inject() (connector: AuditConnector, @Named("appName") appNa
     connector.sendExtendedEvent(extendedEvent).map(handleResponse(_, auditTypeValue))
   }
 
-  private def auditType(answers: Answers): String = answers.`type` match {
-    case JourneyType.ARRIVE               => AuditType.AuditArrival.toString
-    case JourneyType.RETROSPECTIVE_ARRIVE => AuditType.AuditRetrospectiveArrival.toString
-    case JourneyType.DEPART               => AuditType.AuditDeparture.toString
-  }
+  private def auditType(answers: Answers): String =
+    (answers.`type`: @unchecked) match {
+      case JourneyType.ARRIVE               => AuditType.AuditArrival.toString
+      case JourneyType.RETROSPECTIVE_ARRIVE => AuditType.AuditRetrospectiveArrival.toString
+      case JourneyType.DEPART               => AuditType.AuditDeparture.toString
+    }
 
   private def getMovementsData(providerId: String, answers: Answers): JsObject = {
 

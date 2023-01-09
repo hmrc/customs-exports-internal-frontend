@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
+import controllers.routes.ChoiceController
 import forms._
 import models.UcrType.Mucr
 import models.cache._
 import models.{UcrBlock, UcrType}
 import play.api.test.Helpers._
 
-class ChoiceSpec extends IntegrationSpec {
+class ChoiceISpec extends IntegrationSpec {
 
   "Display Page" should {
     "return 403" in {
       givenAuthFailed()
 
-      val response = get(controllers.routes.ChoiceController.displayPage())
+      val response = get(ChoiceController.displayPage)
 
       status(response) mustBe FORBIDDEN
     }
@@ -34,7 +35,7 @@ class ChoiceSpec extends IntegrationSpec {
     "return 303 if there is no cache" in {
       givenAuthSuccess()
 
-      val response = get(controllers.routes.ChoiceController.displayPage())
+      val response = get(ChoiceController.displayPage)
 
       status(response) mustBe SEE_OTHER
     }
@@ -43,7 +44,7 @@ class ChoiceSpec extends IntegrationSpec {
       givenAuthSuccess("pid")
       givenCacheFor(pid = "pid", queryUcr = UcrBlock(ucr = "GB/123-12345", ucrType = Mucr))
 
-      val response = get(controllers.routes.ChoiceController.displayPage())
+      val response = get(ChoiceController.displayPage)
 
       status(response) mustBe OK
     }
@@ -53,7 +54,7 @@ class ChoiceSpec extends IntegrationSpec {
     "return 403" in {
       givenAuthFailed()
 
-      val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Departure.value)
+      val response = post(ChoiceController.submit, "choice" -> Choice.Departure.value)
 
       status(response) mustBe FORBIDDEN
     }
@@ -66,7 +67,7 @@ class ChoiceSpec extends IntegrationSpec {
         givenAuthSuccess("pid")
         givenCacheFor(pid = "pid", queryUcr = queryResult)
 
-        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Arrival.value)
+        val response = post(ChoiceController.submit, "choice" -> Choice.Arrival.value)
 
         status(response) mustBe SEE_OTHER
         theAnswersFor("pid") mustBe Some(
@@ -78,7 +79,7 @@ class ChoiceSpec extends IntegrationSpec {
         givenAuthSuccess("pid")
         givenCacheFor(pid = "pid", queryUcr = queryResult)
 
-        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.RetrospectiveArrival.value)
+        val response = post(ChoiceController.submit, "choice" -> Choice.RetrospectiveArrival.value)
 
         status(response) mustBe SEE_OTHER
         theAnswersFor("pid") mustBe Some(
@@ -90,7 +91,7 @@ class ChoiceSpec extends IntegrationSpec {
         givenAuthSuccess("pid")
         givenCacheFor(pid = "pid", queryUcr = queryResult)
 
-        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.Departure.value)
+        val response = post(ChoiceController.submit, "choice" -> Choice.Departure.value)
 
         status(response) mustBe SEE_OTHER
         theAnswersFor("pid") mustBe Some(
@@ -102,7 +103,7 @@ class ChoiceSpec extends IntegrationSpec {
         givenAuthSuccess("pid")
         givenCacheFor(pid = "pid", queryUcr = queryResult)
 
-        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.AssociateUCR.value)
+        val response = post(ChoiceController.submit, "choice" -> Choice.AssociateUCR.value)
 
         status(response) mustBe SEE_OTHER
         theAnswersFor("pid") mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(queryResult))))
@@ -112,7 +113,7 @@ class ChoiceSpec extends IntegrationSpec {
         givenAuthSuccess("pid")
         givenCacheFor(pid = "pid", queryUcr = queryResult)
 
-        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.DisassociateUCR.value)
+        val response = post(ChoiceController.submit, "choice" -> Choice.DisassociateUCR.value)
 
         status(response) mustBe SEE_OTHER
         theAnswersFor("pid") mustBe Some(DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Mucr, None, Some(queryResult.ucr)))))
@@ -122,7 +123,7 @@ class ChoiceSpec extends IntegrationSpec {
         givenAuthSuccess("pid")
         givenCacheFor(pid = "pid", queryUcr = queryResult)
 
-        val response = post(controllers.routes.ChoiceController.submit(), "choice" -> Choice.ShutMUCR.value)
+        val response = post(ChoiceController.submit, "choice" -> Choice.ShutMUCR.value)
 
         status(response) mustBe SEE_OTHER
         theAnswersFor("pid") mustBe Some(ShutMucrAnswers(shutMucr = Some(ShutMucr(queryResult.ucr))))

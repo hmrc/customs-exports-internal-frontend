@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ class AssociateUcrViewSpec extends ViewSpec with ViewMatchers with Injector {
         backButton mustBe defined
         backButton.foreach { button =>
           button must containMessage("site.back")
-          button must haveHref(controllers.consolidations.routes.ManageMucrController.displayPage())
+          button must haveHref(controllers.consolidations.routes.ManageMucrController.displayPage)
         }
       }
 

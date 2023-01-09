@@ -1,5 +1,5 @@
 @*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@
 @govukLayout(
     title = Title("ileQuery.title")) {
 
-    @formHelper(action = FindConsignmentController.submitQueryForm(), 'autoComplete -> "off") {
+    @formHelper(action = FindConsignmentController.submitQueryForm, Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 
@@ -50,8 +50,8 @@
         @govukButton(Button(content = Text(messages("site.continue"))))
 
         <ul class="govuk-list">
-            <li>@link(content = Html(messages("ileQuery.link.requests")), href = ViewSubmissionsController.displayPage())</li>
-            <li>@link(content = Html(messages("ileQuery.link.ducrPart")), href = DucrPartDetailsController.displayPage())</li>
+            <li>@link(content = Html(messages("ileQuery.link.requests")), href = ViewSubmissionsController.displayPage)</li>
+            <li>@link(content = Html(messages("ileQuery.link.ducrPart")), href = DucrPartDetailsController.displayPage)</li>
         </ul>
     }
 }

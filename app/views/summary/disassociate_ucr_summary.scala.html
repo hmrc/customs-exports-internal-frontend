@@ -1,5 +1,5 @@
 @*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,28 +15,29 @@
  *@
 
 @import components.gds.{gds_main_template, pageTitle}
+@import controllers.routes.ChoiceController
 @import controllers.summary.routes.DisassociateUcrSummaryController
 @import forms.DisassociateUcr
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.Title
 @import views.components.BackButton
 
-@this(  govukLayout: gds_main_template,
-pageTitle: pageTitle,
-table: GovukTable,
-govukButton: GovukButton,
-govukSummaryList : GovukSummaryList,
-formHelper: FormWithCSRF)
+@this(
+    govukLayout: gds_main_template,
+    govukButton: GovukButton,
+    govukSummaryList : GovukSummaryList,
+    pageTitle: pageTitle,
+    formHelper: FormWithCSRF
+)
 
 @(disassociateUcr: DisassociateUcr)(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
     title = Title("disassociate.ucr.summary.title"),
-    backButton = Some(BackButton(messages("site.back"), controllers.routes.ChoiceController.displayPage())),
+    backButton = Some(BackButton(messages("site.back"), ChoiceController.displayPage)),
     useCustomContentWidth = true
 ) {
-
-    @formHelper(action = DisassociateUcrSummaryController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = DisassociateUcrSummaryController.submit, Symbol("autoComplete") -> "off") {
 
         @pageTitle(messages("disassociate.ucr.summary.title"))
 
@@ -55,6 +56,7 @@ formHelper: FormWithCSRF)
             ),
             classes = "govuk-!-margin-bottom-9"
         ))
+
         @govukButton(Button(content = Text(messages("site.confirmAndSubmit"))))
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,14 @@
 package controllers
 
 import base.Injector
+import controllers.MessagesStub.realMessagesApi
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.mvc.Request
 
 trait MessagesStub {
 
-  private val messagesApi: MessagesApi = MessagesStub.realMessagesApi
-
   protected implicit def messages(implicit request: Request[_]): Messages =
-    new AllMessageKeysAreMandatoryMessages(messagesApi.preferred(request))
+    new AllMessageKeysAreMandatoryMessages(realMessagesApi.preferred(request))
 
   protected def messages(key: String, args: Any*)(implicit request: Request[_]): String = messages(request)(key, args: _*)
 
@@ -34,7 +33,7 @@ trait MessagesStub {
    */
   private class AllMessageKeysAreMandatoryMessages(msg: Messages) extends Messages {
 
-    override def asJava: play.i18n.Messages = new play.i18n.MessagesImpl(lang.asJava, messagesApi.asJava)
+    override def asJava: play.i18n.Messages = new play.i18n.MessagesImpl(lang.asJava, realMessagesApi.asJava)
 
     override def messages: Messages = msg.messages
 
@@ -57,5 +56,5 @@ trait MessagesStub {
 }
 
 object MessagesStub extends Injector {
-  val realMessagesApi = instanceOf[MessagesApi]
+  lazy val realMessagesApi: MessagesApi = instanceOf[MessagesApi]
 }

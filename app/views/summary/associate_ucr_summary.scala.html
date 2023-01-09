@@ -1,5 +1,5 @@
 @*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  *@
 
 @import components.gds.{gds_main_template, linkContent, pageTitle}
+@import controllers.consolidations.routes.{AssociateUcrController, MucrOptionsController}
 @import controllers.summary.routes.AssociateUcrSummaryController
 @import forms.ManageMucrChoice
 @import models.cache.AssociateUcrAnswers
@@ -27,7 +28,6 @@
   govukButton: GovukButton,
   pageTitle: pageTitle,
   linkContent: linkContent,
-  govukSummaryList : GovukSummaryList,
   formHelper: FormWithCSRF
 )
 
@@ -35,8 +35,8 @@
 
 @backCall = @{
   associateUcrAnswers.manageMucrChoice.map(_.choice) match {
-    case Some(choice) if choice == ManageMucrChoice.AssociateAnotherUcrToThis => consolidations.routes.AssociateUcrController.displayPage
-    case _ => consolidations.routes.MucrOptionsController.displayPage
+    case Some(choice) if choice == ManageMucrChoice.AssociateAnotherUcrToThis => AssociateUcrController.displayPage
+    case _ => MucrOptionsController.displayPage
   }
 }
 
@@ -80,7 +80,7 @@
   useCustomContentWidth = true
 ) {
 
-  @formHelper(action = AssociateUcrSummaryController.submit(), 'autoComplete -> "off") {
+  @formHelper(action = AssociateUcrSummaryController.submit, Symbol("autoComplete") -> "off") {
 
     @pageTitle(messages("associate.ucr.summary.title"))
 
@@ -88,5 +88,4 @@
 
     @govukButton(Button(content = Text(messages("site.confirmAndSubmit"))))
   }
-
 }

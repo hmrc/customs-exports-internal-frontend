@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package views.movement
 
-import java.text.DecimalFormat
-import java.time.{LocalDate, LocalTime}
 import base.Injector
+import controllers.movements.routes.SpecificDateTimeController
 import forms.common.{Date, Time}
 import forms.{ArrivalDetails, ConsignmentReferenceType, ConsignmentReferences}
 import models.cache.ArrivalAnswers
@@ -30,6 +29,8 @@ import testdata.MovementsTestData
 import views.ViewSpec
 import views.html.arrival_details
 
+import java.text.DecimalFormat
+import java.time.{LocalDate, LocalTime}
 import scala.jdk.CollectionConverters.IterableHasAsScala
 
 class ArrivalDetailsViewSpec extends ViewSpec with Injector {
@@ -43,12 +44,12 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
 
   private def convertIntoTwoDigitFormat(input: Int): String = {
     val formatter = new DecimalFormat("00")
-    formatter.format(input)
+    formatter.format(input.toLong)
   }
 
   private def convertIntoFourDigitFormat(input: Int): String = {
     val formatter = new DecimalFormat("0000")
-    formatter.format(input)
+    formatter.format(input.toLong)
   }
 
   "ArrivalDetails View" when {
@@ -64,7 +65,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
         val backButton = emptyView.getElementById("back-link")
 
         backButton.text() mustBe messages("site.back")
-        backButton.attr("href") mustBe controllers.movements.routes.SpecificDateTimeController.displayPage().toString()
+        backButton.attr("href") mustBe SpecificDateTimeController.displayPage.toString()
       }
 
       "have section header" in {
@@ -192,8 +193,6 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
       "have single error in summary" in {
         viewWithDateError.getElementsByClass("govuk-list govuk-error-summary__list").text() mustBe messages("arrival.details.error.overdue")
       }
-
     }
   }
-
 }

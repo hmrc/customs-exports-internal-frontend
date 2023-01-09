@@ -1,5 +1,5 @@
 @*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 
 @this(govukSummaryList: GovukSummaryList, linkContent: linkContent)
 
-@(transport: Option[Transport])(implicit request: Request[_], messages: Messages)
+@(transport: Option[Transport])(implicit messages: Messages)
 
 
 @components.summary_list(messages("transport.title")) {

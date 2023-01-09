@@ -15,12 +15,13 @@
  */
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
+import controllers.summary.routes.{DisassociateUcrSummaryController, MovementConfirmationController}
 import forms.DisassociateUcr
 import models.UcrType
 import models.cache.DisassociateUcrAnswers
 import play.api.test.Helpers._
 
-class DissociateUcrSpec extends IntegrationSpec {
+class DissociateUcrISpec extends IntegrationSpec {
 
   "Dissociate UCR Summary Page" when {
     "GET" should {
@@ -30,7 +31,7 @@ class DissociateUcrSpec extends IntegrationSpec {
         givenCacheFor("pid", DisassociateUcrAnswers(ucr = Some(DisassociateUcr(kind = UcrType.Mucr, mucr = Some("GB/321-54321"), ducr = None))))
 
         // When
-        val response = get(controllers.summary.routes.DisassociateUcrSummaryController.displayPage())
+        val response = get(DisassociateUcrSummaryController.displayPage)
 
         // Then
         status(response) mustBe OK
@@ -45,11 +46,11 @@ class DissociateUcrSpec extends IntegrationSpec {
         givenMovementsBackendAcceptsTheConsolidation()
 
         // When
-        val response = post(controllers.summary.routes.DisassociateUcrSummaryController.submit())
+        val response = post(DisassociateUcrSummaryController.submit)
 
         // Then
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
+        redirectLocation(response) mustBe Some(MovementConfirmationController.displayPage.url)
         theAnswersFor("pid") mustBe None
         verify(
           postRequestedForConsolidation()

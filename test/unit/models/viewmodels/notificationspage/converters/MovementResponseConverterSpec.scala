@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,8 @@ import models.viewmodels.decoder.{CRCCode, Decoder}
 import models.viewmodels.notificationspage.NotificationsPageSingleElement
 import models.viewmodels.notificationspage.converters.ERSResponseConverterSpec.{roeKeyFromDecoder, soeKeyFromDecoder}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.times
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
@@ -60,7 +61,6 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
     "provided with MovementResponse NotificationFrontendModel" should {
 
       "call Decoder" in {
-
         val input = exampleNotificationFrontendModel(
           responseType = ResponseType.MovementResponse,
           crcCode = Some(crcCodeKeyFromDecoder.code),
@@ -78,7 +78,6 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
       }
 
       "return NotificationsPageSingleElement with values returned by Messages" in {
-
         val input = exampleNotificationFrontendModel(
           responseType = ResponseType.MovementResponse,
           entries = Seq(
@@ -109,7 +108,6 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
     "provided with MovementResponse with missing codes" should {
 
       "not call Decoder" in {
-
         val input = exampleNotificationFrontendModel(responseType = ResponseType.MovementResponse)
 
         converter.convert(input)
@@ -118,7 +116,6 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
       }
 
       "return NotificationsPageSingleElement without content for missing codes" in {
-
         val input = exampleNotificationFrontendModel(responseType = ResponseType.MovementResponse, timestampReceived = testTimestamp)
         val expectedResult = NotificationsPageSingleElement(
           title = messages("notifications.elem.title.inventoryLinkingMovementResponse"),
@@ -133,7 +130,6 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
     "provided with MovementResponse with unknown codes" should {
 
       "call Decoder" in {
-
         val crcCode = "123456"
         val input =
           exampleNotificationFrontendModel(responseType = ResponseType.MovementResponse, crcCode = Some(crcCode))
@@ -144,7 +140,6 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
       }
 
       "return NotificationsPageSingleElement without content for unknown codes" in {
-
         val crcCode = "123456"
         when(decoder.crc(meq(crcCode))).thenReturn(None)
 

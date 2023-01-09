@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,17 @@
 package forms.common
 
 import forms.{AdditionalConstraintsMapping, ConditionalConstraint}
-
-import java.text.DecimalFormat
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoField
 import play.api.data.Forms.text
 import play.api.data.{Forms, Mapping}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.voa.play.form.Condition
 import utils.FieldValidator._
 
+import java.text.DecimalFormat
+import java.time.LocalTime
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
+import java.util.Locale
 import scala.util.Try
 
 case class Time(time: LocalTime) {
@@ -45,7 +45,9 @@ object Time {
   val minuteKey = "minute"
   val ampmKey = "ampm"
 
-  val time12HourFormatter = DateTimeFormatter.ofPattern("h:mma")
+  private lazy val time12HourFormatter =
+    new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern("h:mma").toFormatter(Locale.ENGLISH)
+
   val formatter = new DecimalFormat("00")
   def timeString(hour: String, minutes: String, ampm: String) = s"${hour.toInt}:${f"${minutes.toInt}%02d"}$ampm"
 
@@ -88,7 +90,9 @@ object Time {
     if (prefix.contains("Departure")) "time.error.departure.allEmpty"
     else "time.error.arrival.allEmpty"
 
-  private def bind(hour: String, minutes: String, ampm: String): Time = Time(LocalTime.parse(timeString(hour, minutes, ampm), time12HourFormatter))
+  private def bind(hour: String, minutes: String, ampm: String): Time =
+    Time(LocalTime.parse(timeString(hour, minutes, ampm), time12HourFormatter))
 
-  private def unbind(time: Time): (String, String, String) = (time.getClockHour.toString, formatter.format(time.getMinute), time.getAmPm)
+  private def unbind(time: Time): (String, String, String) =
+    (time.getClockHour.toString, formatter.format(time.getMinute.toLong), time.getAmPm)
 }

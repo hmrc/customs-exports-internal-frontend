@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
+import controllers.movements.routes.{LocationController, MovementDetailsController, SpecificDateTimeController}
+import controllers.summary.routes.{ArriveDepartSummaryController, MovementConfirmationController}
 import forms._
 import forms.common.{Date, Time}
 import models.cache.ArrivalAnswers
 import modules.DateTimeModule
 import play.api.test.Helpers._
 
-class ArrivalSpec extends IntegrationSpec {
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+
+class ArrivalISpec extends IntegrationSpec {
 
   private val date = dateTimeProvider.dateNow.date
   private val time = dateTimeProvider.timeNow.time.truncatedTo(ChronoUnit.MINUTES)
@@ -40,7 +42,7 @@ class ArrivalSpec extends IntegrationSpec {
         givenCacheFor("eori", ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345"))))
 
         // When
-        val response = get(controllers.movements.routes.SpecificDateTimeController.displayPage())
+        val response = get(SpecificDateTimeController.displayPage)
 
         // Then
         status(response) mustBe OK
@@ -55,11 +57,11 @@ class ArrivalSpec extends IntegrationSpec {
           givenCacheFor("eori", ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345"))))
 
           // When
-          val response = post(controllers.movements.routes.SpecificDateTimeController.submit(), "choice" -> SpecificDateTimeChoice.UserDateTime)
+          val response = post(SpecificDateTimeController.submit, "choice" -> SpecificDateTimeChoice.UserDateTime)
 
           // Then
           status(response) mustBe SEE_OTHER
-          redirectLocation(response) mustBe Some(controllers.movements.routes.MovementDetailsController.displayPage().url)
+          redirectLocation(response) mustBe Some(MovementDetailsController.displayPage.url)
           theAnswersFor("eori") mustBe Some(
             ArrivalAnswers(
               consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
@@ -73,11 +75,11 @@ class ArrivalSpec extends IntegrationSpec {
           givenCacheFor("eori", ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345"))))
 
           // When
-          val response = post(controllers.movements.routes.SpecificDateTimeController.submit(), "choice" -> SpecificDateTimeChoice.CurrentDateTime)
+          val response = post(SpecificDateTimeController.submit, "choice" -> SpecificDateTimeChoice.CurrentDateTime)
 
           // Then
           status(response) mustBe SEE_OTHER
-          redirectLocation(response) mustBe Some(controllers.movements.routes.LocationController.displayPage().url)
+          redirectLocation(response) mustBe Some(LocationController.displayPage.url)
           theAnswersFor("eori") mustBe Some(
             ArrivalAnswers(
               consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
@@ -98,7 +100,7 @@ class ArrivalSpec extends IntegrationSpec {
         givenCacheFor("pid", ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345"))))
 
         // When
-        val response = get(controllers.movements.routes.MovementDetailsController.displayPage())
+        val response = get(MovementDetailsController.displayPage)
 
         // Then
         status(response) mustBe OK
@@ -113,7 +115,7 @@ class ArrivalSpec extends IntegrationSpec {
 
         // When
         val response = post(
-          controllers.movements.routes.MovementDetailsController.saveMovementDetails(),
+          MovementDetailsController.saveMovementDetails,
           "dateOfArrival.day" -> date.getDayOfMonth.toString,
           "dateOfArrival.month" -> date.getMonthValue.toString,
           "dateOfArrival.year" -> date.getYear.toString,
@@ -124,7 +126,7 @@ class ArrivalSpec extends IntegrationSpec {
 
         // Then
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.movements.routes.LocationController.displayPage().url)
+        redirectLocation(response) mustBe Some(LocationController.displayPage.url)
         theAnswersFor("pid") mustBe Some(
           ArrivalAnswers(
             consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
@@ -149,7 +151,7 @@ class ArrivalSpec extends IntegrationSpec {
         )
 
         // When
-        val response = get(controllers.movements.routes.LocationController.displayPage())
+        val response = get(LocationController.displayPage)
 
         // Then
         status(response) mustBe OK
@@ -169,11 +171,11 @@ class ArrivalSpec extends IntegrationSpec {
         )
 
         // When
-        val response = post(controllers.movements.routes.LocationController.saveLocation(), "code" -> "GBAUEMAEMAEMA")
+        val response = post(LocationController.saveLocation, "code" -> "GBAUEMAEMAEMA")
 
         // Then
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.summary.routes.ArriveDepartSummaryController.displayPage().url)
+        redirectLocation(response) mustBe Some(ArriveDepartSummaryController.displayPage.url)
         theAnswersFor("pid") mustBe Some(
           ArrivalAnswers(
             consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "GB/123-12345")),
@@ -200,7 +202,7 @@ class ArrivalSpec extends IntegrationSpec {
         )
 
         // When
-        val response = get(controllers.summary.routes.ArriveDepartSummaryController.displayPage())
+        val response = get(ArriveDepartSummaryController.displayPage)
 
         // Then
         status(response) mustBe OK
@@ -222,11 +224,11 @@ class ArrivalSpec extends IntegrationSpec {
         givenTheMovementsBackendAcceptsTheMovement()
 
         // When
-        val response = post(controllers.summary.routes.ArriveDepartSummaryController.submitMovementRequest())
+        val response = post(ArriveDepartSummaryController.submitMovementRequest)
 
         // Then
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
+        redirectLocation(response) mustBe Some(MovementConfirmationController.displayPage.url)
         theAnswersFor("pid") mustBe None
         verify(
           postRequestedForMovement()
