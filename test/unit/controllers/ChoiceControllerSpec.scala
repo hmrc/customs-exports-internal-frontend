@@ -17,6 +17,10 @@
 package controllers
 
 import controllers.actions.AuthenticatedAction
+import controllers.consolidations.routes.{ManageMucrController, MucrOptionsController}
+import controllers.ileQuery.routes.FindConsignmentController
+import controllers.movements.routes.{LocationController, SpecificDateTimeController}
+import controllers.summary.routes.{DisassociateUcrSummaryController, ShutMucrSummaryController}
 import forms.Choice._
 import forms._
 import models.UcrType.{Ducr, DucrPart, Mucr}
@@ -24,7 +28,7 @@ import models.cache._
 import models.{UcrBlock, UcrType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsJson, Request}
@@ -69,22 +73,19 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
   "GET" should {
 
     "redirect to query page" when {
-
       "an UCR is not available" in {
-
         givenTheCacheIsEmpty()
 
         val result = controller().displayPage(getRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm().url)
+        redirectLocation(result) mustBe Some(FindConsignmentController.displayQueryForm.url)
       }
     }
 
     "return 200 when authenticated" when {
 
       "existing answers with no UcrBlock" in {
-
         givenTheCacheContains(Cache(providerId, Some(ArrivalAnswers()), None))
 
         val result = controller().displayPage(getRequest)
@@ -95,7 +96,6 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "existing answers with UcrBlock" in {
-
         val ucrBlock = UcrBlock(ucr = "ucr", ucrType = Mucr)
         givenTheCacheContains(Cache(providerId, None, Some(ucrBlock)))
 
@@ -108,7 +108,6 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     }
 
     "return 403 when unauthenticated" in {
-
       val result = controller(UnsuccessfulAuth).displayPage(getRequest)
 
       status(result) mustBe FORBIDDEN
@@ -123,25 +122,23 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     "return 303 (SEE_OTHER) when authenticated" when {
 
       "user chooses arrival" in {
-
         givenTheCacheContains(Cache(providerId, queryResult))
 
         val result = controller().submit(postWithChoice(Arrival))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(movements.routes.SpecificDateTimeController.displayPage().url)
+        redirectLocation(result) mustBe Some(SpecificDateTimeController.displayPage.url)
         theCacheUpserted.answers mustBe Some(ArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr"))))
         theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
 
       "user chooses retrospective arrival" in {
-
         givenTheCacheContains(Cache(providerId, queryResult))
 
         val result = controller().submit(postWithChoice(RetrospectiveArrival))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(movements.routes.LocationController.displayPage().url)
+        redirectLocation(result) mustBe Some(LocationController.displayPage.url)
         theCacheUpserted.answers mustBe Some(
           RetrospectiveArrivalAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))
         )
@@ -149,13 +146,12 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "user chooses departure" in {
-
         givenTheCacheContains(Cache(providerId, queryResult))
 
         val result = controller().submit(postWithChoice(Departure))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(movements.routes.SpecificDateTimeController.displayPage().url)
+        redirectLocation(result) mustBe Some(SpecificDateTimeController.displayPage.url)
         theCacheUpserted.answers mustBe Some(
           DepartureAnswers(consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.M, "mucr")))
         )
@@ -165,71 +161,65 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       "user chooses associate UCR" when {
 
         "queryUcr is of type Ducr" in {
-
           val queryResultDucr = UcrBlock(ucr = "ucr", ucrType = Ducr)
           givenTheCacheContains(Cache(providerId, None, Some(queryResultDucr)))
 
           val result = controller().submit(postWithChoice(AssociateUCR))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(consolidations.routes.MucrOptionsController.displayPage().url)
+          redirectLocation(result) mustBe Some(MucrOptionsController.displayPage.url)
           theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(queryResultDucr))))
           theCacheUpserted.queryUcr mustBe Some(queryResultDucr)
         }
 
         "queryUcr is of type Ducr Part" in {
-
           val queryResultDucr = UcrBlock(ucr = "ucr-123", ucrType = DucrPart.codeValue)
           givenTheCacheContains(Cache(providerId, None, Some(queryResultDucr)))
 
           val result = controller().submit(postWithChoice(AssociateUCR))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(consolidations.routes.MucrOptionsController.displayPage().url)
+          redirectLocation(result) mustBe Some(MucrOptionsController.displayPage.url)
           theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(UcrType.DucrPart, "ucr-123"))))
           theCacheUpserted.queryUcr mustBe Some(queryResultDucr)
         }
 
         "queryUcr is of type Mucr" in {
-
           givenTheCacheContains(Cache(providerId, None, Some(queryResult)))
 
           val result = controller().submit(postWithChoice(AssociateUCR))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(consolidations.routes.ManageMucrController.displayPage().url)
+          redirectLocation(result) mustBe Some(ManageMucrController.displayPage.url)
           theCacheUpserted.answers mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(queryResult))))
           theCacheUpserted.queryUcr mustBe Some(queryResult)
         }
       }
 
       "user chooses disassociate UCR" in {
-
         givenTheCacheContains(Cache(providerId, queryResult))
 
         val result = controller().submit(postWithChoice(DisassociateUCR))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(summary.routes.DisassociateUcrSummaryController.displayPage().url)
+        redirectLocation(result) mustBe Some(DisassociateUcrSummaryController.displayPage.url)
         theCacheUpserted.answers mustBe Some(DisassociateUcrAnswers(ucr = Some(DisassociateUcr(UcrType.Mucr, None, Some("mucr")))))
         theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
 
       "user chooses shut MUCR" in {
-
         givenTheCacheContains(Cache(providerId, queryResult))
 
         val result = controller().submit(postWithChoice(ShutMUCR))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(summary.routes.ShutMucrSummaryController.displayPage().url)
+        redirectLocation(result) mustBe Some(ShutMucrSummaryController.displayPage.url)
         theCacheUpserted.answers mustBe Some(ShutMucrAnswers(shutMucr = Some(ShutMucr("mucr"))))
         theCacheUpserted.queryUcr mustBe Some(queryResult)
       }
     }
 
     "return 400 when invalid" in {
-
       givenTheCacheContains(Cache(providerId, queryResult))
 
       val result = controller().submit(postRequest)
@@ -238,7 +228,6 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     }
 
     "return 403 when unauthenticated" in {
-
       val result = controller(UnsuccessfulAuth).submit(postRequest)
 
       status(result) mustBe FORBIDDEN
@@ -246,15 +235,13 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
     "redirect to query page" when {
       "queried UCR is not available" in {
-
         givenTheCacheIsEmpty()
 
         val result = controller().submit(postWithChoice(Arrival))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm().url)
+        redirectLocation(result) mustBe Some(FindConsignmentController.displayQueryForm.url)
       }
     }
   }
-
 }

@@ -23,7 +23,7 @@ import controllers.exchanges.AuthenticatedRequest
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.{verify, when}
+import org.mockito.MockitoSugar.{mock, verify, when}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

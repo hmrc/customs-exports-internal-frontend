@@ -18,11 +18,12 @@ package controllers
 
 import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.ActionType.MovementType
+import controllers.routes.ViewSubmissionsController
 import models.notifications.{NotificationFrontendModel, ResponseType}
 import models.submissions.Submission
 import models.viewmodels.notificationspage.{NotificationPageSingleElementFactory, NotificationsPageSingleElement}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
@@ -125,7 +126,7 @@ class ViewNotificationsControllerSpec extends ControllerLayerSpec with ScalaFutu
 
         val result = controller.listOfNotifications(conversationId)(FakeRequest())
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.ViewSubmissionsController.displayPage().url)
+        redirectLocation(result) mustBe Some(ViewSubmissionsController.displayPage.url)
       }
     }
   }

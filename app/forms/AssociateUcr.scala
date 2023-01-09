@@ -57,7 +57,7 @@ object AssociateUcr {
   def apply(ucrBlock: UcrBlock): AssociateUcr =
     AssociateUcr(
       ucr = ucrBlock.ucr,
-      kind = ucrBlock.ucrType match {
+      kind = (ucrBlock.ucrType: @unchecked) match {
         case Ducr.codeValue => Ducr
         case Mucr.codeValue => Mucr
       }

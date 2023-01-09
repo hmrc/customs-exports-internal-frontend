@@ -19,18 +19,17 @@ package controllers.movements
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import forms.GoodsDeparted
 import forms.GoodsDeparted.form
-
-import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
 import models.cache.{DepartureAnswers, JourneyType, MovementAnswers}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.goods_departed
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -41,9 +40,9 @@ class GoodsDepartedController @Inject() (
   mcc: MessagesControllerComponents,
   goodsDepartedPage: goods_departed
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)) { implicit request =>
+  val displayPage: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)) { implicit request =>
     val answers = request.answersAs[DepartureAnswers]
     val goodsDeparted = answers.goodsDeparted
     val consignmentReference = answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
@@ -51,9 +50,14 @@ class GoodsDepartedController @Inject() (
     Ok(goodsDepartedPage(goodsDeparted.fold(form)(form.fill(_)), consignmentReference))
   }
 
-  def saveGoodsDeparted(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)).async { implicit request =>
+  val saveGoodsDeparted: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)).async { implicit request =>
     val consignmentReference =
-      request.answersAs[MovementAnswers].consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
+      request
+        .answersAs[MovementAnswers]
+        .consignmentReferences
+        .map(_.referenceValue)
+        .getOrElse(throw ReturnToStartException)
+
     form
       .bindFromRequest()
       .fold(
@@ -62,10 +66,9 @@ class GoodsDepartedController @Inject() (
           val updatedAnswers = request.answersAs[DepartureAnswers].copy(goodsDeparted = Some(validGoodsDeparted))
 
           cacheRepository.upsert(request.cache.update(updatedAnswers)).map { _ =>
-            Redirect(controllers.movements.routes.TransportController.displayPage())
+            Redirect(controllers.movements.routes.TransportController.displayPage)
           }
         }
       )
   }
-
 }

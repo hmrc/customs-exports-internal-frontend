@@ -17,14 +17,14 @@
 package views.components.summary
 
 import base.Injector
+import controllers.movements.routes.LocationController
 import forms.Location
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import views.html.components.summary.location_summary_list
 import views.{ViewMatchers, ViewSpec}
 
-class LocationSummaryListViewSpec extends ViewSpec with ViewMatchers with MockitoSugar with Injector {
+class LocationSummaryListViewSpec extends ViewSpec with ViewMatchers with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
@@ -35,21 +35,18 @@ class LocationSummaryListViewSpec extends ViewSpec with ViewMatchers with Mockit
   "LocationSummaryList" should {
 
     "have heading" in {
-
       locationList(Some(location)).getElementsByClass("govuk-heading-m").first() must containMessage("location.title")
     }
 
     "have Goods Location Code row with 'Change' link" in {
-
       val goodsLocationCodeRow = locationList(Some(location)).getElementsByClass("govuk-summary-list__row").get(0)
 
       goodsLocationCodeRow.getElementsByClass("govuk-summary-list__key").first() must containMessage("summary.goodsLocation")
       goodsLocationCodeRow.getElementsByClass("govuk-summary-list__value").first().text mustBe "LocationCode"
 
       val changeLinkElement = goodsLocationCodeRow.getElementsByClass("govuk-link").first()
-      changeLinkElement must haveHref(controllers.movements.routes.LocationController.displayPage())
+      changeLinkElement must haveHref(LocationController.displayPage)
       changeLinkElement must containMessage("summary.goodsLocation.change")
     }
   }
-
 }

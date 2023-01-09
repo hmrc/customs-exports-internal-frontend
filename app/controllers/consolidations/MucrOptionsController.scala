@@ -19,18 +19,18 @@ package controllers.consolidations
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.summary.routes.AssociateUcrSummaryController
 import forms.MucrOptions.form
-
-import javax.inject.Inject
 import models.cache.AssociateUcrAnswers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.associateucr.mucr_options
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class MucrOptionsController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
@@ -38,9 +38,9 @@ class MucrOptionsController @Inject() (
   cacheRepository: CacheRepository,
   mucrOptionsPage: mucr_options
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
+  val displayPage: Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
     val answers = request.answersAs[AssociateUcrAnswers]
     val mucrOptions = answers.parentMucr
     val manageMucrChoice = answers.manageMucrChoice
@@ -48,7 +48,7 @@ class MucrOptionsController @Inject() (
     Ok(mucrOptionsPage(mucrOptions.fold(form)(form.fill), request.cache.queryUcr, manageMucrChoice))
   }
 
-  def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
+  val submit: Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
@@ -59,7 +59,7 @@ class MucrOptionsController @Inject() (
         validForm => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(parentMucr = Some(validForm))
           cacheRepository.upsert(request.cache.update(updatedCache)).map { _ =>
-            Redirect(AssociateUcrSummaryController.displayPage())
+            Redirect(AssociateUcrSummaryController.displayPage)
           }
         }
       )

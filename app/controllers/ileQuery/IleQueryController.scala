@@ -72,7 +72,7 @@ class IleQueryController @Inject() (
 
         case OK =>
           val queryResponse = Json.parse(response.body).as[Seq[IleQueryResponseExchange]]
-          queryResponse match {
+          (queryResponse: @unchecked) match {
             case Seq() => Future.successful(loadingPageResult)
             case response +: _ =>
               ileQueryRepository.removeByConversationId(query.conversationId).flatMap { _ =>
@@ -146,9 +146,7 @@ class IleQueryController @Inject() (
 
   private def buildIleQuery(providerId: String, ucr: String): IleQueryExchange = {
     val ucrType = if (validDucr(ucr)) Ducr.codeValue else Mucr.codeValue
-
     val ucrBlock = UcrBlock(ucr = ucr, ucrType = ucrType)
-
     IleQueryExchange(Answers.fakeEORI.get, providerId, ucrBlock)
   }
 

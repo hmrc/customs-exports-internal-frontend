@@ -60,7 +60,7 @@ class GoodsDepartedViewSpec extends ViewSpec with Injector {
       val backButton = goodsDepartedPage(GoodsDeparted.form, validDucr).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(routes.LocationController.displayPage())
+      backButton.get must haveHref(routes.LocationController.displayPage)
     }
 
     "display error summary" when {

@@ -16,12 +16,10 @@
 
 package views
 
-import java.time.temporal.ChronoUnit.MINUTES
-import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
-
 import base.Injector
 import connectors.exchanges.ActionType.{ConsolidationType, MovementType}
-import controllers.routes
+import controllers.ileQuery.routes.FindConsignmentController
+import controllers.routes.ViewNotificationsController
 import models.notifications.{Entry, NotificationFrontendModel, ResponseType}
 import models.submissions.Submission
 import models.{UcrBlock, UcrType}
@@ -29,11 +27,14 @@ import org.jsoup.nodes.Document
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import testdata.CommonTestData.{validWholeDucrParts, _}
+import testdata.CommonTestData._
 import testdata.ConsolidationTestData._
 import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import views.html.view_submissions
+
+import java.time.temporal.ChronoUnit.MINUTES
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 
 class ViewSubmissionsViewSpec extends ViewSpec with Injector {
 
@@ -57,11 +58,10 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
     }
 
     "contain back button" in {
-
       val backButton = emptyPage.getElementById("back-link")
 
       backButton must containMessage("site.back")
-      backButton must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
+      backButton must haveHref(FindConsignmentController.displayQueryForm)
     }
 
     "contain header" in {
@@ -73,7 +73,6 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
     }
 
     "contain correct table headers" in {
-
       val doc: Document = emptyPage
 
       doc.selectFirst(".govuk-table__header.ucr") // must containMessage("submissions.ucr")
@@ -83,7 +82,6 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
     }
 
     "contain correct submission data" in {
-
       val shutMucrSubmission = Submission(
         requestTimestamp = dateTime,
         eori = "",
@@ -187,7 +185,6 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
     }
 
     "contain MUCR and DUCR if Submission contains both" in {
-
       val notifications = Seq(
         exampleNotificationFrontendModel(
           conversationId = conversationId,
@@ -210,7 +207,6 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
 
     "contain link to ViewNotifications page" when {
       "there are Notifications for the Submission" in {
-
         val submission = exampleSubmission(requestTimestamp = dateTime)
         val notifications = Seq(exampleNotificationFrontendModel(timestampReceived = dateTime.plusSeconds(3)))
 
@@ -218,14 +214,12 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
 
         val firstDataRowUcrCell = page.selectFirst(".govuk-table__body .govuk-table__row:nth-child(1)")
 
-        firstDataRowUcrCell.selectFirst(".ucr").child(0) must haveHref(routes.ViewNotificationsController.listOfNotifications(conversationId))
+        firstDataRowUcrCell.selectFirst(".ucr").child(0) must haveHref(ViewNotificationsController.listOfNotifications(conversationId))
       }
     }
 
     "display DUCR with DUCR Part" when {
-
       "there is no notification for the submission" in {
-
         val ucrBlock = UcrBlock("8GB123456789012-123456", Some("123"), "DP")
         val submission = exampleSubmission(ucrBlocks = Seq(ucrBlock), requestTimestamp = dateTime)
         val notifications = Seq.empty

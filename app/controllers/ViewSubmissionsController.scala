@@ -16,11 +16,8 @@
 
 package controllers
 
-import java.time.Instant
-
 import connectors.CustomsDeclareExportsMovementsConnector
 import controllers.actions.AuthenticatedAction
-import javax.inject.{Inject, Singleton}
 import models.notifications.NotificationFrontendModel
 import models.submissions.Submission
 import play.api.i18n.I18nSupport
@@ -28,6 +25,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.view_submissions
 
+import java.time.Instant
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -39,7 +38,7 @@ class ViewSubmissionsController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage: Action[AnyContent] = authenticate.async { implicit request =>
+  val displayPage: Action[AnyContent] = authenticate.async { implicit request =>
     val providerId = request.providerId
 
     for {
@@ -64,5 +63,4 @@ class ViewSubmissionsController @Inject() (
     submissionsWithNotifications: Seq[(Submission, Seq[NotificationFrontendModel])]
   ): Seq[(Submission, Seq[NotificationFrontendModel])] =
     submissionsWithNotifications.sortBy(_._1.requestTimestamp)(Ordering[Instant].reverse)
-
 }

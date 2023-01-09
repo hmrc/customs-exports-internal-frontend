@@ -67,17 +67,17 @@ class AssociateUcrSummaryViewSpec extends ViewSpec with Injector {
       }
 
       "query Ducr" in {
-        validateBackButton(view.getBackButton, controllers.consolidations.routes.MucrOptionsController.displayPage())
+        validateBackButton(view.getBackButton, controllers.consolidations.routes.MucrOptionsController.displayPage)
       }
 
       "query Mucr and Associate this consignment to another" in {
         val view = createView("MUCR", "MUCR", Some(ManageMucrChoice(AssociateThisToMucr)))
-        validateBackButton(view.getBackButton, controllers.consolidations.routes.MucrOptionsController.displayPage())
+        validateBackButton(view.getBackButton, controllers.consolidations.routes.MucrOptionsController.displayPage)
       }
 
       "query Mucr and Associate another consignment to this one" in {
         val view = createView("MUCR", "MUCR", Some(ManageMucrChoice(AssociateAnotherUcrToThis)))
-        validateBackButton(view.getBackButton, controllers.consolidations.routes.AssociateUcrController.displayPage())
+        validateBackButton(view.getBackButton, controllers.consolidations.routes.AssociateUcrController.displayPage)
       }
     }
 
@@ -90,17 +90,17 @@ class AssociateUcrSummaryViewSpec extends ViewSpec with Injector {
       }
 
       "query Ducr" in {
-        validateChangeLink(view, controllers.consolidations.routes.MucrOptionsController.displayPage())
+        validateChangeLink(view, controllers.consolidations.routes.MucrOptionsController.displayPage)
       }
 
       "query Mucr and Associate this consignment to another" in {
         val view = createView("MUCR", "MUCR", Some(ManageMucrChoice(AssociateThisToMucr)))
-        validateChangeLink(view, controllers.consolidations.routes.MucrOptionsController.displayPage())
+        validateChangeLink(view, controllers.consolidations.routes.MucrOptionsController.displayPage)
       }
 
       "query Mucr and Associate another consignment to this one" in {
         val view = createView("MUCR", "MUCR", Some(ManageMucrChoice(AssociateAnotherUcrToThis)))
-        validateChangeLink(view, controllers.consolidations.routes.AssociateUcrController.displayPage())
+        validateChangeLink(view, controllers.consolidations.routes.AssociateUcrController.displayPage)
       }
     }
   }

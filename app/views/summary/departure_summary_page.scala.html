@@ -16,7 +16,8 @@
 
 @import components.gds.{gds_main_template, linkContent, pageTitle}
 @import components.summary._
-@import controllers.summary.routes
+@import controllers.movements.routes.{MovementDetailsController, TransportController}
+@import controllers.summary.routes.ArriveDepartSummaryController
 @import models.cache.DepartureAnswers
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.Title
@@ -26,13 +27,13 @@
 @this(
   govukLayout: gds_main_template,
   govukButton: GovukButton,
+  govukSummaryList: GovukSummaryList,
   pageTitle: pageTitle,
   consignmentDetailsList: consignment_details_summary_list,
   locationList: location_summary_list,
   goodsDepartedList: goods_departed_summary_list,
   transportList: transport_summary_list,
   linkContent: linkContent,
-  govukSummaryList: GovukSummaryList,
   viewDates: ViewDates,
   formHelper: FormWithCSRF
 )
@@ -41,11 +42,10 @@
 
 @govukLayout(
   title = Title("summary.departure.title"),
-  backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.TransportController.displayPage)),
+  backButton = Some(BackButton(messages("site.back"), TransportController.displayPage)),
   useCustomContentWidth = true
 ) {
-
-    @formHelper(action = routes.ArriveDepartSummaryController.submitMovementRequest(), 'autoComplete -> "off") {
+    @formHelper(action = ArriveDepartSummaryController.submitMovementRequest, Symbol("autoComplete") -> "off") {
 
     @pageTitle(messages("summary.departure.title"))
 
@@ -64,7 +64,7 @@
             actions = Some(Actions(
               items = Seq(
                 ActionItem(
-                  href = s"${controllers.movements.routes.MovementDetailsController.displayPage}",
+                  href = s"${MovementDetailsController.displayPage}",
                   content = HtmlContent(linkContent(messages("site.change"))),
                   visuallyHiddenText = Some(messages("summary.departure.date.change"))
                 )
@@ -81,7 +81,7 @@
             actions = Some(Actions(
               items = Seq(
                 ActionItem(
-                  href = s"${controllers.movements.routes.MovementDetailsController.displayPage}",
+                  href = s"${MovementDetailsController.displayPage}",
                   content = HtmlContent(linkContent(messages("site.change"))),
                   visuallyHiddenText = Some(messages("summary.departure.time.change"))
                 )

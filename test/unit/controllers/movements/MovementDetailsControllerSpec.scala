@@ -17,14 +17,14 @@
 package controllers.movements
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
-
 import controllers.ControllerLayerSpec
+import controllers.movements.routes.LocationController
 import forms.common.{Date, Time}
 import forms.{ArrivalDetails, DepartureDetails}
 import models.cache.{Answers, ArrivalAnswers, Cache, DepartureAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import play.api.data.{Form, FormError}
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import play.api.test.Helpers._
@@ -75,21 +75,19 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
     "return 200 (OK)" when {
 
       "GET displayPage is invoked without data in cache" in {
-
         givenTheCacheIsEmpty()
 
-        val result = controller().displayPage()(getRequest)
+        val result = controller().displayPage(getRequest)
 
         status(result) mustBe OK
         arrivalResponseForm.value mustBe empty
       }
 
       "GET displayPage is invoked with data in cache" in {
-
         val cachedForm = Some(ArrivalDetails(Date(LocalDate.now()), Time(LocalTime.now())))
         givenTheCacheContains(Cache("12345", Some(ArrivalAnswers(arrivalDetails = cachedForm)), None))
 
-        val result = controller(ArrivalAnswers(arrivalDetails = cachedForm)).displayPage()(getRequest)
+        val result = controller(ArrivalAnswers(arrivalDetails = cachedForm)).displayPage(getRequest)
 
         status(result) mustBe OK
 
@@ -100,7 +98,6 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
     "return 400 (BAD_REQUEST)" when {
 
       "POST submit is invoked with incorrect form" in {
-
         givenTheCacheIsEmpty()
 
         val invalidForm = Json.toJson("")
@@ -111,7 +108,6 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "date is in the future" in {
-
         val tomorrow = LocalDateTime.now().plusDays(1)
         val incorrectForm = Json.obj(
           "dateOfArrival" -> Json.obj("day" -> tomorrow.getDayOfMonth, "month" -> tomorrow.getMonthValue, "year" -> tomorrow.getYear),
@@ -127,7 +123,6 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "date is in the past" in {
-
         val lastYear = LocalDateTime.now().minusYears(1)
         val incorrectForm = Json.obj(
           "dateOfArrival" -> Json.obj("day" -> lastYear.getDayOfMonth, "month" -> lastYear.getMonthValue, "year" -> lastYear.getYear),
@@ -144,7 +139,6 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
     }
 
     "POST submit is invoked with correct form for arrival" in {
-
       givenTheCacheIsEmpty()
 
       val validArrivalDetails = ArrivalDetails(Date(LocalDate.now()), Time(LocalTime.now()))
@@ -163,11 +157,10 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
       val result = controller(ArrivalAnswers()).saveMovementDetails()(postRequest(correctForm))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.movements.routes.LocationController.displayPage().url)
+      redirectLocation(result) mustBe Some(LocationController.displayPage.url)
     }
 
     "POST submit is invoked with correct form for departure" in {
-
       givenTheCacheIsEmpty()
 
       val validDepartureDetails = DepartureDetails(Date(LocalDate.now()), Time(LocalTime.now()))
@@ -186,8 +179,7 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
       val result = controller(DepartureAnswers()).saveMovementDetails()(postRequest(correctForm))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.movements.routes.LocationController.displayPage().url)
+      redirectLocation(result) mustBe Some(LocationController.displayPage.url)
     }
-
   }
 }

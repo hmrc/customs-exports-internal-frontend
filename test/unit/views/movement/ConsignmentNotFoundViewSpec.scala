@@ -17,6 +17,7 @@
 package views.movement
 
 import base.Injector
+import controllers.ileQuery.routes.FindConsignmentController
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import views.ViewSpec
@@ -32,17 +33,14 @@ class ConsignmentNotFoundViewSpec extends ViewSpec with Injector {
   "Consignment Not Found page" should {
 
     "render title" in {
-
       view.getTitle must containMessage("ileQueryResponse.ucrNotFound.title")
     }
 
     "render page header" in {
-
       view.getElementsByClass("govuk-heading-xl").first().text() mustBe messages("ileQueryResponse.ucrNotFound.title")
     }
 
     "render error message" in {
-
       view.getElementsByClass("govuk-body").first().text() mustBe messages("ileQueryResponse.ucrNotFound.message", "SOME_UCR")
     }
 
@@ -50,7 +48,7 @@ class ConsignmentNotFoundViewSpec extends ViewSpec with Injector {
       val backButton = view.getElementsByClass("govuk-back-link").first()
 
       backButton.text() mustBe messages("site.back")
-      backButton.attr("href") mustBe controllers.ileQuery.routes.FindConsignmentController.displayQueryForm().url
+      backButton.attr("href") mustBe FindConsignmentController.displayQueryForm.url
     }
   }
 }

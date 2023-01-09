@@ -47,7 +47,7 @@ object ConsignmentReferences {
 
   private def form2Model: (ConsignmentReferenceType, Option[String], Option[String]) => ConsignmentReferences = {
     case (reference, ducrValue, mucrValue) =>
-      reference match {
+      (reference: @unchecked) match {
         case ConsignmentReferenceType.D => ConsignmentReferences(ConsignmentReferenceType.D, ducrValue.map(_.toUpperCase).getOrElse(""))
         case ConsignmentReferenceType.M => ConsignmentReferences(ConsignmentReferenceType.M, mucrValue.map(_.toUpperCase).getOrElse(""))
       }

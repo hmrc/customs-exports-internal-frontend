@@ -16,6 +16,7 @@
 
 @import components.gds.gds_main_template
 @import components.ilequery._
+@import controllers.ileQuery.routes.FindConsignmentController
 @import models.notifications.queries.{MucrInfo, UcrInfo}
 @import models.viewmodels.ilequery.IleQueryCodeConverter
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -41,7 +42,7 @@
 @govukLayout(
     useCustomContentWidth = true,
     title = Title("ileQueryResponse.mucr.title"),
-    backButton = Some(BackButton(messages("site.back"), controllers.ileQuery.routes.FindConsignmentController.displayQueryForm()))) {
+    backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))) {
 
     <div class="govuk-grid-row">
 

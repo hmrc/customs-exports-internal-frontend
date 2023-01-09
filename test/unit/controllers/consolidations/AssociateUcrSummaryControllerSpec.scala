@@ -24,7 +24,7 @@ import models.summary.FlashKeys
 import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -70,9 +70,8 @@ class AssociateUcrSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
   "Associate Ducr Summary Controller on displayPage" should {
 
     "return 200 (OK)" when {
-
       "display page is invoked with data in cache" in {
-        val result = controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))).displayPage()(getRequest)
+        val result = controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))).displayPage(getRequest)
 
         status(result) mustBe OK
         verify(summaryPage).apply(any())(any(), any())
@@ -89,24 +88,22 @@ class AssociateUcrSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
 
       "Mucr Options is missing during displaying page" in {
         intercept[RuntimeException] {
-          await(controller(AssociateUcrAnswers(parentMucr = None, childUcr = Some(associateUcr))).displayPage()(getRequest))
+          await(controller(AssociateUcrAnswers(parentMucr = None, childUcr = Some(associateUcr))).displayPage(getRequest))
         } mustBe ReturnToStartException
       }
 
       "Associate Ducr is missing during displaying page" in {
         intercept[RuntimeException] {
-          await(controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = None)).displayPage()(getRequest))
+          await(controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = None)).displayPage(getRequest))
         } mustBe ReturnToStartException
       }
     }
   }
 
   "Associate Ducr Summary Controller on submit" when {
-
     "everything works correctly" should {
 
       "call SubmissionService" in {
-
         val cachedAnswers = AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))
 
         controller(cachedAnswers).submit()(postRequest(Json.obj())).futureValue
@@ -116,16 +113,14 @@ class AssociateUcrSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
       }
 
       "return SEE_OTHER (303) that redirects to AssociateUcrConfirmation" in {
-
         val result =
           controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
+        redirectLocation(result) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage.url)
       }
 
       "return response with Movement Type in flash" in {
-
         val result =
           controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
 
@@ -133,5 +128,4 @@ class AssociateUcrSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
       }
     }
   }
-
 }

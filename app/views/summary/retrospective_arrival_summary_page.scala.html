@@ -16,7 +16,8 @@
 
 @import components.gds.{gds_main_template, pageTitle}
 @import components.summary._
-@import controllers.summary.routes
+@import controllers.movements.routes.LocationController
+@import controllers.summary.routes.ArriveDepartSummaryController
 @import models.cache.RetrospectiveArrivalAnswers
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.Title
@@ -28,7 +29,6 @@
   pageTitle: pageTitle,
   consignmentDetailsList: consignment_details_summary_list,
   locationList: location_summary_list,
-  govukSummaryList : GovukSummaryList,
   formHelper: FormWithCSRF
 )
 
@@ -36,11 +36,10 @@
 
 @govukLayout(
   title = Title("summary.retrospectiveArrival.title"),
-  backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.LocationController.displayPage)),
+  backButton = Some(BackButton(messages("site.back"), LocationController.displayPage)),
   useCustomContentWidth = true
 ) {
-
-    @formHelper(action = routes.ArriveDepartSummaryController.submitMovementRequest(), 'autoComplete -> "off") {
+    @formHelper(action = ArriveDepartSummaryController.submitMovementRequest, Symbol("autoComplete") -> "off") {
 
     @pageTitle(messages("summary.retrospectiveArrival.title"))
 
@@ -49,6 +48,5 @@
     @locationList(data.location)
 
     @govukButton(Button(content = Text(messages("site.confirmAndSubmit"))))
-
   }
 }

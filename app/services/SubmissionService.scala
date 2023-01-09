@@ -121,9 +121,10 @@ class SubmissionService @Inject() (
     }
   }
 
-  private def movementAuditType(journeyType: JourneyType): AuditType.Value = journeyType match {
-    case JourneyType.ARRIVE               => AuditType.AuditArrival
-    case JourneyType.RETROSPECTIVE_ARRIVE => AuditType.AuditRetrospectiveArrival
-    case JourneyType.DEPART               => AuditType.AuditDeparture
-  }
+  private def movementAuditType(journeyType: JourneyType): AuditType.Value =
+    (journeyType: @unchecked) match {
+      case JourneyType.ARRIVE               => AuditType.AuditArrival
+      case JourneyType.RETROSPECTIVE_ARRIVE => AuditType.AuditRetrospectiveArrival
+      case JourneyType.DEPART               => AuditType.AuditDeparture
+    }
 }

@@ -15,6 +15,8 @@
  */
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matchingJsonPath, verify}
+import controllers.consolidations.routes.{AssociateUcrController, ManageMucrController, MucrOptionsController}
+import controllers.summary.routes.{AssociateUcrSummaryController, MovementConfirmationController}
 import forms.MucrOptions.CreateOrAddValues.Create
 import forms.{AssociateUcr, ManageMucrChoice, MucrOptions}
 import models.UcrBlock
@@ -22,7 +24,7 @@ import models.UcrType._
 import models.cache.{AssociateUcrAnswers, Cache}
 import play.api.test.Helpers._
 
-class AssociateUcrSpec extends IntegrationSpec {
+class AssociateUcrISpec extends IntegrationSpec {
 
   "Manage Mucr Page" when {
     "GET" should {
@@ -31,7 +33,7 @@ class AssociateUcrSpec extends IntegrationSpec {
         val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
 
-        val response = get(controllers.consolidations.routes.ManageMucrController.displayPage())
+        val response = get(ManageMucrController.displayPage)
 
         status(response) mustBe OK
       }
@@ -41,7 +43,7 @@ class AssociateUcrSpec extends IntegrationSpec {
         givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(UcrBlock(ucr = "ducr", ucrType = Ducr))))
 
         intercept[IllegalStateException] {
-          await(get(controllers.consolidations.routes.ManageMucrController.displayPage()))
+          await(get(ManageMucrController.displayPage))
         }
       }
     }
@@ -52,10 +54,10 @@ class AssociateUcrSpec extends IntegrationSpec {
         val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
 
-        val response = post(controllers.consolidations.routes.ManageMucrController.submit(), "choice" -> ManageMucrChoice.AssociateThisToMucr)
+        val response = post(ManageMucrController.submit, "choice" -> ManageMucrChoice.AssociateThisToMucr)
 
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.consolidations.routes.MucrOptionsController.displayPage().url)
+        redirectLocation(response) mustBe Some(MucrOptionsController.displayPage.url)
         theAnswersFor("pid") mustBe Some(
           AssociateUcrAnswers(
             childUcr = Some(AssociateUcr(UcrBlock(ucr = "mucr", ucrType = Mucr))),
@@ -69,10 +71,10 @@ class AssociateUcrSpec extends IntegrationSpec {
         val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
 
-        val response = post(controllers.consolidations.routes.ManageMucrController.submit(), "choice" -> ManageMucrChoice.AssociateAnotherUcrToThis)
+        val response = post(ManageMucrController.submit, "choice" -> ManageMucrChoice.AssociateAnotherUcrToThis)
 
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.consolidations.routes.AssociateUcrController.displayPage().url)
+        redirectLocation(response) mustBe Some(AssociateUcrController.displayPage.url)
         theAnswersFor("pid") mustBe Some(
           AssociateUcrAnswers(
             parentMucr = Some(MucrOptions(UcrBlock(ucr = "mucr", ucrType = Mucr))),
@@ -90,7 +92,7 @@ class AssociateUcrSpec extends IntegrationSpec {
         val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
 
-        val response = get(controllers.consolidations.routes.MucrOptionsController.displayPage())
+        val response = get(MucrOptionsController.displayPage)
 
         status(response) mustBe OK
       }
@@ -102,10 +104,10 @@ class AssociateUcrSpec extends IntegrationSpec {
         val queryUcr = UcrBlock(ucr = "mucr", ucrType = Mucr)
         givenCacheFor(Cache("pid", Some(AssociateUcrAnswers()), Some(queryUcr)))
 
-        val response = post(controllers.consolidations.routes.MucrOptionsController.submit(), "createOrAdd" -> "create", "newMucr" -> "GB/123-12345")
+        val response = post(MucrOptionsController.submit, "createOrAdd" -> "create", "newMucr" -> "GB/123-12345")
 
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.summary.routes.AssociateUcrSummaryController.displayPage().url)
+        redirectLocation(response) mustBe Some(AssociateUcrSummaryController.displayPage.url)
         theAnswersFor("pid") mustBe Some(AssociateUcrAnswers(parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345"))))
       }
     }
@@ -120,7 +122,7 @@ class AssociateUcrSpec extends IntegrationSpec {
           Cache("pid", Some(AssociateUcrAnswers(parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")))), Some(queryUcr))
         )
 
-        val response = get(controllers.consolidations.routes.AssociateUcrController.displayPage())
+        val response = get(AssociateUcrController.displayPage)
 
         status(response) mustBe OK
       }
@@ -134,10 +136,10 @@ class AssociateUcrSpec extends IntegrationSpec {
           Cache("pid", Some(AssociateUcrAnswers(parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")))), Some(queryUcr))
         )
 
-        val response = post(controllers.consolidations.routes.AssociateUcrController.submit(), "kind" -> "mucr", "mucr" -> "GB/321-54321")
+        val response = post(AssociateUcrController.submit, "kind" -> "mucr", "mucr" -> "GB/321-54321")
 
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.summary.routes.AssociateUcrSummaryController.displayPage().url)
+        redirectLocation(response) mustBe Some(AssociateUcrSummaryController.displayPage.url)
         theAnswersFor("pid") mustBe Some(
           AssociateUcrAnswers(
             parentMucr = Some(MucrOptions(createOrAdd = Create, newMucr = "GB/123-12345")),
@@ -166,7 +168,7 @@ class AssociateUcrSpec extends IntegrationSpec {
           )
         )
 
-        val response = get(controllers.summary.routes.AssociateUcrSummaryController.displayPage())
+        val response = get(AssociateUcrSummaryController.displayPage)
 
         status(response) mustBe OK
       }
@@ -190,10 +192,10 @@ class AssociateUcrSpec extends IntegrationSpec {
         )
         givenMovementsBackendAcceptsTheConsolidation()
 
-        val response = post(controllers.summary.routes.AssociateUcrSummaryController.submit())
+        val response = post(AssociateUcrSummaryController.submit)
 
         status(response) mustBe SEE_OTHER
-        redirectLocation(response) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
+        redirectLocation(response) mustBe Some(MovementConfirmationController.displayPage.url)
         theAnswersFor("pid") mustBe None
         verify(
           postRequestedForConsolidation()

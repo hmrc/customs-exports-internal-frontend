@@ -17,11 +17,13 @@
 package controllers.movements
 
 import controllers.ControllerLayerSpec
+import controllers.movements.routes.GoodsDepartedController
+import controllers.summary.routes.ArriveDepartSummaryController
 import forms.{ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.cache._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -64,42 +66,38 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
     "return 200 (OK)" when {
 
       "GET displayPage is invoked without data in cache" in {
-
         val answers = ArrivalAnswers(consignmentReferences = Some(consignmentReferences))
-        val result = controller(answers).displayPage()(getRequest)
+        val result = controller(answers).displayPage(getRequest)
 
         status(result) mustBe OK
         theResponseForm.value mustBe empty
       }
 
       "GET displayPage is invoked with data for Arrival" in {
-
         val cachedForm = Some(Location("GBAUEMAEMAEMA"))
 
-        val result = controller(ArrivalAnswers(location = cachedForm, consignmentReferences = Some(consignmentReferences))).displayPage()(getRequest)
+        val result = controller(ArrivalAnswers(location = cachedForm, consignmentReferences = Some(consignmentReferences))).displayPage(getRequest)
 
         status(result) mustBe OK
         theResponseForm.value mustBe cachedForm
       }
 
       "GET displayPage is invoked with data for Retrospective Arrival" in {
-
         val cachedForm = Some(Location("GBAUEMAEMAEMA"))
 
         val result =
           controller(RetrospectiveArrivalAnswers(location = cachedForm, consignmentReferences = Some(consignmentReferences)))
-            .displayPage()(getRequest)
+            .displayPage(getRequest)
 
         status(result) mustBe OK
         theResponseForm.value mustBe cachedForm
       }
 
       "GET displayPage is invoked with data for Departure" in {
-
         val cachedForm = Some(Location("GBAUEMAEMAEMA"))
 
         val result =
-          controller(DepartureAnswers(location = cachedForm, consignmentReferences = Some(consignmentReferences))).displayPage()(getRequest)
+          controller(DepartureAnswers(location = cachedForm, consignmentReferences = Some(consignmentReferences))).displayPage(getRequest)
 
         status(result) mustBe OK
         theResponseForm.value mustBe cachedForm
@@ -109,7 +107,6 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
     "return 400 (BAD_REQUEST)" when {
 
       "POST submit is invoked with incorrect form" in {
-
         givenTheCacheIsEmpty()
         val answers = ArrivalAnswers(consignmentReferences = Some(consignmentReferences))
         val invalidForm = Json.toJson(Location("Invalid"))
@@ -126,7 +123,6 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
     "POST submit is invoked with correct form for arrival" should {
 
       "call cache upsert method" in {
-
         givenTheCacheIsEmpty()
 
         val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
@@ -137,7 +133,6 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "return 303 (SEE_OTHER)" in {
-
         givenTheCacheIsEmpty()
 
         val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
@@ -145,14 +140,13 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller(ArrivalAnswers(consignmentReferences = Some(consignmentReferences))).saveLocation()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.summary.routes.ArriveDepartSummaryController.displayPage().url)
+        redirectLocation(result) mustBe Some(ArriveDepartSummaryController.displayPage.url)
       }
     }
 
     "POST submit is invoked with correct form for retrospective arrival" should {
 
       "call cache upsert method" in {
-
         givenTheCacheIsEmpty()
 
         val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
@@ -163,7 +157,6 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "return 303 (SEE_OTHER)" in {
-
         givenTheCacheIsEmpty()
 
         val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
@@ -172,14 +165,13 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
           controller(RetrospectiveArrivalAnswers(consignmentReferences = Some(consignmentReferences))).saveLocation()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.summary.routes.ArriveDepartSummaryController.displayPage().url)
+        redirectLocation(result) mustBe Some(ArriveDepartSummaryController.displayPage.url)
       }
     }
 
     "POST submit is invoked with correct form for departure" should {
 
       "call cache upsert method" in {
-
         givenTheCacheIsEmpty()
 
         val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
@@ -190,7 +182,6 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "return 303 (SEE_OTHER)" in {
-
         givenTheCacheIsEmpty()
 
         val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
@@ -198,9 +189,8 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
         val result = controller(DepartureAnswers(consignmentReferences = Some(consignmentReferences))).saveLocation()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.movements.routes.GoodsDepartedController.displayPage().url)
+        redirectLocation(result) mustBe Some(GoodsDepartedController.displayPage.url)
       }
     }
   }
-
 }

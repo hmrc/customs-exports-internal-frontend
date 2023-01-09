@@ -21,7 +21,7 @@
 
 @this(converter: IleQueryCodeConverter, govukTable: GovukTable)
 
-@(associatedUcrs: Seq[UcrInfo])(implicit request: Request[_], messages: Messages)
+@(associatedUcrs: Seq[UcrInfo])(implicit messages: Messages)
 
 @if(associatedUcrs.nonEmpty) {
     <div class="govuk-grid-column-full" id="associatedUcrs">

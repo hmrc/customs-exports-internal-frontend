@@ -20,7 +20,7 @@ import base.UnitSpec
 import controllers.CSRFSupport
 import models.ReturnToStartException
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Results
 import play.api.test.FakeRequest
@@ -50,14 +50,12 @@ class ErrorHandlerSpec extends UnitSpec with BeforeAndAfterEach with CSRFSupport
   "Error handler" should {
 
     "display error template" in {
-
       handler.standardErrorTemplate("title", "heading", "message")(fakeRequest)
 
       verify(errorTemplate).apply(meq("title"), meq("heading"), meq("message"))(any(), any())
     }
 
     "display error template with default messages" in {
-
       handler.standardErrorTemplate()(fakeRequest)
 
       verify(errorTemplate).apply(meq("global.error.title"), meq("global.error.heading"), meq("global.error.message"))(any(), any())
@@ -69,7 +67,7 @@ class ErrorHandlerSpec extends UnitSpec with BeforeAndAfterEach with CSRFSupport
       val result = Future.successful(handler.resolveError(fakeRequest, ReturnToStartException))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.ChoiceController.displayPage().url)
+      redirectLocation(result) mustBe Some(controllers.routes.ChoiceController.displayPage.url)
     }
 
     "handle ApplicationException" in {

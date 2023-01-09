@@ -57,7 +57,7 @@ class ViewNotificationsController @Inject() (
         Ok(viewNotificationPage(submissionUcr, elementsToDisplay.reverse))
 
       case _ =>
-        Redirect(routes.ViewSubmissionsController.displayPage())
+        Redirect(routes.ViewSubmissionsController.displayPage)
     }
   }
 }

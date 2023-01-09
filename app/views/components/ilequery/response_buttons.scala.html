@@ -15,18 +15,19 @@
  *@
 
 @import components.gds.link
-@import controllers.routes
+@import controllers.ileQuery.routes.FindConsignmentController
+@import controllers.routes.ChoiceController
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(govukButton: GovukButton)
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit messages: Messages)
 
 <div class="govuk-grid-column-two-thirds">
   <div>
-      @govukButton(Button(content = Text(messages("ileQueryResponse.links.manageConsignment")), href = Some(routes.ChoiceController.displayPage().url)))
+      @govukButton(Button(content = Text(messages("ileQueryResponse.links.manageConsignment")), href = Some(ChoiceController.displayPage.url)))
   </div>
   <div class="govuk-body govuk-!-margin-bottom-9">
-      @link(content = Html(messages("ileQueryResponse.links.findConsignment")), href = controllers.ileQuery.routes.FindConsignmentController.displayQueryForm)
+      @link(content = Html(messages("ileQueryResponse.links.findConsignment")), href = FindConsignmentController.displayQueryForm)
   </div>
 </div>

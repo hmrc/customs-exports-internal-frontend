@@ -19,19 +19,19 @@ package controllers.consolidations
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.summary.routes.AssociateUcrSummaryController
 import forms.AssociateUcr.form
-
-import javax.inject.Inject
 import models.ReturnToStartException
 import models.cache.AssociateUcrAnswers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.associateucr.associate_ucr
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AssociateUcrController @Inject() (
   authenticate: AuthenticatedAction,
   getJourney: JourneyRefiner,
@@ -39,9 +39,9 @@ class AssociateUcrController @Inject() (
   cacheRepository: CacheRepository,
   associateUcrPage: associate_ucr
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
+  val displayPage: Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
     val associateUcrAnswers = request.answersAs[AssociateUcrAnswers]
     val mucrOptions = associateUcrAnswers.parentMucr.getOrElse(throw ReturnToStartException)
     val associateUcr = associateUcrAnswers.childUcr
@@ -49,7 +49,7 @@ class AssociateUcrController @Inject() (
     Ok(associateUcrPage(associateUcr.fold(form)(form.fill), mucrOptions))
   }
 
-  def submit(): Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
+  val submit: Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
     val mucrOptions = request.answersAs[AssociateUcrAnswers].parentMucr.getOrElse(throw ReturnToStartException)
 
     form
@@ -59,7 +59,7 @@ class AssociateUcrController @Inject() (
         formData => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(childUcr = Some(formData))
           cacheRepository.upsert(request.cache.update(updatedCache)).map { _ =>
-            Redirect(AssociateUcrSummaryController.displayPage())
+            Redirect(AssociateUcrSummaryController.displayPage)
           }
         }
       )

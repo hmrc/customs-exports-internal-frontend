@@ -19,8 +19,6 @@ package controllers.movements
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.JourneyRequest
 import forms.{ArrivalDetails, DepartureDetails, MovementDetails}
-
-import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
 import models.cache._
 import play.api.data.{Form, FormError}
@@ -28,10 +26,11 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import play.twirl.api.Html
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{arrival_details, departure_details}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -44,13 +43,24 @@ class MovementDetailsController @Inject() (
   arrivalDetailsPage: arrival_details,
   departureDetailsPage: departure_details
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)) { implicit request =>
+  val displayPage: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)) { implicit request =>
     request.answers match {
       case arrivalAnswers: ArrivalAnswers     => Ok(arrivalPage(arrivalAnswers))
       case departureAnswers: DepartureAnswers => Ok(departurePage(departureAnswers))
       case _                                  => BadRequest
+    }
+  }
+
+  val saveMovementDetails: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async { implicit request =>
+    (request.answers match {
+      case arrivalAnswers: ArrivalAnswers     => handleSavingArrival(arrivalAnswers)
+      case departureAnswers: DepartureAnswers => handleSavingDeparture(departureAnswers)
+      case _                                  => throw new IllegalArgumentException("Invalid answers type")
+    }).flatMap {
+      case Left(resultView) => Future.successful(BadRequest(resultView))
+      case Right(call)      => Future.successful(Redirect(call))
     }
   }
 
@@ -63,18 +73,6 @@ class MovementDetailsController @Inject() (
       departureAnswers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
     )
 
-  def saveMovementDetails(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)).async {
-    implicit request =>
-      (request.answers match {
-        case arrivalAnswers: ArrivalAnswers     => handleSavingArrival(arrivalAnswers)
-        case departureAnswers: DepartureAnswers => handleSavingDeparture(departureAnswers)
-        case _                                  => throw new IllegalArgumentException("Invalid answers type")
-      }).flatMap {
-        case Left(resultView) => Future.successful(BadRequest(resultView))
-        case Right(call)      => Future.successful(Redirect(call))
-      }
-  }
-
   private def handleSavingArrival(arrivalAnswers: ArrivalAnswers)(implicit request: JourneyRequest[AnyContent]): Future[Either[Html, Call]] = {
     def withDateSpecificErrors(formWithErrors: Form[ArrivalDetails]) = formWithErrors.copy(errors = formLevelErrors("Arrival", formWithErrors.errors))
     details.arrivalForm
@@ -84,7 +82,7 @@ class MovementDetailsController @Inject() (
           Future.successful(Left(arrivalDetailsPage(withDateSpecificErrors(formWithErrors), arrivalAnswers.consignmentReferences))),
         validForm =>
           cacheRepository.upsert(request.cache.update(arrivalAnswers.copy(arrivalDetails = Some(validForm)))).map { _ =>
-            Right(controllers.movements.routes.LocationController.displayPage())
+            Right(controllers.movements.routes.LocationController.displayPage)
           }
       )
   }
@@ -100,7 +98,7 @@ class MovementDetailsController @Inject() (
           Future.successful(Left(departureDetailsPage(withDateSpecificErrors(formWithErrors), consignmentReference))),
         validForm =>
           cacheRepository.upsert(request.cache.update(departureAnswers.copy(departureDetails = Some(validForm)))).map { _ =>
-            Right(controllers.movements.routes.LocationController.displayPage())
+            Right(controllers.movements.routes.LocationController.displayPage)
           }
       )
   }

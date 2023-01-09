@@ -17,15 +17,15 @@
 package views
 
 import base.Injector
+import controllers.routes.{DucrPartDetailsController, ViewSubmissionsController}
 import forms.IleQueryForm
 import org.jsoup.nodes.Element
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat.Appendable
 import views.html.ile_query
 
-class IleQueryViewSpec extends ViewSpec with Injector with MockitoSugar {
+class IleQueryViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
@@ -71,7 +71,7 @@ class IleQueryViewSpec extends ViewSpec with Injector with MockitoSugar {
       val previousRequests = govukListElement.getElementsByClass("govuk-link").get(0)
 
       previousRequests.text mustBe messages("ileQuery.link.requests")
-      previousRequests must haveHref(controllers.routes.ViewSubmissionsController.displayPage)
+      previousRequests must haveHref(ViewSubmissionsController.displayPage)
     }
 
     "contain link to 'DUCR Part Details' page" in {
@@ -80,7 +80,7 @@ class IleQueryViewSpec extends ViewSpec with Injector with MockitoSugar {
       val ducrPartDetailsLink = govukListElement.getElementsByClass("govuk-link").get(1)
 
       ducrPartDetailsLink must containMessage("ileQuery.link.ducrPart")
-      ducrPartDetailsLink must haveHref(controllers.routes.DucrPartDetailsController.displayPage)
+      ducrPartDetailsLink must haveHref(DucrPartDetailsController.displayPage)
     }
   }
 }

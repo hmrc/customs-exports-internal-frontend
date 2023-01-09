@@ -17,12 +17,13 @@
 package controllers.movements
 
 import controllers.ControllerLayerSpec
+import controllers.movements.routes.TransportController
 import forms.GoodsDeparted.DepartureLocation.BackIntoTheUk
 import forms.{ConsignmentReferenceType, ConsignmentReferences, GoodsDeparted}
 import models.cache.{Answers, ArrivalAnswers, Cache, DepartureAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -70,21 +71,19 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
     "return 200 (OK)" when {
 
       "there is no data in cache" in {
-
         givenTheCacheIsEmpty()
 
-        val result = controller().displayPage()(getRequest)
+        val result = controller().displayPage(getRequest)
 
         status(result) mustBe OK
         formPassedToPage.value mustBe empty
       }
 
       "there is data in cache" in {
-
         val cachedData = Some(GoodsDeparted(BackIntoTheUk))
 
         val result =
-          controller(DepartureAnswers(consignmentReferences = Some(consignmentReferences), goodsDeparted = cachedData)).displayPage()(getRequest)
+          controller(DepartureAnswers(consignmentReferences = Some(consignmentReferences), goodsDeparted = cachedData)).displayPage(getRequest)
 
         status(result) mustBe OK
         formPassedToPage.value mustBe cachedData
@@ -92,12 +91,10 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
     }
 
     "return 403 (FORBIDDEN)" when {
-
       "user is on arrival journey" in {
-
         givenTheCacheIsEmpty()
 
-        val result = controller(ArrivalAnswers(consignmentReferences = Some(consignmentReferences))).displayPage()(getRequest)
+        val result = controller(ArrivalAnswers(consignmentReferences = Some(consignmentReferences))).displayPage(getRequest)
 
         status(result) mustBe FORBIDDEN
       }
@@ -109,7 +106,6 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
     "provided with correct form" should {
 
       "call MovementRepository" in {
-
         givenTheCacheIsEmpty()
         val correctForm = Json.toJson(GoodsDeparted(BackIntoTheUk))
 
@@ -121,21 +117,18 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "return 303 (SEE_OTHER) and redirect to Transport page" in {
-
         givenTheCacheIsEmpty()
         val correctForm = Json.toJson(GoodsDeparted(BackIntoTheUk))
 
         val result = controller().saveGoodsDeparted()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.movements.routes.TransportController.displayPage().url)
+        redirectLocation(result) mustBe Some(TransportController.displayPage.url)
       }
     }
 
     "provided with incorrect form" should {
-
       "return 400 (BAD_REQUEST)" in {
-
         givenTheCacheIsEmpty()
 
         val incorrectForm = Json.obj("departureLocation" -> "INVALID")
@@ -147,17 +140,14 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
     }
 
     "user is on arrival journey" should {
-
       "return 403 (FORBIDDEN)" in {
-
         givenTheCacheIsEmpty()
         val correctForm = Json.toJson(GoodsDeparted(BackIntoTheUk))
 
-        val result = controller(ArrivalAnswers(consignmentReferences = Some(consignmentReferences))).displayPage()(postRequest(correctForm))
+        val result = controller(ArrivalAnswers(consignmentReferences = Some(consignmentReferences))).displayPage(postRequest(correctForm))
 
         status(result) mustBe FORBIDDEN
       }
     }
   }
-
 }

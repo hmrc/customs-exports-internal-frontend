@@ -17,6 +17,7 @@
 package views
 
 import base.Injector
+import controllers.ileQuery.routes.FindConsignmentController
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import testdata.CommonTestData.correctUcr
@@ -31,32 +32,26 @@ class IleQueryTimeoutViewSpec extends ViewSpec with Injector {
   "ILE Query Timeout page" should {
 
     "display title" in {
-
       page(correctUcr).getTitle must containMessage("ileQueryResponse.timeout.title")
     }
 
     "display back button linking to Find Consignment page" in {
-
       val backButton = page(correctUcr).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
+      backButton.get must haveHref(FindConsignmentController.displayQueryForm)
     }
 
     "display heading" in {
-
       page(correctUcr).getElementsByClass("govuk-heading-xl").first() must containMessage("ileQueryResponse.timeout.heading")
     }
 
     "display queried UCR" in {
-
       page(correctUcr).getElementsByClass("govuk-body-l").first() must containText(correctUcr)
     }
 
     "display information paragraph" in {
-
       page(correctUcr).getElementsByClass("govuk-body-l").get(1) must containMessage("ileQueryResponse.timeout.message")
     }
   }
-
 }

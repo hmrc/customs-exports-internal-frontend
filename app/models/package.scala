@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package base
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import play.api.data.Form
+package object models {
 
-trait UnitSpec extends AnyWordSpec with Matchers {
-
-  val JsonBindMaxChars: Long = Form.FromJsonMaxChars
+  def now: Instant = Instant.now().truncatedTo(ChronoUnit.MILLIS)
 }

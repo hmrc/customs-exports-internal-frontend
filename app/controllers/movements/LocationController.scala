@@ -17,22 +17,23 @@
 package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
-import controllers.summary.routes._
 import controllers.exchanges.JourneyRequest
+import controllers.summary.routes._
 import forms.Location
 import forms.Location.form
-
-import javax.inject.{Inject, Singleton}
 import models.ReturnToStartException
+import models.cache.JourneyType.{ARRIVE, DEPART, RETROSPECTIVE_ARRIVE}
 import models.cache._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.twirl.api.HtmlFormat
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.location
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -43,43 +44,43 @@ class LocationController @Inject() (
   mcc: MessagesControllerComponents,
   locationPage: location
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
-  def displayPage(): Action[AnyContent] =
-    (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)) { implicit request =>
-      val location = request.answersAs[MovementAnswers].location
+  private val actionValidation = authenticate andThen getJourney(ARRIVE, RETROSPECTIVE_ARRIVE, DEPART)
 
-      Ok(buildPage(location.fold(form())(form().fill(_))))
-    }
+  val displayPage: Action[AnyContent] = actionValidation { implicit request =>
+    val location = request.answersAs[MovementAnswers].location
 
-  def saveLocation(): Action[AnyContent] =
-    (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.RETROSPECTIVE_ARRIVE, JourneyType.DEPART)).async { implicit request =>
-      if (request.answersAs[MovementAnswers].consignmentReferences.map(_.referenceValue).isEmpty) throw ReturnToStartException
+    Ok(buildPage(location.fold(form())(form().fill(_))))
+  }
 
-      form()
-        .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[Location]) => Future.successful(BadRequest(buildPage(formWithErrors))),
-          validLocation =>
-            request.answers match {
-              case arrivalAnswers: ArrivalAnswers =>
-                cacheRepository.upsert(request.cache.update(arrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
-                  Redirect(ArriveDepartSummaryController.displayPage())
-                }
-              case retroArrivalAnswers: RetrospectiveArrivalAnswers =>
-                cacheRepository.upsert(request.cache.update(retroArrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
-                  Redirect(ArriveDepartSummaryController.displayPage())
-                }
-              case departureAnswers: DepartureAnswers =>
-                cacheRepository.upsert(request.cache.update(departureAnswers.copy(location = Some(validLocation)))).map { _ =>
-                  Redirect(controllers.movements.routes.GoodsDepartedController.displayPage())
-                }
-              case _ => Future.successful(BadRequest)
-            }
-        )
-    }
+  val saveLocation: Action[AnyContent] = actionValidation.async { implicit request =>
+    if (request.answersAs[MovementAnswers].consignmentReferences.map(_.referenceValue).isEmpty) throw ReturnToStartException
 
-  private def buildPage(form: Form[Location])(implicit request: JourneyRequest[_]) = {
+    form()
+      .bindFromRequest()
+      .fold(
+        (formWithErrors: Form[Location]) => Future.successful(BadRequest(buildPage(formWithErrors))),
+        validLocation =>
+          request.answers match {
+            case arrivalAnswers: ArrivalAnswers =>
+              cacheRepository.upsert(request.cache.update(arrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
+                Redirect(ArriveDepartSummaryController.displayPage)
+              }
+            case retroArrivalAnswers: RetrospectiveArrivalAnswers =>
+              cacheRepository.upsert(request.cache.update(retroArrivalAnswers.copy(location = Some(validLocation)))).map { _ =>
+                Redirect(ArriveDepartSummaryController.displayPage)
+              }
+            case departureAnswers: DepartureAnswers =>
+              cacheRepository.upsert(request.cache.update(departureAnswers.copy(location = Some(validLocation)))).map { _ =>
+                Redirect(controllers.movements.routes.GoodsDepartedController.displayPage)
+              }
+            case _ => Future.successful(BadRequest)
+          }
+      )
+  }
+
+  private def buildPage(form: Form[Location])(implicit request: JourneyRequest[_]): HtmlFormat.Appendable = {
     val answers = request.answersAs[MovementAnswers]
     locationPage(form, answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException), answers.specificDateTimeChoice)
   }

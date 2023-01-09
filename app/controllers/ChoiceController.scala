@@ -18,20 +18,20 @@ package controllers
 
 import controllers.actions.AuthenticatedAction
 import controllers.exchanges.AuthenticatedRequest
+import controllers.ileQuery.routes.FindConsignmentController
 import controllers.summary.routes._
 import forms.Choice
-
-import javax.inject.{Inject, Singleton}
 import models.UcrType.{Ducr, DucrPart, Mucr}
 import models.cache._
 import models.{ReturnToStartException, UcrBlock}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.choice_page
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -41,52 +41,59 @@ class ChoiceController @Inject() (
   cacheRepository: CacheRepository,
   choicePage: choice_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
-  def displayPage: Action[AnyContent] = authenticate.async { implicit request =>
+  val displayPage: Action[AnyContent] = authenticate.async { implicit request =>
     cacheRepository.findByProviderId(request.providerId).map {
       case Some(cache) =>
         cache.answers
           .map(answers => Ok(choicePage(Choice.form().fill(Choice(answers.`type`)), cache.queryUcr)))
           .getOrElse(Ok(choicePage(Choice.form(), cache.queryUcr)))
-      case None => Redirect(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
+
+      case None => Redirect(FindConsignmentController.displayQueryForm)
     }
   }
 
-  def submit: Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
+  val submit: Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
     cacheRepository.findByProviderId(request.providerId).flatMap {
       case Some(cache) if cache.queryUcr.isDefined =>
-        Choice.form().bindFromRequest().fold(formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), proceed(_, cache))
+        Choice
+          .form()
+          .bindFromRequest()
+          .fold(formWithErrors => Future.successful(BadRequest(choicePage(formWithErrors))), proceed(_, cache))
+
       case _ =>
-        Future.successful(Redirect(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm()))
+        Future.successful(Redirect(FindConsignmentController.displayQueryForm))
     }
   }
 
   private def proceed(choice: Choice, cache: Cache)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] = choice match {
     case Choice.Arrival =>
-      saveAndRedirect(ArrivalAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage())
+      saveAndRedirect(ArrivalAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage)
 
     case Choice.RetrospectiveArrival =>
-      saveAndRedirect(RetrospectiveArrivalAnswers.fromQueryUcr, movements.routes.LocationController.displayPage())
+      saveAndRedirect(RetrospectiveArrivalAnswers.fromQueryUcr, movements.routes.LocationController.displayPage)
 
     case Choice.Departure =>
-      saveAndRedirect(DepartureAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage())
+      saveAndRedirect(DepartureAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage)
 
     case Choice.AssociateUCR =>
       val redirectionCall = cache.queryUcr
-        .map(_.ucrType match {
-          case Ducr.codeValue | DucrPart.codeValue => consolidations.routes.MucrOptionsController.displayPage()
-          case Mucr.codeValue                      => consolidations.routes.ManageMucrController.displayPage()
-        })
+        .map(ucrBlock =>
+          (ucrBlock.ucrType: @unchecked) match {
+            case Ducr.codeValue | DucrPart.codeValue => consolidations.routes.MucrOptionsController.displayPage
+            case Mucr.codeValue                      => consolidations.routes.ManageMucrController.displayPage
+          }
+        )
         .getOrElse(throw ReturnToStartException)
 
       saveAndRedirect(AssociateUcrAnswers.fromQueryUcr, redirectionCall)
 
     case Choice.DisassociateUCR =>
-      saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, DisassociateUcrSummaryController.displayPage())
+      saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, DisassociateUcrSummaryController.displayPage)
 
     case Choice.ShutMUCR =>
-      saveAndRedirect(ShutMucrAnswers.fromQueryUcr, ShutMucrSummaryController.displayPage())
+      saveAndRedirect(ShutMucrAnswers.fromQueryUcr, ShutMucrSummaryController.displayPage)
 
     case _ => Future.successful(BadRequest)
   }
@@ -101,5 +108,4 @@ class ChoiceController @Inject() (
       }
       result <- cacheRepository.upsert(updatedCache).map(_ => Redirect(call))
     } yield result
-
 }

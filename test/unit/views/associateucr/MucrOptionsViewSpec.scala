@@ -73,13 +73,13 @@ class MucrOptionsViewSpec extends ViewSpec with Injector {
       }
 
       "query Ducr" in {
-        validateBackbutton(createView().getBackButton, controllers.routes.ChoiceController.displayPage())
+        validateBackbutton(createView().getBackButton, controllers.routes.ChoiceController.displayPage)
       }
 
       "query Mucr and Associate this consignment to another" in {
         validateBackbutton(
           createView(MucrOptions.form, Some(ManageMucrChoice(AssociateThisToMucr))).getBackButton,
-          controllers.consolidations.routes.ManageMucrController.displayPage()
+          controllers.consolidations.routes.ManageMucrController.displayPage
         )
       }
     }

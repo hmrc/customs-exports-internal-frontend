@@ -40,12 +40,12 @@ class ShutMucrSummaryController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)) { implicit request =>
+  val displayPage: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)) { implicit request =>
     val mucr = request.answersAs[ShutMucrAnswers].shutMucr.map(_.mucr).getOrElse(throw ReturnToStartException)
     Ok(summaryPage(mucr))
   }
 
-  def submit(): Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)).async { implicit request =>
+  val submit: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.SHUT_MUCR)).async { implicit request =>
     val answers = request.answersAs[ShutMucrAnswers]
     val ucrType = Some(ConsignmentReferenceType.M.toString)
     val ucr = answers.shutMucr.map(_.mucr)
@@ -58,7 +58,7 @@ class ShutMucrSummaryController @Inject() (
         Some(FlashKeys.CONVERSATION_ID -> conversationId)
       ).flatten
 
-      Redirect(controllers.summary.routes.MovementConfirmationController.displayPage())
+      Redirect(controllers.summary.routes.MovementConfirmationController.displayPage)
         .flashing(flash: _*)
     }
   }

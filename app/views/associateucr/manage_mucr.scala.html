@@ -15,6 +15,8 @@
  *@
 
 @import components.gds.{errorSummary, exportsInputText, gds_main_template, sectionHeader}
+@import controllers.consolidations.routes.ManageMucrController
+@import controllers.routes.ChoiceController
 @import forms.ManageMucrChoice
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.Title
@@ -24,7 +26,6 @@
   govukLayout: gds_main_template,
   govukButton: GovukButton,
   govukRadios: GovukRadios,
-  govukInput: GovukInput,
   errorSummary: errorSummary,
   exportsInputText: exportsInputText,
   sectionHeader: sectionHeader,
@@ -35,9 +36,9 @@
 
 @govukLayout(
     title = Title("manageMucr.title"),
-    backButton = Some(BackButton(messages("site.back"), controllers.routes.ChoiceController.displayPage))) {
+    backButton = Some(BackButton(messages("site.back"), ChoiceController.displayPage))) {
 
-    @formHelper(action = consolidations.routes.ManageMucrController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = ManageMucrController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)
 
         @sectionHeader(messages("manageMucr.heading", queryUcr.map(_.ucr).getOrElse("")))

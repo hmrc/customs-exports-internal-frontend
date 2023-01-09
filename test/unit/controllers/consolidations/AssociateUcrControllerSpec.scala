@@ -17,11 +17,12 @@
 package controllers.consolidations
 
 import controllers.ControllerLayerSpec
+import controllers.summary.routes.AssociateUcrSummaryController
 import forms.{AssociateUcr, MucrOptions}
 import models.cache.AssociateUcrAnswers
 import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{mock, reset, when}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -58,34 +59,28 @@ class AssociateUcrControllerSpec extends ControllerLayerSpec with MockCache {
   "Associate UCR Controller" should {
 
     "return 200 (OK)" when {
-
       "displayPage method is invoked, there is mucr options in cache and associate ucr is empty" in {
-
         val cachedData = AssociateUcrAnswers(parentMucr = Some(MucrOptions("123")))
-        val result = controller(cachedData).displayPage()(getRequest)
+        val result = controller(cachedData).displayPage(getRequest)
 
         status(result) mustBe OK
       }
     }
 
     "return 303 (SEE_OTHER)" when {
-
       "correct form is submitted and cache contains mucr options data" in {
-
         val cachedData = AssociateUcrAnswers(parentMucr = Some(MucrOptions("123")))
         val correctForm =
           Json.toJson(AssociateUcr.mapping.unbind(AssociateUcr(UcrType.Ducr, "5GB123456789000-123ABC456DEFIIIII")))
         val result = controller(cachedData).submit()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.summary.routes.AssociateUcrSummaryController.displayPage().url)
+        redirectLocation(result) mustBe Some(AssociateUcrSummaryController.displayPage.url)
       }
     }
 
     "return 400 (BAD_REQUEST)" when {
-
       "form is incorrect and cache contains data from mucr options" in {
-
         val cachedData = AssociateUcrAnswers(parentMucr = Some(MucrOptions("123")))
         val correctForm =
           Json.toJson(AssociateUcr.mapping.unbind(AssociateUcr(UcrType.Ducr, "incorrect")))
@@ -98,14 +93,12 @@ class AssociateUcrControllerSpec extends ControllerLayerSpec with MockCache {
     "throw an exception" when {
 
       "displayPage method is invoked and cache doesn't have mucr opions" in {
-
         intercept[ReturnToStartException.type] {
-          await(controller(AssociateUcrAnswers()).displayPage()(getRequest))
+          await(controller(AssociateUcrAnswers()).displayPage(getRequest))
         }
       }
 
       "submit method is invoked without mucr options" in {
-
         val correctForm = Json.toJson(AssociateUcr(UcrType.Mucr, "5GB123456789000-123ABC456DEFIIIII"))
 
         intercept[ReturnToStartException.type] {

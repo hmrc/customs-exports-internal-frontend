@@ -17,8 +17,9 @@
 package controllers.ileQuery
 
 import controllers.ControllerLayerSpec
+import controllers.ileQuery.routes.IleQueryController
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{mock, reset, when}
 import play.api.libs.json.{JsString, Json}
 import play.api.test.Helpers.{status, _}
 import play.twirl.api.HtmlFormat
@@ -47,10 +48,8 @@ class FindConsignmentControllerSpec extends ControllerLayerSpec {
   }
 
   "FindConsignmentController on displayQueryForm" should {
-
     "return Ok status (200)" in {
-
-      val result = controller.displayQueryForm()(getRequest)
+      val result = controller.displayQueryForm(getRequest)
 
       status(result) mustBe OK
     }
@@ -61,7 +60,6 @@ class FindConsignmentControllerSpec extends ControllerLayerSpec {
     "provide with correct form" should {
 
       "return SeeOther status (303)" in {
-
         val correctForm = Json.obj(("ucr", JsString(correctUcr)))
 
         val result = controller.submitQueryForm()(postRequest(correctForm))
@@ -70,19 +68,16 @@ class FindConsignmentControllerSpec extends ControllerLayerSpec {
       }
 
       "redirect to Consignment Details page" in {
-
         val correctForm = Json.obj(("ucr", JsString(correctUcr)))
 
         val result = controller.submitQueryForm()(postRequest(correctForm))
 
-        redirectLocation(result).get mustBe controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(correctUcr).url
+        redirectLocation(result).get mustBe IleQueryController.getConsignmentInformation(correctUcr).url
       }
     }
 
     "provided with incorrect form" should {
-
       "return BadRequest status (400)" in {
-
         val incorrectForm = JsString("1234")
 
         val result = controller.submitQueryForm()(postRequest(incorrectForm))
@@ -91,5 +86,4 @@ class FindConsignmentControllerSpec extends ControllerLayerSpec {
       }
     }
   }
-
 }

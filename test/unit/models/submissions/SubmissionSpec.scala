@@ -16,8 +16,6 @@
 
 package models.submissions
 
-import java.time.Instant
-
 import base.UnitSpec
 import connectors.exchanges.ActionType.MovementType
 import models.UcrBlock
@@ -32,7 +30,7 @@ class SubmissionSpec extends UnitSpec with OptionValues {
       conversationId = conversationId,
       ucrBlocks = Seq(ucrBlocks: _*),
       actionType = MovementType.Arrival,
-      requestTimestamp = Instant.now()
+      requestTimestamp = models.now
     )
 
   private val mucrBlock = UcrBlock(ucr = validMucr, ucrType = "M")

@@ -48,7 +48,7 @@ class AssociateUcrViewSpec extends ViewSpec with ViewMatchers with Injector {
         backButton mustBe defined
         backButton.foreach { button =>
           button must containMessage("site.back")
-          button must haveHref(controllers.consolidations.routes.ManageMucrController.displayPage())
+          button must haveHref(controllers.consolidations.routes.ManageMucrController.displayPage)
         }
       }
 

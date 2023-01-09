@@ -16,13 +16,13 @@
 
 package views.components
 
-import org.scalatestplus.mockito.MockitoSugar
+import controllers.ileQuery.routes.FindConsignmentController
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import views.html.components.gds.siteHeader
 import views.{ViewMatchers, ViewSpec}
 
-class SiteHeaderViewSpec extends ViewSpec with ViewMatchers with MockitoSugar {
+class SiteHeaderViewSpec extends ViewSpec with ViewMatchers {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
@@ -31,13 +31,11 @@ class SiteHeaderViewSpec extends ViewSpec with ViewMatchers with MockitoSugar {
   "SiteHeader component" should {
 
     "render service name with link to 'find consignment' page" in {
-
       val serviceNameLink = headerComponent()
         .getElementsByClass("hmrc-internal-service-name__link")
         .first()
-      serviceNameLink must haveHref(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
+      serviceNameLink must haveHref(FindConsignmentController.displayQueryForm)
       serviceNameLink must containMessage("service.name")
     }
-
   }
 }

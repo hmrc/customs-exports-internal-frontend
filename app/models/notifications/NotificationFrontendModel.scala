@@ -16,12 +16,14 @@
 
 package models.notifications
 
-import java.time.Instant
+import models.now
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
+import java.time.Instant
+
 case class NotificationFrontendModel(
-  timestampReceived: Instant = Instant.now(),
+  timestampReceived: Instant = now,
   conversationId: String,
   responseType: ResponseType,
   entries: Seq[Entry],

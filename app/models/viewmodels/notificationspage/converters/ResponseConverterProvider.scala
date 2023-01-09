@@ -49,7 +49,7 @@ class ResponseConverterProvider @Inject() (
     })
 
   private def getMovementTotalsResponseConverter(notification: NotificationFrontendModel): NotificationPageSingleElementConverter =
-    notification.messageCode match {
+    (notification.messageCode: @unchecked) match {
       case ERS.code => ersResponseConverter
       case EMR.code => emrResponseConverter
     }

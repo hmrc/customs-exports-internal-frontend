@@ -20,18 +20,17 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.JourneyRequest
 import forms.ManageMucrChoice._
 import forms.{AssociateUcr, ManageMucrChoice, MucrOptions}
-
-import javax.inject.{Inject, Singleton}
 import models.UcrType.Mucr
 import models.cache.AssociateUcrAnswers
 import models.cache.JourneyType.ASSOCIATE_UCR
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.associateucr.manage_mucr
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -42,18 +41,19 @@ class ManageMucrController @Inject() (
   cacheRepository: CacheRepository,
   manageMucrPage: manage_mucr
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
-  def displayPage(): Action[AnyContent] = (authenticate andThen getJourney(ASSOCIATE_UCR)) { implicit request =>
+  val displayPage: Action[AnyContent] = (authenticate andThen getJourney(ASSOCIATE_UCR)) { implicit request =>
     request.cache.queryUcr.map(_.ucrType) match {
       case Some(Mucr.codeValue) =>
         val manageMucrChoice = request.answersAs[AssociateUcrAnswers].manageMucrChoice
         Ok(manageMucrPage(manageMucrChoice.fold(form())(form().fill), request.cache.queryUcr))
+
       case _ => throw new IllegalStateException("")
     }
   }
 
-  def submit(): Action[AnyContent] = (authenticate andThen getJourney(ASSOCIATE_UCR)).async { implicit request =>
+  val submit: Action[AnyContent] = (authenticate andThen getJourney(ASSOCIATE_UCR)).async { implicit request =>
     form()
       .bindFromRequest()
       .fold(
@@ -62,9 +62,9 @@ class ManageMucrController @Inject() (
           val updatedCache = request.cache.update(updateAnswersWith(validManageMucrChoice))
 
           cacheRepository.upsert(updatedCache).map { _ =>
-            validManageMucrChoice.choice match {
-              case AssociateThisToMucr       => Redirect(routes.MucrOptionsController.displayPage())
-              case AssociateAnotherUcrToThis => Redirect(routes.AssociateUcrController.displayPage())
+            (validManageMucrChoice.choice: @unchecked) match {
+              case AssociateThisToMucr       => Redirect(routes.MucrOptionsController.displayPage)
+              case AssociateAnotherUcrToThis => Redirect(routes.AssociateUcrController.displayPage)
             }
           }
         }
@@ -75,12 +75,12 @@ class ManageMucrController @Inject() (
     val oldAnswers = request.answersAs[AssociateUcrAnswers]
     val answersWithManageMucrChoiceUpdated = oldAnswers.copy(manageMucrChoice = Some(manageMucrChoice))
 
-    manageMucrChoice.choice match {
+    (manageMucrChoice.choice: @unchecked) match {
       case AssociateThisToMucr =>
         answersWithManageMucrChoiceUpdated.copy(parentMucr = None, childUcr = request.cache.queryUcr.map(AssociateUcr(_)))
+
       case AssociateAnotherUcrToThis =>
         answersWithManageMucrChoiceUpdated.copy(parentMucr = request.cache.queryUcr.map(MucrOptions(_)), childUcr = None)
     }
   }
-
 }

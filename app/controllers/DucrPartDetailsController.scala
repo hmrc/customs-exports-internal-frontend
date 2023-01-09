@@ -24,22 +24,23 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.ducr_part_details
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class DucrPartDetailsController @Inject() (
   mcc: MessagesControllerComponents,
   authenticate: AuthenticatedAction,
   cacheRepository: CacheRepository,
   ducrPartsDetailsPage: ducr_part_details
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
-  def displayPage(): Action[AnyContent] = authenticate.async { implicit request =>
+  val displayPage: Action[AnyContent] = authenticate.async { implicit request =>
     cacheRepository
       .findByProviderId(request.providerId)
       .map {
@@ -51,14 +52,14 @@ class DucrPartDetailsController @Inject() (
       .map(form => Ok(ducrPartsDetailsPage(form)))
   }
 
-  def submitDucrPartDetails(): Action[AnyContent] = authenticate.async { implicit request =>
+  val submitDucrPartDetails: Action[AnyContent] = authenticate.async { implicit request =>
     getEmptyForm
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(ducrPartsDetailsPage(formWithErrors))),
         validDucrPartDetails =>
           cacheRepository.upsert(Cache(request.providerId, validDucrPartDetails.toUcrBlock)).map { _ =>
-            Redirect(controllers.routes.ChoiceController.displayPage())
+            Redirect(controllers.routes.ChoiceController.displayPage)
           }
       )
   }

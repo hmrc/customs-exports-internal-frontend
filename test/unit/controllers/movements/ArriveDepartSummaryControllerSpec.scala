@@ -18,12 +18,13 @@ package controllers.movements
 
 import controllers.ControllerLayerSpec
 import controllers.summary.ArriveDepartSummaryController
+import controllers.summary.routes.MovementConfirmationController
 import forms.ConsignmentReferenceType.D
 import forms.ConsignmentReferences
 import models.cache._
 import models.summary.FlashKeys
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.JsString
 import play.api.test.Helpers._
@@ -78,24 +79,21 @@ class ArriveDepartSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
     "return 200 (OK)" when {
 
       "there are answers for Arrival" in {
-
-        val result = controller(ArrivalAnswers()).displayPage()(getRequest)
+        val result = controller(ArrivalAnswers()).displayPage(getRequest)
 
         status(result) mustBe OK
         verify(arrivalSummaryPage).apply(any[ArrivalAnswers])(any(), any())
       }
 
       "there are answers for Retrospective Arrival" in {
-
-        val result = controller(RetrospectiveArrivalAnswers()).displayPage()(getRequest)
+        val result = controller(RetrospectiveArrivalAnswers()).displayPage(getRequest)
 
         status(result) mustBe OK
         verify(retrospectiveArrivalSummaryPage).apply(any[RetrospectiveArrivalAnswers])(any(), any())
       }
 
       "there are answers for Departure" in {
-
-        val result = controller(DepartureAnswers()).displayPage()(getRequest)
+        val result = controller(DepartureAnswers()).displayPage(getRequest)
 
         status(result) mustBe OK
         verify(departureSummaryPage).apply(any[DepartureAnswers])(any(), any())
@@ -103,10 +101,8 @@ class ArriveDepartSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
     }
 
     "return 403 (FORBIDDEN)" when {
-
       "user is on the wrong journey " in {
-
-        val result = controller(AssociateUcrAnswers()).displayPage()(getRequest)
+        val result = controller(AssociateUcrAnswers()).displayPage(getRequest)
 
         status(result) mustBe FORBIDDEN
       }
@@ -118,7 +114,6 @@ class ArriveDepartSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
     "user is on Arrival journey" should {
 
       "call SubmissionService" in {
-
         val cachedAnswers = ArrivalAnswers(consignmentReferences = consignmentRefs)
 
         controller(cachedAnswers).submitMovementRequest()(postRequest(JsString(""))).futureValue
@@ -128,15 +123,13 @@ class ArriveDepartSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
       }
 
       "return SEE_OTHER (303) that redirects to MovementConfirmationController" in {
-
         val result = controller(ArrivalAnswers(consignmentReferences = consignmentRefs)).submitMovementRequest()(postRequest(JsString("")))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
+        redirectLocation(result) mustBe Some(MovementConfirmationController.displayPage.url)
       }
 
       "return response with Movement Type and UCR in flash" in {
-
         val result = controller(ArrivalAnswers(consignmentReferences = consignmentRefs)).submitMovementRequest()(postRequest(JsString("")))
 
         flash(result).get(FlashKeys.JOURNEY_TYPE) mustBe Some(JourneyType.ARRIVE.toString)
@@ -147,7 +140,6 @@ class ArriveDepartSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
     "user is on Retrospective Arrival journey" should {
 
       "call SubmissionService" in {
-
         val cachedAnswers = RetrospectiveArrivalAnswers(consignmentReferences = consignmentRefs)
 
         controller(cachedAnswers).submitMovementRequest()(postRequest(JsString(""))).futureValue
@@ -157,16 +149,14 @@ class ArriveDepartSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
       }
 
       "return SEE_OTHER (303) that redirects to MovementConfirmationController" in {
-
         val result =
           controller(RetrospectiveArrivalAnswers(consignmentReferences = consignmentRefs)).submitMovementRequest()(postRequest(JsString("")))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
+        redirectLocation(result) mustBe Some(MovementConfirmationController.displayPage.url)
       }
 
       "return response with Movement Type and UCR in flash" in {
-
         val result =
           controller(RetrospectiveArrivalAnswers(consignmentReferences = consignmentRefs)).submitMovementRequest()(postRequest(JsString("")))
 
@@ -178,7 +168,6 @@ class ArriveDepartSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
     "user is on Departure journey" should {
 
       "call SubmissionService" in {
-
         val cachedAnswers = DepartureAnswers(consignmentReferences = consignmentRefs)
 
         controller(cachedAnswers).submitMovementRequest()(postRequest(JsString(""))).futureValue
@@ -188,15 +177,13 @@ class ArriveDepartSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
       }
 
       "return SEE_OTHER (303) that redirects to MovementConfirmationController" in {
-
         val result = controller(DepartureAnswers(consignmentReferences = consignmentRefs)).submitMovementRequest()(postRequest(JsString("")))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
+        redirectLocation(result) mustBe Some(MovementConfirmationController.displayPage.url)
       }
 
       "return response with Movement Type and UCR in flash" in {
-
         val result = controller(DepartureAnswers(consignmentReferences = consignmentRefs)).submitMovementRequest()(postRequest(JsString("")))
 
         flash(result).get(FlashKeys.JOURNEY_TYPE) mustBe Some(JourneyType.DEPART.toString)
@@ -204,5 +191,4 @@ class ArriveDepartSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
       }
     }
   }
-
 }

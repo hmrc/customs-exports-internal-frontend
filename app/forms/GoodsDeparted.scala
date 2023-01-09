@@ -46,10 +46,11 @@ object GoodsDeparted {
     case object OutOfTheUk extends DepartureLocation("outOfTheUk")
     case object BackIntoTheUk extends DepartureLocation("backIntoTheUk")
 
-    def apply(input: String): DepartureLocation = input match {
-      case OutOfTheUk.value    => OutOfTheUk
-      case BackIntoTheUk.value => BackIntoTheUk
-    }
+    def apply(input: String): DepartureLocation =
+      (input: @unchecked) match {
+        case OutOfTheUk.value    => OutOfTheUk
+        case BackIntoTheUk.value => BackIntoTheUk
+      }
 
     implicit object DepartureLocationFormat extends Format[DepartureLocation] {
       override def reads(json: JsValue): JsResult[DepartureLocation] = json match {

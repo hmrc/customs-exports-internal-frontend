@@ -21,11 +21,12 @@ import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges._
 import forms._
 import metrics.MovementsMetricsStub
-import models.{ReturnToStartException, UcrType}
 import models.cache.{AssociateUcrAnswers, DisassociateUcrAnswers, MovementAnswers, ShutMucrAnswers}
+import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
 import org.mockito.BDDMockito._
-import org.mockito.Mockito._
+import org.mockito.Mockito.times
+import org.mockito.MockitoSugar.{mock, reset, verify, verifyZeroInteractions}
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
@@ -95,7 +96,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       }
 
       theAssociationSubmitted[AssociateDUCRExchange] mustBe AssociateDUCRExchange(providerId, validEori, mucr, ucr)
-      verify(repository, never()).removeByProviderId(providerId)
+      verify(repository, times(0)).removeByProviderId(providerId)
       verify(audit).auditAssociate(providerId, mucr, ucr, "Failed")
     }
 
@@ -105,8 +106,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
-      verifyNoMoreInteractions(repository)
-      verifyNoMoreInteractions(audit)
+      verifyZeroInteractions(repository)
+      verifyZeroInteractions(audit)
     }
 
     "handle missing ucr" in {
@@ -115,8 +116,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
-      verifyNoMoreInteractions(repository)
-      verifyNoMoreInteractions(audit)
+      verifyZeroInteractions(repository)
+      verifyZeroInteractions(audit)
     }
 
     def theAssociationSubmitted[T <: ConsolidationExchange]: T = {
@@ -164,7 +165,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       }
 
       theDisassociationSubmitted[DisassociateMUCRExchange] mustBe DisassociateMUCRExchange(providerId, validEori, mucr)
-      verify(repository, never()).removeByProviderId(providerId)
+      verify(repository, times(0)).removeByProviderId(providerId)
       verify(audit).auditDisassociate(providerId, mucr, "Failed")
     }
 
@@ -174,8 +175,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
-      verifyNoMoreInteractions(repository)
-      verifyNoMoreInteractions(audit)
+      verifyZeroInteractions(repository)
+      verifyZeroInteractions(audit)
     }
 
     "handle missing ucr" when {
@@ -186,8 +187,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
           await(service.submit(providerId, answers))
         } mustBe ReturnToStartException
 
-        verifyNoMoreInteractions(repository)
-        verifyNoMoreInteractions(audit)
+        verifyZeroInteractions(repository)
+        verifyZeroInteractions(audit)
       }
 
       "missing fields" when {
@@ -198,8 +199,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           } mustBe ReturnToStartException
 
-          verifyNoMoreInteractions(repository)
-          verifyNoMoreInteractions(audit)
+          verifyZeroInteractions(repository)
+          verifyZeroInteractions(audit)
         }
 
         "Disassociate DUCR" in {
@@ -208,8 +209,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           } mustBe ReturnToStartException
 
-          verifyNoMoreInteractions(repository)
-          verifyNoMoreInteractions(audit)
+          verifyZeroInteractions(repository)
+          verifyZeroInteractions(audit)
         }
       }
     }
@@ -244,7 +245,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       }
 
       theShutMucrSubmitted mustBe ShutMUCRExchange(providerId, validEori, mucr)
-      verify(repository, never()).removeByProviderId(providerId)
+      verify(repository, times(0)).removeByProviderId(providerId)
       verify(audit).auditShutMucr(providerId, mucr, "Failed")
     }
 
@@ -254,8 +255,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
-      verifyNoMoreInteractions(repository)
-      verifyNoMoreInteractions(audit)
+      verifyZeroInteractions(repository)
+      verifyZeroInteractions(audit)
     }
 
     "handle missing mucr" in {
@@ -264,8 +265,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
-      verifyNoMoreInteractions(repository)
-      verifyNoMoreInteractions(audit)
+      verifyZeroInteractions(repository)
+      verifyZeroInteractions(audit)
     }
 
     def theShutMucrSubmitted: ShutMUCRExchange = {
@@ -323,9 +324,9 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           }
 
-          verifyNoMoreInteractions(audit)
-          verifyNoMoreInteractions(connector)
-          verifyNoMoreInteractions(repository)
+          verifyZeroInteractions(audit)
+          verifyZeroInteractions(connector)
+          verifyZeroInteractions(repository)
         }
       }
 
@@ -344,7 +345,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           }
 
-          verifyNoMoreInteractions(repository)
+          verifyZeroInteractions(repository)
         }
 
         "call AuditService second time with failed result" in {
@@ -412,9 +413,9 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           }
 
-          verifyNoMoreInteractions(audit)
-          verifyNoMoreInteractions(connector)
-          verifyNoMoreInteractions(repository)
+          verifyZeroInteractions(audit)
+          verifyZeroInteractions(connector)
+          verifyZeroInteractions(repository)
         }
       }
 
@@ -433,7 +434,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           }
 
-          verifyNoMoreInteractions(repository)
+          verifyZeroInteractions(repository)
         }
 
         "call AuditService second time with failed result" in {
@@ -501,9 +502,9 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           }
 
-          verifyNoMoreInteractions(audit)
-          verifyNoMoreInteractions(connector)
-          verifyNoMoreInteractions(repository)
+          verifyZeroInteractions(audit)
+          verifyZeroInteractions(connector)
+          verifyZeroInteractions(repository)
         }
       }
 
@@ -522,7 +523,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           }
 
-          verifyNoMoreInteractions(repository)
+          verifyZeroInteractions(repository)
         }
 
         "call AuditService second time with failed result" in {
@@ -544,5 +545,4 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       }
     }
   }
-
 }

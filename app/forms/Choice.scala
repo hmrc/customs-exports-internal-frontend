@@ -36,14 +36,15 @@ object Choice {
   def apply(input: String): Choice =
     allChoices.find(_.value == input).getOrElse(throw new IllegalArgumentException("Incorrect choice"))
 
-  def apply(`type`: JourneyType): Choice = `type` match {
-    case ARRIVE               => Arrival
-    case RETROSPECTIVE_ARRIVE => RetrospectiveArrival
-    case DEPART               => Departure
-    case ASSOCIATE_UCR        => AssociateUCR
-    case DISSOCIATE_UCR       => DisassociateUCR
-    case SHUT_MUCR            => ShutMUCR
-  }
+  def apply(`type`: JourneyType): Choice =
+    (`type`: @unchecked) match {
+      case ARRIVE               => Arrival
+      case RETROSPECTIVE_ARRIVE => RetrospectiveArrival
+      case DEPART               => Departure
+      case ASSOCIATE_UCR        => AssociateUCR
+      case DISSOCIATE_UCR       => DisassociateUCR
+      case SHUT_MUCR            => ShutMUCR
+    }
 
   implicit object ChoiceValueFormat extends Format[Choice] {
     def reads(status: JsValue): JsResult[Choice] = status match {

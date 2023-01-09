@@ -20,7 +20,7 @@ import base.UnitSpec
 import models.notifications.ResponseType
 import models.viewmodels.decoder.{ActionCode, Decoder, ILEError}
 import org.mockito.ArgumentMatchers.{anyString, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
@@ -47,7 +47,6 @@ class ControlResponseRejectedConverterSpec extends UnitSpec with BeforeAndAfterE
   "ControlResponseRejectedConverter on convert" should {
 
     "return NotificationsPageSingleElement with correct title" in {
-
       val input = RejectedControlResponseSingleError
       val expectedTitle = messages("notifications.elem.title.inventoryLinkingControlResponse.Rejected")
 
@@ -57,7 +56,6 @@ class ControlResponseRejectedConverterSpec extends UnitSpec with BeforeAndAfterE
     }
 
     "return NotificationsPageSingleElement with correct timestampInfo" in {
-
       val input = RejectedControlResponseSingleError
       val expectedTimestampInfo = "23 October 2019 at 12:34pm"
 
@@ -72,7 +70,6 @@ class ControlResponseRejectedConverterSpec extends UnitSpec with BeforeAndAfterE
     "response contains single error" should {
 
       "call Decoder for Error once" in {
-
         val input = RejectedControlResponseSingleError
 
         converter.convert(input)
@@ -81,7 +78,6 @@ class ControlResponseRejectedConverterSpec extends UnitSpec with BeforeAndAfterE
       }
 
       "return NotificationsPageSingleElement with correct content" in {
-
         val input = RejectedControlResponseSingleError
         val expectedContentHeader =
           messages("notifications.elem.content.inventoryLinkingControlResponse.Rejected.singleError")
@@ -98,7 +94,6 @@ class ControlResponseRejectedConverterSpec extends UnitSpec with BeforeAndAfterE
     "response contains multiple errors" should {
 
       "call Decoder for every Error" in {
-
         val input = RejectedControlResponseMultipleErrors
 
         converter.convert(input)
@@ -109,7 +104,6 @@ class ControlResponseRejectedConverterSpec extends UnitSpec with BeforeAndAfterE
       }
 
       "return NotificationsPageSingleElement with correct content" in {
-
         val input = RejectedControlResponseMultipleErrors
         val expectedContentHeader =
           messages("notifications.elem.content.inventoryLinkingControlResponse.Rejected.multiError")
@@ -125,7 +119,6 @@ class ControlResponseRejectedConverterSpec extends UnitSpec with BeforeAndAfterE
       }
     }
   }
-
 }
 
 object ControlResponseRejectedConverterSpec {
@@ -140,5 +133,4 @@ object ControlResponseRejectedConverterSpec {
 
   val RejectedControlResponseMultipleErrors =
     RejectedControlResponse.copy(errorCodes = Seq("07", "E3481", "29", "E607"))
-
 }

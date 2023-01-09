@@ -96,7 +96,7 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
       val backButton = view.getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.SpecificDateTimeController.displayPage())
+      backButton.get must haveHref(controllers.movements.routes.SpecificDateTimeController.displayPage)
     }
 
     "render error summary" when {
@@ -106,7 +106,7 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
 
       "some errors" in {
         val viewWithError = page(movementDetails.departureForm.withError("error", "error.required"), consignmentReferences)
-        viewWithError.getElementById("error-summary-title").text() mustBe messages("error.summary.title")
+        viewWithError.getElementsByClass("govuk-error-summary__title").text() mustBe messages("error.summary.title")
       }
     }
 
@@ -148,7 +148,6 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
       "have single error in summary" in {
         viewWithDateError.getElementsByClass("govuk-list govuk-error-summary__list").text() mustBe (messages("departure.details.error.future"))
       }
-
     }
   }
 }

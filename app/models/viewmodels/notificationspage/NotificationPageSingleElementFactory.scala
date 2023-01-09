@@ -38,7 +38,7 @@ class NotificationPageSingleElementFactory @Inject() (responseConverterProvider:
   }
 
   def build(submission: Submission)(implicit messages: Messages): NotificationsPageSingleElement =
-    submission.actionType match {
+    (submission.actionType: @unchecked) match {
       case Arrival | RetrospectiveArrival | Departure | DucrDisassociation | DucrPartDisassociation | MucrAssociation | MucrDisassociation |
           ShutMucr =>
         buildForRequest(submission)

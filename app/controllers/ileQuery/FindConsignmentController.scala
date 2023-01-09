@@ -18,23 +18,23 @@ package controllers.ileQuery
 
 import controllers.actions.AuthenticatedAction
 import forms.IleQueryForm.form
-
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.ile_query
 
+import javax.inject.{Inject, Singleton}
+
 @Singleton
 class FindConsignmentController @Inject() (authenticate: AuthenticatedAction, mcc: MessagesControllerComponents, ileQueryPage: ile_query)
-    extends FrontendController(mcc) with I18nSupport with WithDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
-  def displayQueryForm(): Action[AnyContent] = authenticate { implicit request =>
+  val displayQueryForm: Action[AnyContent] = authenticate { implicit request =>
     Ok(ileQueryPage(form))
   }
 
-  def submitQueryForm(): Action[AnyContent] = authenticate { implicit request =>
+  val submitQueryForm: Action[AnyContent] = authenticate { implicit request =>
     form
       .bindFromRequest()
       .fold(

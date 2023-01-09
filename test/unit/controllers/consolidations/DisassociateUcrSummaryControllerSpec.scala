@@ -19,13 +19,14 @@ package controllers.consolidations
 import base.Injector
 import controllers.ControllerLayerSpec
 import controllers.summary.DisassociateUcrSummaryController
+import controllers.summary.routes.MovementConfirmationController
 import forms.DisassociateUcr
 import models.cache.{Answers, DisassociateUcrAnswers, JourneyType}
 import models.summary.FlashKeys
 import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsString, Json}
 import play.api.test.Helpers._
@@ -70,10 +71,8 @@ class DisassociateUcrSummaryControllerSpec extends ControllerLayerSpec with Scal
   "Disassociate Ucr Summary Controller on displayPage" should {
 
     "return 200 (OK)" when {
-
       "display page is invoked with data in cache" in {
-
-        val result = controller(DisassociateUcrAnswers(ucr = Some(ucr))).displayPage()(getRequest)
+        val result = controller(DisassociateUcrAnswers(ucr = Some(ucr))).displayPage(getRequest)
 
         status(result) mustBe OK
         verify(summaryPage).apply(any())(any(), any())
@@ -83,22 +82,18 @@ class DisassociateUcrSummaryControllerSpec extends ControllerLayerSpec with Scal
     }
 
     "throw an ReturnToStartException exception" when {
-
       "DisassociateUcr is missing during displaying page" in {
-
         intercept[RuntimeException] {
-          await(controller(DisassociateUcrAnswers(None)).displayPage()(getRequest))
+          await(controller(DisassociateUcrAnswers(None)).displayPage(getRequest))
         } mustBe ReturnToStartException
       }
     }
   }
 
   "Disassociate Ucr Summary Controller on submit" when {
-
     "everything works correctly" should {
 
       "call SubmissionService" in {
-
         val cachedAnswers = DisassociateUcrAnswers(ucr = Some(ucr))
 
         controller(cachedAnswers).submit()(postRequest(JsString(""))).futureValue
@@ -108,22 +103,17 @@ class DisassociateUcrSummaryControllerSpec extends ControllerLayerSpec with Scal
       }
 
       "return SEE_OTHER (303) that redirects to DisassociateUcrConfirmation" in {
-
         val result = controller(DisassociateUcrAnswers(ucr = Some(ucr))).submit()(postRequest(Json.obj()))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage().url)
-
+        redirectLocation(result) mustBe Some(MovementConfirmationController.displayPage.url)
       }
 
       "return response with Movement Type in flash" in {
-
         val result = controller(DisassociateUcrAnswers(ucr = Some(ucr))).submit()(postRequest(Json.obj()))
 
         flash(result).get(FlashKeys.JOURNEY_TYPE) mustBe Some(JourneyType.DISSOCIATE_UCR.toString)
-
       }
     }
   }
-
 }

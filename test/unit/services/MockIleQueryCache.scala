@@ -17,11 +17,11 @@
 package services
 
 import org.mockito.Mockito.reset
+import org.mockito.MockitoSugar.mock
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatestplus.mockito.MockitoSugar
 import repositories.IleQueryRepository
 
-trait MockIleQueryCache extends MockitoSugar with BeforeAndAfterEach {
+trait MockIleQueryCache extends BeforeAndAfterEach {
   this: Suite =>
 
   protected val ileQueryRepository: IleQueryRepository = mock[IleQueryRepository]

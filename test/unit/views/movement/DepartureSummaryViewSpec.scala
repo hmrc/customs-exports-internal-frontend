@@ -55,7 +55,7 @@ class DepartureSummaryViewSpec extends ViewSpec with Injector {
       val backButton = departureSummaryPage(answers).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.TransportController.displayPage())
+      backButton.get must haveHref(controllers.movements.routes.TransportController.displayPage)
     }
 
     "render sub-headers for summary sections" in {

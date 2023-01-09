@@ -57,7 +57,7 @@ class ManageMucrViewSpec extends ViewSpec with Injector {
       backButton mustBe defined
       backButton.foreach { button =>
         button must containMessage("site.back")
-        button must haveHref(controllers.routes.ChoiceController.displayPage())
+        button must haveHref(controllers.routes.ChoiceController.displayPage)
       }
     }
 

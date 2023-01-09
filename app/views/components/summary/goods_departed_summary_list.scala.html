@@ -21,7 +21,7 @@
 
 @this(govukSummaryList: GovukSummaryList, linkContent: linkContent)
 
-@(goodsDeparted: Option[GoodsDeparted])(implicit request: Request[_], messages: Messages)
+@(goodsDeparted: Option[GoodsDeparted])(implicit messages: Messages)
 
 @components.summary_list(messages("goodsDeparted.title")) {
   @govukSummaryList(SummaryList(

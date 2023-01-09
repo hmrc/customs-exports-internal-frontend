@@ -16,15 +16,17 @@
 
 package controllers
 
+import controllers.ileQuery.routes.FindConsignmentController
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class RootController @Inject() (mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage(): Action[AnyContent] = Action {
-    Redirect(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
+  val displayPage: Action[AnyContent] = Action {
+    Redirect(FindConsignmentController.displayQueryForm)
   }
 }

@@ -16,11 +16,12 @@
 
 package models.cache
 
-import java.time.Instant
-
+import models.now
 import play.api.libs.json.{Json, OFormat}
 
-case class IleQuery(sessionId: String, ucr: String, conversationId: String, createdAt: Instant = Instant.now())
+import java.time.Instant
+
+case class IleQuery(sessionId: String, ucr: String, conversationId: String, createdAt: Instant = now)
 
 object IleQuery {
   implicit val format: OFormat[IleQuery] = Json.format[IleQuery]

@@ -14,13 +14,14 @@
  * limitations under the License.
  *@
 
+@import controllers.ileQuery.routes.FindConsignmentController
 @import views.Title
 @import views.html.components.gds._
 
 @this(
-        govukLayout: gds_main_template,
-        pageTitle: pageTitle,
-        linkButton: linkButton
+    govukLayout: gds_main_template,
+    pageTitle: pageTitle,
+    linkButton: linkButton
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -38,7 +39,7 @@
 
     @paragraphBody(messages("sessionTimout.paragraph.saved"))
 
-    @linkButton("sessionTimout.signin.button", controllers.ileQuery.routes.FindConsignmentController.displayQueryForm())
+    @linkButton("sessionTimout.signin.button", FindConsignmentController.displayQueryForm)
 
     @govukLink
 }

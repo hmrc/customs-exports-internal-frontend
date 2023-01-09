@@ -55,7 +55,7 @@ class SpecificDateTimeViewSpec extends ViewSpec with Injector {
       val backButton = createView.getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.routes.ChoiceController.displayPage())
+      backButton.get must haveHref(controllers.routes.ChoiceController.displayPage)
     }
 
     "display 'Continue' button on page" in {

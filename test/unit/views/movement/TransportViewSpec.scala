@@ -62,7 +62,7 @@ class TransportViewSpec extends ViewSpec with Injector {
       val backButton = createPage.getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.GoodsDepartedController.displayPage())
+      backButton.get must haveHref(controllers.movements.routes.GoodsDepartedController.displayPage)
     }
 
     "render error summary" when {
@@ -72,9 +72,8 @@ class TransportViewSpec extends ViewSpec with Injector {
 
       "some errors" in {
         val viewWithError = page(Transport.outOfTheUkForm.withError("error", "error.required"), "some-reference")
-        viewWithError.getElementById("error-summary-title").text() mustBe messages("error.summary.title")
+        viewWithError.getElementsByClass("govuk-error-summary__title").text() mustBe messages("error.summary.title")
       }
     }
   }
-
 }

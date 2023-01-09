@@ -47,7 +47,7 @@ class RetrospectiveArrivalSummaryViewSpec extends ViewSpec with Injector {
       val backButton = page(answers).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.LocationController.displayPage())
+      backButton.get must haveHref(controllers.movements.routes.LocationController.displayPage)
     }
 
     "render sub-headers for summary sections" in {
