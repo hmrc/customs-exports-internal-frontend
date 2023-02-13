@@ -18,6 +18,7 @@ package models.cache
 
 import models.{now, UcrBlock}
 import play.api.libs.json._
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
 
@@ -26,6 +27,7 @@ case class Cache(providerId: String, answers: Option[Answers], queryUcr: Option[
 }
 
 object Cache {
+  implicit private val formatInstant: Format[Instant] = MongoJavatimeFormats.instantFormat
   implicit val format: OFormat[Cache] = Json.format[Cache]
 
   def apply(providerId: String, queryUcr: UcrBlock): Cache = new Cache(providerId, None, Some(queryUcr))
