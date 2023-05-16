@@ -23,7 +23,7 @@ import models.notifications.{NotificationFrontendModel, ResponseType}
 import models.submissions.Submission
 import models.viewmodels.notificationspage.{NotificationPageSingleElementFactory, NotificationsPageSingleElement}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+
 import org.scalatest.concurrent.ScalaFutures
 import play.api.i18n.Messages
 import play.api.test.FakeRequest

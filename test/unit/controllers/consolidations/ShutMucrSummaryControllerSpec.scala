@@ -24,7 +24,7 @@ import models.ReturnToStartException
 import models.cache.{Answers, JourneyType, ShutMucrAnswers}
 import models.summary.FlashKeys
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.JsString
 import play.api.test.Helpers._

@@ -23,7 +23,7 @@ import forms.{ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.cache._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._

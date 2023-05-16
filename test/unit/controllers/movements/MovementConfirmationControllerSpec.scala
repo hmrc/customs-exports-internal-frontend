@@ -19,11 +19,10 @@ package controllers.summary
 import controllers.ControllerLayerSpec
 import forms.ConsignmentReferences
 import models.ReturnToStartException
-import models.summary.FlashKeys._
 import models.cache.JourneyType._
 import models.summary.Confirmation
+import models.summary.FlashKeys._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
