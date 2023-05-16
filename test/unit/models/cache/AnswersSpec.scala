@@ -20,11 +20,64 @@ import base.UnitSpec
 import forms.ConsignmentReferenceType
 import models.UcrType.{Ducr, Mucr}
 import models.{UcrBlock, UcrType}
-import play.api.libs.json.{JsObject, JsString, JsSuccess, JsValue}
+import play.api.libs.json._
+
+import java.time.{Instant, OffsetDateTime}
+import java.util.Date
 
 class AnswersSpec extends UnitSpec {
 
   "Answers reads" should {
+
+    val providerId = "providerId"
+    val ucrBlock = UcrBlock("ucr", UcrType.Ducr)
+
+    "correctly read updated field" when {
+
+      "the value is a string" in {
+        val dateString = "2023-02-20T13:28:51.222Z"
+        val expectedInstant = OffsetDateTime.parse(dateString).toInstant
+
+        val cacheJson: JsValue =
+          JsObject(Map("providerId" -> JsString(providerId), "queryUcr" -> Json.toJson(ucrBlock), "updated" -> JsString(dateString)))
+
+        val expectedResult = Cache(providerId, None, Some(ucrBlock), Some(expectedInstant))
+
+        Cache.format.reads(cacheJson) mustBe JsSuccess(expectedResult)
+      }
+
+      "the value is a date" in {
+        val date = new Date()
+        val expectedInstant = date.toInstant
+
+        val cacheJson: JsValue = JsObject(
+          Map(
+            "providerId" -> JsString(providerId),
+            "queryUcr" -> Json.toJson(ucrBlock),
+            "updated" -> JsObject(Map(s"$$date" -> JsObject(Map(s"$$numberLong" -> JsString(date.getTime.toString)))))
+          )
+        )
+
+        val expectedResult = Cache(providerId, None, Some(ucrBlock), Some(expectedInstant))
+
+        Cache.format.reads(cacheJson) mustBe JsSuccess(expectedResult)
+      }
+    }
+
+    "correctly write updated field as a date" in {
+      val instant = Instant.now()
+      val cache = Cache(providerId, None, Some(ucrBlock), Some(instant))
+
+      val expectedJson: JsValue = JsObject(
+        Map(
+          "providerId" -> JsString(providerId),
+          "queryUcr" -> Json.toJson(ucrBlock),
+          "updated" -> JsObject(Map(s"$$date" -> JsObject(Map(s"$$numberLong" -> JsString(instant.toEpochMilli.toString)))))
+        )
+      )
+
+      Cache.format.writes(cache) mustBe expectedJson
+    }
 
     "correctly read Arrival Answers" in {
 
