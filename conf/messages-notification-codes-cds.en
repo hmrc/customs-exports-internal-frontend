@@ -70,7 +70,7 @@ error.ile.AlreadyArrived = Cannot retrospectively arrive this MUCR/DUCR because 
 error.ile.UCRDoesNotExist = Cannot retrospectively arrive this DUCR/MUCR as it does not exist
 
 error.chief.MucrAlreadyShut = MUCR is already shut
-error.chief.UcrNotExist = Unique Consignment reference does not exist
+error.chief.UcrNotExist = The UCR you have entered does not exist
 error.chief.Refused = Refused - User Role not matched on MUCR Arrivals
 error.chief.UcrAlreadyAssociated = UCR is already associated to Master
 error.chief.InvalidUcrFormat = Invalid characters in UCR or wrong length; please check Tariff
