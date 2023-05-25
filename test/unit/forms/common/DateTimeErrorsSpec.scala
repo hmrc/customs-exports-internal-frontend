@@ -26,11 +26,9 @@ class DateTimeErrorsSpec extends UnitSpec {
   "DateTimeError" should {
 
     "remove duplicates" when {
-
       "there are two errors with the same message" in {
         val error1 = FormError("key1", "message")
         val error2 = FormError("key2", "message")
-
         DateTimeErrors.processErrors(Seq(error1, error2), "any", "other") mustBe (Seq(FormError("key1", "message")))
       }
     }
@@ -39,12 +37,11 @@ class DateTimeErrorsSpec extends UnitSpec {
 
       "there is a general 'date' error" in {
         val error = FormError("dateKey", "message")
-
         DateTimeErrors.processErrors(Seq(error), "dateKey", "timeKey") mustBe (Seq(FormError("dateKey.day", "message")))
       }
+
       "there is a general 'time' error" in {
         val error = FormError("timeKey", "message")
-
         DateTimeErrors.processErrors(Seq(error), "dateKey", "timeKey") mustBe (Seq(FormError("timeKey.hour", "message")))
       }
     }
@@ -53,16 +50,13 @@ class DateTimeErrorsSpec extends UnitSpec {
 
       "there is a specific 'date' error" in {
         val error = FormError("dateKey.month", "message")
-
         DateTimeErrors.processErrors(Seq(error), "dateKey", "timeKey") mustBe (Seq(error))
       }
+
       "there is a specific 'time' error" in {
         val error = FormError("timeKey.minute", "message")
-
         DateTimeErrors.processErrors(Seq(error), "dateKey", "timeKey") mustBe (Seq(error))
       }
     }
-
   }
-
 }

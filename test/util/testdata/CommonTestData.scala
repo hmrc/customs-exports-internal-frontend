@@ -39,5 +39,4 @@ object CommonTestData {
   val conversationId_4: String = "93feaae9-5043-4569-9fc5-ff04bfea0d44"
 
   val aNotificationElement = NotificationsPageSingleElement("TITLE", "TIMESTAMP", Html("<span>CONTENT</span>"))
-
 }

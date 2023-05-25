@@ -19,7 +19,7 @@ package forms
 import base.UnitSpec
 import forms.Transport.ModesOfTransport._
 import play.api.data.FormError
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.Json
 import testdata.TestDataHelper.createRandomAlphanumericString
 
 class TransportSpec extends UnitSpec {
@@ -27,12 +27,10 @@ class TransportSpec extends UnitSpec {
   "Transport model" should {
 
     "has correct formId value" in {
-
       Transport.formId must be("Transport")
     }
 
     "has correct values of Mode of Transport" in {
-
       Sea must be("1")
       Rail must be("2")
       Road must be("3")
@@ -44,7 +42,6 @@ class TransportSpec extends UnitSpec {
     }
 
     "contains all allowed modes of transport" in {
-
       Transport.allowedModesOfTransport.size must be(8)
       Transport.allowedModesOfTransport must contain(Sea)
       Transport.allowedModesOfTransport must contain(Rail)
@@ -62,9 +59,7 @@ class TransportSpec extends UnitSpec {
     "contain errors" when {
 
       "all 3 values are empty" in {
-
         val inputData = Json.obj("modeOfTransport" -> "", "nationality" -> "", "transportId" -> "")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 3
@@ -74,9 +69,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "only modeOfTransport is entered" in {
-
         val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "", "transportId" -> "")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 2
@@ -85,9 +78,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "only nationality is entered" in {
-
         val inputData = Json.obj("modeOfTransport" -> "", "nationality" -> "GB", "transportId" -> "")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 2
@@ -96,9 +87,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "only transportId is entered" in {
-
         val inputData = Json.obj("modeOfTransport" -> "", "nationality" -> "", "transportId" -> "Reference")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 2
@@ -107,9 +96,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "modeOfTransport is empty" in {
-
         val inputData = Json.obj("modeOfTransport" -> "", "nationality" -> "GB", "transportId" -> "Reference")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 1
@@ -117,9 +104,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "nationality is empty" in {
-
         val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "", "transportId" -> "Reference")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 1
@@ -127,9 +112,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "transportId is empty" in {
-
         val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "GB", "transportId" -> "")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 1
@@ -137,9 +120,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with 3 incorrect values" in {
-
         val inputData = Json.obj("modeOfTransport" -> "13", "nationality" -> "invalid", "transportId" -> createRandomAlphanumericString(36))
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 3
@@ -149,9 +130,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with only modeOfTransport being correct" in {
-
         val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "invalid", "transportId" -> "Reference!@#$%^")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 2
@@ -160,9 +139,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with only nationality being correct" in {
-
         val inputData = Json.obj("modeOfTransport" -> "13", "nationality" -> "GB", "transportId" -> "Reference!@#$%^")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 2
@@ -171,9 +148,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with only transportId being correct" in {
-
         val inputData = Json.obj("modeOfTransport" -> "13", "nationality" -> "invalid", "transportId" -> "Reference")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 2
@@ -182,9 +157,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with incorrect modeOfTransport" in {
-
         val inputData = Json.obj("modeOfTransport" -> "13", "nationality" -> "GB", "transportId" -> "Reference")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 1
@@ -192,9 +165,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with incorrect nationality" in {
-
         val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "invalid", "transportId" -> "Reference")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 1
@@ -202,9 +173,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with incorrect transportId" in {
-
         val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "GB", "transportId" -> "Reference!@#$%^")
-
         val errors = Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 1
@@ -215,17 +184,14 @@ class TransportSpec extends UnitSpec {
     "contain no errors" when {
 
       "all 3 values are correct" in {
-
-        val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "GB", "transportId" -> "Reference")
-
+        val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> " GB ", "transportId" -> " Reference ")
         Transport.outOfTheUkForm.bind(inputData, JsonBindMaxChars).errors mustBe empty
       }
 
       "convert to upper case" when {
-
         "country is lower case" in {
           val form = Transport.outOfTheUkForm.bind(
-            JsObject(Map("modeOfTransport" -> JsString("2"), "transportId" -> JsString("xwercwrxwy"), "nationality" -> JsString("pl"))),
+            Json.obj("modeOfTransport" -> "2", "transportId" -> " xwercwrxwy ", "nationality" -> " pl "),
             JsonBindMaxChars
           )
 
@@ -243,9 +209,7 @@ class TransportSpec extends UnitSpec {
     "contain errors" when {
 
       "provided with 3 correct values" in {
-
         val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "GB", "transportId" -> "Reference")
-
         val errors = Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 1
@@ -253,9 +217,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with 3 incorrect values" in {
-
         val inputData = Json.obj("modeOfTransport" -> "13", "nationality" -> "invalid", "transportId" -> createRandomAlphanumericString(36))
-
         val errors = Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 3
@@ -265,9 +227,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with only modeOfTransport being correct" in {
-
         val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "invalid", "transportId" -> "Reference!@#$%^")
-
         val errors = Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 2
@@ -276,9 +236,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with only nationality being correct" in {
-
         val inputData = Json.obj("modeOfTransport" -> "13", "nationality" -> "GB", "transportId" -> "Reference!@#$%^")
-
         val errors = Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 2
@@ -287,9 +245,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with only transportId being correct" in {
-
         val inputData = Json.obj("modeOfTransport" -> "13", "nationality" -> "invalid", "transportId" -> "Reference")
-
         val errors = Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 2
@@ -298,9 +254,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with incorrect modeOfTransport" in {
-
         val inputData = Json.obj("modeOfTransport" -> "13", "nationality" -> "GB", "transportId" -> "Reference")
-
         val errors = Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 1
@@ -308,9 +262,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with incorrect nationality" in {
-
         val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "invalid", "transportId" -> "Reference")
-
         val errors = Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 1
@@ -318,9 +270,7 @@ class TransportSpec extends UnitSpec {
       }
 
       "provided with incorrect transportId" in {
-
         val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "GB", "transportId" -> "Reference!@#$%^")
-
         val errors = Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors
 
         errors.length mustBe 1
@@ -331,60 +281,43 @@ class TransportSpec extends UnitSpec {
     "contain no errors" when {
 
       "all 3 values are empty" in {
-
-        val inputData = Json.obj("modeOfTransport" -> "", "nationality" -> "", "transportId" -> "")
-
+        val inputData = Json.obj("modeOfTransport" -> "", "nationality" -> " ", "transportId" -> " ")
         Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors mustBe empty
       }
 
       "only modeOfTransport is entered" in {
-
-        val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "", "transportId" -> "")
-
+        val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> " ", "transportId" -> " ")
         Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors mustBe empty
       }
 
       "only nationality is entered" in {
-
-        val inputData = Json.obj("modeOfTransport" -> "", "nationality" -> "GB", "transportId" -> "")
-
+        val inputData = Json.obj("modeOfTransport" -> "", "nationality" -> " GB ", "transportId" -> " ")
         Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors mustBe empty
       }
 
       "only transportId is entered" in {
-
-        val inputData = Json.obj("modeOfTransport" -> "", "nationality" -> "", "transportId" -> "Reference")
-
+        val inputData = Json.obj("modeOfTransport" -> "", "nationality" -> " ", "transportId" -> " Reference ")
         Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors mustBe empty
       }
 
       "modeOfTransport is empty" in {
-
-        val inputData = Json.obj("modeOfTransport" -> "", "nationality" -> "GB", "transportId" -> "Reference")
-
+        val inputData = Json.obj("modeOfTransport" -> "", "nationality" -> " GB ", "transportId" -> " Reference ")
         Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors mustBe empty
       }
 
       "nationality is empty" in {
-
-        val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "", "transportId" -> "Reference")
-
+        val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> " ", "transportId" -> " Reference ")
         Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors mustBe empty
       }
 
       "transportId is empty" in {
-
-        val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> "GB", "transportId" -> "")
-
+        val inputData = Json.obj("modeOfTransport" -> "1", "nationality" -> " GB ", "transportId" -> " ")
         Transport.backIntoTheUkForm.bind(inputData, JsonBindMaxChars).errors mustBe empty
       }
 
       "convert to upper case" when {
-
         "country is lower case" in {
-          val form =
-            Transport.backIntoTheUkForm.bind(JsObject(Map("modeOfTransport" -> JsString("2"), "nationality" -> JsString("pl"))), JsonBindMaxChars)
-
+          val form = Transport.backIntoTheUkForm.bind(Json.obj("modeOfTransport" -> " 2 ", "nationality" -> " pl "), JsonBindMaxChars)
           form.errors mustBe empty
           form.value.flatMap(_.modeOfTransport) must be(Some("2"))
           form.value.flatMap(_.nationality) must be(Some("PL"))
@@ -392,5 +325,4 @@ class TransportSpec extends UnitSpec {
       }
     }
   }
-
 }

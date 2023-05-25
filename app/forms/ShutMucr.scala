@@ -34,7 +34,7 @@ object ShutMucr {
       .verifying("error.mucr.format", isEmpty or validMucrIgnoreCase)
   )(form2Data)(ShutMucr.unapply)
 
-  private def form2Data(mucr: String): ShutMucr = ShutMucr(mucr.toUpperCase)
+  private def form2Data(mucr: String): ShutMucr = ShutMucr(mucr.trim.toUpperCase)
 
   def form(): Form[ShutMucr] = Form(mapping)
 }

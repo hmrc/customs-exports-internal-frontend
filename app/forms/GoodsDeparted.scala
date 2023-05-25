@@ -30,13 +30,13 @@ object GoodsDeparted {
 
   private val allowedLocationsValues = Set(OutOfTheUk.value, BackIntoTheUk.value)
 
-  def form2Model(input: String): GoodsDeparted = GoodsDeparted(DepartureLocation(input))
+  def form2Model(input: String): GoodsDeparted = GoodsDeparted(DepartureLocation(input.trim))
   def model2Form(goodsDeparted: GoodsDeparted): Option[String] = Some(goodsDeparted.departureLocation.value)
 
   val mapping: Mapping[GoodsDeparted] =
     Forms.mapping(
       "departureLocation" -> requiredRadio("goodsDeparted.departureLocation.error.empty")
-        .verifying("goodsDeparted.departureLocation.error.incorrect", input => allowedLocationsValues(input))
+        .verifying("goodsDeparted.departureLocation.error.incorrect", input => allowedLocationsValues(input.trim))
     )(form2Model)(model2Form)
 
   def form: Form[GoodsDeparted] = Form(mapping)

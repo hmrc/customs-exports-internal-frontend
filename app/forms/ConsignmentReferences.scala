@@ -34,7 +34,7 @@ object ConsignmentReferenceType extends Enumeration {
 
 object ConsignmentReferences {
 
-  def apply(ucrType: String, ucr: String) =
+  def apply(ucrType: String, ucr: String): ConsignmentReferences =
     ucrType match {
       case "D"  => new ConsignmentReferences(ConsignmentReferenceType.D, ucr)
       case "M"  => new ConsignmentReferences(ConsignmentReferenceType.M, ucr)
@@ -48,8 +48,8 @@ object ConsignmentReferences {
   private def form2Model: (ConsignmentReferenceType, Option[String], Option[String]) => ConsignmentReferences = {
     case (reference, ducrValue, mucrValue) =>
       (reference: @unchecked) match {
-        case ConsignmentReferenceType.D => ConsignmentReferences(ConsignmentReferenceType.D, ducrValue.map(_.toUpperCase).getOrElse(""))
-        case ConsignmentReferenceType.M => ConsignmentReferences(ConsignmentReferenceType.M, mucrValue.map(_.toUpperCase).getOrElse(""))
+        case ConsignmentReferenceType.D => ConsignmentReferences(ConsignmentReferenceType.D, ducrValue.fold("")(_.trim.toUpperCase))
+        case ConsignmentReferenceType.M => ConsignmentReferences(ConsignmentReferenceType.M, mucrValue.fold("")(_.trim.toUpperCase))
       }
   }
 

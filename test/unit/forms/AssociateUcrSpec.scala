@@ -18,7 +18,7 @@ package forms
 
 import base.UnitSpec
 import play.api.data.FormError
-import play.api.libs.json.{JsObject, JsString}
+import play.api.libs.json.Json
 
 class AssociateUcrSpec extends UnitSpec {
 
@@ -26,37 +26,28 @@ class AssociateUcrSpec extends UnitSpec {
 
     "convert to upper case" when {
       "provided with Ducr" in {
-
-        val form = AssociateUcr.form.bind(JsObject(Map("kind" -> JsString("ducr"), "ducr" -> JsString("8gb123457359100-test0001"))), JsonBindMaxChars)
-
+        val form = AssociateUcr.form.bind(Json.obj("kind" -> "ducr", "ducr" -> " 8gb123457359100-test0001 "), JsonBindMaxChars)
         form.errors mustBe empty
         form.value.map(_.ucr) must be(Some("8GB123457359100-TEST0001"))
       }
 
       "provided with Mucr" in {
-
-        val form = AssociateUcr.form.bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test"))), JsonBindMaxChars)
-
+        val form = AssociateUcr.form.bind(Json.obj("kind" -> "mucr", "mucr" -> " gb/abced1234-15804test "), JsonBindMaxChars)
         form.errors mustBe empty
         form.value.map(_.ucr) must be(Some("GB/ABCED1234-15804TEST"))
       }
 
       "provided with Mucr that is 35 characters long" in {
-
-        val form = AssociateUcr.form
-          .bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test1234567890123"))), JsonBindMaxChars)
-
+        val form = AssociateUcr.form.bind(Json.obj("kind" -> "mucr", "mucr" -> " gb/abced1234-15804test1234567890123 "), JsonBindMaxChars)
         form.errors mustBe empty
         form.value.map(_.ucr) must be(Some("GB/ABCED1234-15804TEST1234567890123"))
       }
     }
   }
+
   "return an error" when {
     "provided with Mucr that is over 35 characters long" in {
-
-      val form = AssociateUcr.form
-        .bind(JsObject(Map("kind" -> JsString("mucr"), "mucr" -> JsString("gb/abced1234-15804test12345678901234"))), JsonBindMaxChars)
-
+      val form = AssociateUcr.form.bind(Json.obj("kind" -> "mucr", "mucr" -> "gb/abced1234-15804test12345678901234"), JsonBindMaxChars)
       form.errors mustBe Seq(FormError("mucr", List("mucr.error.format")))
     }
   }

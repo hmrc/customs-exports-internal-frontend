@@ -24,9 +24,7 @@ import play.api.libs.json.Json
 class GoodsDepartedSpec extends UnitSpec {
 
   "GoodsDeparted form" should {
-
     "have correct formId value" in {
-
       GoodsDeparted.formId mustBe "GoodsDeparted"
     }
   }
@@ -36,18 +34,14 @@ class GoodsDepartedSpec extends UnitSpec {
     "contain errors" when {
 
       "provided with empty departure location" in {
-
         val input = Json.obj("departureLocation" -> "")
         val errors = GoodsDeparted.form.bind(input, JsonBindMaxChars).errors
-
         errors mustBe Seq(FormError("departureLocation", "goodsDeparted.departureLocation.error.empty"))
       }
 
       "provided with incorrect departure location" in {
-
         val input = Json.obj("departureLocation" -> "INVALID")
         val errors = GoodsDeparted.form.bind(input, JsonBindMaxChars).errors
-
         errors mustBe Seq(FormError("departureLocation", "goodsDeparted.departureLocation.error.incorrect"))
       }
     }
@@ -55,21 +49,16 @@ class GoodsDepartedSpec extends UnitSpec {
     "not contain any errors" when {
 
       "provided with OutOfTheUk departure location" in {
-
         val input = Json.obj("departureLocation" -> OutOfTheUk.value)
         val errors = GoodsDeparted.form.bind(input, JsonBindMaxChars).errors
-
         errors mustBe empty
       }
 
       "provided with BackIntoTheUk departure location" in {
-
         val input = Json.obj("departureLocation" -> BackIntoTheUk.value)
         val errors = GoodsDeparted.form.bind(input, JsonBindMaxChars).errors
-
         errors mustBe empty
       }
     }
   }
-
 }
