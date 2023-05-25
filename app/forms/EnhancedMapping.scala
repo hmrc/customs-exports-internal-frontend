@@ -39,7 +39,7 @@ object EnhancedMapping {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = data.get("createOrAdd") match {
       case Some(createOrAddValue.`value`) =>
-        val mucr = data.getOrElse(key, "")
+        val mucr = data.getOrElse(key, "").trim
 
         if (mucr.isEmpty) Left(Seq(FormError(key, "mucrOptions.reference.value.empty")))
         else {

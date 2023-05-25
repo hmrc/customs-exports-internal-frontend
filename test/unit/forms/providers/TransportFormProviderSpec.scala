@@ -28,28 +28,19 @@ class TransportFormProviderSpec extends UnitSpec {
   "TransportFormProvider" should {
 
     "return Out of the UK form" when {
-
       "provided with answers containing OutOfTheUk value for GoodsDeparted" in {
-
         val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)))
-
         val form = formProvider.provideForm(answers)
-
         form mustBe Transport.outOfTheUkForm
       }
     }
 
     "return Back into the UK form" when {
-
       "provided with answers containing BackIntoTheUk value for GoodsDeparted" in {
-
         val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(BackIntoTheUk)))
-
         val form = formProvider.provideForm(answers)
-
         form mustBe Transport.backIntoTheUkForm
       }
     }
   }
-
 }

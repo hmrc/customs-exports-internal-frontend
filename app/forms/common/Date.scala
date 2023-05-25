@@ -58,6 +58,7 @@ object Date {
   def isValidDateOrAnyEmptyFields(day: String, month: String, year: String): Boolean =
     if (isAnyFieldEmpty(Seq(day, month, year))) true
     else Try(LocalDate.of(year.toInt, month.toInt, day.toInt)).isSuccess
+
   def isAnyFieldPopulated(fields: Seq[String]): Boolean = fields.exists(_.nonEmpty)
   def isAnyFieldEmpty(fields: Seq[String]): Boolean = fields.exists(_.isEmpty)
   def isAnyFieldPopulatedCondition(fields: Seq[String]): Condition = mapping => fields.exists(field => mapping.getOrElse(field, "").nonEmpty)
@@ -67,9 +68,9 @@ object Date {
       .tuple(dayKey -> dayMapping(prefix), monthKey -> monthMapping(prefix), yearKey -> yearMapping(prefix))
       // Fire error if all date fields are empty (isAnyFieldNotEmpty fails)
       // This will never fire if any individual field-level "missing" errors have fired (see dayMapping below)
-      .verifying(getAllEmptyError(prefix), date => isAnyFieldPopulated(Seq(date._1, date._2, date._3)))
+      .verifying(getAllEmptyError(prefix), date => isAnyFieldPopulated(Seq(date._1.trim, date._2.trim, date._3.trim)))
       // This error only fires if all fields have a value to check it's a valid date
-      .verifying("date.error.invalid", date => isValidDateOrAnyEmptyFields(date._1, date._2, date._3))
+      .verifying("date.error.invalid", date => isValidDateOrAnyEmptyFields(date._1.trim, date._2.trim, date._3.trim))
       .transform((form2model _).tupled, model2form)
 
   private def dayMapping(prefix: String): Mapping[String] = AdditionalConstraintsMapping(
@@ -99,7 +100,7 @@ object Date {
     else "date.error.arrival.allEmpty"
 
   private def form2model(day: String, month: String, year: String): Date =
-    Date(LocalDate.of(year.toInt, month.toInt, day.toInt))
+    Date(LocalDate.of(year.trim.toInt, month.trim.toInt, day.trim.toInt))
 
   private def model2form(date: Date): (String, String, String) = {
     val value = date.date

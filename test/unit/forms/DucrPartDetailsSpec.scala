@@ -23,17 +23,17 @@ import testdata.CommonTestData.{validDucr, validDucrPartId, validWholeDucrParts}
 
 class DucrPartDetailsSpec extends UnitSpec {
 
+  private val ducrToTrim = s" $validDucr "
+  private val ducrPartIdToTrim = s" $validDucrPartId "
+
   "DucrPartDetails mapping" should {
 
     "return errors" when {
-
       val expectedDucrError = FormError("ducr", Seq("ducrPartDetails.ducr.error"))
       val expectedDucrPartIdError = FormError("ducrPartId", Seq("ducrPartDetails.ducrPartId.error"))
 
       "provided with empty DUCR" in {
-
         val input = Map("ducr" -> "", "ducrPartId" -> "")
-
         val result = DucrPartDetails.mapping.bind(input)
 
         result.isLeft mustBe true
@@ -42,9 +42,7 @@ class DucrPartDetailsSpec extends UnitSpec {
       }
 
       "provided with incorrect DUCR" in {
-
         val input = Map("ducr" -> "incorrect!@#$%^", "ducrPartId" -> "incorrect!@#$%^")
-
         val result = DucrPartDetails.mapping.bind(input)
 
         result.isLeft mustBe true
@@ -53,9 +51,7 @@ class DucrPartDetailsSpec extends UnitSpec {
       }
 
       "provided with empty DUCR Part ID" in {
-
         val input = Map("ducr" -> "", "ducrPartId" -> "")
-
         val result = DucrPartDetails.mapping.bind(input)
 
         result.isLeft mustBe true
@@ -64,9 +60,7 @@ class DucrPartDetailsSpec extends UnitSpec {
       }
 
       "provided with incorrect DUCR Part ID" in {
-
         val input = Map("ducr" -> "incorrect!@#$%^", "ducrPartId" -> "incorrect!@#$%^")
-
         val result = DucrPartDetails.mapping.bind(input)
 
         result.isLeft mustBe true
@@ -78,20 +72,14 @@ class DucrPartDetailsSpec extends UnitSpec {
     "return no errors" when {
 
       "provided with correct both DUCR and DUCR Part ID" in {
-
-        val input = Map("ducr" -> validDucr, "ducrPartId" -> validDucrPartId)
-
+        val input = Map("ducr" -> ducrToTrim, "ducrPartId" -> ducrPartIdToTrim)
         val result = DucrPartDetails.mapping.bind(input)
-
         result.isRight mustBe true
       }
 
       "provided with correct lower cased both DUCR and DUCR Part ID" in {
-
-        val input = Map("ducr" -> validDucr.toLowerCase, "ducrPartId" -> validDucrPartId.toLowerCase)
-
+        val input = Map("ducr" -> ducrToTrim.toLowerCase, "ducrPartId" -> ducrPartIdToTrim.toLowerCase)
         val result = DucrPartDetails.mapping.bind(input)
-
         result.isRight mustBe true
       }
     }
@@ -99,9 +87,7 @@ class DucrPartDetailsSpec extends UnitSpec {
     "convert to upper case" when {
 
       "provided with DUCR containing lower case characters" in {
-
-        val input = Map("ducr" -> validDucr.toLowerCase, "ducrPartId" -> validDucrPartId.toLowerCase)
-
+        val input = Map("ducr" -> ducrToTrim.toLowerCase, "ducrPartId" -> ducrPartIdToTrim.toLowerCase)
         val result = DucrPartDetails.mapping.bind(input)
 
         result.isRight mustBe true
@@ -109,9 +95,7 @@ class DucrPartDetailsSpec extends UnitSpec {
       }
 
       "provided with DUCR Part ID containing lower case characters" in {
-
-        val input = Map("ducr" -> validDucr.toLowerCase, "ducrPartId" -> validDucrPartId.toLowerCase)
-
+        val input = Map("ducr" -> ducrToTrim.toLowerCase, "ducrPartId" -> ducrPartIdToTrim.toLowerCase)
         val result = DucrPartDetails.mapping.bind(input)
 
         result.isRight mustBe true
@@ -123,18 +107,14 @@ class DucrPartDetailsSpec extends UnitSpec {
   "DucrPartDetails on toUcrBlock" should {
 
     "return UcrBlock with correct type field" in {
-
       val ducrPartDetails = DucrPartDetails(ducr = validDucr, ducrPartId = validDucrPartId)
       val expectedType = UcrType.DucrPart.codeValue
-
       ducrPartDetails.toUcrBlock.ucrType mustBe expectedType
     }
 
     "return UcrBlock with correct ucr field" in {
-
       val ducrPartDetails = DucrPartDetails(ducr = validDucr, ducrPartId = validDucrPartId)
       val expectedUcr = validWholeDucrParts
-
       ducrPartDetails.toUcrBlock.ucr mustBe expectedUcr
     }
   }
@@ -142,28 +122,21 @@ class DucrPartDetailsSpec extends UnitSpec {
   "DucrPartDetails on apply" should {
 
     "throw IllegalArgumentException" when {
-
       "provided with UcrBlock of type different than DucrParts" in {
-
         val ucrBlock = UcrBlock(ucrType = UcrType.Ducr, ucr = validDucr)
-
         intercept[IllegalArgumentException](DucrPartDetails(ucrBlock))
       }
     }
 
     "return DucrPartDetails with correct ducr" in {
-
       val ucrBlock = UcrBlock(ucrType = UcrType.DucrPart, ucr = validWholeDucrParts)
       val expectedDucr = validDucr
-
       DucrPartDetails(ucrBlock).ducr mustBe expectedDucr
     }
 
     "return DucrPartDetails with correct ducrPartId" in {
-
       val ucrBlock = UcrBlock(ucrType = UcrType.DucrPart, ucr = validWholeDucrParts)
       val expectedDucrPartId = validDucrPartId
-
       DucrPartDetails(ucrBlock).ducrPartId mustBe expectedDucrPartId
     }
   }

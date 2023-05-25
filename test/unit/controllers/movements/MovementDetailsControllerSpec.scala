@@ -16,7 +16,6 @@
 
 package controllers.movements
 
-import java.time.{LocalDate, LocalDateTime, LocalTime}
 import controllers.ControllerLayerSpec
 import controllers.movements.routes.LocationController
 import forms.common.{Date, Time}
@@ -26,13 +25,14 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import play.api.data.{Form, FormError}
-import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import testdata.MovementsTestData
 import views.html.{arrival_details, departure_details}
 
+import java.time.{LocalDate, LocalDateTime, LocalTime}
 import scala.concurrent.ExecutionContext.global
 
 class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
@@ -142,17 +142,14 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
       givenTheCacheIsEmpty()
 
       val validArrivalDetails = ArrivalDetails(Date(LocalDate.now()), Time(LocalTime.now()))
-      val correctForm =
-        JsObject(
-          Map(
-            "dateOfArrival.day" -> JsNumber(validArrivalDetails.dateOfArrival.date.getDayOfMonth),
-            "dateOfArrival.month" -> JsNumber(validArrivalDetails.dateOfArrival.date.getMonthValue),
-            "dateOfArrival.year" -> JsNumber(validArrivalDetails.dateOfArrival.date.getYear),
-            "timeOfArrival.hour" -> JsNumber(validArrivalDetails.timeOfArrival.getClockHour),
-            "timeOfArrival.minute" -> JsNumber(validArrivalDetails.timeOfArrival.getMinute),
-            "timeOfArrival.ampm" -> JsString(validArrivalDetails.timeOfArrival.getAmPm)
-          )
-        )
+      val correctForm = Json.obj(
+        "dateOfArrival.day" -> validArrivalDetails.dateOfArrival.date.getDayOfMonth,
+        "dateOfArrival.month" -> validArrivalDetails.dateOfArrival.date.getMonthValue,
+        "dateOfArrival.year" -> validArrivalDetails.dateOfArrival.date.getYear,
+        "timeOfArrival.hour" -> validArrivalDetails.timeOfArrival.getClockHour,
+        "timeOfArrival.minute" -> validArrivalDetails.timeOfArrival.getMinute,
+        "timeOfArrival.ampm" -> validArrivalDetails.timeOfArrival.getAmPm
+      )
 
       val result = controller(ArrivalAnswers()).saveMovementDetails()(postRequest(correctForm))
 
@@ -164,17 +161,14 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
       givenTheCacheIsEmpty()
 
       val validDepartureDetails = DepartureDetails(Date(LocalDate.now()), Time(LocalTime.now()))
-      val correctForm =
-        JsObject(
-          Map(
-            "dateOfDeparture.day" -> JsNumber(validDepartureDetails.dateOfDeparture.date.getDayOfMonth),
-            "dateOfDeparture.month" -> JsNumber(validDepartureDetails.dateOfDeparture.date.getMonthValue),
-            "dateOfDeparture.year" -> JsNumber(validDepartureDetails.dateOfDeparture.date.getYear),
-            "timeOfDeparture.hour" -> JsNumber(validDepartureDetails.timeOfDeparture.getClockHour),
-            "timeOfDeparture.minute" -> JsNumber(validDepartureDetails.timeOfDeparture.getMinute),
-            "timeOfDeparture.ampm" -> JsString(validDepartureDetails.timeOfDeparture.getAmPm)
-          )
-        )
+      val correctForm = Json.obj(
+        "dateOfDeparture.day" -> validDepartureDetails.dateOfDeparture.date.getDayOfMonth,
+        "dateOfDeparture.month" -> validDepartureDetails.dateOfDeparture.date.getMonthValue,
+        "dateOfDeparture.year" -> validDepartureDetails.dateOfDeparture.date.getYear,
+        "timeOfDeparture.hour" -> validDepartureDetails.timeOfDeparture.getClockHour,
+        "timeOfDeparture.minute" -> validDepartureDetails.timeOfDeparture.getMinute,
+        "timeOfDeparture.ampm" -> validDepartureDetails.timeOfDeparture.getAmPm
+      )
 
       val result = controller(DepartureAnswers()).saveMovementDetails()(postRequest(correctForm))
 

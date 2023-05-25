@@ -42,17 +42,21 @@ object DisassociateUcr {
       "ducr" -> mandatoryIfEqual(
         "kind",
         "ducr",
-        text().verifying("disassociate.ucr.ducr.empty", nonEmpty).verifying("disassociate.ucr.ducr.error", isEmpty or validDucrIgnoreCase)
+        text()
+          .verifying("disassociate.ucr.ducr.empty", nonEmpty)
+          .verifying("disassociate.ucr.ducr.error", isEmpty or validDucrIgnoreCase)
       ),
       "mucr" -> mandatoryIfEqual(
         "kind",
         "mucr",
-        text().verifying("disassociate.ucr.mucr.empty", nonEmpty).verifying("disassociate.ucr.mucr.error", isEmpty or validMucrIgnoreCase)
+        text()
+          .verifying("disassociate.ucr.mucr.empty", nonEmpty)
+          .verifying("disassociate.ucr.mucr.error", isEmpty or validMucrIgnoreCase)
       )
     )(form2Data)(DisassociateUcr.unapply)
 
   private def form2Data(kind: UcrType, ducr: Option[String], mucr: Option[String]): DisassociateUcr =
-    new DisassociateUcr(kind, ducr.map(_.toUpperCase), mucr.map(_.toUpperCase))
+    new DisassociateUcr(kind, ducr.map(_.trim.toUpperCase), mucr.map(_.trim.toUpperCase))
 
   val form: Form[DisassociateUcr] = Form(mapping)
 }

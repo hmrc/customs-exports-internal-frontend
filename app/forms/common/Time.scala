@@ -64,8 +64,8 @@ object Time {
   def mapping(prefix: String): Mapping[Time] =
     Forms
       .tuple(hourKey -> hourMapping(prefix), minuteKey -> minuteMapping(prefix), ampmKey -> amPmMapping(prefix))
-      .verifying(getAllEmptyError(prefix), time => isAnyFieldPopulated(Seq(time._1, time._2, time._3)))
-      .verifying("time.error.invalid", time => isValidTimeOrAnyEmptyFields(time._1, time._2, time._3))
+      .verifying(getAllEmptyError(prefix), time => isAnyFieldPopulated(Seq(time._1.trim, time._2.trim, time._3.trim)))
+      .verifying("time.error.invalid", time => isValidTimeOrAnyEmptyFields(time._1.trim, time._2.trim, time._3.trim))
       .transform((bind _).tupled, unbind)
 
   private def hourMapping(prefix: String): Mapping[String] = AdditionalConstraintsMapping(
@@ -91,7 +91,7 @@ object Time {
     else "time.error.arrival.allEmpty"
 
   private def bind(hour: String, minutes: String, ampm: String): Time =
-    Time(LocalTime.parse(timeString(hour, minutes, ampm), time12HourFormatter))
+    Time(LocalTime.parse(timeString(hour.trim, minutes.trim, ampm.trim), time12HourFormatter))
 
   private def unbind(time: Time): (String, String, String) =
     (time.getClockHour.toString, formatter.format(time.getMinute.toLong), time.getAmPm)

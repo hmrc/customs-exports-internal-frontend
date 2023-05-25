@@ -34,8 +34,8 @@ object AssociateUcr {
   val mapping: Mapping[AssociateUcr] = {
     def bind(associateKind: UcrType, ducr: Option[String], mucr: Option[String]): AssociateUcr =
       associateKind match {
-        case Mucr => AssociateUcr(Mucr, mucr.get.toUpperCase)
-        case _    => AssociateUcr(Ducr, ducr.get.toUpperCase)
+        case Mucr => AssociateUcr(Mucr, mucr.get.trim.toUpperCase)
+        case _    => AssociateUcr(Ducr, ducr.get.trim.toUpperCase)
       }
 
     def unbind(value: AssociateUcr): Option[(UcrType, Option[String], Option[String])] =

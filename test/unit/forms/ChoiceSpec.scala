@@ -20,7 +20,7 @@ import base.UnitSpec
 import forms.Choice._
 import models.cache.JourneyType.{apply => _, _}
 import org.scalatest.OptionValues
-import play.api.libs.json._
+import play.api.libs.json.{JsError, JsNumber, JsString, JsSuccess, JsValue, Json}
 
 class ChoiceSpec extends UnitSpec with OptionValues {
 
@@ -58,7 +58,6 @@ class ChoiceSpec extends UnitSpec with OptionValues {
   "Choice model for apply and unapply" should {
 
     "have correctly prepared unapply method" in {
-
       Choice.unapply(Arrival).value mustBe "arrival"
       Choice.unapply(RetrospectiveArrival).value mustBe "retrospectiveArrival"
       Choice.unapply(Departure).value mustBe "departure"
@@ -69,7 +68,6 @@ class ChoiceSpec extends UnitSpec with OptionValues {
     }
 
     "correctly map input to choice" in {
-
       Choice.apply("arrival") mustBe Arrival
       Choice.apply("retrospectiveArrival") mustBe RetrospectiveArrival
       Choice.apply("departure") mustBe Departure
@@ -80,7 +78,6 @@ class ChoiceSpec extends UnitSpec with OptionValues {
     }
 
     "correctly map JourneyType into choice" in {
-
       Choice.apply(ARRIVE) mustBe Arrival
       Choice.apply(RETROSPECTIVE_ARRIVE) mustBe RetrospectiveArrival
       Choice.apply(DEPART) mustBe Departure
@@ -90,7 +87,6 @@ class ChoiceSpec extends UnitSpec with OptionValues {
     }
 
     "throw an exception during apply method when choice is incorrect" in {
-
       val exception = intercept[IllegalArgumentException] {
         Choice.apply("incorrect")
       }
@@ -102,9 +98,7 @@ class ChoiceSpec extends UnitSpec with OptionValues {
   "ChoiceValueFormat" should {
 
     "return JsSuccess" when {
-
       "the choice is JsString and has correct value" in {
-
         ChoiceValueFormat.reads(JsString("arrival")) mustBe JsSuccess(Arrival)
       }
     }
@@ -112,26 +106,21 @@ class ChoiceSpec extends UnitSpec with OptionValues {
     "return JsError" when {
 
       "the choice is JsString, but has incorrect value" in {
-
         ChoiceValueFormat.reads(JsString("incorrect")) mustBe JsError("Incorrect choice")
       }
 
       "the choice is different than JsString" in {
-
         ChoiceValueFormat.reads(JsNumber(10)) mustBe JsError("Incorrect choice")
       }
     }
 
     "correctly write object as JsValue" in {
-
       ChoiceValueFormat.writes(Arrival) mustBe JsString("arrival")
     }
   }
 
   "Choice" should {
-
     "return correct information about itself" in {
-
       Arrival.isArrival mustBe true
       Arrival.isDeparture mustBe false
       Departure.isArrival mustBe false
@@ -146,6 +135,5 @@ object ChoiceSpec {
   val incorrectChoiceJSON: JsValue = createChoiceJSON("InvalidChoice")
   val emptyChoiceJSON: JsValue = createChoiceJSON()
 
-  def createChoiceJSON(choiceValue: String = ""): JsValue =
-    JsObject(Map("choice" -> JsString(choiceValue)))
+  def createChoiceJSON(choiceValue: String = ""): JsValue = Json.obj("choice" -> choiceValue)
 }
