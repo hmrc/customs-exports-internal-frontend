@@ -22,7 +22,7 @@ import models.UcrType.{Ducr, Mucr}
 import models.{UcrBlock, UcrType}
 import play.api.libs.json.{JsSuccess, Json}
 
-import java.time.{Instant, OffsetDateTime}
+import java.time.Instant
 import java.util.Date
 
 class AnswersSpec extends UnitSpec {
@@ -33,16 +33,6 @@ class AnswersSpec extends UnitSpec {
     val ucrBlock = UcrBlock("ucr", UcrType.Ducr)
 
     "correctly read updated field" when {
-
-      "the value is a string" in {
-        val dateString = "2023-02-20T13:28:51.222Z"
-        val expectedInstant = OffsetDateTime.parse(dateString).toInstant
-
-        val cacheJson = Json.obj("providerId" -> providerId, "queryUcr" -> Json.toJson(ucrBlock), "updated" -> dateString)
-        val expectedResult = Cache(providerId, None, Some(ucrBlock), Some(expectedInstant))
-
-        Cache.format.reads(cacheJson) mustBe JsSuccess(expectedResult)
-      }
 
       "the value is a date" in {
         val date = new Date()

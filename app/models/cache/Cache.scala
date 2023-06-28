@@ -17,7 +17,6 @@
 package models.cache
 
 import models.{now, UcrBlock}
-import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
@@ -28,24 +27,8 @@ case class Cache(providerId: String, answers: Option[Answers], queryUcr: Option[
 }
 
 object Cache {
-  private val stringDateReads: Reads[Instant] = implicitly[Reads[String]].map(Instant.parse)
-
-  private val mongoDateReads: Reads[Instant] = MongoJavatimeFormats.instantReads
-
-  private val instantReads: Reads[Instant] = mongoDateReads orElse stringDateReads
-
-  implicit val formatWrites: Writes[Instant] = MongoJavatimeFormats.instantWrites
-
-  implicit val reads: Reads[Cache] = (
-    (JsPath \ "providerId").read[String] and
-      (JsPath \ "answers").readNullable[Answers] and
-      (JsPath \ "queryUcr").readNullable[UcrBlock] and
-      (JsPath \ "updated").readNullable[Instant](instantReads)
-  )(new Cache(_, _, _, _))
-
-  implicit val writes: OWrites[Cache] = Json.writes[Cache]
-
-  implicit val format: OFormat[Cache] = OFormat(reads, writes)
+  implicit val mongoDateReads: Format[Instant] = MongoJavatimeFormats.instantFormat
+  implicit val format: OFormat[Cache] = Json.format[Cache]
 
   def apply(providerId: String, queryUcr: UcrBlock): Cache = new Cache(providerId, None, Some(queryUcr))
 }
