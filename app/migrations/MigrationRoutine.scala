@@ -19,6 +19,7 @@ package migrations
 import com.google.inject.Singleton
 import com.mongodb.client.{MongoClient, MongoClients}
 import config.AppConfig
+import migrations.changelogs.cache.PurgeExpiredRecords
 import play.api.Logging
 
 import javax.inject.Inject
@@ -38,6 +39,7 @@ class MigrationRoutine @Inject() (appConfig: AppConfig) extends Logging {
   private val lockManagerConfig = LockManagerConfig(lockMaxTries, lockMaxWaitMillis, lockAcquiredForMillis)
 
   private val migrationsRegistry = MigrationsRegistry()
+    .register(new PurgeExpiredRecords())
 
   ExportsMigrationTool(db, migrationsRegistry, lockManagerConfig).execute()
 
