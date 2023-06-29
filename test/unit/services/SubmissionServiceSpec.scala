@@ -25,8 +25,6 @@ import models.cache.{AssociateUcrAnswers, DisassociateUcrAnswers, MovementAnswer
 import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.times
-import org.mockito.MockitoSugar.{mock, reset, verify, verifyZeroInteractions}
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._

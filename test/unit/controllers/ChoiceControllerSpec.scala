@@ -28,7 +28,7 @@ import models.cache._
 import models.{UcrBlock, UcrType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsJson, Request}

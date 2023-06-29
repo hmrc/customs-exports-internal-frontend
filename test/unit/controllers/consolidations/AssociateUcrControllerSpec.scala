@@ -22,7 +22,7 @@ import forms.{AssociateUcr, MucrOptions}
 import models.cache.AssociateUcrAnswers
 import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat

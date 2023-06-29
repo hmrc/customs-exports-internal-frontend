@@ -26,7 +26,7 @@ import models.summary.FlashKeys
 import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsString, Json}
 import play.api.test.Helpers._

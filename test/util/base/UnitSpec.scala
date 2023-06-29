@@ -16,11 +16,16 @@
 
 package base
 
+import org.mockito.MockitoSugar
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, EitherValues, OptionValues}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.Form
 
-trait UnitSpec extends AnyWordSpec with Matchers {
+trait UnitSpec
+    extends AnyWordSpec with BeforeAndAfterAll with BeforeAndAfterEach with EitherValues with Matchers with MockitoSugar with OptionValues
+    with ScalaFutures {
 
   val JsonBindMaxChars: Long = Form.FromJsonMaxChars
 }

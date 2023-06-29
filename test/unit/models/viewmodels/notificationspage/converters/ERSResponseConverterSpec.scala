@@ -23,8 +23,6 @@ import models.viewmodels.decoder.{Decoder, ICSCode, ROECode, SOECode}
 import models.viewmodels.notificationspage.MovementTotalsResponseType.ERS
 import models.viewmodels.notificationspage.NotificationsPageSingleElement
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.times
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages

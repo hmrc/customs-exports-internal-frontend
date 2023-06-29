@@ -25,7 +25,6 @@ import forms.{ConsignmentReferenceType, ConsignmentReferences, GoodsDeparted, Tr
 import models.cache.{Answers, ArrivalAnswers, Cache, DepartureAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._

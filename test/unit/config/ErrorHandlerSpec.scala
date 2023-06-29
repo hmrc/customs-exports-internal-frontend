@@ -20,7 +20,7 @@ import base.UnitSpec
 import controllers.CSRFSupport
 import models.ReturnToStartException
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Results
 import play.api.test.FakeRequest

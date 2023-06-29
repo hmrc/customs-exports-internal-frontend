@@ -25,7 +25,7 @@ import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
 import models.UcrBlock
 import models.cache.JourneyType.JourneyType
 import models.cache.{Answers, Cache}
-import org.mockito.MockitoSugar.mock
+
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{DefaultFileMimeTypes, FileMimeTypes, FileMimeTypesConfiguration}
 import play.api.i18n.{Langs, Messages, MessagesApi}

@@ -19,7 +19,7 @@ package controllers.ileQuery
 import controllers.ControllerLayerSpec
 import controllers.ileQuery.routes.IleQueryController
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+
 import play.api.libs.json.{JsString, Json}
 import play.api.test.Helpers.{status, _}
 import play.twirl.api.HtmlFormat
