@@ -27,7 +27,7 @@
   items: List[AutoCompleteItem],
   isPageHeading: Boolean,
   args: (Symbol, Any)*
-)(implicit messages: Messages)
+)(implicit request: Request[_], messages: Messages)
 
 @*
 Some fields contains Sequence as type of the field, e.g. countries of routing on destination countries page.
