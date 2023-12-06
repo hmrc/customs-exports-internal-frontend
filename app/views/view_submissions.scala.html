@@ -25,8 +25,7 @@
 @this(
   govukLayout: gds_main_template,
   pageTitle: pageTitle,
-  table: GovukTable,
-  viewDates: ViewDates
+  table: GovukTable
 )
 
 @(submissions: Seq[(Submission, Seq[NotificationFrontendModel])])(implicit request: Request[_], messages: Messages)
@@ -97,7 +96,7 @@
             classes = submissionTypeClass
           ),
           TableRow(
-            content = Text(viewDates.formatDateAtTime(submission.requestTimestamp)),
+            content = Text(ViewDates.formatDateAtTime(submission.requestTimestamp)),
             classes = dateOfRequestClass
           ),
           TableRow(

@@ -27,23 +27,19 @@ import views.html.components.gds.paragraphBody
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class MovementResponseConverter @Inject() (val decoder: Decoder, viewDates: ViewDates)
-    extends NotificationPageSingleElementConverter with CommonResponseConverter {
+class MovementResponseConverter @Inject() (val decoder: Decoder) extends NotificationPageSingleElementConverter with CommonResponseConverter {
 
   override def convert(notification: NotificationFrontendModel)(implicit messages: Messages): NotificationsPageSingleElement = {
-
     val crcCodeExplanation = notification.crcCode.flatMap(buildCrcCodeExplanation).getOrElse(HtmlFormat.empty)
 
-    val roeCodeExplanation =
-      findDucrEntry(notification.entries).flatMap(_.roe).flatMap(buildRoeCodeExplanation).getOrElse(HtmlFormat.empty)
-    val soeCodeExplanation =
-      findDucrEntry(notification.entries).flatMap(_.soe).flatMap(buildSoeCodeExplanation).getOrElse(HtmlFormat.empty)
-    val icsCodeExplanation =
-      findDucrEntry(notification.entries).flatMap(_.ics).flatMap(buildIcsCodeExplanation).getOrElse(HtmlFormat.empty)
+    val maybeDucrEntry = findDucrEntry(notification.entries)
+    val roeCodeExplanation = maybeDucrEntry.flatMap(_.roe).flatMap(buildRoeCodeExplanation).getOrElse(HtmlFormat.empty)
+    val soeCodeExplanation = maybeDucrEntry.flatMap(_.soe).flatMap(buildSoeCodeExplanation).getOrElse(HtmlFormat.empty)
+    val icsCodeExplanation = maybeDucrEntry.flatMap(_.ics).flatMap(buildIcsCodeExplanation).getOrElse(HtmlFormat.empty)
 
     NotificationsPageSingleElement(
       title = messages("notifications.elem.title.inventoryLinkingMovementResponse"),
-      timestampInfo = viewDates.formatDateAtTime(notification.timestampReceived),
+      timestampInfo = ViewDates.formatDateAtTime(notification.timestampReceived),
       content = new Html(List(crcCodeExplanation, roeCodeExplanation, soeCodeExplanation, icsCodeExplanation))
     )
   }

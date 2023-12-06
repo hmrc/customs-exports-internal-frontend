@@ -45,8 +45,6 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
   private val dateTime: Instant =
     LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
 
-  private val viewDates = new ViewDates()
-
   private def createView(submissions: Seq[(Submission, Seq[NotificationFrontendModel])] = Seq.empty): Html =
     page(submissions)(request, messages)
 
@@ -163,24 +161,24 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
 
       firstDataRowElements.selectFirst(".ucr").text() mustBe s"$validMucr ${messages("submissions.hidden.text", validMucr)}"
       firstDataRowElements.selectFirst(".submission-type").text() mustBe "MUCR"
-      firstDataRowElements.selectFirst(".date-of-request").text() mustBe viewDates.formatDateAtTime(LocalDateTime.of(2019, 10, 31, 0, 0))
+      firstDataRowElements.selectFirst(".date-of-request").text() mustBe ViewDates.formatDateAtTime(LocalDateTime.of(2019, 10, 31, 0, 0))
       firstDataRowElements.selectFirst(".submission-action") must containMessage("submissions.shutmucr")
 
       secondDataRowElements.selectFirst(".ucr").text() mustBe s"$validDucr ${messages("submissions.hidden.text", validDucr)}"
       secondDataRowElements.selectFirst(".submission-type").text() mustBe "DUCR"
-      secondDataRowElements.selectFirst(".date-of-request").text() mustBe viewDates.formatDateAtTime(LocalDateTime.of(2019, 10, 31, 0, 31))
+      secondDataRowElements.selectFirst(".date-of-request").text() mustBe ViewDates.formatDateAtTime(LocalDateTime.of(2019, 10, 31, 0, 31))
       secondDataRowElements.selectFirst(".submission-action") must containMessage("submissions.arrival")
 
       thirdDataRowElements.selectFirst(".ucr").text() mustBe s"$validWholeDucrParts ${messages("submissions.hidden.text", validWholeDucrParts)}"
       thirdDataRowElements.selectFirst(".submission-type") must containMessage("submissions.submissionType.DP")
-      thirdDataRowElements.selectFirst(".date-of-request").text() mustBe viewDates.formatDateAtTime(LocalDateTime.of(2019, 10, 31, 0, 33))
+      thirdDataRowElements.selectFirst(".date-of-request").text() mustBe ViewDates.formatDateAtTime(LocalDateTime.of(2019, 10, 31, 0, 33))
       thirdDataRowElements.selectFirst(".submission-action") must containMessage("submissions.departure")
 
       fourthDataRowElements
         .selectFirst(".ucr")
         .text() mustBe s"$validDucr $validMucr ${messages("submissions.hidden.text", validDucr + ", " + validMucr)}"
       fourthDataRowElements.selectFirst(".submission-type") must containMessage("submissions.submissionType.D")
-      fourthDataRowElements.selectFirst(".date-of-request").text() mustBe viewDates.formatDateAtTime(LocalDateTime.of(2019, 10, 31, 0, 30))
+      fourthDataRowElements.selectFirst(".date-of-request").text() mustBe ViewDates.formatDateAtTime(LocalDateTime.of(2019, 10, 31, 0, 30))
       fourthDataRowElements.selectFirst(".submission-action") must containMessage("submissions.ducrassociation")
     }
 

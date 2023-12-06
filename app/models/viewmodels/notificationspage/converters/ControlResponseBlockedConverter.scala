@@ -16,7 +16,6 @@
 
 package models.viewmodels.notificationspage.converters
 
-import javax.inject.{Inject, Singleton}
 import models.notifications.NotificationFrontendModel
 import models.viewmodels.decoder.Decoder
 import models.viewmodels.notificationspage.NotificationsPageSingleElement
@@ -26,8 +25,10 @@ import play.twirl.api.Html
 import views.ViewDates
 import views.html.components.{notification_errors, paragraph}
 
+import javax.inject.{Inject, Singleton}
+
 @Singleton
-class ControlResponseBlockedConverter @Inject() (decoder: Decoder, viewDates: ViewDates) extends NotificationPageSingleElementConverter {
+class ControlResponseBlockedConverter @Inject() (decoder: Decoder) extends NotificationPageSingleElementConverter {
 
   private val logger = Logger(this.getClass)
 
@@ -37,7 +38,7 @@ class ControlResponseBlockedConverter @Inject() (decoder: Decoder, viewDates: Vi
   override def convert(notification: NotificationFrontendModel)(implicit messages: Messages): NotificationsPageSingleElement =
     NotificationsPageSingleElement(
       title = messages(TitleMessagesKey),
-      timestampInfo = viewDates.formatDateAtTime(notification.timestampReceived),
+      timestampInfo = ViewDates.formatDateAtTime(notification.timestampReceived),
       content = buildContent(notification)
     )
 
@@ -65,5 +66,4 @@ class ControlResponseBlockedConverter @Inject() (decoder: Decoder, viewDates: Vi
         logger.warn(s"Received inventoryLinkingControlResponse with unknown error code: $errorCode")
         None
       }
-
 }

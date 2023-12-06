@@ -25,7 +25,6 @@ import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import views.ViewDates
 
 class ControlResponseRejectedConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
@@ -34,7 +33,7 @@ class ControlResponseRejectedConverterSpec extends UnitSpec with BeforeAndAfterE
   private implicit val messages: Messages = stubMessages()
 
   private val decoder: Decoder = mock[Decoder]
-  private val converter = new ControlResponseRejectedConverter(decoder, new ViewDates())
+  private val converter = new ControlResponseRejectedConverter(decoder)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
