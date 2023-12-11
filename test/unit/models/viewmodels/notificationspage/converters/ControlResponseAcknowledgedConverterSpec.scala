@@ -23,7 +23,6 @@ import models.viewmodels.decoder.ActionCode
 import play.api.test.FakeRequest
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import views.ViewDates
 
 class ControlResponseAcknowledgedConverterSpec extends UnitSpec with MessagesStub {
 
@@ -31,7 +30,7 @@ class ControlResponseAcknowledgedConverterSpec extends UnitSpec with MessagesStu
 
   private implicit val fakeRequest = FakeRequest()
 
-  private val converter = new ControlResponseAcknowledgedConverter(new ViewDates())
+  private val converter = new ControlResponseAcknowledgedConverter
 
   "ControlResponseAcknowledgedConverter on convert" should {
 

@@ -29,7 +29,6 @@ import play.api.test.Helpers.stubMessages
 import play.twirl.api.Html
 import testdata.CommonTestData.correctUcr
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import views.ViewDates
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
@@ -40,7 +39,7 @@ class EMRResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
   private implicit val messages: Messages = stubMessages()
 
   private val decoder: Decoder = mock[Decoder]
-  private val contentBuilder = new EMRResponseConverter(decoder, new ViewDates())
+  private val contentBuilder = new EMRResponseConverter(decoder)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

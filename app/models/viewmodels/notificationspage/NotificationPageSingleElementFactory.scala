@@ -18,7 +18,6 @@ package models.viewmodels.notificationspage
 
 import connectors.exchanges.ActionType.ConsolidationType._
 import connectors.exchanges.ActionType.MovementType._
-import javax.inject.{Inject, Singleton}
 import models.UcrBlock
 import models.UcrType.{Ducr, DucrPart}
 import models.notifications.NotificationFrontendModel
@@ -29,8 +28,10 @@ import play.twirl.api.HtmlFormat
 import views.ViewDates
 import views.html.components.gds.paragraphBody
 
+import javax.inject.{Inject, Singleton}
+
 @Singleton
-class NotificationPageSingleElementFactory @Inject() (responseConverterProvider: ResponseConverterProvider, viewDates: ViewDates) {
+class NotificationPageSingleElementFactory @Inject() (responseConverterProvider: ResponseConverterProvider) {
 
   def build(notification: NotificationFrontendModel)(implicit messages: Messages): NotificationsPageSingleElement = {
     val responseConverter = responseConverterProvider.provideResponseConverter(notification)
@@ -58,7 +59,7 @@ class NotificationPageSingleElementFactory @Inject() (responseConverterProvider:
 
     NotificationsPageSingleElement(
       title = messages(s"notifications.elem.title.${submission.actionType.typeName}"),
-      timestampInfo = viewDates.formatDateAtTime(submission.requestTimestamp),
+      timestampInfo = ViewDates.formatDateAtTime(submission.requestTimestamp),
       content = content
     )
   }

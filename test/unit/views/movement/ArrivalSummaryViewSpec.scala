@@ -16,9 +16,6 @@
 
 package views.movement
 
-import java.time.temporal.ChronoUnit
-import java.time.{LocalDate, LocalTime}
-
 import base.Injector
 import forms.ArrivalDetails
 import forms.common.{Date, Time}
@@ -27,12 +24,14 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import views.html.summary.arrival_summary_page
 import views.{ViewDates, ViewSpec}
 
+import java.time.temporal.ChronoUnit
+import java.time.{LocalDate, LocalTime}
+
 class ArrivalSummaryViewSpec extends ViewSpec with Injector {
 
   private val date = Date(LocalDate.now())
   private val time = Time(LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
   private val answers = ArrivalAnswers(arrivalDetails = Some(ArrivalDetails(date, time)))
-  private val viewDates = new ViewDates()
 
   private implicit val request = journeyRequest(answers)
 
@@ -71,11 +70,10 @@ class ArrivalSummaryViewSpec extends ViewSpec with Injector {
       val view = page(answers)
 
       view.getElementsByClass("govuk-summary-list__key").get(2) must containMessage("summary.arrival.date")
-      view.getElementsByClass("govuk-summary-list__value").get(2).text mustBe viewDates.formatDate(date.date)
+      view.getElementsByClass("govuk-summary-list__value").get(2).text mustBe ViewDates.formatDate(date.date)
 
       view.getElementsByClass("govuk-summary-list__key").get(3) must containMessage("summary.arrival.time")
-      view.getElementsByClass("govuk-summary-list__value").get(3).text mustBe viewDates.formatTime(time.time)
+      view.getElementsByClass("govuk-summary-list__value").get(3).text mustBe ViewDates.formatTime(time.time)
     }
   }
-
 }

@@ -16,9 +16,6 @@
 
 package views.movement
 
-import java.time.temporal.ChronoUnit
-import java.time.{LocalDate, LocalTime}
-
 import base.Injector
 import forms.DepartureDetails
 import forms.common.{Date, Time}
@@ -27,12 +24,14 @@ import play.api.test.Helpers._
 import views.html.summary.departure_summary_page
 import views.{ViewDates, ViewSpec}
 
+import java.time.temporal.ChronoUnit
+import java.time.{LocalDate, LocalTime}
+
 class DepartureSummaryViewSpec extends ViewSpec with Injector {
 
   private val date = Date(LocalDate.now())
   private val time = Time(LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
   private val answers = DepartureAnswers(departureDetails = Some(DepartureDetails(date, time)))
-  private val viewDates = new ViewDates()
 
   private implicit val request = journeyRequest(answers)
 
@@ -41,17 +40,14 @@ class DepartureSummaryViewSpec extends ViewSpec with Injector {
   "View" should {
 
     "render title" in {
-
       departureSummaryPage(answers).getTitle must containMessage("summary.departure.title")
     }
 
     "render heading" in {
-
       departureSummaryPage(answers).getElementById("title") must containMessage("summary.departure.title")
     }
 
     "render back button" in {
-
       val backButton = departureSummaryPage(answers).getBackButton
 
       backButton mustBe defined
@@ -59,7 +55,6 @@ class DepartureSummaryViewSpec extends ViewSpec with Injector {
     }
 
     "render sub-headers for summary sections" in {
-
       val summaryContent = contentAsString(departureSummaryPage(answers))
 
       summaryContent must include(messages("summary.consignmentDetails"))
@@ -73,11 +68,10 @@ class DepartureSummaryViewSpec extends ViewSpec with Injector {
       val view = departureSummaryPage(answers)
 
       view.getElementsByClass("govuk-summary-list__key").get(2) must containMessage("summary.departure.date")
-      view.getElementsByClass("govuk-summary-list__value").get(2).text mustBe viewDates.formatDate(date.date)
+      view.getElementsByClass("govuk-summary-list__value").get(2).text mustBe ViewDates.formatDate(date.date)
 
       view.getElementsByClass("govuk-summary-list__key").get(3) must containMessage("summary.departure.time")
-      view.getElementsByClass("govuk-summary-list__value").get(3).text mustBe viewDates.formatTime(time.time)
+      view.getElementsByClass("govuk-summary-list__value").get(3).text mustBe ViewDates.formatTime(time.time)
     }
   }
-
 }

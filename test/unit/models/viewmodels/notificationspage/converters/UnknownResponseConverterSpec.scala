@@ -23,17 +23,14 @@ import play.api.test.Helpers.stubMessages
 import play.twirl.api.HtmlFormat
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import views.ViewDates
 
 class UnknownResponseConverterSpec extends UnitSpec {
 
   implicit private val messages: Messages = stubMessages()
-  private val converter = new UnknownResponseConverter(new ViewDates())
+  private val converter = new UnknownResponseConverter
 
   "UnknownResponseConverter on convert" should {
-
     "return generic NotificationsPageSingleElement" in {
-
       val input = exampleNotificationFrontendModel(
         responseType = MovementTotalsResponse,
         messageCode = "UNKNOWN",
@@ -47,5 +44,4 @@ class UnknownResponseConverterSpec extends UnitSpec {
       result.content mustBe HtmlFormat.empty
     }
   }
-
 }

@@ -29,7 +29,6 @@ import play.api.test.Helpers.stubMessages
 import play.twirl.api.HtmlFormat
 import testdata.CommonTestData.correctUcr
 import testdata.NotificationTestData.exampleNotificationFrontendModel
-import views.ViewDates
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
@@ -43,7 +42,7 @@ class MovementResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
   private val decoder: Decoder = mock[Decoder]
 
-  private val converter = new MovementResponseConverter(decoder, new ViewDates())
+  private val converter = new MovementResponseConverter(decoder)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
