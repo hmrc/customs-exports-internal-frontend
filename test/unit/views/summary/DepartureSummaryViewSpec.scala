@@ -21,8 +21,9 @@ import forms.DepartureDetails
 import forms.common.{Date, Time}
 import models.cache.DepartureAnswers
 import play.api.test.Helpers._
+import views.ViewSpec
 import views.html.summary.departure_summary_page
-import views.{ViewDates, ViewSpec}
+import views.helpers.ViewDates
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, LocalTime}

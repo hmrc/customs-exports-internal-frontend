@@ -86,10 +86,7 @@ class MucrOptionsViewSpec extends ViewSpec with Injector {
       }
 
       "query Mucr and Associate this consignment to another" in {
-        validateBackbutton(
-          createView(MucrOptions.form, Some(ManageMucrChoice(AssociateThisToMucr))).getBackButton,
-          ManageMucrController.displayPage
-        )
+        validateBackbutton(createView(MucrOptions.form, Some(ManageMucrChoice(AssociateThisToMucr))).getBackButton, ManageMucrController.displayPage)
       }
     }
 

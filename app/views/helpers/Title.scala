@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package views
+package views.helpers
 
 import play.api.i18n.Messages
-import views.Title.NO_SECTION
+import views.helpers.Title.NO_SECTION
 
 case class Title(headingKey: String, sectionKey: String = NO_SECTION, headingArgs: Seq[String] = Seq.empty, hasErrors: Boolean = false) {
 

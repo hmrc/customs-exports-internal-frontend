@@ -21,8 +21,9 @@ import forms.ArrivalDetails
 import forms.common.{Date, Time}
 import models.cache.ArrivalAnswers
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import views.ViewSpec
 import views.html.summary.arrival_summary_page
-import views.{ViewDates, ViewSpec}
+import views.helpers.ViewDates
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, LocalTime}

@@ -21,8 +21,8 @@ import controllers.{CSRFSupport, MessagesStub}
 import models.cache.{Answers, Cache}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData.providerId
