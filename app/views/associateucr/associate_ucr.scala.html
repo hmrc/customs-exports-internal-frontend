@@ -35,9 +35,9 @@
 @(form: Form[AssociateUcr], mucrOptions: MucrOptions)(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("associate.ucr.title", "", Seq(mucrOptions.mucr)),
-    backButton = Some(BackButton(messages("site.back"), ManageMucrController.displayPage))) {
-
+  title = Title("associate.ucr.title", "", Seq(mucrOptions.mucr), hasErrors = form.hasErrors || form.hasGlobalErrors),
+  backButton = Some(BackButton(messages("site.back"), ManageMucrController.displayPage))
+) {
     @formHelper(action = AssociateUcrController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)
 

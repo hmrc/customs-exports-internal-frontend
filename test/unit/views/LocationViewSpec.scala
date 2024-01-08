@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.movement
+package views
 
 import base.Injector
 import controllers.movements.routes.{MovementDetailsController, SpecificDateTimeController}
@@ -22,11 +22,11 @@ import controllers.routes.ChoiceController
 import forms.{Location, SpecificDateTimeChoice}
 import models.cache.{ArrivalAnswers, DepartureAnswers, RetrospectiveArrivalAnswers}
 import testdata.CommonTestData.validDucr
-import views.ViewSpec
 import views.html.location
 
 class LocationViewSpec extends ViewSpec with Injector {
 
+  private val form = Location.form()
   private val page = instanceOf[location]
 
   private val userDateTimeChoice = SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime)
@@ -34,21 +34,29 @@ class LocationViewSpec extends ViewSpec with Injector {
 
   "View" should {
 
+    "have the page's title prefixed with 'Error:'" when {
+      "the page has errors" in {
+        implicit val request = journeyRequest(ArrivalAnswers())
+        val view = page(form.withGlobalError("error.summary.title"), validDucr, None)
+        view.head.getElementsByTag("title").first.text must startWith("Error: ")
+      }
+    }
+
     "render title" when {
 
       "used for Arrival journey" in {
         implicit val request = journeyRequest(ArrivalAnswers())
-        page(Location.form(), validDucr, None).getTitle must containMessage("location.question")
+        page(form, validDucr, None).getTitle must containMessage("location.question")
       }
 
       "used for Retrospective Arrival journey" in {
         implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
-        page(Location.form(), validDucr, None).getTitle must containMessage("location.question.retrospectiveArrival")
+        page(form, validDucr, None).getTitle must containMessage("location.question.retrospectiveArrival")
       }
 
       "used for Departure journey" in {
         implicit val request = journeyRequest(DepartureAnswers())
-        page(Location.form(), validDucr, None).getTitle must containMessage("location.question")
+        page(form, validDucr, None).getTitle must containMessage("location.question")
       }
     }
 
@@ -56,7 +64,7 @@ class LocationViewSpec extends ViewSpec with Injector {
 
       "used for Arrival journey" in {
         implicit val request = journeyRequest(ArrivalAnswers())
-        val locationPage = page(Location.form(), validDucr, None)
+        val locationPage = page(form, validDucr, None)
 
         locationPage.getElementById("section-header") must containMessage("movement.sectionHeading.ARRIVE", validDucr)
         locationPage.getTitle must containMessage("location.question")
@@ -65,7 +73,7 @@ class LocationViewSpec extends ViewSpec with Injector {
 
       "used for Retrospective Arrival journey" in {
         implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
-        val locationPage = page(Location.form(), validDucr, None)
+        val locationPage = page(form, validDucr, None)
 
         locationPage.getElementById("section-header") must containMessage("movement.sectionHeading.RETROSPECTIVE_ARRIVE", validDucr)
         locationPage.getTitle must containMessage("location.question.retrospectiveArrival")
@@ -74,7 +82,7 @@ class LocationViewSpec extends ViewSpec with Injector {
 
       "used for Departure journey" in {
         implicit val request = journeyRequest(DepartureAnswers())
-        val locationPage = page(Location.form(), validDucr, None)
+        val locationPage = page(form, validDucr, None)
 
         locationPage.getElementById("section-header") must containMessage("movement.sectionHeading.DEPART", validDucr)
         locationPage.getTitle must containMessage("location.question")
@@ -89,7 +97,7 @@ class LocationViewSpec extends ViewSpec with Injector {
         "user is on Arrival journey with user specified date-time" in {
           implicit val request = journeyRequest(ArrivalAnswers())
 
-          val backButton = page(Location.form(), validDucr, Some(userDateTimeChoice)).getElementById("back-link")
+          val backButton = page(form, validDucr, Some(userDateTimeChoice)).getElementById("back-link")
 
           backButton.text() mustBe messages("site.back")
           backButton.attr("href") mustBe MovementDetailsController.displayPage.toString
@@ -98,7 +106,7 @@ class LocationViewSpec extends ViewSpec with Injector {
         "user is on Departure journey with user specified date-time" in {
           implicit val request = journeyRequest(DepartureAnswers())
 
-          val backButton = page(Location.form(), validDucr, Some(userDateTimeChoice)).getElementById("back-link")
+          val backButton = page(form, validDucr, Some(userDateTimeChoice)).getElementById("back-link")
 
           backButton.text() mustBe messages("site.back")
           backButton.attr("href") mustBe MovementDetailsController.displayPage.toString
@@ -110,7 +118,7 @@ class LocationViewSpec extends ViewSpec with Injector {
         "user is on Arrival journey with current date-time" in {
           implicit val request = journeyRequest(ArrivalAnswers())
 
-          val backButton = page(Location.form(), validDucr, Some(currentDateTimeChoice)).getElementById("back-link")
+          val backButton = page(form, validDucr, Some(currentDateTimeChoice)).getElementById("back-link")
 
           backButton.text() mustBe messages("site.back")
           backButton.attr("href") mustBe SpecificDateTimeController.displayPage.toString()
@@ -119,7 +127,7 @@ class LocationViewSpec extends ViewSpec with Injector {
         "user is on Departure journey with current date-time" in {
           implicit val request = journeyRequest(DepartureAnswers())
 
-          val backButton = page(Location.form(), validDucr, Some(currentDateTimeChoice)).getElementById("back-link")
+          val backButton = page(form, validDucr, Some(currentDateTimeChoice)).getElementById("back-link")
 
           backButton.text() mustBe messages("site.back")
           backButton.attr("href") mustBe SpecificDateTimeController.displayPage.toString()
@@ -130,7 +138,7 @@ class LocationViewSpec extends ViewSpec with Injector {
         "user is on Retrospective Arrival journey" in {
           implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
 
-          val backButton = page(Location.form(), validDucr, None).getElementById("back-link")
+          val backButton = page(form, validDucr, None).getElementById("back-link")
 
           backButton.text() mustBe messages("site.back")
           backButton.attr("href") mustBe ChoiceController.displayPage.toString
@@ -144,13 +152,13 @@ class LocationViewSpec extends ViewSpec with Injector {
       "no errors" in {
         implicit val request = journeyRequest(ArrivalAnswers())
 
-        page(Location.form(), validDucr, None).getErrorSummary mustBe empty
+        page(form, validDucr, None).getErrorSummary mustBe empty
       }
 
       "some errors" in {
         implicit val request = journeyRequest(ArrivalAnswers())
 
-        val view = page(Location.form().withError("code", "error.required"), validDucr, None)
+        val view = page(form.withError("code", "error.required"), validDucr, None)
         view.getElementsByClass("govuk-error-summary__title").text() mustBe messages("error.summary.title")
       }
     }

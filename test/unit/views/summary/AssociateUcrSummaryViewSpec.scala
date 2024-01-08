@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.associateucr
+package views.summary
 
 import base.Injector
 import forms.ManageMucrChoice._

@@ -37,9 +37,9 @@
 @(form: Form[Transport], consignmentReference: String)(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("transport.title"),
-    backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.GoodsDepartedController.displayPage))) {
-
+  title = Title("transport.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
+  backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.GoodsDepartedController.displayPage))
+) {
     @formHelper(action = controllers.movements.routes.TransportController.saveTransport, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)
 

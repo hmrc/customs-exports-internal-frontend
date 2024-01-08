@@ -38,10 +38,9 @@
 }
 
 @govukLayout(
-  title = Title("ducrPartDetails.title", "ducrPartDetails.heading"),
+  title = Title("ducrPartDetails.title", "ducrPartDetails.heading", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))
 ) {
-
   @formHelper(action = DucrPartDetailsController.submitDucrPartDetails, Symbol("autoComplete") -> "off") {
     @errorSummary(form.errors)
 

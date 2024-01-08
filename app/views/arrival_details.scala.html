@@ -36,8 +36,8 @@
 @(form: Form[ArrivalDetails], consignmentReferences: Option[ConsignmentReferences])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("arrivalDetails.header"),
-    backButton = Some(BackButton(messages("site.back"), SpecificDateTimeController.displayPage))
+  title = Title("arrivalDetails.header", hasErrors = form.hasErrors || form.hasGlobalErrors),
+  backButton = Some(BackButton(messages("site.back"), SpecificDateTimeController.displayPage))
 ) {
     @formHelper(action = MovementDetailsController.saveMovementDetails, Symbol("autoComplete") -> "off") {
         @errorSummary(DateTimeErrors.processErrors(form.errors, "dateOfArrival", "timeOfArrival"))

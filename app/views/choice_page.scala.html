@@ -44,8 +44,10 @@
   }
 }
 
-@govukLayout(title = Title("movement.choice.title"), backButton = backLink) {
-
+@govukLayout(
+  title = Title("movement.choice.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
+  backButton = backLink
+) {
     @formHelper(action = ChoiceController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)
 
@@ -100,6 +102,3 @@
         @govukButton(Button(content = Text(messages("site.continue"))))
     }
 }
-
-
-

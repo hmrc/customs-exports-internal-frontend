@@ -36,38 +36,38 @@
 @sectionHeaderKey = @{s"specific.datetime.${request.answers.`type`.toString.toLowerCase}.heading"}
 
 @govukLayout(
-  title = Title("specific.datetime.heading"),
-  backButton = Some(BackButton(messages("site.back"), ChoiceController.displayPage))) {
+  title = Title("specific.datetime.heading", hasErrors = form.hasErrors || form.hasGlobalErrors),
+  backButton = Some(BackButton(messages("site.back"), ChoiceController.displayPage))
+) {
+    @formHelper(action = controllers.movements.routes.SpecificDateTimeController.submit, Symbol("autoComplete") -> "off") {
+        @errorSummary(form.errors)
 
-  @formHelper(action = controllers.movements.routes.SpecificDateTimeController.submit, Symbol("autoComplete") -> "off") {
-    @errorSummary(form.errors)
+        @sectionHeader(messages(sectionHeaderKey, consignmentReferenceValue))
 
-    @sectionHeader(messages(sectionHeaderKey, consignmentReferenceValue))
-
-    @govukRadios(Radios(
-      name = "choice",
-      fieldset = Some(Fieldset(
-        legend = Some(Legend(
-          content = Text(messages("specific.datetime.heading")),
-          isPageHeading = true,
-          classes = "govuk-fieldset__legend govuk-fieldset__legend--l"
+        @govukRadios(Radios(
+          name = "choice",
+          fieldset = Some(Fieldset(
+            legend = Some(Legend(
+              content = Text(messages("specific.datetime.heading")),
+              isPageHeading = true,
+              classes = "govuk-fieldset__legend govuk-fieldset__legend--l"
+            ))
+          )),
+          errorMessage = form("choice").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
+          items = Seq(
+            RadioItem(
+              value = Some(SpecificDateTimeChoice.UserDateTime),
+              content = Text(messages("specific.datetime.userDateTime")),
+              checked = form("choice").value.contains(SpecificDateTimeChoice.UserDateTime)
+            ),
+            RadioItem(
+              value = Some(SpecificDateTimeChoice.CurrentDateTime),
+              content = Text(messages("specific.datetime.currentDateTime")),
+              checked = form("choice").value.contains(SpecificDateTimeChoice.CurrentDateTime)
+            )
+          )
         ))
-      )),
-      errorMessage = form("choice").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
-      items = Seq(
-        RadioItem(
-          value = Some(SpecificDateTimeChoice.UserDateTime),
-          content = Text(messages("specific.datetime.userDateTime")),
-          checked = form("choice").value.contains(SpecificDateTimeChoice.UserDateTime)
-        ),
-        RadioItem(
-          value = Some(SpecificDateTimeChoice.CurrentDateTime),
-          content = Text(messages("specific.datetime.currentDateTime")),
-          checked = form("choice").value.contains(SpecificDateTimeChoice.CurrentDateTime)
-        )
-      )
-    ))
 
-    @govukButton(Button(content = Text(messages("site.continue"))))
-  }
+        @govukButton(Button(content = Text(messages("site.continue"))))
+    }
 }

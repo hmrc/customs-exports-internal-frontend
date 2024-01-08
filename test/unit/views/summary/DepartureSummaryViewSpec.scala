@@ -14,65 +14,63 @@
  * limitations under the License.
  */
 
-package views.movement
+package views.summary
 
 import base.Injector
-import forms.ArrivalDetails
+import forms.DepartureDetails
 import forms.common.{Date, Time}
-import models.cache.ArrivalAnswers
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import views.html.summary.arrival_summary_page
+import models.cache.DepartureAnswers
+import play.api.test.Helpers._
+import views.html.summary.departure_summary_page
 import views.{ViewDates, ViewSpec}
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, LocalTime}
 
-class ArrivalSummaryViewSpec extends ViewSpec with Injector {
+class DepartureSummaryViewSpec extends ViewSpec with Injector {
 
   private val date = Date(LocalDate.now())
   private val time = Time(LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
-  private val answers = ArrivalAnswers(arrivalDetails = Some(ArrivalDetails(date, time)))
+  private val answers = DepartureAnswers(departureDetails = Some(DepartureDetails(date, time)))
 
   private implicit val request = journeyRequest(answers)
 
-  private val page = instanceOf[arrival_summary_page]
+  private val departureSummaryPage = instanceOf[departure_summary_page]
 
   "View" should {
 
     "render title" in {
-
-      page(answers).getTitle must containMessage("summary.arrival.title")
+      departureSummaryPage(answers).getTitle must containMessage("summary.departure.title")
     }
 
     "render heading" in {
-
-      page(answers).getElementById("title") must containMessage("summary.arrival.title")
+      departureSummaryPage(answers).getElementById("title") must containMessage("summary.departure.title")
     }
 
     "render back button" in {
-
-      val backButton = page(answers).getBackButton
+      val backButton = departureSummaryPage(answers).getBackButton
 
       backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.LocationController.displayPage)
+      backButton.get must haveHref(controllers.movements.routes.TransportController.displayPage)
     }
 
     "render sub-headers for summary sections" in {
-
-      val summaryContent = contentAsString(page(answers))
+      val summaryContent = contentAsString(departureSummaryPage(answers))
 
       summaryContent must include(messages("summary.consignmentDetails"))
-      summaryContent must include(messages("arrivalDetails.title"))
       summaryContent must include(messages("location.title"))
+      summaryContent must include(messages("departureDetails.title"))
+      summaryContent must include(messages("goodsDeparted.title"))
+      summaryContent must include(messages("transport.title"))
     }
 
-    "render formatted arrival date and time" in {
-      val view = page(answers)
+    "render formatted departure date and time" in {
+      val view = departureSummaryPage(answers)
 
-      view.getElementsByClass("govuk-summary-list__key").get(2) must containMessage("summary.arrival.date")
+      view.getElementsByClass("govuk-summary-list__key").get(2) must containMessage("summary.departure.date")
       view.getElementsByClass("govuk-summary-list__value").get(2).text mustBe ViewDates.formatDate(date.date)
 
-      view.getElementsByClass("govuk-summary-list__key").get(3) must containMessage("summary.arrival.time")
+      view.getElementsByClass("govuk-summary-list__key").get(3) must containMessage("summary.departure.time")
       view.getElementsByClass("govuk-summary-list__value").get(3).text mustBe ViewDates.formatTime(time.time)
     }
   }

@@ -39,8 +39,10 @@
   else ChoiceController.displayPage
 }
 
-@govukLayout(title = Title("mucrOptions.title"), backButton = Some(BackButton(messages("site.back"), backCall))) {
-
+@govukLayout(
+  title = Title("mucrOptions.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
+  backButton = Some(BackButton(messages("site.back"), backCall))
+) {
     @formHelper(action = MucrOptionsController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)
 

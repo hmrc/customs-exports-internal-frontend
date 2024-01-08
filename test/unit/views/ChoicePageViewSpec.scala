@@ -30,24 +30,29 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
+  private val form = Choice.form()
   private val page = instanceOf[choice_page]
 
   "Choice page page" should {
 
-    "render title" in {
+    "have the page's title prefixed with 'Error:'" when {
+      "the page has errors" in {
+        val view = page(form.withGlobalError("error.summary.title"))
+        view.head.getElementsByTag("title").first.text must startWith("Error: ")
+      }
+    }
 
-      page(Choice.form()).getTitle must containMessage("movement.choice.title")
+    "render title" in {
+      page(form).getTitle must containMessage("movement.choice.title")
     }
 
     "render section header" in {
-
-      page(Choice.form(), Some(UcrBlock(ucr = "9GB123456", ucrType = Ducr)))
+      page(form, Some(UcrBlock(ucr = "9GB123456", ucrType = Ducr)))
         .getElementById("section-header") must containMessage("movement.choice.sectionHeading", "9GB123456")
     }
 
     "render all options for radio button" in {
-
-      val choicePage = page(Choice.form())
+      val choicePage = page(form)
 
       choicePage.getElementsByAttributeValue("for", "choice").text() mustBe messages("movement.choice.arrival.label")
       choicePage.getElementsByAttributeValue("for", "choice-2").text() mustBe messages("movement.choice.associate.label")
@@ -60,13 +65,11 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
     "render error summary" when {
 
       "no errors" in {
-
-        page(Choice.form()).getErrorSummary mustBe empty
+        page(form).getErrorSummary mustBe empty
       }
 
       "some errors" in {
-
-        val view: Document = page(Choice.form().withError(FormError("choice", "error.required")))
+        val view: Document = page(form.withError(FormError("choice", "error.required")))
 
         view must haveGovUkGlobalErrorSummary
         view must haveGovUkFieldError("choice", messages("error.required"))
@@ -74,30 +77,22 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
     }
 
     "render back link" when {
-
       "form contains ucr block" in {
-
-        val backButton = page(Choice.form(), Some(UcrBlock(ucr = "ucr", ucrType = Ducr))).getElementById("back-link")
-
+        val backButton = page(form, Some(UcrBlock(ucr = "ucr", ucrType = Ducr))).getElementById("back-link")
         backButton must haveHref(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation("ucr"))
       }
     }
 
     "not render back link" when {
-
       "form does not contain ucr block" in {
-
-        val backButton = Option(page(Choice.form(), None).getElementById("back-link"))
-
+        val backButton = Option(page(form, None).getElementById("back-link"))
         backButton mustNot be(defined)
       }
     }
 
     "not render 'Shut Mucr' option" when {
-
       "ILE query was for a Ducr" in {
-
-        val choicePage = page(Choice.form(), Some(UcrBlock(ucr = "ducr", ucrType = Ducr)))
+        val choicePage = page(form, Some(UcrBlock(ucr = "ducr", ucrType = Ducr)))
 
         choicePage.getElementsByClass("govuk-radios__input").size() mustBe 5
 
@@ -112,10 +107,8 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
     }
 
     "not render 'Shut Mucr' and 'Retrospective arrival` option" when {
-
       "ILE query was for a Ducr" in {
-
-        val choicePage = page(Choice.form(), Some(UcrBlock(ucr = "ducr-part", ucrType = DucrPart)))
+        val choicePage = page(form, Some(UcrBlock(ucr = "ducr-part", ucrType = DucrPart)))
 
         choicePage.getElementsByClass("govuk-radios__input").size() mustBe 4
 
@@ -130,10 +123,8 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
     }
 
     "render 'Shut Mucr' option" when {
-
       "ILE query was for a Mucr" in {
-
-        val choicePage = page(Choice.form(), Some(UcrBlock(ucr = "mucr", ucrType = Mucr)))
+        val choicePage = page(form, Some(UcrBlock(ucr = "mucr", ucrType = Mucr)))
 
         choicePage.getElementsByClass("govuk-radios__input").size() mustBe 6
 

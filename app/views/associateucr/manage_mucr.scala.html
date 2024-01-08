@@ -35,9 +35,9 @@
 @(form: Form[ManageMucrChoice], queryUcr: Option[UcrBlock])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("manageMucr.title"),
-    backButton = Some(BackButton(messages("site.back"), ChoiceController.displayPage))) {
-
+  title = Title("manageMucr.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
+  backButton = Some(BackButton(messages("site.back"), ChoiceController.displayPage))
+) {
     @formHelper(action = ManageMucrController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)
 

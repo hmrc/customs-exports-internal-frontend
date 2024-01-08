@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.summary
 
 import base.Injector
 import controllers.ileQuery.routes.IleQueryController
@@ -25,6 +25,7 @@ import models.cache.JourneyType._
 import models.cache._
 import models.summary.Confirmation
 import play.api.test.FakeRequest
+import views.ViewSpec
 import views.html.summary.confirmation_page
 
 class ConfirmationPageViewSpec extends ViewSpec with Injector {

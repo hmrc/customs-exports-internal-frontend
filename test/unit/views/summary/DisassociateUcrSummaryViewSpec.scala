@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.disassociateucr
+package views.summary
 
 import base.Injector
 import controllers.routes.ChoiceController
