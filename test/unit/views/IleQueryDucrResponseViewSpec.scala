@@ -21,6 +21,7 @@ import models.notifications.EntryStatus
 import models.notifications.queries.{DucrInfo, MovementInfo, MucrInfo}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
+import play.twirl.api.HtmlFormat.Appendable
 import views.html.ile_query_ducr_response
 
 class IleQueryDucrResponseViewSpec extends ViewSpec with Injector {
@@ -34,7 +35,7 @@ class IleQueryDucrResponseViewSpec extends ViewSpec with Injector {
   val ducrInfo = DucrInfo(ucr = "ducr", declarationId = "id", movements = Seq(movement), entryStatus = Some(status))
   val parentInfo = MucrInfo("parentUcr")
 
-  private def view(info: DucrInfo = ducrInfo, parent: Option[MucrInfo] = None) = page(info, parent)
+  private def view(info: DucrInfo = ducrInfo, parent: Option[MucrInfo] = None): Appendable = page(info, parent)
 
   "Ile Query page" should {
 

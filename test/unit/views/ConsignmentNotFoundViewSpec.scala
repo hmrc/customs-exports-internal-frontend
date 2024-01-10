@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package views.movement
+package views
 
 import base.Injector
 import controllers.ileQuery.routes.FindConsignmentController
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import views.ViewSpec
 import views.html.consignment_not_found_page
 
 class ConsignmentNotFoundViewSpec extends ViewSpec with Injector {

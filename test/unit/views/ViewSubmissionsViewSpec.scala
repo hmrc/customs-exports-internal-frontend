@@ -31,6 +31,7 @@ import testdata.CommonTestData._
 import testdata.ConsolidationTestData._
 import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
+import views.helpers.ViewDates
 import views.html.view_submissions
 
 import java.time.temporal.ChronoUnit.MINUTES

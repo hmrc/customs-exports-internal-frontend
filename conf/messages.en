@@ -48,8 +48,11 @@ site.inputText.newMucr.label.hint = For example ‘GB/123456789100-AB123’.
 
 site.accessibility.error = Error:
 
-title.format={0} - {1} - GOV.UK
-title.withSection.format={0} - {1} - {2} - GOV.UK
+title.format = {0} - {1} - GOV.UK
+title.withErrors.format = Error: {0} - {1} - GOV.UK
+
+title.withSection.format = {0} - {1} - {2} - GOV.UK
+title.withErrors.withSection.format = Error: {0} - {1} - {2} - GOV.UK
 
 error.unknown = Unknown error.
 error.required = Please enter a value.

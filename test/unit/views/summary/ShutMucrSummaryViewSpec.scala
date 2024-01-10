@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.shutmucr
+package views.summary
 
 import base.Injector
 import models.cache.ShutMucrAnswers

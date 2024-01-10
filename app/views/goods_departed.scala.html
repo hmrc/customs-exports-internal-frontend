@@ -18,7 +18,7 @@
 @import controllers.exchanges.JourneyRequest
 @import forms.GoodsDeparted
 @import forms.GoodsDeparted.DepartureLocation.{BackIntoTheUk, OutOfTheUk}
-@import views.Title
+@import views.helpers.Title
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.components.BackButton
 
@@ -37,11 +37,10 @@
 @sectionHeaderKey(request: JourneyRequest[_]) = @{s"movement.sectionHeading.${request.answers.`type`.toString}"}
 
 @govukLayout(
-    title = Title("goodsDeparted.title"),
-    backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.LocationController.displayPage))) {
-
+  title = Title("goodsDeparted.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
+  backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.LocationController.displayPage))
+) {
     @formHelper(action = controllers.movements.routes.GoodsDepartedController.saveGoodsDeparted, Symbol("autoComplete") -> "off") {
-
       @errorSummary(form.errors)
 
       @sectionHeader(messages(sectionHeaderKey(request), consignmentReference))

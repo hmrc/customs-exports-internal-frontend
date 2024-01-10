@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.movement
+package views
 
 import base.Injector
 import controllers.movements.routes.SpecificDateTimeController
@@ -26,7 +26,6 @@ import play.api.data.Form
 import play.twirl.api.Html
 import testdata.CommonTestData.correctUcr
 import testdata.MovementsTestData
-import views.ViewSpec
 import views.html.arrival_details
 
 import java.text.DecimalFormat
@@ -37,6 +36,8 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
 
   private implicit val request = journeyRequest(ArrivalAnswers())
   private val movementDetails = MovementsTestData.movementDetails
+
+  private val form = movementDetails.arrivalForm
   private val page = instanceOf[arrival_details]
 
   private val consignmentReferences = ConsignmentReferences(ConsignmentReferenceType.D, referenceValue = correctUcr)
@@ -54,8 +55,15 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
 
   "ArrivalDetails View" when {
 
+    "the page has errors" should {
+      "have the page's title prefixed with 'Error:'" in {
+        val view = createView(form.withGlobalError("error.summary.title"))
+        view.head.getElementsByTag("title").first.text must startWith("Error: ")
+      }
+    }
+
     "provided with empty form" should {
-      val emptyView = createView(movementDetails.arrivalForm)
+      val emptyView = createView(form)
 
       "have title" in {
         emptyView.getTitle must containMessage("arrivalDetails.header")
@@ -135,7 +143,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
     "provided with form containing data" should {
       val date = LocalDate.now().minusDays(1)
       val time = LocalTime.of(1, 2)
-      val viewWithData = createView(movementDetails.arrivalForm.fill(ArrivalDetails(Date(date), Time(time))))
+      val viewWithData = createView(form.fill(ArrivalDetails(Date(date), Time(time))))
 
       "have value in day field" in {
         viewWithData.getElementById("dateOfArrival_day").`val`() mustBe convertIntoTwoDigitFormat(date.getDayOfMonth)
@@ -159,7 +167,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
     }
 
     "provided with Date error" should {
-      val viewWithDateError: Document = createView(movementDetails.arrivalForm.withError("dateOfArrival", "date.error.invalid"))
+      val viewWithDateError: Document = createView(form.withError("dateOfArrival", "date.error.invalid"))
 
       "have error summary" in {
         viewWithDateError must haveGovUkGlobalErrorSummary
@@ -172,7 +180,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
     }
 
     "provided with Time error" should {
-      val viewWithTimeError: Document = createView(movementDetails.arrivalForm.withError("timeOfArrival", "time.error.invalid"))
+      val viewWithTimeError: Document = createView(form.withError("timeOfArrival", "time.error.invalid"))
 
       "have error summary" in {
         viewWithTimeError must haveGovUkGlobalErrorSummary
@@ -185,7 +193,7 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
 
     "provided with form level DateTime error" should {
       val viewWithDateError: Document = createView(
-        movementDetails.arrivalForm
+        form
           .withError("dateOfArrival", "arrival.details.error.overdue")
           .withError("timeOfArrival", "arrival.details.error.overdue")
       )

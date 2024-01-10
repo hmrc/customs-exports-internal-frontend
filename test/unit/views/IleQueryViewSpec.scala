@@ -29,11 +29,19 @@ class IleQueryViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
+  private val form = IleQueryForm.form
   private val page = instanceOf[ile_query]
 
-  private val view: Appendable = page(IleQueryForm.form)
+  private val view: Appendable = page(form)
 
   "Ile Query page" should {
+
+    "have the page's title prefixed with 'Error:'" when {
+      "the page has errors" in {
+        val view = page(form.withGlobalError("error.summary.title"))
+        view.head.getElementsByTag("title").first.text must startWith("Error: ")
+      }
+    }
 
     "render title" in {
       view.getTitle must containMessage("ileQuery.title")
@@ -51,7 +59,7 @@ class IleQueryViewSpec extends ViewSpec with Injector {
       }
 
       "some errors" in {
-        val errorView = page(IleQueryForm.form.withError("error", "error.required"))
+        val errorView = page(form.withError("error", "error.required"))
         val govukErrorSummary = errorView.getElementsByClass("govuk-error-summary__title").first
         govukErrorSummary.text mustBe messages("error.summary.title")
       }

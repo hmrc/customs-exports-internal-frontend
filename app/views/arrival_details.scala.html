@@ -17,7 +17,7 @@
 @import controllers.movements.routes.{MovementDetailsController, SpecificDateTimeController}
 @import forms.{ArrivalDetails, ConsignmentReferences}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.Title
+@import views.helpers.Title
 @import views.components.BackButton
 @import views.html.components.gds._
 @import forms.common.DateTimeErrors
@@ -36,8 +36,8 @@
 @(form: Form[ArrivalDetails], consignmentReferences: Option[ConsignmentReferences])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("arrivalDetails.header"),
-    backButton = Some(BackButton(messages("site.back"), SpecificDateTimeController.displayPage))
+  title = Title("arrivalDetails.header", hasErrors = form.hasErrors || form.hasGlobalErrors),
+  backButton = Some(BackButton(messages("site.back"), SpecificDateTimeController.displayPage))
 ) {
     @formHelper(action = MovementDetailsController.saveMovementDetails, Symbol("autoComplete") -> "off") {
         @errorSummary(DateTimeErrors.processErrors(form.errors, "dateOfArrival", "timeOfArrival"))

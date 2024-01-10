@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package views
+package views.helpers
 
 import play.api.i18n.Messages
-import views.Title.NO_SECTION
+import views.helpers.Title.NO_SECTION
 
-case class Title(headingKey: String, sectionKey: String = NO_SECTION, headingArgs: Seq[String] = Seq.empty) {
+case class Title(headingKey: String, sectionKey: String = NO_SECTION, headingArgs: Seq[String] = Seq.empty, hasErrors: Boolean = false) {
 
   def format(implicit messages: Messages): String = {
     val heading = messages(headingKey, headingArgs: _*)
     val service = messages("service.name")
+    val withErrors = if (hasErrors) ".withErrors" else ""
 
-    if (sectionKey.nonEmpty) {
-      messages("title.withSection.format", heading, messages(sectionKey), service)
-    } else {
-      messages("title.format", heading, service)
-    }
-
+    if (sectionKey.isEmpty) messages(s"title${withErrors}.format", heading, service)
+    else messages(s"title${withErrors}.withSection.format", heading, messages(sectionKey), service)
   }
 }
 

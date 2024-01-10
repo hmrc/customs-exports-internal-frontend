@@ -17,6 +17,8 @@
 package views.associateucr
 
 import base.Injector
+import controllers.consolidations.routes.ManageMucrController
+import controllers.routes.ChoiceController
 import forms.ManageMucrChoice._
 import forms.{ManageMucrChoice, MucrOptions}
 import models.UcrBlock
@@ -40,6 +42,13 @@ class MucrOptionsViewSpec extends ViewSpec with Injector {
     page(form, queryUcr, manageMucrChoice)
 
   "MUCR options" should {
+
+    "have the page's title prefixed with 'Error:'" when {
+      "the page has errors" in {
+        val view = createView(MucrOptions.form.withGlobalError("error.summary.title"))
+        view.head.getElementsByTag("title").first.text must startWith("Error: ")
+      }
+    }
 
     val view = createView()
 
@@ -73,14 +82,11 @@ class MucrOptionsViewSpec extends ViewSpec with Injector {
       }
 
       "query Ducr" in {
-        validateBackbutton(createView().getBackButton, controllers.routes.ChoiceController.displayPage)
+        validateBackbutton(createView().getBackButton, ChoiceController.displayPage)
       }
 
       "query Mucr and Associate this consignment to another" in {
-        validateBackbutton(
-          createView(MucrOptions.form, Some(ManageMucrChoice(AssociateThisToMucr))).getBackButton,
-          controllers.consolidations.routes.ManageMucrController.displayPage
-        )
+        validateBackbutton(createView(MucrOptions.form, Some(ManageMucrChoice(AssociateThisToMucr))).getBackButton, ManageMucrController.displayPage)
       }
     }
 

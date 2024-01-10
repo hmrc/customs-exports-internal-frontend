@@ -19,7 +19,7 @@
 @import forms.{AssociateUcr, MucrOptions}
 @import models.UcrType
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.Title
+@import views.helpers.Title
 @import views.components.BackButton
 
 @this(
@@ -35,9 +35,9 @@
 @(form: Form[AssociateUcr], mucrOptions: MucrOptions)(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("associate.ucr.title", "", Seq(mucrOptions.mucr)),
-    backButton = Some(BackButton(messages("site.back"), ManageMucrController.displayPage))) {
-
+  title = Title("associate.ucr.title", "", Seq(mucrOptions.mucr), hasErrors = form.hasErrors || form.hasGlobalErrors),
+  backButton = Some(BackButton(messages("site.back"), ManageMucrController.displayPage))
+) {
     @formHelper(action = AssociateUcrController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)
 

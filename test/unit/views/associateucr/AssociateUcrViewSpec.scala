@@ -17,6 +17,7 @@
 package views.associateucr
 
 import base.Injector
+import controllers.consolidations.routes.ManageMucrController
 import models.UcrType.{Ducr, Mucr}
 import forms.{AssociateUcr, MucrOptions}
 import play.api.data.Form
@@ -29,6 +30,8 @@ import views.{ViewMatchers, ViewSpec}
 class AssociateUcrViewSpec extends ViewSpec with ViewMatchers with Injector {
 
   implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
+
+  private val form = AssociateUcr.form
   private val page = instanceOf[associate_ucr]
 
   val mucrOptions = MucrOptions("MUCR")
@@ -38,9 +41,16 @@ class AssociateUcrViewSpec extends ViewSpec with ViewMatchers with Injector {
 
   "Associate Ucr View" when {
 
+    "the page has errors" should {
+      "have the page's title prefixed with 'Error:'" in {
+        val view = createView(mucrOptions, form.withGlobalError("error.summary.title"))
+        view.head.getElementsByTag("title").first.text must startWith("Error: ")
+      }
+    }
+
     "form is empty" should {
 
-      val emptyView = createView(mucrOptions, AssociateUcr.form)
+      val emptyView = createView(mucrOptions, form)
 
       "display 'Back' button" in {
         val backButton = emptyView.getBackButton
@@ -48,7 +58,7 @@ class AssociateUcrViewSpec extends ViewSpec with ViewMatchers with Injector {
         backButton mustBe defined
         backButton.foreach { button =>
           button must containMessage("site.back")
-          button must haveHref(controllers.consolidations.routes.ManageMucrController.displayPage)
+          button must haveHref(ManageMucrController.displayPage)
         }
       }
 
@@ -88,8 +98,7 @@ class AssociateUcrViewSpec extends ViewSpec with ViewMatchers with Injector {
     }
 
     "form contains 'MUCR' with value" should {
-
-      val mucrView = createView(mucrOptions, AssociateUcr.form.fill(AssociateUcr(Mucr, "1234")))
+      val mucrView = createView(mucrOptions, form.fill(AssociateUcr(Mucr, "1234")))
 
       "display value" in {
         mucrView.getElementById("mucr").`val`() mustBe "1234"
@@ -97,8 +106,7 @@ class AssociateUcrViewSpec extends ViewSpec with ViewMatchers with Injector {
     }
 
     "form contains 'DUCR' with value" should {
-
-      val ducrView = createView(mucrOptions, AssociateUcr.form.fill(AssociateUcr(Ducr, "1234")))
+      val ducrView = createView(mucrOptions, form.fill(AssociateUcr(Ducr, "1234")))
 
       "display value" in {
         ducrView.getElementById("ducr").`val`() mustBe "1234"

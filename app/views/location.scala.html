@@ -21,7 +21,7 @@
 @import forms.Location
 @import models.cache.JourneyType
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.Title
+@import views.helpers.Title
 @import views.components.BackButton
 @import forms.SpecificDateTimeChoice
 
@@ -55,11 +55,10 @@
 @sectionHeaderKey = @{ s"movement.sectionHeading.${request.answers.`type`.toString}" }
 
 @govukLayout(
-    title = Title(pageTitleKey),
-    backButton = Some(BackButton(messages("site.back"), backLink))) {
-
-        @formHelper(action = LocationController.saveLocation, Symbol("autoComplete") -> "off") {
-
+  title = Title(pageTitleKey, hasErrors = form.hasErrors || form.hasGlobalErrors),
+  backButton = Some(BackButton(messages("site.back"), backLink))
+) {
+    @formHelper(action = LocationController.saveLocation, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)
 
         @sectionHeader(messages(sectionHeaderKey, consignmentReference))

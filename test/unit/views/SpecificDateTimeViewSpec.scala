@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package views.movement
+package views
 
 import base.Injector
 import forms.SpecificDateTimeChoice
 import models.cache.{ArrivalAnswers, DepartureAnswers}
 import play.api.data.Form
 import play.twirl.api.Html
-import views.ViewSpec
 import views.html.specific_date_and_time
 
 class SpecificDateTimeViewSpec extends ViewSpec with Injector {
@@ -35,25 +34,28 @@ class SpecificDateTimeViewSpec extends ViewSpec with Injector {
 
   "SpecificDateTime View on empty page" should {
 
-    "display page title" in {
+    "have the page's title prefixed with 'Error:'" when {
+      "the page has errors" in {
+        val view = page(form.withGlobalError("error.summary.title"), "some-reference")
+        view.head.getElementsByTag("title").first.text must startWith("Error: ")
+      }
+    }
 
+    "display page title" in {
       createView.getElementsByTag("h1").first() must containMessage("specific.datetime.heading")
     }
 
     "have the correct section header for the Arrival journey" in {
-
       createView.getElementById("section-header") must containMessage("specific.datetime.arrive.heading", "some-reference")
     }
 
     "have the correct section header for the Departure journey" in {
-
       val departureView = page(form, "some-reference")(journeyRequest(DepartureAnswers()), messages)
       departureView.getElementById("section-header") must containMessage("specific.datetime.depart.heading", "some-reference")
     }
 
     "display 'Back' button that links to Choice" in {
       val backButton = createView.getBackButton
-
       backButton mustBe defined
       backButton.get must haveHref(controllers.routes.ChoiceController.displayPage)
     }
