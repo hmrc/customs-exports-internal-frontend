@@ -35,40 +35,48 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuditService @Inject() (connector: AuditConnector, @Named("appName") appName: String)(implicit ec: ExecutionContext) {
   private val logger = Logger(this.getClass)
 
-  def auditShutMucr(providerId: String, mucr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
-    audit(
-      AuditType.AuditShutMucr,
-      Map(EventData.providerId.toString -> providerId, EventData.mucr.toString -> mucr, EventData.submissionResult.toString -> result)
+  def auditShutMucr(providerId: String, mucr: String, result: String, conversationId: Option[String] = None)(
+    implicit hc: HeaderCarrier
+  ): Future[AuditResult] = {
+    val data = Map(EventData.providerId.toString -> providerId, EventData.mucr.toString -> mucr, EventData.submissionResult.toString -> result)
+
+    audit(AuditType.AuditShutMucr, addOptionalConversationId(data, conversationId))
+  }
+
+  def auditDisassociate(providerId: String, ucr: String, result: String, conversationId: Option[String] = None)(
+    implicit hc: HeaderCarrier
+  ): Future[AuditResult] = {
+    val data = Map(EventData.providerId.toString -> providerId, EventData.ucr.toString -> ucr, EventData.submissionResult.toString -> result)
+
+    audit(AuditType.AuditDisassociate, addOptionalConversationId(data, conversationId))
+  }
+
+  def auditAssociate(providerId: String, mucr: String, ducr: String, result: String, conversationId: Option[String] = None)(
+    implicit hc: HeaderCarrier
+  ): Future[AuditResult] = {
+    val data = Map(
+      EventData.providerId.toString -> providerId,
+      EventData.mucr.toString -> mucr,
+      EventData.ducr.toString -> ducr,
+      EventData.submissionResult.toString -> result
     )
 
-  def auditDisassociate(providerId: String, ucr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
-    audit(
-      AuditType.AuditDisassociate,
-      Map(EventData.providerId.toString -> providerId, EventData.ucr.toString -> ucr, EventData.submissionResult.toString -> result)
+    audit(AuditType.AuditAssociate, addOptionalConversationId(data, conversationId))
+  }
+
+  def auditMovements(movementExchange: MovementExchange, result: String, movementAuditType: AuditType.Audit, conversationId: Option[String] = None)(
+    implicit hc: HeaderCarrier
+  ): Future[AuditResult] = {
+    val data = Map(
+      EventData.providerId.toString -> movementExchange.providerId,
+      EventData.messageCode.toString -> movementExchange.choice.ileCode,
+      EventData.ucrType.toString -> movementExchange.consignmentReference.reference.toString,
+      EventData.ucr.toString -> movementExchange.consignmentReference.referenceValue,
+      EventData.submissionResult.toString -> result
     )
 
-  def auditAssociate(providerId: String, mucr: String, ducr: String, result: String)(implicit hc: HeaderCarrier): Future[AuditResult] =
-    audit(
-      AuditType.AuditAssociate,
-      Map(
-        EventData.providerId.toString -> providerId,
-        EventData.mucr.toString -> mucr,
-        EventData.ducr.toString -> ducr,
-        EventData.submissionResult.toString -> result
-      )
-    )
-
-  def auditMovements(data: MovementExchange, result: String, movementAuditType: AuditType.Audit)(implicit hc: HeaderCarrier): Future[AuditResult] =
-    audit(
-      movementAuditType,
-      Map(
-        EventData.providerId.toString -> data.providerId,
-        EventData.messageCode.toString -> data.choice.ileCode,
-        EventData.ucrType.toString -> data.consignmentReference.reference.toString,
-        EventData.ucr.toString -> data.consignmentReference.referenceValue,
-        EventData.submissionResult.toString -> result
-      )
-    )
+    audit(movementAuditType, addOptionalConversationId(data, conversationId))
+  }
 
   private def audit(auditType: AuditType.Audit, auditData: Map[String, String])(implicit hc: HeaderCarrier): Future[AuditResult] = {
     val event = createAuditEvent(auditType, auditData)
@@ -153,6 +161,9 @@ class AuditService @Inject() (connector: AuditConnector, @Named("appName") appNa
     val hcAuditDetails = Json.toJson(AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()).as[JsObject]
     hcAuditDetails.deepMerge(userInput)
   }
+
+  private def addOptionalConversationId(data: Map[String, String], conversationId: Option[String]): Map[String, String] =
+    conversationId.fold(data)(convId => data ++ Map(EventData.conversationId.toString -> convId))
 }
 
 object AuditService {
@@ -161,6 +172,6 @@ object AuditService {
     type Data = Value
 
     val providerId = Value("pid")
-    val mucr, ducr, ucr, ucrType, messageCode, movementReference, submissionResult = Value
+    val mucr, ducr, ucr, ucrType, messageCode, movementReference, submissionResult, conversationId = Value
   }
 }
