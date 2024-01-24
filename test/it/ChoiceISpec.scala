@@ -109,7 +109,7 @@ class ChoiceISpec extends IntegrationSpec {
         theAnswersFor("pid") mustBe Some(AssociateUcrAnswers(childUcr = Some(AssociateUcr(queryResult))))
       }
 
-      "Dissociate UCR" in {
+      "Disassociate UCR" in {
         givenAuthSuccess("pid")
         givenCacheFor(pid = "pid", queryUcr = queryResult)
 

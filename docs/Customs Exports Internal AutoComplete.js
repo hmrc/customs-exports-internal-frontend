@@ -118,6 +118,6 @@ function completePage() {
         document.getElementsByClassName('govuk-button')[0].click()
     }
     if(currentPageIs("/customs-exports-internal/associate-ucr-summary")){}
-    if(currentPageIs("/customs-exports-internal/dissociate-ucr-summary")){}
+    if(currentPageIs("/customs-exports-internal/disassociate-ucr-summary")){}
     if(currentPageIs("/customs-exports-internal/shut-mucr-summary")){}
 }

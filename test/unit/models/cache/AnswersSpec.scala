@@ -81,7 +81,7 @@ class AnswersSpec extends UnitSpec {
       Answers.format.reads(associateUcrAnswersJson) mustBe JsSuccess(expectedResult)
     }
 
-    "correctly read Dissociate UCR Answers" in {
+    "correctly read Disassociate UCR Answers" in {
       val dissociateUcrAnswersJson = Json.obj("type" -> JourneyType.DISSOCIATE_UCR.toString)
       val expectedResult = DisassociateUcrAnswers(None)
       Answers.format.reads(dissociateUcrAnswersJson) mustBe JsSuccess(expectedResult)
