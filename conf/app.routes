@@ -37,8 +37,8 @@ GET         /associate-ucr-summary                 controllers.summary.Associate
 POST        /associate-ucr-summary                 controllers.summary.AssociateUcrSummaryController.submit
 
 # Disassociate UCR summary page
-GET         /dissociate-ucr-summary                controllers.summary.DisassociateUcrSummaryController.displayPage
-POST        /dissociate-ucr-summary                controllers.summary.DisassociateUcrSummaryController.submit
+GET         /disassociate-ucr-summary              controllers.summary.DisassociateUcrSummaryController.displayPage
+POST        /disassociate-ucr-summary              controllers.summary.DisassociateUcrSummaryController.submit
 
 # Specific date-time page
 GET         /specific-date-and-time               controllers.movements.SpecificDateTimeController.displayPage

@@ -21,9 +21,9 @@ import models.UcrType
 import models.cache.DisassociateUcrAnswers
 import play.api.test.Helpers._
 
-class DissociateUcrISpec extends IntegrationSpec {
+class DisassociateUcrISpec extends IntegrationSpec {
 
-  "Dissociate UCR Summary Page" when {
+  "Disassociate UCR Summary Page" when {
     "GET" should {
       "return 200" in {
         // Given
