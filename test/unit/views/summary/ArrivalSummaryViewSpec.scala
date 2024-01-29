@@ -17,9 +17,11 @@
 package views.summary
 
 import base.Injector
+import controllers.exchanges.JourneyRequest
 import forms.ArrivalDetails
 import forms.common.{Date, Time}
 import models.cache.ArrivalAnswers
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import views.ViewSpec
 import views.html.summary.arrival_summary_page
@@ -34,7 +36,7 @@ class ArrivalSummaryViewSpec extends ViewSpec with Injector {
   private val time = Time(LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
   private val answers = ArrivalAnswers(arrivalDetails = Some(ArrivalDetails(date, time)))
 
-  private implicit val request = journeyRequest(answers)
+  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(answers)
 
   private val page = instanceOf[arrival_summary_page]
 

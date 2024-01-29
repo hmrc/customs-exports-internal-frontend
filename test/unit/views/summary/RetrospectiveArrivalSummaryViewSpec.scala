@@ -17,7 +17,9 @@
 package views.summary
 
 import base.Injector
+import controllers.exchanges.JourneyRequest
 import models.cache.RetrospectiveArrivalAnswers
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import views.ViewSpec
 import views.html.summary.retrospective_arrival_summary_page
@@ -26,7 +28,7 @@ class RetrospectiveArrivalSummaryViewSpec extends ViewSpec with Injector {
 
   private val answers = RetrospectiveArrivalAnswers()
 
-  private implicit val request = journeyRequest(answers)
+  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(answers)
 
   private val page = instanceOf[retrospective_arrival_summary_page]
 

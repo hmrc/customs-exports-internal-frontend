@@ -17,7 +17,7 @@
 package metrics
 
 import com.codahale.metrics.Timer.Context
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import javax.inject.{Inject, Singleton}
 import metrics.MetricIdentifiers._
 import models.cache.JourneyType._

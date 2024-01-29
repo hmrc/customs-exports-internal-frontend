@@ -17,9 +17,11 @@
 package views
 
 import base.Injector
+import controllers.exchanges.JourneyRequest
 import forms.SpecificDateTimeChoice
 import models.cache.{ArrivalAnswers, DepartureAnswers}
 import play.api.data.Form
+import play.api.mvc.AnyContentAsEmpty
 import play.twirl.api.Html
 import views.html.specific_date_and_time
 
@@ -28,7 +30,7 @@ class SpecificDateTimeViewSpec extends ViewSpec with Injector {
   private val page = instanceOf[specific_date_and_time]
 
   private val form: Form[SpecificDateTimeChoice] = SpecificDateTimeChoice.form()
-  private implicit val request = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(ArrivalAnswers())
 
   private def createView: Html = page(form, "some-reference")
 

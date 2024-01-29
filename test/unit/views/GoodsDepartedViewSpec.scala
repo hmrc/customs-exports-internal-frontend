@@ -17,17 +17,19 @@
 package views
 
 import base.Injector
+import controllers.exchanges.JourneyRequest
 import controllers.movements.routes.LocationController
 import forms.GoodsDeparted
 import models.cache.DepartureAnswers
 import org.jsoup.nodes.Document
 import play.api.data.FormError
+import play.api.mvc.AnyContentAsEmpty
 import testdata.CommonTestData.validDucr
 import views.html.goods_departed
 
 class GoodsDepartedViewSpec extends ViewSpec with Injector {
 
-  private implicit val request = journeyRequest(DepartureAnswers())
+  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(DepartureAnswers())
 
   private val form = GoodsDeparted.form
   private val page = instanceOf[goods_departed]

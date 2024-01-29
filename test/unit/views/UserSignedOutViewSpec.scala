@@ -17,13 +17,15 @@
 package views
 
 import base.Injector
+import controllers.exchanges.JourneyRequest
 import models.cache.AssociateUcrAnswers
+import play.api.mvc.AnyContentAsEmpty
 import play.twirl.api.Html
 import views.html.user_signed_out
 
 class UserSignedOutViewSpec extends ViewSpec with Injector {
 
-  private implicit val request = journeyRequest(AssociateUcrAnswers())
+  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(AssociateUcrAnswers())
   private val page = instanceOf[user_signed_out]
   private def createView(): Html = page()
 

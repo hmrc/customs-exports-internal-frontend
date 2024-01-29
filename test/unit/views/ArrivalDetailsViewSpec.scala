@@ -17,12 +17,14 @@
 package views
 
 import base.Injector
+import controllers.exchanges.JourneyRequest
 import controllers.movements.routes.SpecificDateTimeController
 import forms.common.{Date, Time}
 import forms.{ArrivalDetails, ConsignmentReferenceType, ConsignmentReferences}
 import models.cache.ArrivalAnswers
 import org.jsoup.nodes.Document
 import play.api.data.Form
+import play.api.mvc.AnyContentAsEmpty
 import play.twirl.api.Html
 import testdata.CommonTestData.correctUcr
 import testdata.MovementsTestData
@@ -34,7 +36,7 @@ import scala.jdk.CollectionConverters.IterableHasAsScala
 
 class ArrivalDetailsViewSpec extends ViewSpec with Injector {
 
-  private implicit val request = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(ArrivalAnswers())
   private val movementDetails = MovementsTestData.movementDetails
 
   private val form = movementDetails.arrivalForm

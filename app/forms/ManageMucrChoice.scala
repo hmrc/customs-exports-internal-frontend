@@ -18,14 +18,14 @@ package forms
 
 import forms.EnhancedMapping.requiredRadio
 import play.api.data.{Form, Forms, Mapping}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import utils.FieldValidator.isContainedIn
 
 case class ManageMucrChoice(choice: String)
 
 object ManageMucrChoice {
 
-  implicit val format = Json.format[ManageMucrChoice]
+  implicit val format: OFormat[ManageMucrChoice] = Json.format[ManageMucrChoice]
 
   val AssociateThisToMucr = "associateThisToAnotherMucr"
   val AssociateAnotherUcrToThis = "associateAnotherUcrToThis"

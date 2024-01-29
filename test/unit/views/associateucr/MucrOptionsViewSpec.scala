@@ -18,6 +18,7 @@ package views.associateucr
 
 import base.Injector
 import controllers.consolidations.routes.ManageMucrController
+import controllers.exchanges.JourneyRequest
 import controllers.routes.ChoiceController
 import forms.ManageMucrChoice._
 import forms.{ManageMucrChoice, MucrOptions}
@@ -26,14 +27,14 @@ import models.UcrType.Mucr
 import models.cache.AssociateUcrAnswers
 import org.jsoup.nodes.{Document, Element}
 import play.api.data.{Form, FormError}
-import play.api.mvc.Call
+import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.twirl.api.Html
 import views.ViewSpec
 import views.html.associateucr.mucr_options
 
 class MucrOptionsViewSpec extends ViewSpec with Injector {
 
-  private implicit val request = journeyRequest(AssociateUcrAnswers())
+  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(AssociateUcrAnswers())
 
   private val page = instanceOf[mucr_options]
 

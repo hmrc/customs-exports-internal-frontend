@@ -27,13 +27,13 @@ sealed trait ConsolidationExchange {
 }
 
 object ConsolidationExchange {
-  implicit val associateDucrFormat = Json.format[AssociateDUCRExchange]
-  implicit val associateDucrPartFormat = Json.format[AssociateDUCRPartExchange]
-  implicit val associateMucrFormat = Json.format[AssociateMUCRExchange]
-  implicit val disassociateDucrFormat = Json.format[DisassociateDUCRExchange]
-  implicit val disassociateDucrPartFormat = Json.format[DisassociateDUCRPartExchange]
-  implicit val disassociateMucrFormat = Json.format[DisassociateMUCRExchange]
-  implicit val shutMucrFormat = Json.format[ShutMUCRExchange]
+  implicit val associateDucrFormat: OFormat[AssociateDUCRExchange] = Json.format[AssociateDUCRExchange]
+  implicit val associateDucrPartFormat: OFormat[AssociateDUCRPartExchange] = Json.format[AssociateDUCRPartExchange]
+  implicit val associateMucrFormat: OFormat[AssociateMUCRExchange] = Json.format[AssociateMUCRExchange]
+  implicit val disassociateDucrFormat: OFormat[DisassociateDUCRExchange] = Json.format[DisassociateDUCRExchange]
+  implicit val disassociateDucrPartFormat: OFormat[DisassociateDUCRPartExchange] = Json.format[DisassociateDUCRPartExchange]
+  implicit val disassociateMucrFormat: OFormat[DisassociateMUCRExchange] = Json.format[DisassociateMUCRExchange]
+  implicit val shutMucrFormat: OFormat[ShutMUCRExchange] = Json.format[ShutMUCRExchange]
 
   implicit val format: Format[ConsolidationExchange] = Union
     .from[ConsolidationExchange](typeField = "consolidationType")

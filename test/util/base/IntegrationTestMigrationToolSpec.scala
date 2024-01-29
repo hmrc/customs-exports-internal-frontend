@@ -17,7 +17,7 @@
 package base
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kenshoo.play.metrics.PlayModule
+import com.codahale.metrics.MetricRegistry
 import com.mongodb.client.{MongoClients, MongoCollection, MongoDatabase}
 import migrations.changelogs.MigrationDefinition
 import org.bson.Document
@@ -31,7 +31,7 @@ trait IntegrationTestMigrationToolSpec extends IntegrationTestBaseSpec with Guic
   val collectionUnderTest: String
   val changeLog: MigrationDefinition
 
-  override implicit lazy val app: Application = GuiceApplicationBuilder().disable[PlayModule].build()
+  override implicit lazy val app: Application = GuiceApplicationBuilder().disable[MetricRegistry].build()
 
   private val mongoClient = MongoClients.create()
 

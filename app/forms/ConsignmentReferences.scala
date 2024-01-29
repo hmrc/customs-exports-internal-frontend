@@ -20,7 +20,7 @@ import forms.ConsignmentReferenceType.ConsignmentReferenceType
 import forms.EnhancedMapping.requiredRadio
 import play.api.data.Forms.text
 import play.api.data.{Form, Forms}
-import play.api.libs.json.{Format, Json, Reads, Writes}
+import play.api.libs.json.{Format, Json, OFormat, Reads, Writes}
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
 import utils.FieldValidator._
 
@@ -41,7 +41,7 @@ object ConsignmentReferences {
       case "DP" => new ConsignmentReferences(ConsignmentReferenceType.DP, ucr)
     }
 
-  implicit val format = Json.format[ConsignmentReferences]
+  implicit val format: OFormat[ConsignmentReferences] = Json.format[ConsignmentReferences]
 
   val formId = "ConsignmentReferences"
 

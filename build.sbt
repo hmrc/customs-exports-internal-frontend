@@ -1,6 +1,5 @@
 import sbt._
 import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import uk.gov.hmrc.SbtAutoBuildPlugin
 
 val appName = "customs-exports-internal-frontend"
@@ -32,7 +31,7 @@ lazy val microservice = Project(appName, file("."))
 
 lazy val commonSettings = List(
   majorVersion := 0,
-  scalaVersion := "2.13.8",
+  scalaVersion := "2.13.12",
   scalacOptions ++= scalacFlags,
   retrieveManaged := true,
   dependencyOverrides += "commons-codec" % "commons-codec" % "1.15",
@@ -53,6 +52,9 @@ lazy val scalacFlags = List(
   "-Xcheckinit",
   "-Xfatal-warnings",                            // warnings are fatal!!
   "-Ywarn-numeric-widen",
+  "-Wconf:cat=unused-imports&src=routes/.*:s", // silent "unused import" warnings from Play routes
+  "-Wconf:cat=unused&src=.*routes.*:s", // silence private val defaultPrefix in class Routes is never used
+  "-Wconf:msg=eq not selected from this instance:s" // silence eq not selected from this instance warning
 )
 
 lazy val jsSettings = List(
