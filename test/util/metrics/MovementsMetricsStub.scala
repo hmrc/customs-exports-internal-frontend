@@ -17,7 +17,7 @@
 package metrics
 
 import com.codahale.metrics.{Counter, MetricRegistry, Timer}
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 trait MovementsMetricsStub {
 
@@ -25,8 +25,6 @@ trait MovementsMetricsStub {
 
   private val metrics: Metrics = new Metrics {
     override val defaultRegistry: MetricRegistry = registry
-
-    override def toJson: String = ???
   }
 
   val movementsMetricsStub = new MovementsMetrics(metrics)
