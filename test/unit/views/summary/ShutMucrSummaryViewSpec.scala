@@ -17,13 +17,15 @@
 package views.summary
 
 import base.Injector
+import controllers.exchanges.JourneyRequest
 import models.cache.ShutMucrAnswers
+import play.api.mvc.AnyContentAsEmpty
 import views.ViewSpec
 import views.html.summary.shut_mucr_summary
 
 class ShutMucrSummaryViewSpec extends ViewSpec with Injector {
 
-  private implicit val request = journeyRequest(ShutMucrAnswers())
+  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(ShutMucrAnswers())
 
   private val page = instanceOf[shut_mucr_summary]
   private val shutMucr = "some-mucr"

@@ -17,9 +17,11 @@
 package views
 
 import base.Injector
+import controllers.exchanges.JourneyRequest
 import controllers.movements.routes.SpecificDateTimeController
 import models.cache.ArrivalAnswers
 import org.jsoup.nodes.Document
+import play.api.mvc.AnyContentAsEmpty
 import testdata.MovementsTestData
 import views.html.departure_details
 
@@ -27,7 +29,7 @@ import scala.jdk.CollectionConverters.IterableHasAsScala
 
 class DepartureDetailsViewSpec extends ViewSpec with Injector {
 
-  private implicit val request = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(ArrivalAnswers())
 
   private val movementDetails = MovementsTestData.movementDetails
 

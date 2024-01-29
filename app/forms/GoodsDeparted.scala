@@ -62,5 +62,5 @@ object GoodsDeparted {
     }
   }
 
-  implicit val format = Json.format[GoodsDeparted]
+  implicit val format: OFormat[GoodsDeparted] = Json.format[GoodsDeparted]
 }

@@ -74,7 +74,7 @@ object MucrOptions {
     }
   }
 
-  implicit val format = Json.format[MucrOptions]
+  implicit val format: OFormat[MucrOptions] = Json.format[MucrOptions]
 
   def apply(ucrBlock: UcrBlock): MucrOptions = ucrBlock.ucrType match {
     case UcrType.Mucr.codeValue => MucrOptions("", ucrBlock.ucr, CreateOrAddValues.Add)

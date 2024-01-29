@@ -50,7 +50,7 @@ abstract class IntegrationSpec
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
-      .disable[com.kenshoo.play.metrics.PlayModule]
+      .disable[com.codahale.metrics.MetricRegistry]
       .configure(authConfiguration)
       .configure(movementsBackendConfiguration)
       .configure(mongoConfiguration)

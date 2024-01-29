@@ -21,6 +21,7 @@ import controllers.ileQuery.routes.FindConsignmentController
 import forms.DucrPartDetails
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
+import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData._
@@ -28,7 +29,7 @@ import views.html.ducr_part_details
 
 class DucrPartDetailsViewSpec extends ViewSpec with ViewMatchers with Injector {
 
-  private implicit val request = FakeRequest().withCSRFToken
+  private implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
 
   private val form = DucrPartDetails.form()
   private val page = instanceOf[ducr_part_details]

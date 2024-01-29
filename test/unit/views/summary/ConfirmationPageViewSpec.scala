@@ -24,13 +24,14 @@ import models.UcrType.{Ducr, DucrPart, Mucr}
 import models.cache.JourneyType._
 import models.cache._
 import models.summary.Confirmation
+import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import views.ViewSpec
 import views.html.summary.confirmation_page
 
 class ConfirmationPageViewSpec extends ViewSpec with Injector {
 
-  private implicit val request = FakeRequest().withCSRFToken
+  private implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
 
   private val page = instanceOf[confirmation_page]
   private val dummyUcr = "dummyUcr"

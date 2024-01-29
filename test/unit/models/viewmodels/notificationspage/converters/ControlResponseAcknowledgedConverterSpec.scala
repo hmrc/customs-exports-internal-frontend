@@ -20,6 +20,7 @@ import base.UnitSpec
 import controllers.MessagesStub
 import models.notifications.ResponseType
 import models.viewmodels.decoder.ActionCode
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
@@ -28,7 +29,7 @@ class ControlResponseAcknowledgedConverterSpec extends UnitSpec with MessagesStu
 
   import ControlResponseAcknowledgedConverterSpec._
 
-  private implicit val fakeRequest = FakeRequest()
+  private implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
   private val converter = new ControlResponseAcknowledgedConverter
 

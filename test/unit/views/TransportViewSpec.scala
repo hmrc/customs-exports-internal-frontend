@@ -17,14 +17,16 @@
 package views
 
 import base.Injector
+import controllers.exchanges.JourneyRequest
 import forms.Transport
 import models.cache.ArrivalAnswers
+import play.api.mvc.AnyContentAsEmpty
 import play.twirl.api.Html
 import views.html.transport
 
 class TransportViewSpec extends ViewSpec with Injector {
 
-  private implicit val request = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(ArrivalAnswers())
 
   private val form = Transport.outOfTheUkForm
   private val page = instanceOf[transport]
