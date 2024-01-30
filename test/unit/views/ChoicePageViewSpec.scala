@@ -104,19 +104,17 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
 
         choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 0
       }
-    }
 
-    "not render 'Shut Mucr' and 'Retrospective arrival` option" when {
-      "ILE query was for a Ducr" in {
+      "ILE query was for a Ducr part" in {
         val choicePage = page(form, Some(UcrBlock(ucr = "ducr-part", ucrType = DucrPart)))
 
-        choicePage.getElementsByClass("govuk-radios__input").size() mustBe 4
+        choicePage.getElementsByClass("govuk-radios__input").size() mustBe 5
 
         choicePage.getElementsByAttributeValue("value", "arrival").size() mustBe 1
         choicePage.getElementsByAttributeValue("value", "associateUCR").size() mustBe 1
         choicePage.getElementsByAttributeValue("value", "disassociateUCR").size() mustBe 1
         choicePage.getElementsByAttributeValue("value", "departure").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "retrospectiveArrival").size() mustBe 0
+        choicePage.getElementsByAttributeValue("value", "retrospectiveArrival").size() mustBe 1
 
         choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 0
       }
