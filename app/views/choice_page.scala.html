@@ -94,8 +94,7 @@
                     checked = form("choice").value.contains(RetrospectiveArrival.value)
                 )
             )
-            .filterNot(item => item.value.contains(ShutMUCR.value) && queryUcr.exists(_.ucrType == Ducr.codeValue))
-            .filterNot(item => (item.value.contains(ShutMUCR.value) || item.value.contains(RetrospectiveArrival.value)) && queryUcr.exists(_.ucrType == DucrPart.codeValue)),
+            .filterNot(item => item.value.contains(ShutMUCR.value) && (queryUcr.exists(_.ucrType == Ducr.codeValue) || queryUcr.exists(_.ucrType == DucrPart.codeValue))),
             errorMessage = form("choice").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
         ))
 
