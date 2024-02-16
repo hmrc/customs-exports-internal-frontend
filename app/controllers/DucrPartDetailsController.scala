@@ -18,7 +18,6 @@ package controllers
 
 import controllers.actions.AuthenticatedAction
 import forms.ChiefUcrDetails
-import models.UcrType
 import models.cache.Cache
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -44,7 +43,7 @@ class DucrPartDetailsController @Inject() (
     cacheRepository
       .findByProviderId(request.providerId)
       .map {
-        case Some(cache) if cache.queryUcr.exists(_.ucrType == UcrType.DucrPart.codeValue) =>
+        case Some(cache) =>
           cache.queryUcr.map(ucrBlock => getEmptyForm.fill(ChiefUcrDetails(ucrBlock))).getOrElse(getEmptyForm)
 
         case _ => getEmptyForm

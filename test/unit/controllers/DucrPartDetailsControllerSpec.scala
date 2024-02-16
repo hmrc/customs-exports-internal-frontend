@@ -26,7 +26,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.MockCache
-import testdata.CommonTestData.{validDucr, validDucrPartId, validWholeDucrParts}
+import testdata.CommonTestData.{validDucr, validDucrPartId, validMucr, validWholeDucrParts}
 import views.html.ducr_part_details
 
 import scala.concurrent.ExecutionContext.global
@@ -105,7 +105,7 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
       }
     }
 
-    "cache contains queryUcr of different type" should {
+    "cache contains queryUcr of DUCR only" should {
 
       "call ChiefUcrDetails view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
@@ -114,12 +114,31 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
         verify(ducrPartDetailsPage).apply(any())(any(), any())
       }
 
-      "pass empty form to ChiefUcrDetails view" in {
+      "pass populated form to ChiefUcrDetails view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
         givenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
 
-        val expectedForm = ChiefUcrDetails.form()
+        val expectedForm = ChiefUcrDetails.form().fill(ChiefUcrDetails(mucr = None, ducr = Some(validDucr), ducrPartId = None))
+        verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
+      }
+    }
+
+    "cache contains queryUcr of MUCR only" should {
+
+      "call ChiefUcrDetails view" in {
+        val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Mucr.codeValue, ucr = validMucr)))
+        givenTheCacheContains(cacheContents)
+        controller.displayPage(getRequest).futureValue
+        verify(ducrPartDetailsPage).apply(any())(any(), any())
+      }
+
+      "pass populated form to ChiefUcrDetails view" in {
+        val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Mucr.codeValue, ucr = validMucr)))
+        givenTheCacheContains(cacheContents)
+        controller.displayPage(getRequest).futureValue
+
+        val expectedForm = ChiefUcrDetails.form().fill(ChiefUcrDetails(mucr = Some(validMucr), ducr = None, ducrPartId = None))
         verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
       }
     }
@@ -127,44 +146,60 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
 
   "DucrPartDetailsController on submitDucrPartDetails" when {
 
-    "provided with incorrect data" should {
-      val inputData = Json.obj("ducr" -> "InvalidDucr!@#", "ducrPartId" -> "InvalidDucrPartId!@#")
+    val invalidFormData =
+      Seq(Json.obj("ducr" -> "InvalidDucr!@#", "ducrPartId" -> "InvalidDucrPartId!@#"), Json.obj("ducr" -> validDucr, "mucr" -> validMucr))
 
-      "return BadRequest (400) response" in {
-        val result = controller.submitDucrPartDetails()(postRequest(inputData))
-        status(result) mustBe BAD_REQUEST
-      }
+    invalidFormData.foreach { inputData =>
+      s"provided with incorrect data $inputData" should {
 
-      "not call CacheRepository" in {
-        controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
-        verifyZeroInteractions(cacheRepository)
+        "return BadRequest (400) response" in {
+          val result = controller.submitDucrPartDetails()(postRequest(inputData))
+          status(result) mustBe BAD_REQUEST
+        }
+
+        "not call CacheRepository" in {
+          controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
+          verifyZeroInteractions(cacheRepository)
+        }
       }
     }
 
-    "provided with correct data" should {
-      val inputData = Json.obj("ducr" -> validDucr, "ducrPartId" -> validDucrPartId)
+    val ducrPartData = Json.obj("ducr" -> validDucr, "ducrPartId" -> validDucrPartId)
+    val ducrData = Json.obj("ducr" -> validDucr)
+    val mucrData = Json.obj("mucr" -> validMucr)
+    val validFormData = Seq(ducrData, ducrPartData, mucrData)
 
-      "call CacheRepository upsert" in {
-        controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
-        verify(cacheRepository).upsert(any[Cache])
-      }
+    validFormData.foreach { inputData =>
+      s"provided with correct data $inputData" should {
 
-      "provide CacheRepository with correct UcrBlock object" in {
-        controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
+        "call CacheRepository upsert" in {
+          controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
+          verify(cacheRepository).upsert(any[Cache])
+        }
 
-        val expectedUcrBlock = UcrBlock(ucrType = UcrType.DucrPart, ucr = validWholeDucrParts.toUpperCase)
-        theCacheUpserted.queryUcr mustBe defined
-        theCacheUpserted.queryUcr.get mustBe expectedUcrBlock
-      }
+        "provide CacheRepository with correct UcrBlock object" in {
+          controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
 
-      "return SeeOther (303) response" in {
-        val result = controller.submitDucrPartDetails()(postRequest(inputData))
-        status(result) mustBe SEE_OTHER
-      }
+          val expectedUcrBlock = inputData match {
+            case _ if ducrData == inputData     => UcrBlock(ucrType = UcrType.Ducr, ucr = validDucr.toUpperCase)
+            case _ if ducrPartData == inputData => UcrBlock(ucrType = UcrType.DucrPart, ucr = validWholeDucrParts.toUpperCase)
+            case _ if mucrData == inputData     => UcrBlock(ucrType = UcrType.Mucr, ucr = validMucr.toUpperCase)
+            case _                              => throw new IllegalArgumentException(s"Unexpected input data: $inputData")
+          }
 
-      "redirect to Choice page" in {
-        val result = controller.submitDucrPartDetails()(postRequest(inputData))
-        redirectLocation(result) mustBe Some(ChoiceController.displayPage.url)
+          theCacheUpserted.queryUcr mustBe defined
+          theCacheUpserted.queryUcr.get mustBe expectedUcrBlock
+        }
+
+        "return SeeOther (303) response" in {
+          val result = controller.submitDucrPartDetails()(postRequest(inputData))
+          status(result) mustBe SEE_OTHER
+        }
+
+        "redirect to Choice page" in {
+          val result = controller.submitDucrPartDetails()(postRequest(inputData))
+          redirectLocation(result) mustBe Some(ChoiceController.displayPage.url)
+        }
       }
     }
   }
