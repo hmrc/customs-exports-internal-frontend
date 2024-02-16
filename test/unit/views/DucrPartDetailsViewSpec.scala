@@ -18,7 +18,7 @@ package views
 
 import base.Injector
 import controllers.ileQuery.routes.FindConsignmentController
-import forms.DucrPartDetails
+import forms.ChiefUcrDetails
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
 import play.api.mvc.{AnyContentAsEmpty, Request}
@@ -31,12 +31,12 @@ class DucrPartDetailsViewSpec extends ViewSpec with ViewMatchers with Injector {
 
   private implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
 
-  private val form = DucrPartDetails.form()
+  private val form = ChiefUcrDetails.form()
   private val page = instanceOf[ducr_part_details]
 
-  private def createView(form: Form[DucrPartDetails]): Html = page(form)
+  private def createView(form: Form[ChiefUcrDetails]): Html = page(form)
 
-  "DucrPartDetails view" when {
+  "ChiefUcrDetails view" when {
 
     "the page has errors" should {
       "have the page's title prefixed with 'Error:'" in {
@@ -114,7 +114,7 @@ class DucrPartDetailsViewSpec extends ViewSpec with ViewMatchers with Injector {
     }
 
     "provided with filled form" should {
-      val view = createView(form.fill(DucrPartDetails(ducr = validDucr, ducrPartId = validDucrPartId)))
+      val view = createView(form.fill(ChiefUcrDetails(mucr = None, ducr = Some(validDucr), ducrPartId = Some(validDucrPartId))))
 
       "fill DUCR input field" in {
         view.getElementById("ducr").`val`() mustBe validDucr

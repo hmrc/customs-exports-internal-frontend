@@ -16,7 +16,7 @@
 
 @import controllers.ileQuery.routes.FindConsignmentController
 @import controllers.routes.DucrPartDetailsController
-@import forms.DucrPartDetails
+@import forms.ChiefUcrDetails
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.helpers.Title
 @import views.components.BackButton
@@ -32,7 +32,7 @@
     heading: heading
 )
 
-@(form: Form[DucrPartDetails])(implicit request: Request[_], messages: Messages)
+@(form: Form[ChiefUcrDetails])(implicit request: Request[_], messages: Messages)
 
 @pageHint = {
   <div id="page-hint" class="govuk-hint govuk-!-margin-bottom-4">@messages("ducrPartDetails.pageHint")</div>

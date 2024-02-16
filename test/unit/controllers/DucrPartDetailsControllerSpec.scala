@@ -17,11 +17,10 @@
 package controllers
 
 import controllers.routes.ChoiceController
-import forms.DucrPartDetails
-import models.cache.Cache
+import forms.ChiefUcrDetails
 import models.{UcrBlock, UcrType}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-
+import models.cache.Cache
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -80,14 +79,14 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
         givenTheCacheIsEmpty()
         controller.displayPage(getRequest).futureValue
 
-        val expectedForm = DucrPartDetails.form()
+        val expectedForm = ChiefUcrDetails.form()
         verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
       }
     }
 
     "cache contains queryUcr of DucrParts type" should {
 
-      "call DucrPartDetails view" in {
+      "call ChiefUcrDetails view" in {
         val cacheContents =
           Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts)))
         givenTheCacheContains(cacheContents)
@@ -95,32 +94,32 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
         verify(ducrPartDetailsPage).apply(any())(any(), any())
       }
 
-      "pass data from CacheRepository to DucrPartDetails view" in {
+      "pass data from CacheRepository to ChiefUcrDetails view" in {
         val cacheContents =
           Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts)))
         givenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
 
-        val expectedForm = DucrPartDetails.form().fill(DucrPartDetails(ducr = validDucr, ducrPartId = validDucrPartId))
+        val expectedForm = ChiefUcrDetails.form().fill(ChiefUcrDetails(mucr = None, ducr = Some(validDucr), ducrPartId = Some(validDucrPartId)))
         verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
       }
     }
 
     "cache contains queryUcr of different type" should {
 
-      "call DucrPartDetails view" in {
+      "call ChiefUcrDetails view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
         givenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
         verify(ducrPartDetailsPage).apply(any())(any(), any())
       }
 
-      "pass empty form to DucrPartDetails view" in {
+      "pass empty form to ChiefUcrDetails view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
         givenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
 
-        val expectedForm = DucrPartDetails.form()
+        val expectedForm = ChiefUcrDetails.form()
         verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
       }
     }
