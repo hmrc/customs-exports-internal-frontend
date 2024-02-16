@@ -28,25 +28,39 @@
     exportsInputText: exportsInputText,
     errorSummary: errorSummary,
     pageTitle: pageTitle,
-    formHelper: FormWithCSRF
+    formHelper: FormWithCSRF,
+    heading: heading
 )
 
 @(form: Form[DucrPartDetails])(implicit request: Request[_], messages: Messages)
 
 @pageHint = {
-  <span id="page-hint" class="govuk-hint">@messages("ducrPartDetails.heading")</span>
+  <div id="page-hint" class="govuk-hint govuk-!-margin-bottom-4">@messages("ducrPartDetails.pageHint")</div>
 }
 
 @govukLayout(
-  title = Title("ducrPartDetails.title", "ducrPartDetails.heading", hasErrors = form.hasErrors || form.hasGlobalErrors),
+  title = Title("ducrPartDetails.title", "ducrPartDetails.pageHint", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))
 ) {
   @formHelper(action = DucrPartDetailsController.submitDucrPartDetails, Symbol("autoComplete") -> "off") {
     @errorSummary(form.errors)
 
-    @pageTitle(messages("ducrPartDetails.title"))
+    @pageTitle(text = messages("ducrPartDetails.title"), classes = "")
 
     @pageHint
+
+    @heading(messages("ducrPartDetails.mucrHeading"), "govuk-heading-m", "h2")
+
+    @exportsInputText(
+        field = form("mucr"),
+        labelKey = "ducrPartDetails.mucr",
+        hintKey = Some("ducrPartDetails.mucr.hint"),
+        inputClasses = "govuk-input--width-20"
+    )
+
+    @paragraphBody(message = messages("ducrPartDetails.or"), classes = "govuk-body govuk-!-padding-2", id = Some("or"))
+
+    @heading(messages("ducrPartDetails.ducrHeading"), "govuk-heading-m", "h2")
 
     @exportsInputText(
       field = form("ducr"),

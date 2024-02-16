@@ -57,12 +57,29 @@ class DucrPartDetailsViewSpec extends ViewSpec with ViewMatchers with Injector {
       }
 
       "render page hint" in {
-        view.getElementById("page-hint") must containMessage("ducrPartDetails.heading")
+        view.getElementById("page-hint") must containMessage("ducrPartDetails.pageHint")
       }
 
       "render 'Back' button leading to 'Find a consignment' page" in {
         view.getBackButton mustBe defined
         view.getBackButton.get must haveHref(FindConsignmentController.displayQueryForm)
+      }
+
+      "render Option 1 & 2 headings" in {
+        view.getElementsByTag("h2").get(0) must containMessage("ducrPartDetails.mucrHeading")
+        view.getElementsByTag("h2").get(1) must containMessage("ducrPartDetails.ducrHeading")
+      }
+
+      "render 'Or' text" in {
+        view.getElementById("or") must containMessage("ducrPartDetails.or")
+      }
+
+      "render MUCR input field label" in {
+        view.getElementsByAttributeValue("for", "mucr").first() must containMessage("ducrPartDetails.mucr")
+      }
+
+      "render MUCR input field hint" in {
+        view.getElementById("mucr-hint") must containMessage("ducrPartDetails.mucr.hint")
       }
 
       "render DUCR input field label" in {

@@ -84,14 +84,23 @@ choicePage.input.error.incorrectValue = Please, choose valid option.
 
 ileQuery.link.ducrPart = Enter a DUCR Part
 
-ducrPartDetails.title = DUCR Part details
-ducrPartDetails.heading = You can use this service if your original declaration was made in CHIEF.
-ducrPartDetails.ducr = Enter DUCR
-ducrPartDetails.ducr.hint = For example, 9GB123999746000-DUCR12345.
-ducrPartDetails.ducr.error = Enter a DUCR in the correct format.
-ducrPartDetails.ducrPartId = Enter DUCR Part ID
-ducrPartDetails.ducrPartId.hint = This can be up to 3 digits. For example, 123.
-ducrPartDetails.ducrPartId.error = Enter a DUCR Part ID in the correct format.
+ducrPartDetails.title = Manage a CHIEF consignment
+ducrPartDetails.pageHint = Use one of the two options below. Enter the reference of the consignment you want to manage.
+ducrPartDetails.mucrHeading = Option 1
+ducrPartDetails.ducrHeading = Option 2
+ducrPartDetails.mucr = Enter the associated MUCR
+ducrPartDetails.mucr.hint = For example, GB/123456789100-AB123.
+ducrPartDetails.mucr.error = Enter a valid MUCR.
+ducrPartDetails.or = or
+ducrPartDetails.ducr = Enter the associated DUCR
+ducrPartDetails.ducr.hint = For example, 3GB986007773125-INVOICE123.
+ducrPartDetails.ducr.error = Enter a valid DUCR.
+ducrPartDetails.ducr.error.blank = A DUCR must be entered with a DUCR Part.
+ducrPartDetails.ducrPartId = Enter DUCR Part (optional)
+ducrPartDetails.ducrPartId.hint = This can be up to 3 numbers and one optional capital letter at the end. For example, 1, 111, 111M or M.
+ducrPartDetails.ducrPartId.error = Enter a valid DUCR Part.
+ducrPartDetails.error.blank = Enter a consignment reference in one of the two options.
+ducrPartDetails.error.mismatchedInput = Enter a consignment reference in only one of the two options.
 
 consignmentReferences.reference.ducr = Declaration Consignment Reference (DUCR)
 consignmentReferences.reference.ducrPart = DUCR Part
