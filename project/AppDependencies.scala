@@ -4,12 +4,13 @@ import sbt._
 object AppDependencies {
 
   val bootstrapPlayVersion = "8.3.0"
+  val frontendPlayVersion = "8.5.0"
   val hmrcMongoVersion = "1.7.0"
   val jacksonVersion = "2.14.2"
 
   val compile = Seq(
     "uk.gov.hmrc"                   %% "bootstrap-frontend-play-30"               % bootstrapPlayVersion,
-    "uk.gov.hmrc"                   %% "play-frontend-hmrc-play-30"               % bootstrapPlayVersion,
+    "uk.gov.hmrc"                   %% "play-frontend-hmrc-play-30"               % frontendPlayVersion,
     "uk.gov.hmrc.mongo"             %% "hmrc-mongo-play-30"                       % hmrcMongoVersion,
     // Used by the Migration tool. Keep this library's version to the same major.minor version as the mongo-scala-driver.
     "org.mongodb"                   % "mongodb-driver-sync"                       % "4.11.1",
