@@ -181,10 +181,11 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
           controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
 
           val expectedUcrBlock = inputData match {
-            case _ if ducrData == inputData     => UcrBlock(ucrType = UcrType.Ducr, ucr = validDucr.toUpperCase)
-            case _ if ducrPartData == inputData => UcrBlock(ucrType = UcrType.DucrPart, ucr = validWholeDucrParts.toUpperCase)
-            case _ if mucrData == inputData     => UcrBlock(ucrType = UcrType.Mucr, ucr = validMucr.toUpperCase)
-            case _                              => throw new IllegalArgumentException(s"Unexpected input data: $inputData")
+            case _ if ducrData == inputData => UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr.toUpperCase, chiefUcr = Some(true))
+            case _ if ducrPartData == inputData =>
+              UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts.toUpperCase, chiefUcr = Some(true))
+            case _ if mucrData == inputData => UcrBlock(ucrType = UcrType.Mucr.codeValue, ucr = validMucr.toUpperCase, chiefUcr = Some(true))
+            case _                          => throw new IllegalArgumentException(s"Unexpected input data: $inputData")
           }
 
           theCacheUpserted.queryUcr mustBe defined

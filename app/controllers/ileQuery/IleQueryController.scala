@@ -119,8 +119,8 @@ class IleQueryController @Inject() (
 
       case Some(response: UcrNotFoundResponseExchangeData) =>
         response.ucrBlock match {
-          case Some(UcrBlock(ucr, _, _)) => Future.successful(Ok(consignmentNotFound(ucr)))
-          case _                         => Future.successful(InternalServerError(errorHandler.standardErrorTemplate()))
+          case Some(UcrBlock(ucr, _, _, _)) => Future.successful(Ok(consignmentNotFound(ucr)))
+          case _                            => Future.successful(InternalServerError(errorHandler.standardErrorTemplate()))
         }
 
       case _ => Future.successful(loadingPageResult)

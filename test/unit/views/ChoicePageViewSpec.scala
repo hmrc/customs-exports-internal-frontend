@@ -76,10 +76,15 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
       }
     }
 
-    "render back link" when {
-      "form contains ucr block" in {
-        val backButton = page(form, Some(UcrBlock(ucr = "ucr", ucrType = Ducr))).getElementById("back-link")
-        backButton must haveHref(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation("ucr"))
+    "render back link and point to appropriate page" when {
+      Seq(Some(true), None).foreach { chiefStatus =>
+        s"form contains ucr block ${if (chiefStatus.isDefined) "from CHIEF"}" in {
+          val backButton = page(form, Some(UcrBlock(ucr = "ucr", ucrType = Ducr.codeValue, chiefUcr = chiefStatus))).getElementById("back-link")
+          if (chiefStatus.isEmpty)
+            backButton must haveHref(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation("ucr"))
+          else
+            backButton must haveHref(controllers.routes.DucrPartDetailsController.displayPage)
+        }
       }
     }
 
@@ -91,48 +96,51 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
     }
 
     "not render 'Shut Mucr' option" when {
-      "ILE query was for a Ducr" in {
-        val choicePage = page(form, Some(UcrBlock(ucr = "ducr", ucrType = Ducr)))
+      Seq(Some(true), None).foreach { chiefStatus =>
+        s"ILE query was for a Ducr ${if (chiefStatus.isDefined) "from CHIEF"}" in {
+          val choicePage = page(form, Some(UcrBlock(ucr = "ducr", ucrType = Ducr.codeValue, chiefUcr = chiefStatus)))
 
-        choicePage.getElementsByClass("govuk-radios__input").size() mustBe 5
+          choicePage.getElementsByClass("govuk-radios__input").size() mustBe 5
 
-        choicePage.getElementsByAttributeValue("value", "arrival").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "associateUCR").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "disassociateUCR").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "departure").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "retrospectiveArrival").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "arrival").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "associateUCR").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "disassociateUCR").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "departure").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "retrospectiveArrival").size() mustBe 1
 
-        choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 0
-      }
+          choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 0
+        }
 
-      "ILE query was for a Ducr part" in {
-        val choicePage = page(form, Some(UcrBlock(ucr = "ducr-part", ucrType = DucrPart)))
+        s"ILE query was for a Ducr part ${if (chiefStatus.isDefined) "from CHIEF"}" in {
+          val choicePage = page(form, Some(UcrBlock(ucr = "ducr-part", ucrType = DucrPart.codeValue, chiefUcr = chiefStatus)))
 
-        choicePage.getElementsByClass("govuk-radios__input").size() mustBe 5
+          choicePage.getElementsByClass("govuk-radios__input").size() mustBe 5
 
-        choicePage.getElementsByAttributeValue("value", "arrival").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "associateUCR").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "disassociateUCR").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "departure").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "retrospectiveArrival").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "arrival").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "associateUCR").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "disassociateUCR").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "departure").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "retrospectiveArrival").size() mustBe 1
 
-        choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 0
+          choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 0
+        }
       }
     }
 
-    "render 'Shut Mucr' option" when {
-      "ILE query was for a Mucr" in {
-        val choicePage = page(form, Some(UcrBlock(ucr = "mucr", ucrType = Mucr)))
+    "render 'Shut Mucr' and 'Retrospective Arrival' options appropriately" when {
+      Seq(Some(true), None).foreach { chiefStatus =>
+        s"ILE query was for a Mucr ${if (chiefStatus.isDefined) "from CHIEF"}" in {
+          val choicePage = page(form, Some(UcrBlock(ucr = "mucr", ucrType = Mucr.codeValue, chiefUcr = chiefStatus)))
 
-        choicePage.getElementsByClass("govuk-radios__input").size() mustBe 6
+          choicePage.getElementsByClass("govuk-radios__input").size() mustBe (if (chiefStatus.isDefined) 5 else 6)
 
-        choicePage.getElementsByAttributeValue("value", "arrival").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "associateUCR").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "disassociateUCR").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "departure").size() mustBe 1
-        choicePage.getElementsByAttributeValue("value", "retrospectiveArrival").size() mustBe 1
-
-        choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "arrival").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "associateUCR").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "disassociateUCR").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "departure").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 1
+          choicePage.getElementsByAttributeValue("value", "retrospectiveArrival").size() mustBe (if (chiefStatus.isDefined) 0 else 1)
+        }
       }
     }
   }

@@ -19,7 +19,7 @@
 @import controllers.routes.{ChoiceController, DucrPartDetailsController}
 @import forms.Choice
 @import forms.Choice._
-@import models.UcrType.{Ducr, DucrPart}
+@import models.UcrType.{Ducr, DucrPart, Mucr}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.components.BackButton
 @import views.html.components.gds.sectionHeader
@@ -39,7 +39,7 @@
 
 @backLink = @{
   queryUcr.map { block =>
-    if (block.is(DucrPart)) BackButton(messages("site.back"), DucrPartDetailsController.displayPage)
+    if (block.isChief) BackButton(messages("site.back"), DucrPartDetailsController.displayPage)
     else BackButton(messages("site.back"), IleQueryController.getConsignmentInformation(block.ucr))
   }
 }
@@ -94,7 +94,8 @@
                     checked = form("choice").value.contains(RetrospectiveArrival.value)
                 )
             )
-            .filterNot(item => item.value.contains(ShutMUCR.value) && (queryUcr.exists(_.ucrType == Ducr.codeValue) || queryUcr.exists(_.ucrType == DucrPart.codeValue))),
+            .filterNot(item => item.value.contains(ShutMUCR.value) && (queryUcr.exists(_.ucrType == Ducr.codeValue) || queryUcr.exists(_.ucrType == DucrPart.codeValue)))
+            .filterNot(item => item.value.contains(RetrospectiveArrival.value) && (queryUcr.exists(_.chiefUcr == Some(true)) && queryUcr.exists(_.ucrType == Mucr.codeValue))),
             errorMessage = form("choice").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
         ))
 

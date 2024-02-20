@@ -27,9 +27,10 @@ import utils.FieldValidator._
 case class ChiefUcrDetails(mucr: Option[String], ducr: Option[String], ducrPartId: Option[String]) {
 
   def toUcrBlock: UcrBlock = this match {
-    case ChiefUcrDetails(Some(mucr), None, None)             => UcrBlock(ucr = mucr, ucrType = UcrType.Mucr.codeValue)
-    case ChiefUcrDetails(None, Some(ducr), None)             => UcrBlock(ucr = ducr, ucrType = UcrType.Ducr.codeValue)
-    case ChiefUcrDetails(None, Some(ducr), Some(ducrPartId)) => UcrBlock(ucr = s"$ducr$Separator$ducrPartId", ucrType = UcrType.DucrPart.codeValue)
+    case ChiefUcrDetails(Some(mucr), None, None) => UcrBlock(ucr = mucr, ucrType = UcrType.Mucr.codeValue, chiefUcr = Some(true))
+    case ChiefUcrDetails(None, Some(ducr), None) => UcrBlock(ucr = ducr, ucrType = UcrType.Ducr.codeValue, chiefUcr = Some(true))
+    case ChiefUcrDetails(None, Some(ducr), Some(ducrPartId)) =>
+      UcrBlock(ucr = s"$ducr$Separator$ducrPartId", ucrType = UcrType.DucrPart.codeValue, chiefUcr = Some(true))
     case _ => throw new IllegalArgumentException(s"Cannot create valid UcrBlock instance from ChiefUcrDetails: [${this.toString}]")
   }
 }
