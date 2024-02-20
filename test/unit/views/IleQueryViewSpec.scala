@@ -18,7 +18,7 @@ package views
 
 import base.Injector
 import controllers.routes.ViewSubmissionsController
-import forms.IleQueryForm
+import forms.CdsOrChiefChoiceForm
 import org.jsoup.nodes.Element
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
@@ -29,7 +29,7 @@ class IleQueryViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  private val form = IleQueryForm.form
+  private val form = CdsOrChiefChoiceForm.form
   private val page = instanceOf[ile_query]
 
   private val view: Appendable = page(form)

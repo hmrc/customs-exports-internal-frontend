@@ -16,7 +16,7 @@
 
 @import components.gds.{errorSummary, gds_main_template, pageTitle}
 @import controllers.ileQuery.routes.IleQueryController
-@import controllers.routes.{ChoiceController, DucrPartDetailsController}
+@import controllers.routes.{ChoiceController, ManageChiefConsignmentController}
 @import forms.Choice
 @import forms.Choice._
 @import models.UcrType.{Ducr, DucrPart, Mucr}
@@ -39,7 +39,7 @@
 
 @backLink = @{
   queryUcr.map { block =>
-    if (block.isChief) BackButton(messages("site.back"), DucrPartDetailsController.displayPage)
+    if (block.isChief) BackButton(messages("site.back"), ManageChiefConsignmentController.displayPage)
     else BackButton(messages("site.back"), IleQueryController.getConsignmentInformation(block.ucr))
   }
 }

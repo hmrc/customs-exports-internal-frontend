@@ -17,7 +17,7 @@
 package controllers.ileQuery
 
 import controllers.ControllerLayerSpec
-import controllers.routes.DucrPartDetailsController
+import controllers.routes.ManageChiefConsignmentController
 import controllers.ileQuery.routes.IleQueryController
 import org.mockito.ArgumentMatchers.any
 
@@ -76,7 +76,7 @@ class FindConsignmentControllerSpec extends ControllerLayerSpec {
       "redirect to Manage a CHIEF UCR page" in {
         val result = controller.submitQueryForm()(postRequest(chiefForm))
 
-        redirectLocation(result).get mustBe DucrPartDetailsController.displayPage.url
+        redirectLocation(result).get mustBe ManageChiefConsignmentController.displayPage.url
       }
     }
 

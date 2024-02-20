@@ -22,7 +22,7 @@ import play.api.data.format.Formatter
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
 import utils.FieldValidator._
 
-object IleQueryForm {
+object CdsOrChiefChoiceForm {
 
   val cds = "cds"
   val chief = "chief"
@@ -48,7 +48,7 @@ object IleQueryForm {
   private def unapply(ucr: Option[String]): Option[(String, Option[String])] =
     if (ucr.isDefined) Some((cds, ucr)) else Some((chief, None))
 
-  def form: Form[Option[String]] = Form(IleQueryForm.mapping)
+  def form: Form[Option[String]] = Form(CdsOrChiefChoiceForm.mapping)
 
   def requiredRadio(requiredKey: String, choices: Seq[String]): FieldMapping[String] =
     of(radioFormatter(requiredKey, choices))

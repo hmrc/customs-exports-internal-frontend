@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.AuthenticatedAction
-import forms.ChiefUcrDetails
+import forms.ChiefConsignment
 import models.cache.Cache
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -25,17 +25,17 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.ducr_part_details
+import views.html.manage_chief_consignment
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DucrPartDetailsController @Inject() (
+class ManageChiefConsignmentController @Inject() (
   mcc: MessagesControllerComponents,
   authenticate: AuthenticatedAction,
   cacheRepository: CacheRepository,
-  ducrPartsDetailsPage: ducr_part_details
+  manageChiefConsignmentPage: manage_chief_consignment
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
@@ -44,24 +44,24 @@ class DucrPartDetailsController @Inject() (
       .findByProviderId(request.providerId)
       .map {
         case Some(cache) =>
-          cache.queryUcr.map(ucrBlock => getEmptyForm.fill(ChiefUcrDetails(ucrBlock))).getOrElse(getEmptyForm)
+          cache.queryUcr.map(ucrBlock => getEmptyForm.fill(ChiefConsignment(ucrBlock))).getOrElse(getEmptyForm)
 
         case _ => getEmptyForm
       }
-      .map(form => Ok(ducrPartsDetailsPage(form)))
+      .map(form => Ok(manageChiefConsignmentPage(form)))
   }
 
-  val submitDucrPartDetails: Action[AnyContent] = authenticate.async { implicit request =>
+  val submitChiefConsignment: Action[AnyContent] = authenticate.async { implicit request =>
     getEmptyForm
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(ducrPartsDetailsPage(formWithErrors))),
-        validDucrPartDetails =>
-          cacheRepository.upsert(Cache(request.providerId, validDucrPartDetails.toUcrBlock)).map { _ =>
+        formWithErrors => Future.successful(BadRequest(manageChiefConsignmentPage(formWithErrors))),
+        validChiefConsignment =>
+          cacheRepository.upsert(Cache(request.providerId, validChiefConsignment.toUcrBlock)).map { _ =>
             Redirect(controllers.routes.ChoiceController.displayPage)
           }
       )
   }
 
-  private def getEmptyForm: Form[ChiefUcrDetails] = ChiefUcrDetails.form()
+  private def getEmptyForm: Form[ChiefConsignment] = ChiefConsignment.form()
 }

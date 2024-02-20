@@ -83,7 +83,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
           if (chiefStatus.isEmpty)
             backButton must haveHref(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation("ucr"))
           else
-            backButton must haveHref(controllers.routes.DucrPartDetailsController.displayPage)
+            backButton must haveHref(controllers.routes.ManageChiefConsignmentController.displayPage)
         }
       }
     }

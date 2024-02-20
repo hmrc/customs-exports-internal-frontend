@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.ChiefUcrDetails._
+import forms.ChiefConsignment._
 import models.{UcrBlock, UcrType}
 import play.api.data.Forms.{optional, text}
 import play.api.data.{Form, Forms, Mapping}
@@ -24,36 +24,36 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.voa.play.form.Condition
 import utils.FieldValidator._
 
-case class ChiefUcrDetails(mucr: Option[String], ducr: Option[String], ducrPartId: Option[String]) {
+case class ChiefConsignment(mucr: Option[String], ducr: Option[String], ducrPartId: Option[String]) {
 
   def toUcrBlock: UcrBlock = this match {
-    case ChiefUcrDetails(Some(mucr), None, None) => UcrBlock(ucr = mucr, ucrType = UcrType.Mucr.codeValue, chiefUcr = Some(true))
-    case ChiefUcrDetails(None, Some(ducr), None) => UcrBlock(ucr = ducr, ucrType = UcrType.Ducr.codeValue, chiefUcr = Some(true))
-    case ChiefUcrDetails(None, Some(ducr), Some(ducrPartId)) =>
+    case ChiefConsignment(Some(mucr), None, None) => UcrBlock(ucr = mucr, ucrType = UcrType.Mucr.codeValue, chiefUcr = Some(true))
+    case ChiefConsignment(None, Some(ducr), None) => UcrBlock(ucr = ducr, ucrType = UcrType.Ducr.codeValue, chiefUcr = Some(true))
+    case ChiefConsignment(None, Some(ducr), Some(ducrPartId)) =>
       UcrBlock(ucr = s"$ducr$Separator$ducrPartId", ucrType = UcrType.DucrPart.codeValue, chiefUcr = Some(true))
-    case _ => throw new IllegalArgumentException(s"Cannot create valid UcrBlock instance from ChiefUcrDetails: [${this.toString}]")
+    case _ => throw new IllegalArgumentException(s"Cannot create valid UcrBlock instance from ChiefConsignment: [${this.toString}]")
   }
 }
 
-object ChiefUcrDetails {
-  implicit val format: OFormat[ChiefUcrDetails] = Json.format[ChiefUcrDetails]
+object ChiefConsignment {
+  implicit val format: OFormat[ChiefConsignment] = Json.format[ChiefConsignment]
 
   val Separator = "-"
 
-  def apply(ucrBlock: UcrBlock): ChiefUcrDetails =
+  def apply(ucrBlock: UcrBlock): ChiefConsignment =
     ucrBlock.ucrType match {
       case UcrType.DucrPart.codeValue =>
         val separatorIndex = ucrBlock.ucr.lastIndexOf(Separator)
         val (ducr, ducrPartId) = ucrBlock.ucr.splitAt(separatorIndex)
         val ducrPartIdWithoutSeparator = ducrPartId.tail
 
-        ChiefUcrDetails(mucr = None, ducr = Some(ducr), ducrPartId = Some(ducrPartIdWithoutSeparator))
-      case UcrType.Ducr.codeValue => ChiefUcrDetails(mucr = None, ducr = Some(ucrBlock.ucr), ducrPartId = None)
-      case UcrType.Mucr.codeValue => ChiefUcrDetails(mucr = Some(ucrBlock.ucr), ducr = None, ducrPartId = None)
-      case _ => throw new IllegalArgumentException(s"Cannot create DucrPartDetails instance from UcrBlock of type: [${ucrBlock.ucrType}]")
+        ChiefConsignment(mucr = None, ducr = Some(ducr), ducrPartId = Some(ducrPartIdWithoutSeparator))
+      case UcrType.Ducr.codeValue => ChiefConsignment(mucr = None, ducr = Some(ucrBlock.ucr), ducrPartId = None)
+      case UcrType.Mucr.codeValue => ChiefConsignment(mucr = Some(ucrBlock.ucr), ducr = None, ducrPartId = None)
+      case _ => throw new IllegalArgumentException(s"Cannot create ChiefConsignment instance from UcrBlock of type: [${ucrBlock.ucrType}]")
     }
 
-  val mapping: Mapping[ChiefUcrDetails] = {
+  val mapping: Mapping[ChiefConsignment] = {
     val mucrField = "mucr"
     val ducrField = "ducr"
     val ducrPartField = "ducrPartId"
@@ -67,7 +67,7 @@ object ChiefUcrDetails {
       Seq(
         ConditionalConstraint(
           isFieldNotEmpty(mucrField) and (isFieldEmpty(ducrField) and isFieldEmpty(ducrPartField)),
-          "ducrPartDetails.mucr.error",
+          "manageChiefConsignment.mucr.error",
           validMucrIgnoreCaseOption
         )
       )
@@ -76,10 +76,10 @@ object ChiefUcrDetails {
     def ducrMapping: AdditionalConstraintsMapping[Option[String]] = AdditionalConstraintsMapping(
       optional(text()).transform(_.map(_.trim.toUpperCase), (o: Option[String]) => o),
       Seq(
-        ConditionalConstraint(isFieldNotEmpty(ducrField) and isFieldEmpty(mucrField), "ducrPartDetails.ducr.error", validDucrIgnoreCaseOption),
+        ConditionalConstraint(isFieldNotEmpty(ducrField) and isFieldEmpty(mucrField), "manageChiefConsignment.ducr.error", validDucrIgnoreCaseOption),
         ConditionalConstraint(
           isFieldNotEmpty(ducrPartField) and isFieldEmpty(ducrField) and isFieldEmpty(mucrField),
-          "ducrPartDetails.ducr.error.blank",
+          "manageChiefConsignment.ducr.error.blank",
           nonEmptyOptionString
         )
       )
@@ -88,31 +88,35 @@ object ChiefUcrDetails {
     def ducrPartMapping: AdditionalConstraintsMapping[Option[String]] = AdditionalConstraintsMapping(
       optional(text()).transform(_.map(_.trim.toUpperCase), (o: Option[String]) => o),
       Seq(
-        ConditionalConstraint(isFieldNotEmpty(ducrPartField) and isFieldEmpty(mucrField), "ducrPartDetails.ducrPartId.error", isValidDucrPartIdOption)
+        ConditionalConstraint(
+          isFieldNotEmpty(ducrPartField) and isFieldEmpty(mucrField),
+          "manageChiefConsignment.ducrPartId.error",
+          isValidDucrPartIdOption
+        )
       )
     )
 
     Forms
-      .mapping("mucr" -> mucrMapping, "ducr" -> ducrMapping, "ducrPartId" -> ducrPartMapping)(ChiefUcrDetails.apply)(ChiefUcrDetails.unapply)
+      .mapping("mucr" -> mucrMapping, "ducr" -> ducrMapping, "ducrPartId" -> ducrPartMapping)(ChiefConsignment.apply)(ChiefConsignment.unapply)
       .verifying(
-        "ducrPartDetails.error.blank",
+        "manageChiefConsignment.error.blank",
         fields =>
           fields match {
-            case ChiefUcrDetails(None, None, None) => false
-            case _                                 => true
+            case ChiefConsignment(None, None, None) => false
+            case _                                  => true
           }
       )
       .verifying(
-        "ducrPartDetails.error.mismatchedInput",
+        "manageChiefConsignment.error.mismatchedInput",
         fields =>
           fields match {
-            case ChiefUcrDetails(Some(_), Some(_), Some(_)) => false
-            case ChiefUcrDetails(Some(_), Some(_), _)       => false
-            case ChiefUcrDetails(Some(_), _, Some(_))       => false
-            case _                                          => true
+            case ChiefConsignment(Some(_), Some(_), Some(_)) => false
+            case ChiefConsignment(Some(_), Some(_), _)       => false
+            case ChiefConsignment(Some(_), _, Some(_))       => false
+            case _                                           => true
           }
       )
   }
 
-  def form(): Form[ChiefUcrDetails] = Form(mapping)
+  def form(): Form[ChiefConsignment] = Form(mapping)
 }

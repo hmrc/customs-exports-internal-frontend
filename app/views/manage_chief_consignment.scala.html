@@ -15,8 +15,8 @@
  *@
 
 @import controllers.ileQuery.routes.FindConsignmentController
-@import controllers.routes.DucrPartDetailsController
-@import forms.ChiefUcrDetails
+@import controllers.routes.ManageChiefConsignmentController
+@import forms.ChiefConsignment
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.helpers.Title
 @import views.components.BackButton
@@ -32,47 +32,47 @@
     heading: heading
 )
 
-@(form: Form[ChiefUcrDetails])(implicit request: Request[_], messages: Messages)
+@(form: Form[ChiefConsignment])(implicit request: Request[_], messages: Messages)
 
 @pageHint = {
-  <div id="page-hint" class="govuk-hint govuk-!-margin-bottom-4">@messages("ducrPartDetails.pageHint")</div>
+  <div id="page-hint" class="govuk-hint govuk-!-margin-bottom-4">@messages("manageChiefConsignment.pageHint")</div>
 }
 
 @govukLayout(
-  title = Title("ducrPartDetails.title", "ducrPartDetails.pageHint", hasErrors = form.hasErrors || form.hasGlobalErrors),
+  title = Title("manageChiefConsignment.title", "manageChiefConsignment.pageHint", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))
 ) {
-  @formHelper(action = DucrPartDetailsController.submitDucrPartDetails, Symbol("autoComplete") -> "off") {
+  @formHelper(action = ManageChiefConsignmentController.submitChiefConsignment, Symbol("autoComplete") -> "off") {
     @errorSummary(form.errors)
 
-    @pageTitle(text = messages("ducrPartDetails.title"), classes = "")
+    @pageTitle(text = messages("manageChiefConsignment.title"), classes = "")
 
     @pageHint
 
-    @heading(messages("ducrPartDetails.mucrHeading"), "govuk-heading-m", "h2")
+    @heading(messages("manageChiefConsignment.mucrHeading"), "govuk-heading-m", "h2")
 
     @exportsInputText(
         field = form("mucr"),
-        labelKey = "ducrPartDetails.mucr",
-        hintKey = Some("ducrPartDetails.mucr.hint"),
+        labelKey = "manageChiefConsignment.mucr",
+        hintKey = Some("manageChiefConsignment.mucr.hint"),
         inputClasses = "govuk-input--width-20"
     )
 
-    @paragraphBody(message = messages("ducrPartDetails.or"), classes = "govuk-body govuk-!-padding-2", id = Some("or"))
+    @paragraphBody(message = messages("manageChiefConsignment.or"), classes = "govuk-body govuk-!-padding-2", id = Some("or"))
 
-    @heading(messages("ducrPartDetails.ducrHeading"), "govuk-heading-m", "h2")
+    @heading(messages("manageChiefConsignment.ducrHeading"), "govuk-heading-m", "h2")
 
     @exportsInputText(
       field = form("ducr"),
-      labelKey = "ducrPartDetails.ducr",
-      hintKey = Some("ducrPartDetails.ducr.hint"),
+      labelKey = "manageChiefConsignment.ducr",
+      hintKey = Some("manageChiefConsignment.ducr.hint"),
       inputClasses = "govuk-input--width-20"
     )
 
     @exportsInputText(
       field = form("ducrPartId"),
-      labelKey = "ducrPartDetails.ducrPartId",
-      hintKey = Some("ducrPartDetails.ducrPartId.hint"),
+      labelKey = "manageChiefConsignment.ducrPartId",
+      hintKey = Some("manageChiefConsignment.ducrPartId.hint"),
       inputClasses = "govuk-input--width-3"
     )
 

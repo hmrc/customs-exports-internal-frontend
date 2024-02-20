@@ -21,7 +21,7 @@ import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.IleQueryExchange
 import controllers.actions.AuthenticatedAction
 import controllers.exchanges.AuthenticatedRequest
-import forms.IleQueryForm.form
+import forms.CdsOrChiefChoiceForm.form
 import models.UcrBlock
 import models.UcrType.{Ducr, Mucr}
 import models.cache.{Answers, Cache, IleQuery}

@@ -17,7 +17,7 @@
 package controllers.ileQuery
 
 import controllers.actions.AuthenticatedAction
-import forms.IleQueryForm.form
+import forms.CdsOrChiefChoiceForm.form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
@@ -41,7 +41,7 @@ class FindConsignmentController @Inject() (authenticate: AuthenticatedAction, mc
         formWithErrors => BadRequest(ileQueryPage(formWithErrors)),
         {
           case Some(ucr) => Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr))
-          case _         => Redirect(controllers.routes.DucrPartDetailsController.displayPage)
+          case _         => Redirect(controllers.routes.ManageChiefConsignmentController.displayPage)
         }
       )
   }

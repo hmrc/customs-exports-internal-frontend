@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.routes.ChoiceController
-import forms.ChiefUcrDetails
+import forms.ChiefConsignment
 import models.{UcrBlock, UcrType}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import models.cache.Cache
@@ -27,30 +27,29 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import testdata.CommonTestData.{validDucr, validDucrPartId, validMucr, validWholeDucrParts}
-import views.html.ducr_part_details
+import views.html.manage_chief_consignment
 
 import scala.concurrent.ExecutionContext.global
 
-class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache with ScalaFutures with IntegrationPatience {
+class ManageChiefConsignmentControllerSpec extends ControllerLayerSpec with MockCache with ScalaFutures with IntegrationPatience {
 
-  private val ducrPartDetailsPage = mock[ducr_part_details]
+  private val manageChiefConsignmentPage = mock[manage_chief_consignment]
 
-  private def controller = new DucrPartDetailsController(stubMessagesControllerComponents(), SuccessfulAuth(), cacheRepository, ducrPartDetailsPage)(
-    global
-  )
+  private def controller =
+    new ManageChiefConsignmentController(stubMessagesControllerComponents(), SuccessfulAuth(), cacheRepository, manageChiefConsignmentPage)(global)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(ducrPartDetailsPage)
-    when(ducrPartDetailsPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    reset(manageChiefConsignmentPage)
+    when(manageChiefConsignmentPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override def afterEach(): Unit = {
-    reset(ducrPartDetailsPage)
+    reset(manageChiefConsignmentPage)
     super.afterEach()
   }
 
-  "DucrPartDetailsController on displayPage" should {
+  "ManageChiefConsignmentController on displayPage" should {
 
     "call CacheRepository" in {
       givenTheCacheIsEmpty()
@@ -65,86 +64,86 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
     }
   }
 
-  "DucrPartDetailsController on displayPage" when {
+  "ManageChiefConsignmentController on displayPage" when {
 
     "cache is empty" should {
 
-      "call DucrPartDetails view" in {
+      "call ChiefConsignment view" in {
         givenTheCacheIsEmpty()
         controller.displayPage(getRequest).futureValue
-        verify(ducrPartDetailsPage).apply(any())(any(), any())
+        verify(manageChiefConsignmentPage).apply(any())(any(), any())
       }
 
-      "pass empty form to DucrPartDetails view" in {
+      "pass empty form to ChiefConsignment view" in {
         givenTheCacheIsEmpty()
         controller.displayPage(getRequest).futureValue
 
-        val expectedForm = ChiefUcrDetails.form()
-        verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
+        val expectedForm = ChiefConsignment.form()
+        verify(manageChiefConsignmentPage).apply(meq(expectedForm))(any(), any())
       }
     }
 
     "cache contains queryUcr of DucrParts type" should {
 
-      "call ChiefUcrDetails view" in {
+      "call ChiefConsignment view" in {
         val cacheContents =
           Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts)))
         givenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
-        verify(ducrPartDetailsPage).apply(any())(any(), any())
+        verify(manageChiefConsignmentPage).apply(any())(any(), any())
       }
 
-      "pass data from CacheRepository to ChiefUcrDetails view" in {
+      "pass data from CacheRepository to ChiefConsignment view" in {
         val cacheContents =
           Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts)))
         givenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
 
-        val expectedForm = ChiefUcrDetails.form().fill(ChiefUcrDetails(mucr = None, ducr = Some(validDucr), ducrPartId = Some(validDucrPartId)))
-        verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
+        val expectedForm = ChiefConsignment.form().fill(ChiefConsignment(mucr = None, ducr = Some(validDucr), ducrPartId = Some(validDucrPartId)))
+        verify(manageChiefConsignmentPage).apply(meq(expectedForm))(any(), any())
       }
     }
 
     "cache contains queryUcr of DUCR only" should {
 
-      "call ChiefUcrDetails view" in {
+      "call ChiefConsignment view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
         givenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
-        verify(ducrPartDetailsPage).apply(any())(any(), any())
+        verify(manageChiefConsignmentPage).apply(any())(any(), any())
       }
 
-      "pass populated form to ChiefUcrDetails view" in {
+      "pass populated form to ChiefConsignment view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
         givenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
 
-        val expectedForm = ChiefUcrDetails.form().fill(ChiefUcrDetails(mucr = None, ducr = Some(validDucr), ducrPartId = None))
-        verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
+        val expectedForm = ChiefConsignment.form().fill(ChiefConsignment(mucr = None, ducr = Some(validDucr), ducrPartId = None))
+        verify(manageChiefConsignmentPage).apply(meq(expectedForm))(any(), any())
       }
     }
 
     "cache contains queryUcr of MUCR only" should {
 
-      "call ChiefUcrDetails view" in {
+      "call ChiefConsignment view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Mucr.codeValue, ucr = validMucr)))
         givenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
-        verify(ducrPartDetailsPage).apply(any())(any(), any())
+        verify(manageChiefConsignmentPage).apply(any())(any(), any())
       }
 
-      "pass populated form to ChiefUcrDetails view" in {
+      "pass populated form to ChiefConsignment view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Mucr.codeValue, ucr = validMucr)))
         givenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
 
-        val expectedForm = ChiefUcrDetails.form().fill(ChiefUcrDetails(mucr = Some(validMucr), ducr = None, ducrPartId = None))
-        verify(ducrPartDetailsPage).apply(meq(expectedForm))(any(), any())
+        val expectedForm = ChiefConsignment.form().fill(ChiefConsignment(mucr = Some(validMucr), ducr = None, ducrPartId = None))
+        verify(manageChiefConsignmentPage).apply(meq(expectedForm))(any(), any())
       }
     }
   }
 
-  "DucrPartDetailsController on submitDucrPartDetails" when {
+  "ManageChiefConsignmentController on submitChiefConsignment" when {
 
     val invalidFormData =
       Seq(Json.obj("ducr" -> "InvalidDucr!@#", "ducrPartId" -> "InvalidDucrPartId!@#"), Json.obj("ducr" -> validDucr, "mucr" -> validMucr))
@@ -153,12 +152,12 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
       s"provided with incorrect data $inputData" should {
 
         "return BadRequest (400) response" in {
-          val result = controller.submitDucrPartDetails()(postRequest(inputData))
+          val result = controller.submitChiefConsignment()(postRequest(inputData))
           status(result) mustBe BAD_REQUEST
         }
 
         "not call CacheRepository" in {
-          controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
+          controller.submitChiefConsignment()(postRequest(inputData)).futureValue
           verifyZeroInteractions(cacheRepository)
         }
       }
@@ -173,12 +172,12 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
       s"provided with correct data $inputData" should {
 
         "call CacheRepository upsert" in {
-          controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
+          controller.submitChiefConsignment()(postRequest(inputData)).futureValue
           verify(cacheRepository).upsert(any[Cache])
         }
 
         "provide CacheRepository with correct UcrBlock object" in {
-          controller.submitDucrPartDetails()(postRequest(inputData)).futureValue
+          controller.submitChiefConsignment()(postRequest(inputData)).futureValue
 
           val expectedUcrBlock = inputData match {
             case _ if ducrData == inputData => UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr.toUpperCase, chiefUcr = Some(true))
@@ -193,12 +192,12 @@ class DucrPartDetailsControllerSpec extends ControllerLayerSpec with MockCache w
         }
 
         "return SeeOther (303) response" in {
-          val result = controller.submitDucrPartDetails()(postRequest(inputData))
+          val result = controller.submitChiefConsignment()(postRequest(inputData))
           status(result) mustBe SEE_OTHER
         }
 
         "redirect to Choice page" in {
-          val result = controller.submitDucrPartDetails()(postRequest(inputData))
+          val result = controller.submitChiefConsignment()(postRequest(inputData))
           redirectLocation(result) mustBe Some(ChoiceController.displayPage.url)
         }
       }

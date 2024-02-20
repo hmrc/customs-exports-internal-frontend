@@ -16,11 +16,11 @@
 
 @import components.gds.{errorSummary, gds_main_template, pageTitle}
 @import controllers.ileQuery.routes.FindConsignmentController
-@import controllers.routes.{DucrPartDetailsController, ViewSubmissionsController}
+@import controllers.routes.{ManageChiefConsignmentController, ViewSubmissionsController}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.gds.{exportsInputText, link}
 @import views.helpers.Title
-@import forms.IleQueryForm
+@import forms.CdsOrChiefChoiceForm
 
 @this(
     govukLayout: gds_main_template,
@@ -36,7 +36,7 @@
 
 @inputField = @{
     Some(exportsInputText(
-        field = form(IleQueryForm.ucr),
+        field = form(CdsOrChiefChoiceForm.ucr),
         inputClasses = "govuk-input govuk-input--width-20",
         labelKey = "ileQuery.radio.1.text"
     ))
@@ -44,7 +44,7 @@
 
 @radios = {
     @govukRadios(Radios(
-            name = IleQueryForm.isIleQuery,
+            name = CdsOrChiefChoiceForm.isIleQuery,
             fieldset = Some(Fieldset(
                     legend = Some(Legend(
                     content = Text(messages("ileQuery.paragraph")),
@@ -54,20 +54,20 @@
             )),
             items = Seq(
                 RadioItem(
-                    id = Some(IleQueryForm.cds),
-                    value = Some(IleQueryForm.cds),
+                    id = Some(CdsOrChiefChoiceForm.cds),
+                    value = Some(CdsOrChiefChoiceForm.cds),
                     content = Text(messages("ileQuery.radio.1")),
                     conditionalHtml = inputField,
-                    checked = form(IleQueryForm.isIleQuery).value.contains(IleQueryForm.cds)
+                    checked = form(CdsOrChiefChoiceForm.isIleQuery).value.contains(CdsOrChiefChoiceForm.cds)
                 ),
                 RadioItem(
-                    id = Some(IleQueryForm.chief),
-                    value = Some(IleQueryForm.chief),
+                    id = Some(CdsOrChiefChoiceForm.chief),
+                    value = Some(CdsOrChiefChoiceForm.chief),
                     content = Text(messages("ileQuery.radio.2")),
-                    checked = form(IleQueryForm.isIleQuery).value.contains(IleQueryForm.chief)
+                    checked = form(CdsOrChiefChoiceForm.isIleQuery).value.contains(CdsOrChiefChoiceForm.chief)
                 )
             ),
-            errorMessage = form(IleQueryForm.isIleQuery).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+            errorMessage = form(CdsOrChiefChoiceForm.isIleQuery).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
     ))
 }
 

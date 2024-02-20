@@ -18,25 +18,25 @@ package views
 
 import base.Injector
 import controllers.ileQuery.routes.FindConsignmentController
-import forms.ChiefUcrDetails
+import forms.ChiefConsignment
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData._
-import views.html.ducr_part_details
+import views.html.manage_chief_consignment
 
-class DucrPartDetailsViewSpec extends ViewSpec with ViewMatchers with Injector {
+class ChiefConsignmentViewSpec extends ViewSpec with ViewMatchers with Injector {
 
   private implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
 
-  private val form = ChiefUcrDetails.form()
-  private val page = instanceOf[ducr_part_details]
+  private val form = ChiefConsignment.form()
+  private val page = instanceOf[manage_chief_consignment]
 
-  private def createView(form: Form[ChiefUcrDetails]): Html = page(form)
+  private def createView(form: Form[ChiefConsignment]): Html = page(form)
 
-  "ChiefUcrDetails view" when {
+  "ChiefConsignment view" when {
 
     "the page has errors" should {
       "have the page's title prefixed with 'Error:'" in {
@@ -49,15 +49,15 @@ class DucrPartDetailsViewSpec extends ViewSpec with ViewMatchers with Injector {
       val view = createView(form)
 
       "render title" in {
-        view.getTitle must containMessage("ducrPartDetails.title")
+        view.getTitle must containMessage("manageChiefConsignment.title")
       }
 
       "render heading" in {
-        view.getElementById("title") must containMessage("ducrPartDetails.title")
+        view.getElementById("title") must containMessage("manageChiefConsignment.title")
       }
 
       "render page hint" in {
-        view.getElementById("page-hint") must containMessage("ducrPartDetails.pageHint")
+        view.getElementById("page-hint") must containMessage("manageChiefConsignment.pageHint")
       }
 
       "render 'Back' button leading to 'Find a consignment' page" in {
@@ -66,28 +66,28 @@ class DucrPartDetailsViewSpec extends ViewSpec with ViewMatchers with Injector {
       }
 
       "render Option 1 & 2 headings" in {
-        view.getElementsByTag("h2").get(0) must containMessage("ducrPartDetails.mucrHeading")
-        view.getElementsByTag("h2").get(1) must containMessage("ducrPartDetails.ducrHeading")
+        view.getElementsByTag("h2").get(0) must containMessage("manageChiefConsignment.mucrHeading")
+        view.getElementsByTag("h2").get(1) must containMessage("manageChiefConsignment.ducrHeading")
       }
 
       "render 'Or' text" in {
-        view.getElementById("or") must containMessage("ducrPartDetails.or")
+        view.getElementById("or") must containMessage("manageChiefConsignment.or")
       }
 
       "render MUCR input field label" in {
-        view.getElementsByAttributeValue("for", "mucr").first() must containMessage("ducrPartDetails.mucr")
+        view.getElementsByAttributeValue("for", "mucr").first() must containMessage("manageChiefConsignment.mucr")
       }
 
       "render MUCR input field hint" in {
-        view.getElementById("mucr-hint") must containMessage("ducrPartDetails.mucr.hint")
+        view.getElementById("mucr-hint") must containMessage("manageChiefConsignment.mucr.hint")
       }
 
       "render DUCR input field label" in {
-        view.getElementsByAttributeValue("for", "ducr").first() must containMessage("ducrPartDetails.ducr")
+        view.getElementsByAttributeValue("for", "ducr").first() must containMessage("manageChiefConsignment.ducr")
       }
 
       "render DUCR input field hint" in {
-        view.getElementById("ducr-hint") must containMessage("ducrPartDetails.ducr.hint")
+        view.getElementById("ducr-hint") must containMessage("manageChiefConsignment.ducr.hint")
       }
 
       "render empty DUCR input field" in {
@@ -95,11 +95,11 @@ class DucrPartDetailsViewSpec extends ViewSpec with ViewMatchers with Injector {
       }
 
       "render DUCR Part ID input field label" in {
-        view.getElementsByAttributeValue("for", "ducrPartId").first() must containMessage("ducrPartDetails.ducrPartId")
+        view.getElementsByAttributeValue("for", "ducrPartId").first() must containMessage("manageChiefConsignment.ducrPartId")
       }
 
       "render DUCR Part ID input field hint" in {
-        view.getElementById("ducrPartId-hint") must containMessage("ducrPartDetails.ducrPartId.hint")
+        view.getElementById("ducrPartId-hint") must containMessage("manageChiefConsignment.ducrPartId.hint")
       }
 
       "render empty DUCR Part ID input field" in {
@@ -114,7 +114,7 @@ class DucrPartDetailsViewSpec extends ViewSpec with ViewMatchers with Injector {
     }
 
     "provided with filled form" should {
-      val view = createView(form.fill(ChiefUcrDetails(mucr = None, ducr = Some(validDucr), ducrPartId = Some(validDucrPartId))))
+      val view = createView(form.fill(ChiefConsignment(mucr = None, ducr = Some(validDucr), ducrPartId = Some(validDucrPartId))))
 
       "fill DUCR input field" in {
         view.getElementById("ducr").`val`() mustBe validDucr
@@ -126,26 +126,26 @@ class DucrPartDetailsViewSpec extends ViewSpec with ViewMatchers with Injector {
     }
 
     "provided with form containing DUCR error" should {
-      val view: Document = createView(form.withError(FormError("ducr", "ducrPartDetails.ducr.error")))
+      val view: Document = createView(form.withError(FormError("ducr", "manageChiefConsignment.ducr.error")))
 
       "render error summary" in {
         view must haveGovUkGlobalErrorSummary
       }
 
       "render field error" in {
-        view must haveGovUkFieldError("ducr", messages("ducrPartDetails.ducr.error"))
+        view must haveGovUkFieldError("ducr", messages("manageChiefConsignment.ducr.error"))
       }
     }
 
     "provided with form containing DUCR Part ID error" should {
-      val view: Document = createView(form.withError(FormError("ducrPartId", "ducrPartDetails.ducrPartId.error")))
+      val view: Document = createView(form.withError(FormError("ducrPartId", "manageChiefConsignment.ducrPartId.error")))
 
       "render error summary" in {
         view must haveGovUkGlobalErrorSummary
       }
 
       "render field error" in {
-        view must haveGovUkFieldError("ducrPartId", messages("ducrPartDetails.ducrPartId.error"))
+        view must haveGovUkFieldError("ducrPartId", messages("manageChiefConsignment.ducrPartId.error"))
       }
     }
   }
