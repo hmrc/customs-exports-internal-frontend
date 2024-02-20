@@ -248,7 +248,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
           controller.getConsignmentInformation(incorrectUCR)(request).futureValue
 
-          val expectedForm = IleQueryForm.form.fillAndValidate(incorrectUCR)
+          val expectedForm = IleQueryForm.form.fillAndValidate(Some(incorrectUCR))
           verify(ileQueryPage).apply(meq(expectedForm))(any(), any())
         }
       }

@@ -17,7 +17,7 @@
 package views
 
 import base.Injector
-import controllers.routes.{DucrPartDetailsController, ViewSubmissionsController}
+import controllers.routes.ViewSubmissionsController
 import forms.IleQueryForm
 import org.jsoup.nodes.Element
 import play.api.mvc.{AnyContent, Request}
@@ -48,7 +48,7 @@ class IleQueryViewSpec extends ViewSpec with Injector {
     }
 
     "render page header" in {
-      view.getElementsByClass("govuk-label--xl").first.text mustBe messages("ileQuery.title")
+      view.getElementsByClass("govuk-heading-xl").first.text mustBe messages("ileQuery.title")
     }
 
     "render error summary" when {
@@ -65,8 +65,21 @@ class IleQueryViewSpec extends ViewSpec with Injector {
       }
     }
 
+    "contain explanatory accompanying text" in {
+      view.getElementsByClass("govuk-body").first.text mustBe messages("ileQuery.paragraph")
+    }
+
+    "contain radios for CDS or CHIEF with conditional HTML" in {
+      val radioItems = view.getElementsByClass("govuk-radios__item")
+      radioItems.size mustBe 2
+      radioItems.first must containMessage("ileQuery.radio.1")
+
+      radioItems.get(1) must containMessage("ileQuery.radio.2")
+    }
+
     "contains input field" in {
       Option(view.getElementById("ucr")) mustBe defined
+      view.getElementsByAttributeValue("for", "ucr").first() must containMessage("ileQuery.radio.1.text")
     }
 
     "contains submit button" in {
@@ -80,15 +93,6 @@ class IleQueryViewSpec extends ViewSpec with Injector {
 
       previousRequests.text mustBe messages("ileQuery.link.requests")
       previousRequests must haveHref(ViewSubmissionsController.displayPage)
-    }
-
-    "contain link to 'DUCR Part Details' page" in {
-      val govukListElement = view.getElementsByClass("govuk-list").first
-
-      val ducrPartDetailsLink = govukListElement.getElementsByClass("govuk-link").get(1)
-
-      ducrPartDetailsLink must containMessage("ileQuery.link.ducrPart")
-      ducrPartDetailsLink must haveHref(DucrPartDetailsController.displayPage)
     }
   }
 }

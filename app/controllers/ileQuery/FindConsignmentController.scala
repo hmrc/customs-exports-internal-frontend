@@ -39,7 +39,10 @@ class FindConsignmentController @Inject() (authenticate: AuthenticatedAction, mc
       .bindFromRequest()
       .fold(
         formWithErrors => BadRequest(ileQueryPage(formWithErrors)),
-        validUcr => Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(validUcr))
+        {
+          case Some(ucr) => Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr))
+          case _         => Redirect(controllers.routes.DucrPartDetailsController.displayPage)
+        }
       )
   }
 }
