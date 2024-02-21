@@ -16,9 +16,9 @@ GET         /consignment-query/:ucr                controllers.ileQuery.IleQuery
 GET         /choice                                controllers.ChoiceController.displayPage
 POST        /choice                                controllers.ChoiceController.submit
 
-# DUCR Part details page
-GET         /ducr-part-details                     controllers.DucrPartDetailsController.displayPage
-POST        /ducr-part-details                     controllers.DucrPartDetailsController.submitDucrPartDetails
+# Manage CHIEF consignment page
+GET         /manage-chief-consignment             controllers.ManageChiefConsignmentController.displayPage
+POST        /manage-chief-consignment             controllers.ManageChiefConsignmentController.submitChiefConsignment
 
 #Manage MUCR
 GET         /manage-mucr                          controllers.consolidations.ManageMucrController.displayPage

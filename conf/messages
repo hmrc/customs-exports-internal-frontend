@@ -84,14 +84,23 @@ choicePage.input.error.incorrectValue = Please, choose valid option.
 
 ileQuery.link.ducrPart = Enter a DUCR Part
 
-ducrPartDetails.title = DUCR Part details
-ducrPartDetails.heading = You can use this service if your original declaration was made in CHIEF.
-ducrPartDetails.ducr = Enter DUCR
-ducrPartDetails.ducr.hint = For example, 9GB123999746000-DUCR12345.
-ducrPartDetails.ducr.error = Enter a DUCR in the correct format.
-ducrPartDetails.ducrPartId = Enter DUCR Part ID
-ducrPartDetails.ducrPartId.hint = This can be up to 3 digits. For example, 123.
-ducrPartDetails.ducrPartId.error = Enter a DUCR Part ID in the correct format.
+manageChiefConsignment.title = Manage a CHIEF consignment
+manageChiefConsignment.pageHint = Use one of the two options below. Enter the reference of the consignment you want to manage.
+manageChiefConsignment.mucrHeading = Option 1
+manageChiefConsignment.ducrHeading = Option 2
+manageChiefConsignment.mucr = Enter the associated MUCR
+manageChiefConsignment.mucr.hint = For example, GB/123456789100-AB123.
+manageChiefConsignment.mucr.error = Enter a valid MUCR.
+manageChiefConsignment.or = or
+manageChiefConsignment.ducr = Enter the associated DUCR
+manageChiefConsignment.ducr.hint = For example, 3GB986007773125-INVOICE123.
+manageChiefConsignment.ducr.error = Enter a valid DUCR.
+manageChiefConsignment.ducr.error.blank = A DUCR must be entered with a DUCR Part.
+manageChiefConsignment.ducrPartId = Enter DUCR Part (optional)
+manageChiefConsignment.ducrPartId.hint = This can be up to 3 numbers and one optional capital letter at the end. For example, 1, 111, 111M or M.
+manageChiefConsignment.ducrPartId.error = Enter a valid DUCR Part.
+manageChiefConsignment.error.blank = Enter a consignment reference in one of the two options.
+manageChiefConsignment.error.mismatchedInput = Enter a consignment reference in only one of the two options.
 
 consignmentReferences.reference.ducr = Declaration Consignment Reference (DUCR)
 consignmentReferences.reference.ducrPart = DUCR Part
@@ -338,7 +347,12 @@ notifications.elem.content.inventoryLinkingMovementResponse.crc = CRC:
 notifications.elem.content.inventoryLinkingMovementTotalsResponse.roe = Route of entry is:
 notifications.elem.content.inventoryLinkingMovementTotalsResponse.soe = Status of entry is:
 
-ileQuery.title = Find a CDS consignment
+ileQuery.title = Manage a CDS or CHIEF Consignment
+ileQuery.paragraph = Select the customs declaration service that holds your consignment details.
+ileQuery.radio.1 = CDS
+ileQuery.radio.1.text = Enter the DUCR or MUCR associated with the consignment.
+ileQuery.radio.2 = CHIEF
+ileQuery.radio.empty = Please select either CDS or CHIEF
 ileQuery.ucr.empty = Enter a Unique Consignment Reference.
 ileQuery.ucr.incorrect = Unique Consignment Reference is incorrect.
 

@@ -22,7 +22,7 @@ import connectors.exchanges.IleQueryExchange
 import controllers.ControllerLayerSpec
 import controllers.exchanges.Operator
 import controllers.ileQuery.routes.IleQueryController
-import forms.IleQueryForm
+import forms.CdsOrChiefChoiceForm
 import models.{now, UcrBlock}
 import models.UcrType.Mucr
 import models.cache.{Answers, Cache, IleQuery}
@@ -248,7 +248,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
 
           controller.getConsignmentInformation(incorrectUCR)(request).futureValue
 
-          val expectedForm = IleQueryForm.form.fillAndValidate(incorrectUCR)
+          val expectedForm = CdsOrChiefChoiceForm.form.fillAndValidate(Some(incorrectUCR))
           verify(ileQueryPage).apply(meq(expectedForm))(any(), any())
         }
       }

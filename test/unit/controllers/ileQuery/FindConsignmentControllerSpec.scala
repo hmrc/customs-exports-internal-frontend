@@ -17,6 +17,7 @@
 package controllers.ileQuery
 
 import controllers.ControllerLayerSpec
+import controllers.routes.ManageChiefConsignmentController
 import controllers.ileQuery.routes.IleQueryController
 import org.mockito.ArgumentMatchers.any
 
@@ -58,21 +59,24 @@ class FindConsignmentControllerSpec extends ControllerLayerSpec {
   "FindConsignmentController on submitQueryForm" when {
 
     "provide with correct form" should {
-
+      val cdsForm = Json.obj(("ucr", JsString(correctUcr)), ("isIleQuery", JsString("cds")))
+      val chiefForm = Json.obj(("isIleQuery", JsString("chief")))
       "return SeeOther status (303)" in {
-        val correctForm = Json.obj(("ucr", JsString(correctUcr)))
-
-        val result = controller.submitQueryForm()(postRequest(correctForm))
+        val result = controller.submitQueryForm()(postRequest(cdsForm))
 
         status(result) mustBe SEE_OTHER
       }
 
       "redirect to Consignment Details page" in {
-        val correctForm = Json.obj(("ucr", JsString(correctUcr)))
-
-        val result = controller.submitQueryForm()(postRequest(correctForm))
+        val result = controller.submitQueryForm()(postRequest(cdsForm))
 
         redirectLocation(result).get mustBe IleQueryController.getConsignmentInformation(correctUcr).url
+      }
+
+      "redirect to Manage a CHIEF UCR page" in {
+        val result = controller.submitQueryForm()(postRequest(chiefForm))
+
+        redirectLocation(result).get mustBe ManageChiefConsignmentController.displayPage.url
       }
     }
 

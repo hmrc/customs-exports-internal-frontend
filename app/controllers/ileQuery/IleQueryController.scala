@@ -21,8 +21,7 @@ import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.IleQueryExchange
 import controllers.actions.AuthenticatedAction
 import controllers.exchanges.AuthenticatedRequest
-import forms.IleQueryForm.form
-import javax.inject.{Inject, Singleton}
+import forms.CdsOrChiefChoiceForm.form
 import models.UcrBlock
 import models.UcrType.{Ducr, Mucr}
 import models.cache.{Answers, Cache, IleQuery}
@@ -38,6 +37,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.FieldValidator.validDucr
 import views.html._
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -119,8 +119,8 @@ class IleQueryController @Inject() (
 
       case Some(response: UcrNotFoundResponseExchangeData) =>
         response.ucrBlock match {
-          case Some(UcrBlock(ucr, _, _)) => Future.successful(Ok(consignmentNotFound(ucr)))
-          case _                         => Future.successful(InternalServerError(errorHandler.standardErrorTemplate()))
+          case Some(UcrBlock(ucr, _, _, _)) => Future.successful(Ok(consignmentNotFound(ucr)))
+          case _                            => Future.successful(InternalServerError(errorHandler.standardErrorTemplate()))
         }
 
       case _ => Future.successful(loadingPageResult)
@@ -128,14 +128,14 @@ class IleQueryController @Inject() (
 
   private def sendIleQuery(ucr: String)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
     form
-      .fillAndValidate(ucr)
+      .fillAndValidate(Some(ucr))
       .fold(
         formWithErrors => Future.successful(BadRequest(ileQueryPage(formWithErrors))),
         validUcr => {
-          val ileQueryRequest = buildIleQuery(request.providerId, validUcr)
+          val ileQueryRequest = buildIleQuery(request.providerId, validUcr.get)
 
           connector.submit(ileQueryRequest).flatMap { conversationId =>
-            val ileQuery = IleQuery(retrieveSessionId, validUcr, conversationId)
+            val ileQuery = IleQuery(retrieveSessionId, validUcr.get, conversationId)
 
             ileQueryRepository.insertOne(ileQuery).map { _ =>
               Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr))
