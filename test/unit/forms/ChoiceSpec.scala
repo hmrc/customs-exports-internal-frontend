@@ -64,7 +64,6 @@ class ChoiceSpec extends UnitSpec with OptionValues {
       Choice.unapply(AssociateUCR).value mustBe "associateUCR"
       Choice.unapply(DisassociateUCR).value mustBe "disassociateUCR"
       Choice.unapply(ShutMUCR).value mustBe "shutMUCR"
-      Choice.unapply(ViewSubmissions).value mustBe "submissions"
     }
 
     "correctly map input to choice" in {
@@ -74,7 +73,6 @@ class ChoiceSpec extends UnitSpec with OptionValues {
       Choice.apply("associateUCR") mustBe AssociateUCR
       Choice.apply("disassociateUCR") mustBe DisassociateUCR
       Choice.apply("shutMUCR") mustBe ShutMUCR
-      Choice.apply("submissions") mustBe ViewSubmissions
     }
 
     "correctly map JourneyType into choice" in {

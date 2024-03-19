@@ -21,9 +21,9 @@ import controllers.exchanges.AuthenticatedRequest
 import controllers.ileQuery.routes.FindConsignmentController
 import controllers.summary.routes._
 import forms.Choice
+import models.{ReturnToStartException, UcrBlock}
 import models.UcrType.{Ducr, DucrPart, Mucr}
 import models.cache._
-import models.{ReturnToStartException, UcrBlock}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.CacheRepository
@@ -67,45 +67,42 @@ class ChoiceController @Inject() (
     }
   }
 
-  private def proceed(choice: Choice, cache: Cache)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] = choice match {
-    case Choice.Arrival =>
-      saveAndRedirect(ArrivalAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage)
+  private def proceed(choice: Choice, cache: Cache): Future[Result] = {
+    def determineRedirectionForAssociateUcr(queryUcr: Option[UcrBlock]): Call = queryUcr.map { ucrBlock =>
+      ucrBlock.ucrType match {
+        case Ducr.codeValue | DucrPart.codeValue => consolidations.routes.MucrOptionsController.displayPage
+        case Mucr.codeValue                      => consolidations.routes.ManageMucrController.displayPage
+        case _                                   => throw ReturnToStartException
+      }
+    }.getOrElse(throw ReturnToStartException)
 
-    case Choice.RetrospectiveArrival =>
-      saveAndRedirect(RetrospectiveArrivalAnswers.fromQueryUcr, movements.routes.LocationController.displayPage)
+    val (answers, call) = choice match {
+      case Choice.Arrival =>
+        (ArrivalAnswers.fromQueryUcr(cache.queryUcr), movements.routes.SpecificDateTimeController.displayPage)
 
-    case Choice.Departure =>
-      saveAndRedirect(DepartureAnswers.fromQueryUcr, movements.routes.SpecificDateTimeController.displayPage)
+      case Choice.RetrospectiveArrival if cache.queryUcr.exists(_.isChief) =>
+        (ArrivalAnswers.fromQueryUcr(cache.queryUcr).withLocationCode("GBAURETRETRET"), movements.routes.SpecificDateTimeController.displayPage)
 
-    case Choice.AssociateUCR =>
-      val redirectionCall = cache.queryUcr
-        .map(ucrBlock =>
-          (ucrBlock.ucrType: @unchecked) match {
-            case Ducr.codeValue | DucrPart.codeValue => consolidations.routes.MucrOptionsController.displayPage
-            case Mucr.codeValue                      => consolidations.routes.ManageMucrController.displayPage
-          }
-        )
-        .getOrElse(throw ReturnToStartException)
+      case Choice.RetrospectiveArrival =>
+        (RetrospectiveArrivalAnswers.fromQueryUcr(cache.queryUcr), movements.routes.LocationController.displayPage)
 
-      saveAndRedirect(AssociateUcrAnswers.fromQueryUcr, redirectionCall)
+      case Choice.Departure =>
+        (DepartureAnswers.fromQueryUcr(cache.queryUcr), movements.routes.SpecificDateTimeController.displayPage)
 
-    case Choice.DisassociateUCR =>
-      saveAndRedirect(DisassociateUcrAnswers.fromQueryUcr, DisassociateUcrSummaryController.displayPage)
+      case Choice.AssociateUCR =>
+        val redirection = determineRedirectionForAssociateUcr(cache.queryUcr)
+        (AssociateUcrAnswers.fromQueryUcr(cache.queryUcr), redirection)
 
-    case Choice.ShutMUCR =>
-      saveAndRedirect(ShutMucrAnswers.fromQueryUcr, ShutMucrSummaryController.displayPage)
+      case Choice.DisassociateUCR =>
+        (DisassociateUcrAnswers.fromQueryUcr(cache.queryUcr), DisassociateUcrSummaryController.displayPage)
 
-    case _ => Future.successful(BadRequest)
+      case Choice.ShutMUCR =>
+        (ShutMucrAnswers.fromQueryUcr(cache.queryUcr), ShutMucrSummaryController.displayPage)
+    }
+
+    saveAndRedirect(cache.copy(answers = Some(answers)), call)
   }
 
-  private def saveAndRedirect(answerProvider: Option[UcrBlock] => Answers, call: Call)(
-    implicit request: AuthenticatedRequest[AnyContent]
-  ): Future[Result] =
-    for {
-      updatedCache: Cache <- cacheRepository.findByProviderId(request.providerId).map {
-        case Some(cache) => cache.copy(answers = Some(answerProvider.apply(cache.queryUcr)))
-        case None        => Cache(request.providerId, Some(answerProvider.apply(None)), None)
-      }
-      result <- cacheRepository.upsert(updatedCache).map(_ => Redirect(call))
-    } yield result
+  private def saveAndRedirect(updatedCache: Cache, call: Call): Future[Result] =
+    cacheRepository.upsert(updatedCache).map(_ => Redirect(call))
 }
