@@ -68,9 +68,8 @@ object Choice {
   case object AssociateUCR extends Choice("associateUCR")
   case object DisassociateUCR extends Choice("disassociateUCR")
   case object ShutMUCR extends Choice("shutMUCR")
-  case object ViewSubmissions extends Choice("submissions")
 
-  val allChoices: Seq[Choice] = Seq(Arrival, RetrospectiveArrival, Departure, AssociateUCR, DisassociateUCR, ShutMUCR, ViewSubmissions)
+  val allChoices: Seq[Choice] = Seq(Arrival, RetrospectiveArrival, Departure, AssociateUCR, DisassociateUCR, ShutMUCR)
 
   val choiceId = "choice"
 

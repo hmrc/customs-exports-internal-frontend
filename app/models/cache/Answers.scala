@@ -63,6 +63,9 @@ case class ArrivalAnswers(
   override val location: Option[Location] = None
 ) extends MovementAnswers {
   override val `type`: JourneyType.Value = JourneyType.ARRIVE
+
+  def withLocationCode(locationCode: String): ArrivalAnswers =
+    copy(location = Some(Location(locationCode)))
 }
 
 object ArrivalAnswers {

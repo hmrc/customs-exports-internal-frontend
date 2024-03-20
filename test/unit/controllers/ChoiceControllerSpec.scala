@@ -243,5 +243,24 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         redirectLocation(result) mustBe Some(FindConsignmentController.displayQueryForm.url)
       }
     }
+
+    "take user on Arrival journey and prefill location code" when {
+      "user selects to retrospectively arrive a CHIEF DUCR" in {
+        val queryResultDucr = UcrBlock(ucr = "ucr", ucrType = Ducr.codeValue, chiefUcr = Some(true))
+        givenTheCacheContains(Cache(providerId, None, Some(queryResultDucr)))
+
+        val result = controller().submit(postWithChoice(RetrospectiveArrival))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(SpecificDateTimeController.displayPage.url)
+        theCacheUpserted.answers mustBe Some(
+          ArrivalAnswers(
+            consignmentReferences = Some(ConsignmentReferences(ConsignmentReferenceType.D, "ucr")),
+            location = Some(Location("GBAURETRETRET"))
+          )
+        )
+        theCacheUpserted.queryUcr mustBe Some(queryResultDucr)
+      }
+    }
   }
 }
