@@ -18,67 +18,69 @@ package models.viewmodels.decoder
 
 import base.UnitSpec
 import controllers.{CSRFSupport, MessagesStub}
-import play.api.i18n.Messages
+import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import views.ViewMatchers
 
-class ILEErrorSpec extends UnitSpec with ViewMatchers with CSRFSupport {
+class ILEErrorSpec extends UnitSpec with ViewMatchers with CSRFSupport with MessagesStub {
 
   "ILE Error" should {
 
-    "have correct amount of codes" in {
+    "contain all expected errors" in {
+      val ileErrorsNames = Set(
+        "error.ile.InvalidUcrFormat",
+        "error.ile.ClientIdValidationFailed",
+        "error.ile.UcrNotAtTopOfConsolidation",
+        "error.ile.MucrNotShutConsolidation",
+        "error.ile.ParentMucrInSameConsolidation",
+        "error.ile.ConsolidationNotFound",
+        "error.ile.ConsolidationAlreadyShut",
+        "error.ile.UcrTypeNotMatchingUcrFormat",
+        "error.ile.DeclarationNotExist",
+        "error.ile.UcrAlreadyAssociated",
+        "error.ile.NoPriorArrivalFoundAtDepartureLocation",
+        "error.ile.DeclarationsMissingP2P",
+        "error.ile.DeclarationCancelledOrTerminated",
+        "error.ile.UnknownDeclarationIdentifier",
+        "error.ile.ConsolidationLevelLimitReached",
+        "error.ile.InvalidGoodsDateTime",
+        "error.ile.MucrNotShutDeparture",
+        "error.ile.FutureDateTimeOverExceeded",
+        "error.ile.UcrIsNotMucr",
+        "error.ile.UcrNotExist",
+        "error.ile.UcrAlreadyDisassociated",
+        "error.ile.EmptyMucr",
+        "error.ile.LocationBasedPermissionFailed",
+        "error.ile.InvalidGoodsLocation",
+        "error.ile.MucrAlreadyDeparted",
+        "error.ile.UcrRejectedUponArrival",
+        "error.ile.AlreadyRetrospectiveArrived",
+        "error.ile.PreviouslyArrivedDUCROrMUCR",
+        "error.ile.AlreadyArrived",
+        "error.ile.UCRDoesNotExist",
+        "error.ile.DifferentSubmitterId",
+        "error.ile.MucrNotMatchingEac",
+        "error.ile.DifferentLocation"
+      )
 
-      val expectedCodesAmount = 30
-      ILEError.allErrors.size mustBe expectedCodesAmount
+      ILEError.allErrors.map(_.messageKey).toSet mustBe ileErrorsNames
     }
 
     "contain non-empty code and description for every error" in {
-
       ILEError.allErrors.foreach { error =>
         error.code mustNot be(empty)
         error.messageKey mustNot be(empty)
       }
     }
 
+    implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest()
+
     "have translations for all errors" in {
-      val messages: Messages = MessagesStub.realMessagesApi.preferred(FakeRequest().withCSRFToken)
+      ILEError.allErrors.foreach(error => messages must haveTranslationFor(s"${error.messageKey}"))
+    }
 
-      val ileErrorsNames = Seq(
-        "InvalidUcrFormat",
-        "ClientIdValidationFailed",
-        "UcrNotAtTopOfConsolidation",
-        "MucrNotShutConsolidation",
-        "ParentMucrInSameConsolidation",
-        "ConsolidationNotFound",
-        "ConsolidationAlreadyShut",
-        "UcrTypeNotMatchingUcrFormat",
-        "DeclarationNotExist",
-        "UcrAlreadyAssociated",
-        "NoPriorArrivalFoundAtDepartureLocation",
-        "DeclarationsMissingP2P",
-        "DeclarationCancelledOrTerminated",
-        "UnknownDeclarationIdentifier",
-        "ConsolidationLevelLimitReached",
-        "InvalidGoodsDateTime",
-        "MucrNotShutDeparture",
-        "FutureDateTimeOverExceeded",
-        "UcrIsNotMucr",
-        "UcrNotExist",
-        "UcrAlreadyDisassociated",
-        "EmptyMucr",
-        "LocationBasedPermissionFailed",
-        "InvalidGoodsLocation",
-        "MucrAlreadyDeparted",
-        "UcrRejectedUponArrival",
-        "AlreadyRetrospectiveArrived",
-        "PreviouslyArrivedDUCROrMUCR",
-        "AlreadyArrived",
-        "UCRDoesNotExist"
-      )
-
-      ileErrorsNames.foreach { errorName =>
-        messages must haveTranslationFor(s"error.ile.$errorName")
-      }
+    "have translations for all errors in Welsh" in {
+      ILEError.allErrors.foreach(error => messagesCy must haveTranslationFor(s"${error.messageKey}"))
     }
   }
 

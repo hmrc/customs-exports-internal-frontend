@@ -17,23 +17,15 @@
 package models.viewmodels.decoder
 
 import base.UnitSpec
+import controllers.MessagesStub
 import models.viewmodels.decoder.SOECode._
+import play.api.mvc.{AnyContentAsEmpty, Request}
+import play.api.test.FakeRequest
+import views.ViewMatchers
 
-class SOECodeSpec extends UnitSpec {
+class SOECodeSpec extends UnitSpec with MessagesStub with ViewMatchers {
 
   "Soe Code" should {
-
-    "have correct amount of DUCR codes" in {
-
-      val expectedCodesAmount = 20
-      SOECode.DucrCodes.size mustBe expectedCodesAmount
-    }
-
-    "have correct amount of MUCR codes" in {
-
-      val expectedCodesAmount = 4
-      SOECode.MucrCodes.size mustBe expectedCodesAmount
-    }
 
     "have correct list of DUCR codes" in {
 
@@ -57,17 +49,34 @@ class SOECodeSpec extends UnitSpec {
         InsufficientGuarantees,
         CompletedSuccessfully,
         Departed,
-        Frustrated
+        Frustrated,
+        DeclarationReceived,
+        ProvisionalCustomsDebtCalculated,
+        FinalCustomsDebtCalculated,
+        GoodsExitResultsReceived,
+        AmendedNoQuotaAllocation,
+        ManualTaskRaised,
+        NonExistentDeclaration,
+        DeclarationUnderRisk
       )
 
       SOECode.DucrCodes mustBe expectedCodes
     }
 
     "have correct list of MUCR codes" in {
-
       val expectedCodes = Set(ConsolidationOpen, ConsolidationClosedWithoutP2P, ConsolidationHasP2P, ConsolidationWithEmptyMucr)
 
       SOECode.MucrCodes mustBe expectedCodes
+    }
+
+    implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest()
+
+    "have messages for all codes" in {
+      SOECode.AllCodes.foreach(soeCode => messages must haveTranslationFor(soeCode.messageKey))
+    }
+
+    "have messages for all codes in welsh" in {
+      SOECode.AllCodes.foreach(soeCode => messagesCy must haveTranslationFor(soeCode.messageKey))
     }
   }
 }
