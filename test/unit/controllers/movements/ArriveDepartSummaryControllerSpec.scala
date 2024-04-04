@@ -22,7 +22,7 @@ import controllers.summary.routes.MovementConfirmationController
 import forms.ConsignmentReferenceType.D
 import forms.ConsignmentReferences
 import models.cache._
-import models.summary.FlashKeys
+import models.summary.SessionHelper
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 
 import org.scalatest.concurrent.ScalaFutures
@@ -129,11 +129,11 @@ class ArriveDepartSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
         redirectLocation(result) mustBe Some(MovementConfirmationController.displayPage.url)
       }
 
-      "return response with Movement Type and UCR in flash" in {
+      "return response with Movement Type and UCR in session" in {
         val result = controller(ArrivalAnswers(consignmentReferences = consignmentRefs)).submitMovementRequest()(postRequest(JsString("")))
 
-        flash(result).get(FlashKeys.JOURNEY_TYPE) mustBe Some(JourneyType.ARRIVE.toString)
-        flash(result).get(FlashKeys.UCR) mustBe Some(dummyUcr)
+        session(result).get(SessionHelper.JOURNEY_TYPE) mustBe Some(JourneyType.ARRIVE.toString)
+        session(result).get(SessionHelper.UCR) mustBe Some(dummyUcr)
       }
     }
 
@@ -156,12 +156,12 @@ class ArriveDepartSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
         redirectLocation(result) mustBe Some(MovementConfirmationController.displayPage.url)
       }
 
-      "return response with Movement Type and UCR in flash" in {
+      "return response with Movement Type and UCR in session" in {
         val result =
           controller(RetrospectiveArrivalAnswers(consignmentReferences = consignmentRefs)).submitMovementRequest()(postRequest(JsString("")))
 
-        flash(result).get(FlashKeys.JOURNEY_TYPE) mustBe Some(JourneyType.RETROSPECTIVE_ARRIVE.toString)
-        flash(result).get(FlashKeys.UCR) mustBe Some(dummyUcr)
+        session(result).get(SessionHelper.JOURNEY_TYPE) mustBe Some(JourneyType.RETROSPECTIVE_ARRIVE.toString)
+        session(result).get(SessionHelper.UCR) mustBe Some(dummyUcr)
       }
     }
 
@@ -183,11 +183,11 @@ class ArriveDepartSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
         redirectLocation(result) mustBe Some(MovementConfirmationController.displayPage.url)
       }
 
-      "return response with Movement Type and UCR in flash" in {
+      "return response with Movement Type and UCR in session" in {
         val result = controller(DepartureAnswers(consignmentReferences = consignmentRefs)).submitMovementRequest()(postRequest(JsString("")))
 
-        flash(result).get(FlashKeys.JOURNEY_TYPE) mustBe Some(JourneyType.DEPART.toString)
-        flash(result).get(FlashKeys.UCR) mustBe Some(dummyUcr)
+        session(result).get(SessionHelper.JOURNEY_TYPE) mustBe Some(JourneyType.DEPART.toString)
+        session(result).get(SessionHelper.UCR) mustBe Some(dummyUcr)
       }
     }
   }

@@ -52,7 +52,6 @@ abstract class ControllerLayerSpec extends UnitSpec with BeforeAndAfterEach with
     FakeRequest("POST", "/").withJsonBody(wts.writes(body)).withCSRFToken
 
   protected implicit def messages(implicit request: Request[_]): Messages = stubMessagesControllerComponents().messagesApi.preferred(request)
-  protected implicit val flashApi: Flash = Flash()
 
   protected def contentAsHtml(of: Future[Result]): Html = Html(contentAsBytes(of).decodeString(charset(of).getOrElse("utf-8")))
 

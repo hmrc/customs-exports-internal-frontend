@@ -16,10 +16,22 @@
 
 package models.summary
 
-object FlashKeys {
+import play.api.mvc.{Request, Session}
+
+object SessionHelper {
+
   val JOURNEY_TYPE: String = "JOURNEY_TYPE"
   val UCR = "UCR"
   val UCR_TYPE = "UCR_TYPE"
   val MUCR_TO_ASSOCIATE = "MUCR_TO_ASSOCIATE"
   val CONVERSATION_ID = "CONVERSATION_ID"
+
+  def getValue(key: String)(implicit request: Request[_]): Option[String] =
+    request.session.data.get(key)
+
+  def getOrElse(key: String, default: String = "")(implicit request: Request[_]): String =
+    request.session.data.getOrElse(key, default)
+
+  def removeValue(key: String)(implicit request: Request[_]): Session =
+    request.session - key
 }

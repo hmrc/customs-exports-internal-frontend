@@ -17,9 +17,10 @@
 package controllers.summary
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
+import controllers.summary.routes.MovementConfirmationController
 import models.ReturnToStartException
 import models.cache.{AssociateUcrAnswers, JourneyType}
-import models.summary.FlashKeys
+import models.summary.SessionHelper._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubmissionService
@@ -56,16 +57,15 @@ class AssociateUcrSummaryController @Inject() (
     val mucrToAssociate = answers.parentMucr.map(_.mucr)
 
     submissionService.submit(request.providerId, answers).map { conversationId =>
-      val flash = Seq(
-        Some(FlashKeys.JOURNEY_TYPE -> answers.`type`.toString),
-        ucr.map(ucr => FlashKeys.UCR -> ucr),
-        ucrType.map(ucrType => FlashKeys.UCR_TYPE -> ucrType),
-        mucrToAssociate.map(mucr => FlashKeys.MUCR_TO_ASSOCIATE -> mucr),
-        Some(FlashKeys.CONVERSATION_ID -> conversationId)
+      val values = List(
+        Some(JOURNEY_TYPE -> answers.`type`.toString),
+        ucr.map(ucr => UCR -> ucr),
+        ucrType.map(ucrType => UCR_TYPE -> ucrType),
+        mucrToAssociate.map(mucr => MUCR_TO_ASSOCIATE -> mucr),
+        Some(CONVERSATION_ID -> conversationId)
       ).flatten
 
-      Redirect(controllers.summary.routes.MovementConfirmationController.displayPage)
-        .flashing(flash: _*)
+      Redirect(MovementConfirmationController.displayPage).addingToSession(values: _*)
     }
   }
 }

@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.summary.routes.MovementConfirmationController
 import models.ReturnToStartException
 import models.cache.{DisassociateUcrAnswers, JourneyType}
-import models.summary.FlashKeys
+import models.summary.SessionHelper._
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SubmissionService
@@ -53,14 +53,14 @@ class DisassociateUcrSummaryController @Inject() (
     val ucr = answers.ucr.map(_.ucr)
 
     submissionService.submit(request.providerId, answers).map { conversationId =>
-      val flash = Seq(
-        Some(FlashKeys.JOURNEY_TYPE -> answers.`type`.toString),
-        ucr.map(ucr => FlashKeys.UCR -> ucr),
-        ucrType.map(ucrType => FlashKeys.UCR_TYPE -> ucrType),
-        Some(FlashKeys.CONVERSATION_ID -> conversationId)
+      val values = List(
+        Some(JOURNEY_TYPE -> answers.`type`.toString),
+        ucr.map(ucr => UCR -> ucr),
+        ucrType.map(ucrType => UCR_TYPE -> ucrType),
+        Some(CONVERSATION_ID -> conversationId)
       ).flatten
 
-      Redirect(MovementConfirmationController.displayPage).flashing(flash: _*)
+      Redirect(MovementConfirmationController.displayPage).addingToSession(values: _*)
     }
   }
 }

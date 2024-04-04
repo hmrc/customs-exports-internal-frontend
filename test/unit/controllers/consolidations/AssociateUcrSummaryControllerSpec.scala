@@ -20,7 +20,7 @@ import controllers.ControllerLayerSpec
 import controllers.summary.AssociateUcrSummaryController
 import forms.{AssociateUcr, MucrOptions}
 import models.cache.{Answers, AssociateUcrAnswers, JourneyType}
-import models.summary.FlashKeys
+import models.summary.SessionHelper
 import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
@@ -120,11 +120,11 @@ class AssociateUcrSummaryControllerSpec extends ControllerLayerSpec with ScalaFu
         redirectLocation(result) mustBe Some(controllers.summary.routes.MovementConfirmationController.displayPage.url)
       }
 
-      "return response with Movement Type in flash" in {
-        val result =
-          controller(AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))).submit()(postRequest(Json.obj()))
+      "return response with Movement Type in session" in {
+        val answers = AssociateUcrAnswers(parentMucr = Some(mucrOptions), childUcr = Some(associateUcr))
+        val result = controller(answers).submit()(postRequest(Json.obj()))
 
-        flash(result).get(FlashKeys.JOURNEY_TYPE) mustBe Some(JourneyType.ASSOCIATE_UCR.toString)
+        session(result).get(SessionHelper.JOURNEY_TYPE) mustBe Some(JourneyType.ASSOCIATE_UCR.toString)
       }
     }
   }

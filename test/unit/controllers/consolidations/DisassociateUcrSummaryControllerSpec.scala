@@ -22,7 +22,7 @@ import controllers.summary.DisassociateUcrSummaryController
 import controllers.summary.routes.MovementConfirmationController
 import forms.DisassociateUcr
 import models.cache.{Answers, DisassociateUcrAnswers, JourneyType}
-import models.summary.FlashKeys
+import models.summary.SessionHelper
 import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
@@ -109,10 +109,10 @@ class DisassociateUcrSummaryControllerSpec extends ControllerLayerSpec with Scal
         redirectLocation(result) mustBe Some(MovementConfirmationController.displayPage.url)
       }
 
-      "return response with Movement Type in flash" in {
+      "return response with Movement Type in session" in {
         val result = controller(DisassociateUcrAnswers(ucr = Some(ucr))).submit()(postRequest(Json.obj()))
 
-        flash(result).get(FlashKeys.JOURNEY_TYPE) mustBe Some(JourneyType.DISSOCIATE_UCR.toString)
+        session(result).get(SessionHelper.JOURNEY_TYPE) mustBe Some(JourneyType.DISSOCIATE_UCR.toString)
       }
     }
   }
