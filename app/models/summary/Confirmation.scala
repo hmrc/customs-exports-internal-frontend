@@ -19,7 +19,7 @@ package models.summary
 import forms.ConsignmentReferences
 import models.cache.JourneyType
 import models.cache.JourneyType.JourneyType
-import models.summary.FlashKeys._
+import models.summary.SessionHelper._
 import play.api.mvc.Request
 
 case class Confirmation(journeyType: JourneyType, conversationId: String, consignmentRefs: Option[ConsignmentReferences], mucr: Option[String])
@@ -27,17 +27,15 @@ case class Confirmation(journeyType: JourneyType, conversationId: String, consig
 object Confirmation {
 
   def apply()(implicit request: Request[_]): Option[Confirmation] = {
-    val extractValue = request.flash.get(_)
-
     val consignmentReferences =
       for {
-        ucr <- extractValue(UCR)
-        ucrType <- extractValue(UCR_TYPE)
+        ucr <- getValue(UCR)
+        ucrType <- getValue(UCR_TYPE)
       } yield ConsignmentReferences(ucrType, ucr)
 
     for {
-      journeyType <- extractValue(JOURNEY_TYPE).map(JourneyType.withName)
-      conversationId <- extractValue(CONVERSATION_ID)
-    } yield new Confirmation(journeyType, conversationId, consignmentReferences, extractValue(MUCR_TO_ASSOCIATE))
+      journeyType <- getValue(JOURNEY_TYPE).map(JourneyType.withName)
+      conversationId <- getValue(CONVERSATION_ID)
+    } yield new Confirmation(journeyType, conversationId, consignmentReferences, getValue(MUCR_TO_ASSOCIATE))
   }
 }

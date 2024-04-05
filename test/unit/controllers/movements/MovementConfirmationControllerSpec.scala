@@ -21,7 +21,7 @@ import forms.ConsignmentReferences
 import models.ReturnToStartException
 import models.cache.JourneyType._
 import models.summary.Confirmation
-import models.summary.FlashKeys._
+import models.summary.SessionHelper._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.ScalaFutures
@@ -61,7 +61,7 @@ class MovementConfirmationControllerSpec extends ControllerLayerSpec with GivenW
       maybeJourneyType: Option[JourneyType],
       maybeConversationId: Option[String] = Some(conversationId)
     ): FakeRequest[AnyContentAsEmpty.type] = {
-      val flash = List(
+      val values = List(
         maybeConversationId.map(conversationId => CONVERSATION_ID -> conversationId),
         maybeJourneyType.map(journeyType => JOURNEY_TYPE -> journeyType.toString),
         Some(MUCR_TO_ASSOCIATE -> dummyMucr),
@@ -69,7 +69,7 @@ class MovementConfirmationControllerSpec extends ControllerLayerSpec with GivenW
         Some(UCR_TYPE -> dummyUcrType)
       ).flatten
 
-      FakeRequest("GET", "/").withFlash(flash: _*)
+      FakeRequest("GET", "/").withSession(values: _*)
     }
 
     "return 200 when authenticated" in {

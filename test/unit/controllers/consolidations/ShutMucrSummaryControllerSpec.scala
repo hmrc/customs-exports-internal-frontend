@@ -22,7 +22,7 @@ import controllers.summary.routes.MovementConfirmationController
 import forms.ShutMucr
 import models.ReturnToStartException
 import models.cache.{Answers, JourneyType, ShutMucrAnswers}
-import models.summary.FlashKeys
+import models.summary.SessionHelper
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 
 import org.scalatest.concurrent.ScalaFutures
@@ -101,10 +101,10 @@ class ShutMucrSummaryControllerSpec extends ControllerLayerSpec with ScalaFuture
         redirectLocation(result) mustBe Some(MovementConfirmationController.displayPage.url)
       }
 
-      "return response with Movement Type in flash" in {
+      "return response with Movement Type in session" in {
         val result = controller(ShutMucrAnswers(shutMucr = Some(shutMucr))).submit()(postRequest(JsString("")))
 
-        flash(result).get(FlashKeys.JOURNEY_TYPE) mustBe Some(JourneyType.SHUT_MUCR.toString)
+        session(result).get(SessionHelper.JOURNEY_TYPE) mustBe Some(JourneyType.SHUT_MUCR.toString)
       }
     }
   }

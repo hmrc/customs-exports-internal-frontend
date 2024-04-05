@@ -20,7 +20,7 @@ import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.summary.routes.MovementConfirmationController
 import models.cache.JourneyType.{ARRIVE, DEPART, RETROSPECTIVE_ARRIVE}
 import models.cache._
-import models.summary.FlashKeys
+import models.summary.SessionHelper._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubmissionService
@@ -59,14 +59,14 @@ class ArriveDepartSummaryController @Inject() (
     val ucr = answers.consignmentReferences.map(_.referenceValue)
 
     submissionService.submit(request.providerId, request.answersAs[MovementAnswers]).map { conversationId =>
-      val flash = Seq(
-        Some(FlashKeys.JOURNEY_TYPE -> answers.`type`.toString),
-        ucr.map(ucr => FlashKeys.UCR -> ucr),
-        ucrType.map(ucrType => FlashKeys.UCR_TYPE -> ucrType),
-        Some(FlashKeys.CONVERSATION_ID -> conversationId)
+      val values = List(
+        Some(JOURNEY_TYPE -> answers.`type`.toString),
+        ucr.map(ucr => UCR -> ucr),
+        ucrType.map(ucrType => UCR_TYPE -> ucrType),
+        Some(CONVERSATION_ID -> conversationId)
       ).flatten
-      Redirect(MovementConfirmationController.displayPage)
-        .flashing(flash: _*)
+
+      Redirect(MovementConfirmationController.displayPage).addingToSession(values: _*)
     }
   }
 }
