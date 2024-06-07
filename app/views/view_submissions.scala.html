@@ -15,7 +15,6 @@
  *@
 
 @import components.gds.{gds_main_template, pageTitle}
-@import models.notifications.NotificationFrontendModel
 @import models.submissions.Submission
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.components.BackButton
@@ -28,18 +27,14 @@
   table: GovukTable
 )
 
-@(submissions: Seq[(Submission, Seq[NotificationFrontendModel])])(implicit request: Request[_], messages: Messages)
+@(submissions: Seq[Submission])(implicit request: Request[_], messages: Messages)
 
-@ucrCellContent(submission: Submission, notifications: Seq[NotificationFrontendModel]) = {
-  @if(notifications.isEmpty){
-    @components.elements_in_separate_lines(submission.ucrBlocks.map(_.fullUcr))
-  } else {
-    @link(
-      content = components.elements_in_separate_lines(submission.ucrBlocks.map(_.fullUcr)),
-      textHidden = Some(messages("submissions.hidden.text", submission.ucrBlocks.map(_.fullUcr).mkString(", "))),
-      href = routes.ViewNotificationsController.listOfNotifications(submission.conversationId)
-    )
-  }
+@ucrCellContent(submission: Submission) = {
+  @link(
+    content = components.elements_in_separate_lines(submission.ucrBlocks.map(_.fullUcr)),
+    textHidden = Some(messages("submissions.hidden.text", submission.ucrBlocks.map(_.fullUcr).mkString(", "))),
+    href = routes.ViewNotificationsController.listOfNotifications(submission.conversationId)
+  )
 }
 
 @ucrClass = @{"ucr"}
@@ -85,10 +80,10 @@
         )
       )),
       firstCellIsHeader = false,
-      rows = submissions.map { case (submission, notifications) =>
+      rows = submissions.map { submission =>
         Seq(
           TableRow(
-            content = HtmlContent(ucrCellContent(submission, notifications)),
+            content = HtmlContent(ucrCellContent(submission)),
             classes = ucrClass
           ),
           TableRow(

@@ -19,8 +19,6 @@ package views
 import base.Injector
 import connectors.exchanges.ActionType.{ConsolidationType, MovementType}
 import controllers.ileQuery.routes.FindConsignmentController
-import controllers.routes.ViewNotificationsController
-import models.notifications.{Entry, NotificationFrontendModel, ResponseType}
 import models.submissions.Submission
 import models.{UcrBlock, UcrType}
 import org.jsoup.nodes.Document
@@ -29,8 +27,6 @@ import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData._
 import testdata.ConsolidationTestData._
-import testdata.MovementsTestData.exampleSubmission
-import testdata.NotificationTestData.exampleNotificationFrontendModel
 import views.helpers.ViewDates
 import views.html.view_submissions
 
@@ -46,7 +42,7 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
   private val dateTime: Instant =
     LocalDate.of(2019, 10, 31).atStartOfDay().toInstant(ZoneOffset.UTC)
 
-  private def createView(submissions: Seq[(Submission, Seq[NotificationFrontendModel])] = Seq.empty): Html =
+  private def createView(submissions: Seq[Submission] = Seq.empty): Html =
     page(submissions)(request, messages)
 
   "Submissions page" should {
@@ -88,14 +84,6 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
         ucrBlocks = Seq(UcrBlock(ucr = validMucr, ucrType = "M")),
         actionType = ConsolidationType.ShutMucr
       )
-      val shutMucrNotifications = Seq(
-        exampleNotificationFrontendModel(
-          timestampReceived = dateTime.plus(10, MINUTES),
-          conversationId = conversationId,
-          responseType = ResponseType.ControlResponse,
-          entries = Seq(Entry(ucrBlock = Some(UcrBlock(ucr = validMucr, ucrType = "M"))))
-        )
-      )
 
       val arrivalSubmission = Submission(
         requestTimestamp = dateTime.plus(31, MINUTES),
@@ -103,14 +91,6 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
         conversationId = conversationId_2,
         ucrBlocks = Seq(UcrBlock(ucr = validDucr, ucrType = "D")),
         actionType = MovementType.Arrival
-      )
-      val arrivalNotifications = Seq(
-        exampleNotificationFrontendModel(
-          timestampReceived = dateTime.plus(35, MINUTES),
-          conversationId = conversationId_2,
-          responseType = ResponseType.ControlResponse,
-          entries = Seq(Entry(ucrBlock = Some(UcrBlock(ucr = validDucr, ucrType = "D"))))
-        )
       )
 
       val departureSubmission = Submission(
@@ -120,14 +100,6 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
         ucrBlocks = Seq(UcrBlock(ucr = validWholeDucrParts, ucrType = UcrType.DucrPart.codeValue)),
         actionType = MovementType.Departure
       )
-      val departureNotifications = Seq(
-        exampleNotificationFrontendModel(
-          timestampReceived = dateTime.plus(37, MINUTES),
-          conversationId = conversationId_3,
-          responseType = ResponseType.ControlResponse,
-          entries = Seq(Entry(ucrBlock = Some(UcrBlock(ucr = validWholeDucrParts, ucrType = UcrType.DucrPart.codeValue))))
-        )
-      )
 
       val associateSubmission = Submission(
         requestTimestamp = dateTime.plus(30, MINUTES),
@@ -136,24 +108,8 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
         ucrBlocks = Seq(UcrBlock(ucr = validDucr, ucrType = "D"), UcrBlock(ucr = validMucr, ucrType = "M")),
         actionType = ConsolidationType.DucrAssociation
       )
-      val associateNotifications = Seq(
-        exampleNotificationFrontendModel(
-          timestampReceived = dateTime.plus(34, MINUTES),
-          conversationId = conversationId_4,
-          responseType = ResponseType.ControlResponse,
-          entries =
-            Seq(Entry(ucrBlock = Some(UcrBlock(ucr = validDucr, ucrType = "D"))), Entry(ucrBlock = Some(UcrBlock(ucr = validMucr, ucrType = "M"))))
-        )
-      )
 
-      val pageWithData: Document = createView(
-        Seq(
-          shutMucrSubmission -> shutMucrNotifications,
-          arrivalSubmission -> arrivalNotifications,
-          departureSubmission -> departureNotifications,
-          associateSubmission -> associateNotifications
-        )
-      )
+      val pageWithData: Document = createView(Seq(shutMucrSubmission, arrivalSubmission, departureSubmission, associateSubmission))
 
       val firstDataRowElements = pageWithData.selectFirst(".govuk-table__body .govuk-table__row:nth-child(1)")
       val secondDataRowElements = pageWithData.selectFirst(".govuk-table__body .govuk-table__row:nth-child(2)")
@@ -184,15 +140,8 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
     }
 
     "contain MUCR and DUCR if Submission contains both" in {
-      val notifications = Seq(
-        exampleNotificationFrontendModel(
-          conversationId = conversationId,
-          responseType = ResponseType.ControlResponse,
-          entries = Seq(Entry(ucrBlock = Some(UcrBlock(ucr = validMucr, ucrType = "M"))))
-        )
-      )
 
-      val pageWithData: Document = createView(Seq(exampleAssociateDucrRequestSubmission -> notifications))
+      val pageWithData: Document = createView(Seq(exampleAssociateDucrRequestSubmission))
 
       val firstDataRowElements = pageWithData.selectFirst(".govuk-table__body .govuk-table__row:nth-child(1)")
 
@@ -202,33 +151,6 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
       val actualUcrTypes = firstDataRowElements.selectFirst(".submission-type").text()
       actualUcrTypes must include("MUCR")
       actualUcrTypes must include("DUCR")
-    }
-
-    "contain link to ViewNotifications page" when {
-      "there are Notifications for the Submission" in {
-        val submission = exampleSubmission(requestTimestamp = dateTime)
-        val notifications = Seq(exampleNotificationFrontendModel(timestampReceived = dateTime.plusSeconds(3)))
-
-        val page: Document = createView(Seq((submission, notifications)))
-
-        val firstDataRowUcrCell = page.selectFirst(".govuk-table__body .govuk-table__row:nth-child(1)")
-
-        firstDataRowUcrCell.selectFirst(".ucr").child(0) must haveHref(ViewNotificationsController.listOfNotifications(conversationId))
-      }
-    }
-
-    "display DUCR with DUCR Part" when {
-      "there is no notification for the submission" in {
-        val ucrBlock = UcrBlock("8GB123456789012-123456", Some("123"), "DP")
-        val submission = exampleSubmission(ucrBlocks = Seq(ucrBlock), requestTimestamp = dateTime)
-        val notifications = Seq.empty
-
-        val page: Document = createView(Seq((submission, notifications)))
-
-        val firstDataRowUcrCell = page.selectFirst(".govuk-table__body .govuk-table__row:nth-child(1)")
-
-        firstDataRowUcrCell.selectFirst(".ucr").text() mustBe "8GB123456789012-123456-123"
-      }
     }
   }
 }
