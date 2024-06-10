@@ -23,7 +23,6 @@ import connectors.exchanges.{ArrivalExchange, DisassociateDUCRExchange, IleQuery
 import forms.{ConsignmentReferenceType, ConsignmentReferences, Location}
 import models.UcrBlock
 import models.UcrType.Ducr
-import models.notifications.ResponseType.ControlResponse
 import models.notifications.queries.DucrInfo
 import models.notifications.queries.IleQueryResponseExchangeData.SuccessfulResponseExchangeData
 import org.mockito.BDDMockito._
@@ -33,7 +32,6 @@ import play.api.libs.json.{Format, Json}
 import play.api.test.Helpers._
 import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmission
-import testdata.NotificationTestData.exampleNotificationFrontendModel
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
@@ -247,43 +245,6 @@ class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
       verify(getRequestedFor(urlEqualTo(expectedUrl)))
 
       response mustBe Some(expectedSubmission)
-    }
-  }
-
-  "fetch Notifications" should {
-    "send GET request to the backend" in {
-      val expectedNotification = exampleNotificationFrontendModel()
-      val notificationsJson =
-        s"""[
-          |   {
-          |     "timestampReceived":${Json.toJson(expectedNotification.timestampReceived)},
-          |     "conversationId":"$conversationId",
-          |     "responseType":"${ControlResponse.value}",
-          |     "entries":[
-          |       {
-          |         "ucrBlock":{
-          |           "ucr":"$correctUcr",
-          |           "ucrType":"D"
-          |         },
-          |         "goodsItem":[]
-          |       }
-          |     ],
-          |     "errorCodes":[],
-          |     "messageCode":""
-          |   }
-          |]""".stripMargin
-
-      stubFor(
-        get(s"/notifications/$conversationId?providerId=$providerId")
-          .willReturn(aResponse().withStatus(OK).withBody(notificationsJson))
-      )
-
-      val response = connector.fetchNotifications(conversationId, providerId).futureValue
-
-      val expectedUrl = s"/notifications/$conversationId?providerId=$providerId"
-      verify(getRequestedFor(urlEqualTo(expectedUrl)))
-
-      response mustBe Seq(expectedNotification)
     }
   }
 

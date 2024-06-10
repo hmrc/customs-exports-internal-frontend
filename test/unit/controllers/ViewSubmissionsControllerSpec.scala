@@ -17,7 +17,6 @@
 package controllers
 
 import connectors.CustomsDeclareExportsMovementsConnector
-import models.notifications.NotificationFrontendModel
 import models.now
 import models.submissions.Submission
 import org.mockito.ArgumentCaptor
@@ -27,9 +26,7 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testdata.CommonTestData.{conversationId, conversationId_2, conversationId_3, providerId}
-import testdata.MovementsTestData
 import testdata.MovementsTestData.exampleSubmission
-import testdata.NotificationTestData.exampleNotificationFrontendModel
 import views.html.view_submissions
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -59,7 +56,6 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
     "return 200 (OK)" in {
       when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq.empty))
-      when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
       val result = controller.displayPage(getRequest)
 
@@ -68,23 +64,11 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
     "call connector for all Submissions" in {
       when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq.empty))
-      when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
       controller.displayPage(getRequest).futureValue
 
       val expectedProviderId = providerId
       verify(customsExportsMovementConnector).fetchAllSubmissions(meq(expectedProviderId))(any())
-    }
-
-    "call connector for all Notifications" in {
-      val submission = MovementsTestData.exampleSubmission()
-      when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any())).thenReturn(Future.successful(Seq(submission)))
-      when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
-
-      controller.displayPage(getRequest).futureValue
-
-      val expectedProviderId = providerId
-      verify(customsExportsMovementConnector).fetchAllNotificationsForUser(meq(expectedProviderId))(any())
     }
 
     "call submissions view, passing Submissions in descending order" when {
@@ -96,13 +80,12 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
 
         when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any()))
           .thenReturn(Future.successful(Seq(submission1, submission2, submission3)))
-        when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any())).thenReturn(Future.successful(Seq.empty))
 
         controller.displayPage(getRequest).futureValue
 
-        val viewArguments: Seq[(Submission, Seq[NotificationFrontendModel])] = captureViewArguments()
+        val viewArguments: Seq[Submission] = captureViewArguments()
 
-        val submissions: Seq[Submission] = viewArguments.map(_._1)
+        val submissions: Seq[Submission] = viewArguments
         submissions mustBe Seq(submission3, submission2, submission1)
       }
 
@@ -111,32 +94,22 @@ class ViewSubmissionsControllerSpec extends ControllerLayerSpec with ScalaFuture
         val submission2 = exampleSubmission(conversationId = conversationId_2, requestTimestamp = now.minusSeconds(30))
         val submission3 = exampleSubmission(conversationId = conversationId_3, requestTimestamp = now)
 
-        val notification1 = exampleNotificationFrontendModel(conversationId = conversationId)
-        val notification2 = exampleNotificationFrontendModel(conversationId = conversationId_2)
-        val notification3 = exampleNotificationFrontendModel(conversationId = conversationId_3)
-        val notification4 = exampleNotificationFrontendModel(conversationId = conversationId_3)
-
         when(customsExportsMovementConnector.fetchAllSubmissions(any[String])(any()))
           .thenReturn(Future.successful(Seq(submission1, submission2, submission3)))
 
-        when(customsExportsMovementConnector.fetchAllNotificationsForUser(any[String])(any()))
-          .thenReturn(Future.successful(Seq(notification1, notification2, notification3, notification4)))
-
         controller.displayPage(getRequest).futureValue
 
-        val viewArguments: Seq[(Submission, Seq[NotificationFrontendModel])] = captureViewArguments()
+        val viewArguments: Seq[Submission] = captureViewArguments()
 
-        val submissions: Seq[Submission] = viewArguments.map(_._1)
-        val notifications: Seq[Seq[NotificationFrontendModel]] = viewArguments.map(_._2)
+        val submissions: Seq[Submission] = viewArguments
         submissions mustBe Seq(submission3, submission2, submission1)
-        notifications mustBe Seq(Seq(notification4, notification3), Seq(notification2), Seq(notification1))
       }
     }
   }
 
-  private def captureViewArguments(): Seq[(Submission, Seq[NotificationFrontendModel])] = {
-    val captor: ArgumentCaptor[Seq[(Submission, Seq[NotificationFrontendModel])]] =
-      ArgumentCaptor.forClass(classOf[Seq[(Submission, Seq[NotificationFrontendModel])]])
+  private def captureViewArguments(): Seq[Submission] = {
+    val captor: ArgumentCaptor[Seq[Submission]] =
+      ArgumentCaptor.forClass(classOf[Seq[Submission]])
     verify(submissionsPage).apply(captor.capture())(any(), any())
     captor.getValue
   }
