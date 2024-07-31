@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
-package migrations.exceptions
+package modules
 
-class LockManagerException(message: String) extends RuntimeException(message)
+import play.api.inject._
+import routines.RoutineRunner
+
+class RoutineRunnerModule extends SimpleModule(bind[RoutineRunner].toSelf.eagerly())

@@ -9,16 +9,16 @@ object AppDependencies {
   val jacksonVersion = "2.14.2"
 
   val compile = Seq(
-    "uk.gov.hmrc"                   %% "bootstrap-frontend-play-30"               % bootstrapPlayVersion,
-    "uk.gov.hmrc"                   %% "play-frontend-hmrc-play-30"               % frontendPlayVersion,
-    "uk.gov.hmrc.mongo"             %% "hmrc-mongo-play-30"                       % hmrcMongoVersion,
-    // Used by the Migration tool. Keep this library's version to the same major.minor version as the mongo-scala-driver.
-    "org.mongodb"                   % "mongodb-driver-sync"                       % "4.11.1",
-    "uk.gov.hmrc"                   %% "play-conditional-form-mapping-play-30"    % "2.0.0",
-    "uk.gov.hmrc"                   %% "play-json-union-formatter"                % "1.20.0",
-    "com.fasterxml.jackson.module"  %% "jackson-module-scala"                     % jacksonVersion,
-    "com.github.tototoshi"          %% "scala-csv"                                % "1.3.10",
-    "org.webjars.npm"               %  "accessible-autocomplete"                  % "2.0.4"
+    "uk.gov.hmrc"                   %% "bootstrap-frontend-play-30"            % bootstrapPlayVersion,
+    "uk.gov.hmrc"                   %% "play-frontend-hmrc-play-30"            % frontendPlayVersion,
+    "uk.gov.hmrc.mongo"             %% "hmrc-mongo-play-30"                    % hmrcMongoVersion,
+    "uk.gov.hmrc"                   %% "play-conditional-form-mapping-play-30" % "2.0.0",
+    "uk.gov.hmrc"                   %% "play-json-union-formatter"             % "1.20.0",
+    "com.fasterxml.jackson.module"  %% "jackson-module-scala"                  % jacksonVersion,
+    "com.github.tototoshi"          %% "scala-csv"                             % "1.3.10",
+    "org.webjars.npm"               %  "accessible-autocomplete"               % "2.0.4",
+    // To remove with the removal of 'DeleteMigrationCollectionsRoutine'
+    "org.mongodb"                   %  "mongodb-driver-sync"                   % "4.11.1"
   ).map(_.withSources)
 
   val testScope = "test,it"

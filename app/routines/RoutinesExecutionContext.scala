@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
-package migrations.exceptions
+package routines
 
-class ExportsMigrationException(message: String) extends RuntimeException(message)
+import org.apache.pekko.actor.ActorSystem
+import javax.inject.{Inject, Singleton}
+import play.api.libs.concurrent.CustomExecutionContext
+
+@Singleton
+class RoutinesExecutionContext @Inject() (actorSystem: ActorSystem) extends CustomExecutionContext(actorSystem, "contexts.routines-dispatcher") {}
