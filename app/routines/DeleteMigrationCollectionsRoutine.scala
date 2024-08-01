@@ -14,36 +14,30 @@
  * limitations under the License.
  */
 
-package migrations
+package routines
 
 import com.google.inject.Singleton
 import com.mongodb.client.{MongoClient, MongoClients}
-import config.AppConfig
-import migrations.changelogs.cache.PurgeExpiredRecords
 import play.api.Logging
+import config.AppConfig
 
 import javax.inject.Inject
+import scala.concurrent.Future
 
 @Singleton
-class MigrationRoutine @Inject() (appConfig: AppConfig) extends Logging {
-
-  logger.info("Starting migration with ExportsMigrationTool")
+class DeleteMigrationCollectionsRoutine @Inject() (appConfig: AppConfig)(implicit rec: RoutinesExecutionContext) extends Logging {
 
   private val (client, mongoDatabase) = createMongoClient
   private val db = client.getDatabase(mongoDatabase)
 
-  private val lockMaxWaitMillis = minutesToMillis(5)
-  private val lockAcquiredForMillis = minutesToMillis(3)
+  def execute(): Future[Unit] = Future {
+    logger.info("Starting cleanup to delete migration collections from mongo...")
 
-  private val lockMaxTries = 10
-  private val lockManagerConfig = LockManagerConfig(lockMaxTries, lockMaxWaitMillis, lockAcquiredForMillis)
-
-  private val migrationsRegistry = MigrationsRegistry()
-    .register(new PurgeExpiredRecords())
-
-  ExportsMigrationTool(db, migrationsRegistry, lockManagerConfig).execute()
-
-  client.close()
+    List("exportsMigrationLock", "exportsMigrationChangeLog").foreach { collection =>
+      db.getCollection(collection).drop()
+      logger.info(s"...dropped $collection collection from mongo")
+    }
+  }
 
   private def createMongoClient: (MongoClient, String) = {
     val (mongoUri, _) = {
@@ -53,6 +47,4 @@ class MigrationRoutine @Inject() (appConfig: AppConfig) extends Logging {
     val (_, mongoDatabase) = mongoUri.splitAt(mongoUri.lastIndexOf('/'.toInt))
     (MongoClients.create(appConfig.mongodbUri), mongoDatabase.drop(1))
   }
-
-  private def minutesToMillis(minutes: Int): Long = minutes * 60L * 1000L
 }
