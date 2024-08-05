@@ -33,7 +33,7 @@ class CacheRepository @Inject() (mc: MongoComponent)(implicit val executionConte
 
   override def classTag: ClassTag[Cache] = implicitly[ClassTag[Cache]]
 
-  def findByProviderId(providerId: String): Future[Option[Cache]] = findOne("providerId", providerId).map(_.headOption)
+  def findByProviderId(providerId: String): Future[Option[Cache]] = findOne("providerId", providerId)
 
   def removeByProviderId(providerId: String): Future[Unit] = removeEvery("providerId", providerId)
 

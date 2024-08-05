@@ -16,9 +16,7 @@ object AppDependencies {
     "uk.gov.hmrc"                   %% "play-json-union-formatter"             % "1.20.0",
     "com.fasterxml.jackson.module"  %% "jackson-module-scala"                  % jacksonVersion,
     "com.github.tototoshi"          %% "scala-csv"                             % "1.3.10",
-    "org.webjars.npm"               %  "accessible-autocomplete"               % "2.0.4",
-    // To remove with the removal of 'DeleteMigrationCollectionsRoutine'
-    "org.mongodb"                   %  "mongodb-driver-sync"                   % "4.11.1"
+    "org.webjars.npm"               %  "accessible-autocomplete"               % "2.0.4"
   ).map(_.withSources)
 
   val testScope = "test,it"

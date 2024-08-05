@@ -25,5 +25,4 @@ trait TestMongoDB {
 
   val mongoConfiguration: Configuration =
     Configuration.from(Map("mongodb.uri" -> s"mongodb://localhost:$Port/$DatabaseName"))
-
 }
