@@ -17,7 +17,6 @@
 package base
 
 import com.codahale.metrics.SharedMetricRegistries
-import modules.RoutineRunnerModule
 import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.reflect.ClassTag
@@ -33,7 +32,7 @@ trait Injector {
    */
   SharedMetricRegistries.clear()
 
-  private val injector = GuiceApplicationBuilder().disable[RoutineRunnerModule].injector()
+  private val injector = GuiceApplicationBuilder().injector()
 
   def instanceOf[T <: AnyRef](implicit classTag: ClassTag[T]): T = injector.instanceOf[T]
 }
