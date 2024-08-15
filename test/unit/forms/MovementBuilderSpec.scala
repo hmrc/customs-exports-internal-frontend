@@ -16,13 +16,13 @@
 
 package forms
 
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
 import base.UnitSpec
 import connectors.exchanges.{ArrivalExchange, DepartureExchange, MovementDetailsExchange, RetrospectiveArrivalExchange}
 import testdata.CommonTestData.providerId
-import testdata.MovementsTestData._
+import testdata.MovementsTestData.{validArrivalAnswers, validDepartureAnswers, validRetrospectiveArrivalAnswers}
+
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class MovementBuilderSpec extends UnitSpec {
 
@@ -32,9 +32,7 @@ class MovementBuilderSpec extends UnitSpec {
   "Movement Builder" when {
 
     "provided with ArrivalAnswers" should {
-
       "return ArrivalExchange" in {
-
         val answers = validArrivalAnswers
         val movementDetailsFormatted =
           DateTimeFormatter.ISO_INSTANT.format(answers.arrivalDetails.get.goodsArrivalMoment(zoneId))
@@ -54,14 +52,11 @@ class MovementBuilderSpec extends UnitSpec {
           case _ =>
             fail(s"Result is not of type [${ArrivalExchange.getClass.getSimpleName}]")
         }
-
       }
     }
 
     "provided with RetrospectiveArrivalAnswers" should {
-
       "return RetrospectiveArrivalExchange" in {
-
         val answers = validRetrospectiveArrivalAnswers
         val expectedResult = RetrospectiveArrivalExchange(
           eori = answers.eori.get,
@@ -82,9 +77,7 @@ class MovementBuilderSpec extends UnitSpec {
     }
 
     "provided with DepartureAnswers" should {
-
       "return DepartureExchange" in {
-
         val answers = validDepartureAnswers
         val movementDetailsFormatted =
           DateTimeFormatter.ISO_INSTANT.format(answers.departureDetails.get.goodsDepartureMoment(zoneId))
@@ -105,9 +98,7 @@ class MovementBuilderSpec extends UnitSpec {
           case _ =>
             fail(s"Result is not of type [${DepartureExchange.getClass.getSimpleName}]")
         }
-
       }
     }
   }
-
 }

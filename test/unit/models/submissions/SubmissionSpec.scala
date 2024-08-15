@@ -16,10 +16,10 @@
 
 package models.submissions
 
-import base.UnitSpec
 import connectors.exchanges.ActionType.MovementType
 import models.UcrBlock
 import org.scalatest.OptionValues
+import base.UnitSpec
 import testdata.CommonTestData._
 
 class SubmissionSpec extends UnitSpec with OptionValues {

@@ -16,9 +16,9 @@
 
 package views.helpers
 
-import base.UnitSpec
 import play.api.i18n.Lang
 import play.api.test.Helpers.{stubLangs, stubMessagesApi}
+import base.UnitSpec
 import views.helpers.ViewDates.zoneId
 
 import java.time._

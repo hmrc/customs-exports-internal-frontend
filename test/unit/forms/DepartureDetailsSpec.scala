@@ -17,8 +17,8 @@
 package forms
 
 import java.time.{LocalDate, LocalTime}
-import base.UnitSpec
 import forms.common.{Date, Time}
+import base.UnitSpec
 import matchers.FormMatchers
 import testdata.MovementsTestData
 

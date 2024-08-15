@@ -17,12 +17,10 @@
 package forms.common
 
 import java.time.LocalTime
-
-import base.UnitSpec
 import forms.common.Time._
-
-import matchers.FormMatchers
 import play.api.data.{Form, FormError}
+import base.UnitSpec
+import matchers.FormMatchers
 
 class TimeSpec extends UnitSpec with FormMatchers {
 

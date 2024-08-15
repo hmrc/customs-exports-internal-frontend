@@ -17,7 +17,6 @@
 package controllers
 
 import org.apache.pekko.stream.testkit.NoMaterializer
-import base.UnitSpec
 import config.AppConfig
 import connectors.StrideAuthConnector
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
@@ -36,6 +35,7 @@ import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import repositories.CacheRepository
+import base.UnitSpec
 import testdata.CommonTestData.providerId
 import views.html.unauthorized
 

@@ -16,13 +16,13 @@
 
 package views.summary
 
-import base.Injector
 import controllers.exchanges.JourneyRequest
 import forms.ArrivalDetails
 import forms.common.{Date, Time}
 import models.cache.ArrivalAnswers
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import base.Injector
 import views.ViewSpec
 import views.html.summary.arrival_summary_page
 import views.helpers.ViewDates

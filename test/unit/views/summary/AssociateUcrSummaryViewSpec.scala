@@ -16,7 +16,6 @@
 
 package views.summary
 
-import base.Injector
 import forms.ManageMucrChoice._
 import forms.{AssociateUcr, ManageMucrChoice, MucrOptions}
 import models.UcrType.Ducr
@@ -25,6 +24,7 @@ import org.jsoup.nodes.Element
 import play.api.mvc.{AnyContent, Call, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
+import base.Injector
 import views.ViewSpec
 import views.html.summary.associate_ucr_summary
 

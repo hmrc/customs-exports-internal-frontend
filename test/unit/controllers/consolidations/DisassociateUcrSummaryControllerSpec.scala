@@ -16,7 +16,6 @@
 
 package controllers.consolidations
 
-import base.Injector
 import controllers.ControllerLayerSpec
 import controllers.summary.DisassociateUcrSummaryController
 import controllers.summary.routes.MovementConfirmationController
@@ -32,6 +31,7 @@ import play.api.libs.json.{JsString, Json}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.SubmissionService
+import base.Injector
 import testdata.CommonTestData.conversationId
 import views.html.summary.disassociate_ucr_summary
 

@@ -49,4 +49,5 @@ case class Submission(
 object Submission {
   implicit val formatInstant: Format[Instant] = MongoJavatimeFormats.instantFormat
   implicit val format: OFormat[Submission] = Json.format[Submission]
+  implicit val optional: Reads[Option[Submission]] = JsPath.readNullable[Submission]
 }

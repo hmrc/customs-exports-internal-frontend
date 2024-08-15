@@ -16,13 +16,13 @@
 
 package views.summary
 
-import base.Injector
 import controllers.routes.ChoiceController
 import controllers.summary.routes.DisassociateUcrSummaryController
 import forms.DisassociateUcr
 import models.UcrType
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
+import base.Injector
 import views.ViewSpec
 import views.html.summary.disassociate_ucr_summary
 

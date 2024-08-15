@@ -16,8 +16,7 @@
 
 package models.viewmodels.decoder
 
-import base.UnitSpec
-import controllers.MessagesStub
+import base.{MessagesStub, UnitSpec}
 import models.viewmodels.decoder.SOECode._
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest

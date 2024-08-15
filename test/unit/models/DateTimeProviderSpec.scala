@@ -17,9 +17,8 @@
 package models
 
 import java.time._
-
-import base.UnitSpec
 import forms.common.{Date, Time}
+import base.UnitSpec
 
 class DateTimeProviderSpec extends UnitSpec {
 

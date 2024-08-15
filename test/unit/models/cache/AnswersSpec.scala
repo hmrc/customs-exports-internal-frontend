@@ -16,11 +16,11 @@
 
 package models.cache
 
-import base.UnitSpec
 import forms.ConsignmentReferenceType
 import models.UcrType.{Ducr, Mucr}
 import models.{UcrBlock, UcrType}
 import play.api.libs.json.{JsSuccess, Json}
+import base.UnitSpec
 
 import java.time.Instant
 import java.util.Date

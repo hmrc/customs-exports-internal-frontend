@@ -16,8 +16,8 @@
 
 package models.viewmodels.decoder
 
-import base.UnitSpec
-import controllers.{CSRFSupport, MessagesStub}
+import base.{MessagesStub, UnitSpec}
+import controllers.CSRFSupport
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import views.ViewMatchers

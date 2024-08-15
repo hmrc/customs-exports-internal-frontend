@@ -16,12 +16,12 @@
 
 package models.viewmodels.notificationspage.converters
 
-import base.UnitSpec
-import controllers.MessagesStub
+import base.MessagesStub
 import models.notifications.ResponseType
 import models.viewmodels.decoder.ActionCode
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import base.UnitSpec
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 

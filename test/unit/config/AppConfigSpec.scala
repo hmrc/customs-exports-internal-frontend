@@ -16,10 +16,10 @@
 
 package config
 
-import base.UnitSpec
 import com.typesafe.config.{Config, ConfigFactory}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import base.UnitSpec
 
 class AppConfigSpec extends UnitSpec {
 

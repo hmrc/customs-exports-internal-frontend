@@ -31,17 +31,14 @@ class LoadingScreenViewSpec extends ViewSpec with Injector {
   "Loading screen" should {
 
     "render title" in {
-
       view.getTitle must containMessage("ileQuery.loading.title")
     }
 
     "render page header" in {
-
       view.getElementById("title") must containMessage("ileQuery.loading.title")
     }
 
     "render page hint" in {
-
       view.getElementById("main-content") must containMessage("ileQuery.loading.hint")
     }
   }

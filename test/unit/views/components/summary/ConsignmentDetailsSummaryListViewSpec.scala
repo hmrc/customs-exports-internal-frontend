@@ -16,10 +16,10 @@
 
 package views.components.summary
 
-import base.Injector
 import forms.{ConsignmentReferenceType, ConsignmentReferences}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
+import base.Injector
 import testdata.CommonTestData.{validDucr, validMucr}
 import views.html.components.summary.consignment_details_summary_list
 import views.{ViewMatchers, ViewSpec}

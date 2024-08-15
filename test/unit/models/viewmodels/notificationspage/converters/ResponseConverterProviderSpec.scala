@@ -16,7 +16,6 @@
 
 package models.viewmodels.notificationspage.converters
 
-import base.UnitSpec
 import models.notifications.ResponseType._
 import models.viewmodels.decoder.ActionCode
 import models.viewmodels.notificationspage.MovementTotalsResponseType.{EMR, ERS}
@@ -24,6 +23,7 @@ import models.viewmodels.notificationspage.MovementTotalsResponseType.{EMR, ERS}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
+import base.UnitSpec
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 
 class ResponseConverterProviderSpec extends UnitSpec with BeforeAndAfterEach {

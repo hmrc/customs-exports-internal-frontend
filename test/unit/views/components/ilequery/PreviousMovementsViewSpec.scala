@@ -17,11 +17,10 @@
 package views.components.ilequery
 
 import java.time.ZonedDateTime
-
-import base.Injector
 import models.notifications.queries.MovementInfo
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
+import base.Injector
 import views.ViewSpec
 import views.html.components.ilequery.response_previous_movements
 

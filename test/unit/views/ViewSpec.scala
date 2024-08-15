@@ -16,8 +16,9 @@
 
 package views
 
+import base.MessagesStub
+import controllers.CSRFSupport
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
-import controllers.{CSRFSupport, MessagesStub}
 import models.cache.{Answers, Cache}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}

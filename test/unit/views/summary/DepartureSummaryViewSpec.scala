@@ -16,13 +16,13 @@
 
 package views.summary
 
-import base.Injector
 import controllers.exchanges.JourneyRequest
 import forms.DepartureDetails
 import forms.common.{Date, Time}
 import models.cache.DepartureAnswers
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers._
+import base.Injector
 import views.ViewSpec
 import views.html.summary.departure_summary_page
 import views.helpers.ViewDates

@@ -16,13 +16,13 @@
 
 package controllers.ileQuery
 
-import config.ErrorHandler
 import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.IleQueryExchange
 import controllers.ControllerLayerSpec
 import controllers.exchanges.Operator
 import controllers.ileQuery.routes.IleQueryController
 import forms.CdsOrChiefChoiceForm
+import handlers.ErrorHandler
 import models.{now, UcrBlock}
 import models.UcrType.Mucr
 import models.cache.{Answers, Cache, IleQuery}
@@ -30,10 +30,10 @@ import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResp
 import models.notifications.queries._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
-
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import play.api.libs.json.Json
 import play.api.mvc.Headers
+import play.api.mvc.Results.InternalServerError
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.{MockCache, MockIleQueryCache}
@@ -56,26 +56,25 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
   private val consignmentNotFoundPage = mock[consignment_not_found_page]
   private val ileQueryTimeoutPage = mock[ile_query_timeout]
 
-  private def controller: IleQueryController =
-    new IleQueryController(
-      SuccessfulAuth(operator = Operator(providerId)),
-      stubMessagesControllerComponents(),
-      errorHandler,
-      cacheRepository,
-      ileQueryRepository,
-      connector,
-      ileQueryPage,
-      loadingScreenPage,
-      ileQueryDucrResponsePage,
-      ileQueryMucrResponsePage,
-      consignmentNotFoundPage,
-      ileQueryTimeoutPage
-    )(global)
+  private val controller = new IleQueryController(
+    SuccessfulAuth(operator = Operator(providerId)),
+    stubMessagesControllerComponents(),
+    errorHandler,
+    cacheRepository,
+    ileQueryRepository,
+    connector,
+    ileQueryPage,
+    loadingScreenPage,
+    ileQueryDucrResponsePage,
+    ileQueryMucrResponsePage,
+    consignmentNotFoundPage,
+    ileQueryTimeoutPage
+  )(global)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    when(errorHandler.standardErrorTemplate()(any())).thenReturn(HtmlFormat.empty)
+    when(errorHandler.defaultErrorTemplate(any(), any(), any())(any())).thenReturn(HtmlFormat.empty)
     when(ileQueryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(loadingScreenPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
     when(ileQueryDucrResponsePage.apply(any[DucrInfo], any[Option[MucrInfo]])(any(), any())).thenReturn(HtmlFormat.empty)
@@ -409,6 +408,8 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
         }
 
         "return InternalServerError response" in {
+          when(errorHandler.internalServerError(any())).thenReturn(InternalServerError)
+
           when(ileQueryRepository.findBySessionIdAndUcr(anyString(), anyString()))
             .thenReturn(Future.successful(Some(IleQuery("sessionId", "mucr", conversationId))))
 

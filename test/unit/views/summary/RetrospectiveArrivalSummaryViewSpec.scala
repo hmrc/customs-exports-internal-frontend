@@ -16,11 +16,11 @@
 
 package views.summary
 
-import base.Injector
 import controllers.exchanges.JourneyRequest
 import models.cache.RetrospectiveArrivalAnswers
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import base.Injector
 import views.ViewSpec
 import views.html.summary.retrospective_arrival_summary_page
 

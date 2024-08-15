@@ -16,13 +16,13 @@
 
 package models.viewmodels.notificationspage.converters
 
-import base.UnitSpec
 import models.notifications.ResponseType
 import models.viewmodels.decoder.{ActionCode, Decoder, ILEError}
 import org.mockito.ArgumentMatchers.{anyString, eq => meq}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
+import base.UnitSpec
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 

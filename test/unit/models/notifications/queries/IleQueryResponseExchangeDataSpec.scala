@@ -16,10 +16,10 @@
 
 package models.notifications.queries
 
-import base.UnitSpec
 import models.notifications.EntryStatus
 import models.notifications.queries.IleQueryResponseExchangeData.SuccessfulResponseExchangeData
 import models.viewmodels.decoder.ROECode.{DocumentaryControl, NoControlRequired, NonBlockingDocumentaryControl, PhysicalExternalPartyControl}
+import base.UnitSpec
 
 class IleQueryResponseExchangeDataSpec extends UnitSpec {
 

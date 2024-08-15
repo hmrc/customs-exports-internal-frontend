@@ -16,9 +16,9 @@
 
 package forms
 
-import base.UnitSpec
 import play.api.data.FormError
 import play.api.libs.json.Json
+import base.UnitSpec
 
 class CdsOrChiefChoiceFormSpec extends UnitSpec {
 

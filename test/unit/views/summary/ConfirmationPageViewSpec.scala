@@ -16,7 +16,6 @@
 
 package views.summary
 
-import base.Injector
 import controllers.ileQuery.routes.IleQueryController
 import forms.ConsignmentReferences
 import models.UcrType
@@ -26,6 +25,7 @@ import models.cache._
 import models.summary.Confirmation
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
+import base.Injector
 import views.ViewSpec
 import views.html.summary.confirmation_page
 

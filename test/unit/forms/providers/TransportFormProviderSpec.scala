@@ -16,10 +16,10 @@
 
 package forms.providers
 
-import base.UnitSpec
 import forms.GoodsDeparted.DepartureLocation.{BackIntoTheUk, OutOfTheUk}
 import forms.{GoodsDeparted, Transport}
 import models.cache.DepartureAnswers
+import base.UnitSpec
 
 class TransportFormProviderSpec extends UnitSpec {
 

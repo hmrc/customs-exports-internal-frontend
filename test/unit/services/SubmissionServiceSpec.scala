@@ -16,11 +16,9 @@
 
 package services
 
-import base.UnitSpec
 import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges._
 import forms._
-import metrics.MovementsMetricsStub
 import models.cache.{AssociateUcrAnswers, DisassociateUcrAnswers, MovementAnswers, ShutMucrAnswers}
 import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
@@ -34,6 +32,8 @@ import testdata.CommonTestData._
 import testdata.MovementsTestData._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
+import base.UnitSpec
+import metrics.MovementsMetricsStub
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

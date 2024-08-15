@@ -16,11 +16,11 @@
 
 package forms
 
-import base.UnitSpec
 import forms.Choice._
 import models.cache.JourneyType.{apply => _, _}
 import org.scalatest.OptionValues
 import play.api.libs.json.{JsError, JsNumber, JsString, JsSuccess, JsValue, Json}
+import base.UnitSpec
 
 class ChoiceSpec extends UnitSpec with OptionValues {
 

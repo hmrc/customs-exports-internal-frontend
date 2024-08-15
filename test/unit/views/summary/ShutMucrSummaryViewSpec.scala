@@ -16,10 +16,10 @@
 
 package views.summary
 
-import base.Injector
 import controllers.exchanges.JourneyRequest
 import models.cache.ShutMucrAnswers
 import play.api.mvc.AnyContentAsEmpty
+import base.Injector
 import views.ViewSpec
 import views.html.summary.shut_mucr_summary
 

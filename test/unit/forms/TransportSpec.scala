@@ -16,10 +16,10 @@
 
 package forms
 
-import base.UnitSpec
 import forms.Transport.ModesOfTransport._
 import play.api.data.FormError
 import play.api.libs.json.Json
+import base.UnitSpec
 import testdata.TestDataHelper.createRandomAlphanumericString
 
 class TransportSpec extends UnitSpec {

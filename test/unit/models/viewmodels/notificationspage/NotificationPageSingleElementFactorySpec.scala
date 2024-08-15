@@ -16,10 +16,9 @@
 
 package models.viewmodels.notificationspage
 
-import base.UnitSpec
+import base.{MessagesStub, UnitSpec}
 import com.google.inject.Guice
 import connectors.exchanges.ActionType.{ConsolidationType, MovementType}
-import controllers.MessagesStub
 import models.UcrBlock
 import models.notifications.NotificationFrontendModel
 import models.submissions.Submission

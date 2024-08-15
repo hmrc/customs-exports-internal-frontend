@@ -29,7 +29,6 @@ class SiteHeaderViewSpec extends ViewSpec with ViewMatchers {
   private def headerComponent = new siteHeader()
 
   "SiteHeader component" should {
-
     "render service name with link to 'find consignment' page" in {
       val serviceNameLink = headerComponent()
         .getElementsByClass("hmrc-internal-service-name__link")

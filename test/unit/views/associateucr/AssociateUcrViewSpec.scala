@@ -18,8 +18,8 @@ package views.associateucr
 
 import base.Injector
 import controllers.consolidations.routes.ManageMucrController
-import models.UcrType.{Ducr, Mucr}
 import forms.{AssociateUcr, MucrOptions}
+import models.UcrType.{Ducr, Mucr}
 import play.api.data.Form
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
