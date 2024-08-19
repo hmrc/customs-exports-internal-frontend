@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package controllers
 
 import org.apache.pekko.stream.testkit.NoMaterializer
-import base.UnitSpec
 import config.AppConfig
 import connectors.StrideAuthConnector
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
@@ -36,6 +35,7 @@ import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import repositories.CacheRepository
+import base.UnitSpec
 import testdata.CommonTestData.providerId
 import views.html.unauthorized
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 
 package views
 
+import base.MessagesStub
+import controllers.CSRFSupport
 import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
-import controllers.{CSRFSupport, MessagesStub}
 import models.cache.{Answers, Cache}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}

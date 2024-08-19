@@ -1,0 +1,33 @@
+
+#global-header {
+  background-color: #FFF;
+  border-bottom: 10px solid govuk-colour("turquoise");
+}
+
+.header__menu__proposition-name, a.header__menu__proposition-name:visited, .organisation-logo {
+  color: #000;
+}
+
+.service-info {
+  border-top: none;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.associate_ucr {
+
+  &__from {
+    width: 20%
+  }
+
+  &__to {
+    width: 20%
+  }
+
+  &__change {
+    text-align: right;
+    width: 20%;
+  }
+}

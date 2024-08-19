@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package connectors
 
+import base.{Injector, WiremockTestServer}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.AppConfig
 import connectors.exception.MovementsConnectorException
@@ -27,22 +28,36 @@ import models.notifications.queries.DucrInfo
 import models.notifications.queries.IleQueryResponseExchangeData.SuccessfulResponseExchangeData
 import org.mockito.BDDMockito._
 import org.mockito.MockitoSugar.mock
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.time.{Millis, Seconds, Span}
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status
 import play.api.libs.json.{Format, Json}
 import play.api.test.Helpers._
 import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmission
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
+import scala.concurrent.ExecutionContext.Implicits.global
 
-class CustomsDeclareExportsMovementsConnectorSpec extends ConnectorSpec {
+class CustomsDeclareExportsMovementsConnectorSpec extends AnyWordSpec with Injector with Matchers with ScalaFutures with WiremockTestServer {
+
+  implicit val defaultPatience: PatienceConfig =
+    PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
+
+  implicit private val hc: HeaderCarrier = HeaderCarrier()
 
   implicit val formatInstant: Format[Instant] = MongoJavatimeFormats.instantFormat
+
   private val config = mock[AppConfig]
   given(config.customsDeclareExportsMovementsUrl).willReturn(downstreamURL)
 
-  private val connector = new CustomsDeclareExportsMovementsConnector(config, httpClient)
+  private val httpClientV2: HttpClientV2 = instanceOf[HttpClientV2]
+  private val connector = new CustomsDeclareExportsMovementsConnector(config, httpClientV2)
 
   "Submit Movement" should {
 

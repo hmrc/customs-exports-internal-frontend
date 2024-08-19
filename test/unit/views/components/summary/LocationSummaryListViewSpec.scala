@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package views.components.summary
 
-import base.Injector
 import controllers.movements.routes.LocationController
 import forms.Location
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
+import base.Injector
 import views.html.components.summary.location_summary_list
 import views.{ViewMatchers, ViewSpec}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@
 package views.components.ilequery
 
 import java.time.ZonedDateTime
-
-import base.Injector
 import models.notifications.queries.MovementInfo
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
+import base.Injector
 import views.ViewSpec
 import views.html.components.ilequery.response_previous_movements
 

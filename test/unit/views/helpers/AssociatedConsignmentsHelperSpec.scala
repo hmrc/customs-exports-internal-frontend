@@ -16,8 +16,7 @@
 
 package views.helpers
 
-import base.Injector
-import controllers.MessagesStub
+import base.{Injector, MessagesStub}
 import models.notifications.EntryStatus
 import models.notifications.queries.{DucrInfo, MucrInfo}
 import models.viewmodels.decoder.SOECode

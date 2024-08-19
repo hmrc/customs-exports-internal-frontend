@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package forms
 
-import base.UnitSpec
 import forms.Choice._
 import models.cache.JourneyType.{apply => _, _}
 import org.scalatest.OptionValues
 import play.api.libs.json.{JsError, JsNumber, JsString, JsSuccess, JsValue, Json}
+import base.UnitSpec
 
 class ChoiceSpec extends UnitSpec with OptionValues {
 

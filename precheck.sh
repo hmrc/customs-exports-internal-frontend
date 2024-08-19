@@ -1,1 +1,3 @@
-sbt clean scalafmt test:scalafmt it:test::scalafmt coverage test it:test scalafmtCheckAll coverageReport
+#!/usr/bin/env bash
+
+sbt precommit

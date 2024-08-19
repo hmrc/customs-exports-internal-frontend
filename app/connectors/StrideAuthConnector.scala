@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,13 @@ package connectors
 
 import com.google.inject.Inject
 import config.AppConfig
-import javax.inject.Singleton
 import uk.gov.hmrc.auth.core.PlayAuthConnector
-import uk.gov.hmrc.http.CorePost
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
+
+import javax.inject.Singleton
 
 @Singleton
-class StrideAuthConnector @Inject() (configuration: AppConfig, client: HttpClient) extends PlayAuthConnector {
-  override val serviceUrl: String = configuration.authBaseUrl
-  override def http: CorePost = client
+class StrideAuthConnector @Inject() (appConfig: AppConfig, override val httpClientV2: HttpClientV2) extends PlayAuthConnector {
+
+  override val serviceUrl: String = appConfig.authBaseUrl
 }

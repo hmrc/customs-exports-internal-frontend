@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package views.summary
 
-import base.Injector
 import controllers.ileQuery.routes.IleQueryController
 import forms.ConsignmentReferences
 import models.UcrType
@@ -26,6 +25,7 @@ import models.cache._
 import models.summary.Confirmation
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
+import base.Injector
 import views.ViewSpec
 import views.html.summary.confirmation_page
 

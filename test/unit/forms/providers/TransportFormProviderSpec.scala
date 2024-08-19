@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package forms.providers
 
-import base.UnitSpec
 import forms.GoodsDeparted.DepartureLocation.{BackIntoTheUk, OutOfTheUk}
 import forms.{GoodsDeparted, Transport}
 import models.cache.DepartureAnswers
+import base.UnitSpec
 
 class TransportFormProviderSpec extends UnitSpec {
 

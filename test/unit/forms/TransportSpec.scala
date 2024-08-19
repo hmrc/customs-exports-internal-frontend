@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package forms
 
-import base.UnitSpec
 import forms.Transport.ModesOfTransport._
 import play.api.data.FormError
 import play.api.libs.json.Json
+import base.UnitSpec
 import testdata.TestDataHelper.createRandomAlphanumericString
 
 class TransportSpec extends UnitSpec {

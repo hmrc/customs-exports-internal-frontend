@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,27 @@
 
 package controllers.actions
 
-import scala.concurrent.{ExecutionContext, Future}
-
 import config.AppConfig
 import connectors.StrideAuthConnector
 import controllers.exchanges.{AuthenticatedRequest, Operator}
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.Results.Forbidden
+import play.api.{Configuration, Environment, Logger, Mode}
+import play.api.mvc.Results.{Forbidden, Redirect}
 import play.api.mvc._
-import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.unauthorized
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthenticatedAction @Inject() (
   appConfig: AppConfig,
-  override val config: Configuration,
-  override val env: Environment,
+  override val configuration: Configuration,
+  override val environment: Environment,
   override val authConnector: StrideAuthConnector,
   mcc: MessagesControllerComponents,
   unauthorizedPage: unauthorized
@@ -62,9 +61,40 @@ class AuthenticatedAction @Inject() (
     } recover {
       case _: NoActiveSession =>
         toStrideLogin(if (appConfig.runningAsDev) s"http://${request.host}${request.uri}" else request.uri)
+
       case e: AuthorisationException =>
         logger.debug("Authentication Failed", e)
         forbidden
     }
   }
+}
+
+protected trait AuthRedirects {
+
+  def configuration: Configuration
+
+  def environment: Environment
+
+  def toStrideLogin(successUrl: String, failureUrl: Option[String] = None): Result =
+    Redirect(
+      strideLoginUrl,
+      Map("successURL" -> Seq(successUrl), "origin" -> Seq(defaultOrigin)) ++ failureUrl.map(f => Map("failureURL" -> Seq(f))).getOrElse(Map())
+    )
+
+  private lazy val envPrefix =
+    if (environment.mode.equals(Mode.Test)) "Test"
+    else configuration.getOptional[String]("run.mode").getOrElse("Dev")
+
+  private def host: String = {
+    val key = s"$envPrefix.external-url.stride-auth-frontend.host"
+    configuration.getOptional[String](key).getOrElse("http://localhost:9041")
+  }
+
+  private def strideLoginUrl: String = host + "/stride/sign-in"
+
+  private lazy val defaultOrigin: String =
+    configuration
+      .getOptional[String]("sosOrigin")
+      .orElse(configuration.getOptional[String]("appName"))
+      .getOrElse("undefined")
 }

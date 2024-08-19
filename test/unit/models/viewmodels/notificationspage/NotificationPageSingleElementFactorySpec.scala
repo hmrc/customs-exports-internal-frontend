@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package models.viewmodels.notificationspage
 
-import base.UnitSpec
+import base.{MessagesStub, UnitSpec}
 import com.google.inject.Guice
 import connectors.exchanges.ActionType.{ConsolidationType, MovementType}
-import controllers.MessagesStub
 import models.UcrBlock
 import models.notifications.NotificationFrontendModel
 import models.submissions.Submission

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package views.associateucr
 
 import base.Injector
 import controllers.consolidations.routes.ManageMucrController
-import models.UcrType.{Ducr, Mucr}
 import forms.{AssociateUcr, MucrOptions}
+import models.UcrType.{Ducr, Mucr}
 import play.api.data.Form
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest

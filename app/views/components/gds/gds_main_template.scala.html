@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 
 @import config.TimeoutDialogConfig
 @import controllers.exchanges.{AuthenticatedRequest, JourneyRequest}
+@import controllers.routes.SignOutController
 @import components.gds.{phaseBanner, siteHeader}
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcHead, HmrcTimeoutDialogHelper, HmrcStandardFooter}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.helpers.Title
@@ -33,6 +34,7 @@
   govukBackLink: GovukBackLink,
   siteHeader: siteHeader,
   hmrcHead: HmrcHead,
+  hmrcScripts: HmrcScripts,
   hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
   phaseBanner: phaseBanner,
   timeoutDialogConfig: TimeoutDialogConfig,
@@ -51,32 +53,24 @@
     @if(useTimeoutDialog) {
         @hmrcHead(
             headBlock = Some(hmrcTimeoutDialogHelper(
-                signOutUrl = controllers.routes.SignOutController.signOut(models.SignOutReason.SessionTimeout).url,
+                signOutUrl = SignOutController.signOut(models.SignOutReason.SessionTimeout).url,
                 keepAliveUrl = Some(request.uri),
                 timeout = Some(timeoutDialogConfig.timeout.toSeconds.toInt),
                 countdown = Some(timeoutDialogConfig.countdown.toSeconds.toInt)
             ))
         )
+    } else {
+        @hmrcHead()
     }
 
     <link rel="shortcut icon" href='@routes.Assets.versioned("/lib/govuk-frontend/govuk/assets/images/favicon.ico")' type="image/x-icon" />
     <link rel="shortcut icon" href='@routes.Assets.versioned("lib/accessible-autocomplete/dist/accessible-autocomplete.min.css")' rel="stylesheet" type="text/css" />
     <meta name="format-detection" content="telephone=no" />
-        <!--[if lte IE 8]><link href='@controllers.routes.Assets.versioned("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
-        <!--[if gt IE 8]><!--><link href='@routes.Assets.versioned("stylesheets/customsdecexfrontend-app.css")' media="screen" rel="stylesheet" type="text/css" /><!--<![endif]-->
-}
-
-@scripts = {
-  <script @CSPNonce.attr src='@routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
-  <script @CSPNonce.attr src="@routes.Assets.versioned("javascripts/show-hide-content.js")" type="text/javascript"></script>
-
-  <script @CSPNonce.attr src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
-  <script @CSPNonce.attr>window.HMRCFrontend.initAll();</script>
-  <script @CSPNonce.attr>window.GOVUKFrontend.initAll();</script>
+    <link href='@routes.Assets.versioned("stylesheets/movements-app.css")' media="screen" rel="stylesheet" type="text/css" />
 }
 
 @beforeContentBlock = {
-    @phaseBanner("beta")
+    @phaseBanner("BETA")
 }
 
 @content = {
@@ -97,7 +91,7 @@
     headBlock = Some(head),
     beforeContentBlock = Some(beforeContentBlock),
     bodyEndBlock = None,
-    scriptsBlock = Some(scripts),
+    scriptsBlock = Some(hmrcScripts()),
     headerBlock = Some(siteHeader()),
     footerBlock = Some(hmrcFooter())
   )(content)
@@ -107,7 +101,7 @@
     headBlock = Some(head),
     beforeContentBlock = Some(beforeContentBlock),
     bodyEndBlock = None,
-    scriptsBlock = Some(scripts),
+    scriptsBlock = Some(hmrcScripts()),
     headerBlock = Some(siteHeader()),
     footerBlock = Some(hmrcFooter())
   )(content)
