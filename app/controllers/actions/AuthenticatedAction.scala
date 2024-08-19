@@ -19,9 +19,9 @@ package controllers.actions
 import config.AppConfig
 import connectors.StrideAuthConnector
 import controllers.exchanges.{AuthenticatedRequest, Operator}
-import play.api.{Configuration, Environment, Logger, Mode}
 import play.api.mvc.Results.{Forbidden, Redirect}
 import play.api.mvc._
+import play.api.{Configuration, Environment, Logging, Mode}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
@@ -35,17 +35,15 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthenticatedAction @Inject() (
   appConfig: AppConfig,
-  override val configuration: Configuration,
-  override val environment: Environment,
+  override val config: Configuration,
+  override val env: Environment,
   override val authConnector: StrideAuthConnector,
   mcc: MessagesControllerComponents,
   unauthorizedPage: unauthorized
-) extends ActionBuilder[AuthenticatedRequest, AnyContent] with AuthorisedFunctions with AuthRedirects {
+) extends ActionBuilder[AuthenticatedRequest, AnyContent] with AuthorisedFunctions with AuthRedirects with Logging {
 
   override implicit val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
-
-  private val logger = Logger(classOf[AuthenticatedAction])
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
@@ -69,32 +67,44 @@ class AuthenticatedAction @Inject() (
   }
 }
 
-protected trait AuthRedirects {
+trait AuthRedirects {
 
-  def configuration: Configuration
+  def config: Configuration
 
-  def environment: Environment
+  def env: Environment
+
+  private lazy val envPrefix =
+    if (env.mode.equals(Mode.Test)) "Test"
+    else
+      config
+        .getOptional[String]("run.mode")
+        .getOrElse("Dev")
+
+  private val hostDefaults: Map[String, String] = Map(
+    "Dev.external-url.bas-gateway-frontend.host" -> "http://localhost:9553",
+    "Dev.external-url.citizen-auth-frontend.host" -> "http://localhost:9029",
+    "Dev.external-url.identity-verification-frontend.host" -> "http://localhost:9938",
+    "Dev.external-url.stride-auth-frontend.host" -> "http://localhost:9041"
+  )
+
+  private def host(service: String): String = {
+    val key = s"$envPrefix.external-url.$service.host"
+    config.getOptional[String](key).orElse(hostDefaults.get(key)).getOrElse("")
+  }
+
+  def strideLoginUrl: String = host("stride-auth-frontend") + "/stride/sign-in"
+
+  final lazy val defaultOrigin: String =
+    config
+      .getOptional[String]("sosOrigin")
+      .orElse(config.getOptional[String]("appName"))
+      .getOrElse("undefined")
+
+  def origin: String = defaultOrigin
 
   def toStrideLogin(successUrl: String, failureUrl: Option[String] = None): Result =
     Redirect(
       strideLoginUrl,
-      Map("successURL" -> Seq(successUrl), "origin" -> Seq(defaultOrigin)) ++ failureUrl.map(f => Map("failureURL" -> Seq(f))).getOrElse(Map())
+      Map("successURL" -> Seq(successUrl), "origin" -> Seq(origin)) ++ failureUrl.map(f => Map("failureURL" -> Seq(f))).getOrElse(Map())
     )
-
-  private lazy val envPrefix =
-    if (environment.mode.equals(Mode.Test)) "Test"
-    else configuration.getOptional[String]("run.mode").getOrElse("Dev")
-
-  private def host: String = {
-    val key = s"$envPrefix.external-url.stride-auth-frontend.host"
-    configuration.getOptional[String](key).getOrElse("http://localhost:9041")
-  }
-
-  private def strideLoginUrl: String = host + "/stride/sign-in"
-
-  private lazy val defaultOrigin: String =
-    configuration
-      .getOptional[String]("sosOrigin")
-      .orElse(configuration.getOptional[String]("appName"))
-      .getOrElse("undefined")
 }
