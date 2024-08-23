@@ -37,6 +37,7 @@ import play.api.libs.json.{Format, Json}
 import play.api.test.Helpers._
 import testdata.CommonTestData._
 import testdata.MovementsTestData.exampleSubmission
+import testdata.NotificationTestData.exampleNotificationFrontendModel
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -260,6 +261,21 @@ class CustomsDeclareExportsMovementsConnectorSpec extends AnyWordSpec with Injec
       verify(getRequestedFor(urlEqualTo(expectedUrl)))
 
       response mustBe Some(expectedSubmission)
+    }
+  }
+
+  "fetch Notifications" when {
+    "everything works correctly" should {
+      "send GET request to the backend" in {
+        val notifications = List(exampleNotificationFrontendModel(), exampleNotificationFrontendModel())
+        val response = aResponse().withStatus(OK).withBody(Json.toJson(notifications).toString)
+        val url = s"/notifications/$conversationId?providerId=$providerId"
+        stubFor(get(url).willReturn(response))
+
+        connector.fetchNotifications(conversationId, providerId).futureValue
+
+        verify(getRequestedFor(urlEqualTo(url)))
+      }
     }
   }
 

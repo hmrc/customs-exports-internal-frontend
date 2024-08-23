@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-@import views.html.components.gds.{link, heading, paragraphBody, summaryList}
+@import views.html.components.gds.{link, heading, paragraphBody}
 @import controllers.ileQuery.routes.IleQueryController
 @import controllers.routes.{ChoiceController, ViewNotificationsController}
 @import views.helpers.Title
@@ -29,12 +29,11 @@
 
 @this(
   govukLayout: gds_main_template,
-  pageTitle: pageTitle,
+  govukPanel: GovukPanel,
+  govukTable: GovukTable,
   govukInsetText: GovukInsetText,
-  heading: heading,
-    govukPanel: GovukPanel,
-    govukTable: GovukTable,
-    summaryList: summaryList
+  pageTitle: pageTitle,
+  heading: heading
 )
 
 @(confirmation: Confirmation)(implicit request: Request[_], messages: Messages)

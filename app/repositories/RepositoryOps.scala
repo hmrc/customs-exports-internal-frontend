@@ -41,13 +41,6 @@ trait RepositoryOps[T] extends Logging {
   def findAll[V](keyId: String, keyValue: V): Future[Seq[T]] =
     collection.find(equal(keyId, keyValue)).toFuture()
 
-  def findAll(searchParameters: SearchParameters): Future[Seq[T]] =
-    if (searchParameters.isEmpty) Future.successful(Seq.empty)
-    else {
-      val query = BsonDocument(Json.toJson(searchParameters).toString)
-      collection.find(query).toFuture()
-    }
-
   def findOne[V](keyId: String, keyValue: V): Future[Option[T]] =
     collection.find(equal(keyId, keyValue)).toFuture().map(_.headOption)
 
