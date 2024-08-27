@@ -17,15 +17,22 @@
 @import controllers.routes.SignOutController
 @import scala.concurrent.duration.Duration
 
+@this()
+
 @(keepAliveUrl: String, timeout: Duration, countdown: Duration)(implicit messages: Messages)
+
+@title = @{ messages("timeoutDialog.title") }
+@message = @{ messages("timeoutDialog.message") }
+@buttonText = @{ messages("timeoutDialog.keepAlive.text") }
+@signoutText = @{ messages("timeoutDialog.signout.text") }
 
 <div id="timeout-dialog"
     class="govuk-visually-hidden"
     style="display: none;"
-    data-title="@{messages("timeoutDialog.title")}"
-    data-message="@{messages("timeoutDialog.message")}"
-    data-keep-alive-button-text="@{messages("timeoutDialog.keepAlive.text")}"
-    data-sign-out-button-text="@{messages("timeoutDialog.signout.text")}"
+    data-title="@title"
+    data-message="@message"
+    data-keep-alive-button-text="@buttonText"
+    data-sign-out-button-text="@signoutText"
     data-timeout="@{timeout.toSeconds}"
     data-countdown="@{countdown.toSeconds}"
     data-keep-alive-url="@{keepAliveUrl}"

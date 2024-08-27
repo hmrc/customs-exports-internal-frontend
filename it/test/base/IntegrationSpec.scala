@@ -28,23 +28,28 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.Application
+import play.api.{Application, Configuration}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Call, Request, Result}
 import play.api.test.Helpers._
 import play.api.test.{CSRFTokenHelper, FakeRequest}
 import repositories.CacheRepository
-import repository.TestMongoDB
 
 import java.time.{Clock, LocalDateTime}
 import scala.concurrent.Future
 
 trait IntegrationSpec
     extends AnyWordSpec with Matchers with BeforeAndAfterEach with GuiceOneServerPerSuite with AuthWiremockTestServer
-    with MovementsBackendWiremockTestServer with AuditWiremockTestServer with Eventually with TestMongoDB {
+    with MovementsBackendWiremockTestServer with AuditWiremockTestServer with Eventually {
 
   implicit val defaultPatience: PatienceConfig = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
+
+  val Port = 27017
+  val DatabaseName = "test-customs-exports-internal"
+
+  val mongoConfiguration: Configuration =
+    Configuration.from(Map("mongodb.uri" -> s"mongodb://localhost:$Port/$DatabaseName"))
 
   /*
     Intentionally NOT exposing the real CacheRepository as we shouldn't test our production code using our production classes.

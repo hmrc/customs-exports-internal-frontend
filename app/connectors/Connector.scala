@@ -30,12 +30,6 @@ trait Connector {
     override def getMessage: String = s"Invalid $method($url). $message"
   }
 
-  def delete[R](
-    url: String,
-    additionalHeaders: Seq[(String, String)] = List.empty
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: HttpReads[R]): Future[R] =
-    op(httpClient.delete(url"$url"), additionalHeaders)
-
   def get[R](url: String)(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: HttpReads[R]): Future[R] =
     op(httpClient.get(url"$url"), List.empty)
 

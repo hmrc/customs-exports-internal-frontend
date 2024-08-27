@@ -16,12 +16,13 @@
 
 package views.helpers
 
-import play.api.i18n.Lang
-import play.api.test.Helpers.{stubLangs, stubMessagesApi}
 import base.UnitSpec
+import play.api.i18n.{Lang, Messages}
+import play.api.test.Helpers.{stubLangs, stubMessagesApi}
 import views.helpers.ViewDates.zoneId
 
 import java.time._
+import java.time.temporal.UnsupportedTemporalTypeException
 import java.util.Locale
 
 class ViewDatesSpec extends UnitSpec {
@@ -29,7 +30,7 @@ class ViewDatesSpec extends UnitSpec {
   "ViewDates" when {
 
     "the Locale is English" should {
-      implicit val messages = stubMessagesApi().preferred(List(Lang(Locale.ENGLISH)))
+      implicit val messages: Messages = stubMessagesApi().preferred(List(Lang(Locale.ENGLISH)))
 
       val instant = Instant.parse("2023-08-31T23:55:00Z")
 
@@ -65,7 +66,7 @@ class ViewDatesSpec extends UnitSpec {
     }
 
     "the Locale is Welsh" should {
-      implicit val messages = stubMessagesApi(langs = stubLangs(List(Lang("cy")))).preferred(List(Lang("cy")))
+      implicit val messages: Messages = stubMessagesApi(langs = stubLangs(List(Lang("cy")))).preferred(List(Lang("cy")))
 
       val months =
         Array("", "Ionawr", "Chwefror", "Mawrth", "Ebrill", "Mai", "Mehefin", "Gorffennaf", "Awst", "Medi", "Hydref", "Tachwedd", "Rhagfyr")
@@ -95,6 +96,39 @@ class ViewDatesSpec extends UnitSpec {
           ViewDates.formatTime(localDateTime) mustBe "11:00yb"
           ViewDates.formatTime(localTime) mustBe "11:00yb"
           ViewDates.formatTime(zonedDateTime) mustBe expectedTimeInLondon
+        }
+      }
+    }
+  }
+
+  "ViewDates" should {
+    "throw an exception" when {
+      implicit val messages: Messages = stubMessagesApi().preferred(List(Lang(Locale.ENGLISH)))
+
+      "the temporal argument provided to 'formatDate' cannot be formatted" in {
+        intercept[UnsupportedTemporalTypeException] {
+          ViewDates.formatDate(Month.SEPTEMBER)
+        }
+      }
+
+      "the temporal argument provided to 'formatDateAtTime' cannot be formatted" in {
+        intercept[UnsupportedTemporalTypeException] {
+          ViewDates.formatDateAtTime(Month.SEPTEMBER)
+        }
+      }
+
+      "the temporal argument provided to 'formatTime' cannot be formatted" in {
+        intercept[UnsupportedTemporalTypeException] {
+          ViewDates.formatTime(Month.SEPTEMBER)
+        }
+      }
+
+      "the Locale is Welsh and" when {
+        "the temporal argument provided to 'formatDateAtTime' cannot be formatted" in {
+          intercept[UnsupportedTemporalTypeException] {
+            val messages: Messages = stubMessagesApi(langs = stubLangs(List(Lang("cy")))).preferred(List(Lang("cy")))
+            ViewDates.formatDateAtTime(Month.SEPTEMBER)(messages)
+          }
         }
       }
     }

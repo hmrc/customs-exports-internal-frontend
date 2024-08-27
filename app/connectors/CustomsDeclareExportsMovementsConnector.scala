@@ -19,7 +19,6 @@ package connectors
 import config.AppConfig
 import connectors.exception.MovementsConnectorException
 import connectors.exchanges.{ConsolidationExchange, IleQueryExchange, MovementExchange}
-import connectors.formats.Implicit.optionFormat
 import models.notifications.NotificationFrontendModel
 import models.submissions.Submission
 import play.api.Logging
