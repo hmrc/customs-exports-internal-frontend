@@ -20,10 +20,9 @@ import com.mongodb.ErrorCategory.DUPLICATE_KEY
 import com.mongodb.client.model.ReturnDocument
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.model.Filters.equal
-import org.mongodb.scala.model.{FindOneAndReplaceOptions, FindOneAndUpdateOptions}
-import org.mongodb.scala.{Document, MongoCollection, MongoWriteException}
+import org.mongodb.scala.model.FindOneAndReplaceOptions
+import org.mongodb.scala.{MongoCollection, MongoWriteException}
 import play.api.Logging
-import play.api.libs.json.{Json, Writes}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
@@ -45,19 +44,6 @@ trait RepositoryOps[T] extends Logging {
     collection.find(equal(keyId, keyValue)).toFuture().map(_.headOption)
 
   /*
-   Find one and return if a document with keyId=keyValue exists,
-   or create "document: T" if a document with keyId=keyValue does NOT exists.
-   */
-  def findOneOrCreate[V](keyId: String, keyValue: V, document: => T)(implicit writes: Writes[T]): Future[T] =
-    collection
-      .findOneAndUpdate(
-        filter = equal(keyId, keyValue),
-        update = BsonDocument(Json.toJson(document).toString()),
-        options = FindOneAndUpdateOptions().upsert(true).returnDocument(ReturnDocument.AFTER)
-      )
-      .toFuture()
-
-  /*
    Find one and replace with "document: T" if a document with keyId=keyValue exists,
    or create "document: T" if a document with keyId=keyValue does NOT exists.
    */
@@ -69,23 +55,6 @@ trait RepositoryOps[T] extends Logging {
         options = FindOneAndReplaceOptions().upsert(true).returnDocument(ReturnDocument.AFTER)
       )
       .toFuture()
-
-  /*
-   Find one and replace with "document: T" only if a document with keyId=keyValue exists,
-   */
-  def findOneAndReplaceIfExists[V](keyId: String, keyValue: V, document: T): Future[Option[T]] =
-    collection
-      .findOneAndReplace(
-        filter = equal(keyId, keyValue),
-        replacement = document,
-        options = FindOneAndReplaceOptions().returnDocument(ReturnDocument.AFTER)
-      )
-      .toFutureOption()
-
-  def findOneAndRemove[V](keyId: String, keyValue: V): Future[Option[T]] =
-    collection.findOneAndDelete(equal(keyId, keyValue)).toFutureOption()
-
-  def indexList: Future[Seq[Document]] = collection.listIndexes().toFuture()
 
   def insertOne(document: T): Future[Either[WriteError, T]] =
     collection
@@ -103,13 +72,9 @@ trait RepositoryOps[T] extends Logging {
   def removeEvery[V](keyId: String, keyValue: V): Future[Unit] =
     collection.deleteMany(equal(keyId, keyValue)).toFuture().map(_ => ())
 
-  def removeOne[V](keyId: String, keyValue: V): Future[Unit] =
-    collection.deleteOne(equal(keyId, keyValue)).toFuture().map(_ => ())
-
   def size: Future[Long] = collection.countDocuments().toFuture()
 }
 
 sealed abstract class WriteError(message: String)
 
-case class GenericError(message: String) extends WriteError(message)
 case class DuplicateKey(message: String) extends WriteError(message)
