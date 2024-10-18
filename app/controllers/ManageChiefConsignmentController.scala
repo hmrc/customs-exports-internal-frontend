@@ -19,6 +19,7 @@ package controllers
 import controllers.actions.AuthenticatedAction
 import forms.ChiefConsignment
 import models.cache.Cache
+import models.summary.SessionHelper
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -40,7 +41,7 @@ class ManageChiefConsignmentController @Inject() (
     extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
   val displayPage: Action[AnyContent] = authenticate.async { implicit request =>
-    cacheRepository
+    val futureResult = cacheRepository
       .findByProviderId(request.providerId)
       .map {
         case Some(cache) =>
@@ -49,6 +50,8 @@ class ManageChiefConsignmentController @Inject() (
         case _ => getEmptyForm
       }
       .map(form => Ok(manageChiefConsignmentPage(form)))
+
+    futureResult.map(_.withSession(SessionHelper.clearAllReceiptPageSessionKeys()))
   }
 
   val submitChiefConsignment: Action[AnyContent] = authenticate.async { implicit request =>

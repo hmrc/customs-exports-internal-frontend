@@ -26,12 +26,14 @@ object SessionHelper {
   val MUCR_TO_ASSOCIATE = "MUCR_TO_ASSOCIATE"
   val CONVERSATION_ID = "CONVERSATION_ID"
 
+  private val allSessionKeys = List(CONVERSATION_ID, JOURNEY_TYPE, UCR, UCR_TYPE, MUCR_TO_ASSOCIATE)
+
   def getValue(key: String)(implicit request: Request[_]): Option[String] =
     request.session.data.get(key)
 
   def getOrElse(key: String, default: String = "")(implicit request: Request[_]): String =
     request.session.data.getOrElse(key, default)
 
-  def removeValue(key: String)(implicit request: Request[_]): Session =
-    request.session - key
+  def clearAllReceiptPageSessionKeys()(implicit request: Request[_]): Session =
+    request.session -- allSessionKeys
 }

@@ -24,6 +24,7 @@ import forms.Choice
 import models.{ReturnToStartException, UcrBlock}
 import models.UcrType.{Ducr, DucrPart, Mucr}
 import models.cache._
+import models.summary.SessionHelper
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.CacheRepository
@@ -44,7 +45,7 @@ class ChoiceController @Inject() (
     extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
   val displayPage: Action[AnyContent] = authenticate.async { implicit request =>
-    cacheRepository.findByProviderId(request.providerId).map {
+    val futureResult = cacheRepository.findByProviderId(request.providerId).map {
       case Some(cache) =>
         cache.answers
           .map(answers => Ok(choicePage(Choice.form().fill(Choice(answers.`type`)), cache.queryUcr)))
@@ -52,6 +53,8 @@ class ChoiceController @Inject() (
 
       case None => Redirect(FindConsignmentController.displayQueryForm)
     }
+
+    futureResult.map(_.withSession(SessionHelper.clearAllReceiptPageSessionKeys()))
   }
 
   val submit: Action[AnyContent] = authenticate.async { implicit request: AuthenticatedRequest[AnyContent] =>
