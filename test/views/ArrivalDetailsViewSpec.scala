@@ -18,13 +18,11 @@ package views
 
 import base.Injector
 import controllers.exchanges.JourneyRequest
-import controllers.movements.routes.SpecificDateTimeController
 import forms.common.{Date, Time}
 import forms.{ArrivalDetails, ConsignmentReferenceType, ConsignmentReferences}
 import models.cache.ArrivalAnswers
 import org.jsoup.nodes.Document
 import play.api.data.Form
-import play.api.mvc.AnyContentAsEmpty
 import play.twirl.api.Html
 import testdata.CommonTestData.correctUcr
 import testdata.MovementsTestData
@@ -36,7 +34,7 @@ import scala.jdk.CollectionConverters.IterableHasAsScala
 
 class ArrivalDetailsViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[_] = journeyRequest(ArrivalAnswers())
   private val movementDetails = MovementsTestData.movementDetails
 
   private val form = movementDetails.arrivalForm
@@ -65,80 +63,77 @@ class ArrivalDetailsViewSpec extends ViewSpec with Injector {
     }
 
     "provided with empty form" should {
-      val emptyView = createView(form)
+      val view = createView(form)
 
       "have title" in {
-        emptyView.getTitle must containMessage("arrivalDetails.header")
+        view.getTitle must containMessage("arrivalDetails.header")
       }
 
-      "have 'Back' button" in {
-        val backButton = emptyView.getElementById("back-link")
-
-        backButton.text() mustBe messages("site.back")
-        backButton.attr("href") mustBe SpecificDateTimeController.displayPage.toString()
+      "render the back button" in {
+        view.checkBackButton
       }
 
       "have section header" in {
-        emptyView.getElementById("section-header") must containMessage("arrivalDetails.sectionHeading", consignmentReferences.referenceValue)
+        view.getElementById("section-header") must containMessage("arrivalDetails.sectionHeading", consignmentReferences.referenceValue)
       }
 
       "have heading" in {
-        emptyView.getElementById("title") must containMessage("arrivalDetails.header")
+        view.getElementById("title") must containMessage("arrivalDetails.header")
       }
 
       "have date section" which {
 
         "contains label" in {
-          emptyView.getElementsByTag("legend").asScala.exists { elem =>
+          view.getElementsByTag("legend").asScala.exists { elem =>
             elem.text() == messages("arrivalDetails.date.question")
           }
         }
 
         "contains hint" in {
-          emptyView.getElementById("dateOfArrival-hint") must containMessage("arrivalDetails.date.hint")
+          view.getElementById("dateOfArrival-hint") must containMessage("arrivalDetails.date.hint")
         }
 
         "contains input for day" in {
-          emptyView.getElementsByAttributeValue("for", "dateOfArrival_day").first() must containMessage("date.day")
-          emptyView.getElementById("dateOfArrival_day").`val`() mustBe empty
+          view.getElementsByAttributeValue("for", "dateOfArrival_day").first() must containMessage("date.day")
+          view.getElementById("dateOfArrival_day").`val`() mustBe empty
         }
 
         "contains input for month" in {
-          emptyView.getElementsByAttributeValue("for", "dateOfArrival_month").first() must containMessage("date.month")
-          emptyView.getElementById("dateOfArrival_month").`val`() mustBe empty
+          view.getElementsByAttributeValue("for", "dateOfArrival_month").first() must containMessage("date.month")
+          view.getElementById("dateOfArrival_month").`val`() mustBe empty
         }
 
         "contains input for year" in {
-          emptyView.getElementsByAttributeValue("for", "dateOfArrival_year").first() must containMessage("date.year")
-          emptyView.getElementById("dateOfArrival_year").`val`() mustBe empty
+          view.getElementsByAttributeValue("for", "dateOfArrival_year").first() must containMessage("date.year")
+          view.getElementById("dateOfArrival_year").`val`() mustBe empty
         }
       }
 
       "have time section" which {
 
         "contains label" in {
-          emptyView.getElementsByTag("legend").asScala.exists { elem =>
+          view.getElementsByTag("legend").asScala.exists { elem =>
             elem.text() == messages("arrivalDetails.time.question")
           }
         }
 
         "contains hint" in {
-          emptyView.getElementById("timeOfArrival-hint") must containMessage("arrivalDetails.time.hint")
+          view.getElementById("timeOfArrival-hint") must containMessage("arrivalDetails.time.hint")
         }
 
         "contains input for hour" in {
-          emptyView.getElementsByAttributeValue("for", "timeOfArrival_hour").first() must containMessage("time.hour")
-          emptyView.getElementById("timeOfArrival_hour").`val`() mustBe empty
+          view.getElementsByAttributeValue("for", "timeOfArrival_hour").first() must containMessage("time.hour")
+          view.getElementById("timeOfArrival_hour").`val`() mustBe empty
         }
 
         "contains input for minute" in {
-          emptyView.getElementsByAttributeValue("for", "timeOfArrival_minute").first() must containMessage("time.minute")
-          emptyView.getElementById("timeOfArrival_minute").`val`() mustBe empty
+          view.getElementsByAttributeValue("for", "timeOfArrival_minute").first() must containMessage("time.minute")
+          view.getElementById("timeOfArrival_minute").`val`() mustBe empty
         }
       }
 
       "have 'Continue' button" in {
-        emptyView.getElementsByClass("govuk-button").first() must containMessage("site.continue")
+        view.getElementsByClass("govuk-button").first() must containMessage("site.continue")
       }
     }
 

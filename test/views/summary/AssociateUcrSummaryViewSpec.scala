@@ -16,15 +16,14 @@
 
 package views.summary
 
+import base.Injector
 import forms.ManageMucrChoice._
 import forms.{AssociateUcr, ManageMucrChoice, MucrOptions}
 import models.UcrType.Ducr
 import models.cache.AssociateUcrAnswers
-import org.jsoup.nodes.Element
 import play.api.mvc.{AnyContent, Call, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import base.Injector
 import views.ViewSpec
 import views.html.summary.associate_ucr_summary
 
@@ -56,29 +55,8 @@ class AssociateUcrSummaryViewSpec extends ViewSpec with Injector {
       view.getElementsByClass("govuk-summary-list__key").last() must containText(messages("associate.ucr.summary.kind.mucr"))
     }
 
-    "render back button" when {
-
-      def validateBackButton(backButton: Option[Element], call: Call): Unit = {
-        backButton mustBe defined
-        backButton.foreach { button =>
-          button must containMessage("site.back")
-          button must haveHref(call)
-        }
-      }
-
-      "query Ducr" in {
-        validateBackButton(view.getBackButton, controllers.consolidations.routes.MucrOptionsController.displayPage)
-      }
-
-      "query Mucr and Associate this consignment to another" in {
-        val view = createView("MUCR", "MUCR", Some(ManageMucrChoice(AssociateThisToMucr)))
-        validateBackButton(view.getBackButton, controllers.consolidations.routes.MucrOptionsController.displayPage)
-      }
-
-      "query Mucr and Associate another consignment to this one" in {
-        val view = createView("MUCR", "MUCR", Some(ManageMucrChoice(AssociateAnotherUcrToThis)))
-        validateBackButton(view.getBackButton, controllers.consolidations.routes.AssociateUcrController.displayPage)
-      }
+    "render the back button" in {
+      view.checkBackButton
     }
 
     "render change link" when {

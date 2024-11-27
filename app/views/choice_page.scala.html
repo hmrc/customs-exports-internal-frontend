@@ -39,8 +39,8 @@
 
 @backLink = @{
   queryUcr.map { block =>
-    if (block.isChief) BackButton(messages("site.back"), ManageChiefConsignmentController.displayPage)
-    else BackButton(messages("site.back"), IleQueryController.getConsignmentInformation(block.ucr))
+    if (block.isChief) BackButton("site.back", ManageChiefConsignmentController.displayPage)
+    else BackButton("site.back", IleQueryController.getConsignmentInformation(block.ucr))
   }
 }
 

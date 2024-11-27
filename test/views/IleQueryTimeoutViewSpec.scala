@@ -17,7 +17,6 @@
 package views
 
 import base.Injector
-import controllers.ileQuery.routes.FindConsignmentController
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import testdata.CommonTestData.correctUcr
@@ -35,11 +34,8 @@ class IleQueryTimeoutViewSpec extends ViewSpec with Injector {
       page(correctUcr).getTitle must containMessage("ileQueryResponse.timeout.title")
     }
 
-    "display back button linking to Find Consignment page" in {
-      val backButton = page(correctUcr).getBackButton
-
-      backButton mustBe defined
-      backButton.get must haveHref(FindConsignmentController.displayQueryForm)
+    "render the back button" in {
+      page(correctUcr).checkBackButton
     }
 
     "display heading" in {

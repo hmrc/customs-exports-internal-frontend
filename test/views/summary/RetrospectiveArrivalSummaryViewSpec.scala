@@ -16,11 +16,10 @@
 
 package views.summary
 
+import base.Injector
 import controllers.exchanges.JourneyRequest
 import models.cache.RetrospectiveArrivalAnswers
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import base.Injector
 import views.ViewSpec
 import views.html.summary.retrospective_arrival_summary_page
 
@@ -28,37 +27,29 @@ class RetrospectiveArrivalSummaryViewSpec extends ViewSpec with Injector {
 
   private val answers = RetrospectiveArrivalAnswers()
 
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(answers)
+  private implicit val request: JourneyRequest[_] = journeyRequest(answers)
 
   private val page = instanceOf[retrospective_arrival_summary_page]
 
   "View" should {
 
     "render title" in {
-
       page(answers).getTitle must containMessage("summary.retrospectiveArrival.title")
     }
 
     "render heading" in {
-
       page(answers).getElementById("title") must containMessage("summary.retrospectiveArrival.title")
     }
 
-    "render back button" in {
-
-      val backButton = page(answers).getBackButton
-
-      backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.LocationController.displayPage)
+    "render the back button" in {
+      page(answers).checkBackButton
     }
 
     "render sub-headers for summary sections" in {
-
       val summaryContent = contentAsString(page(answers))
 
       summaryContent must include(messages("summary.consignmentDetails"))
       summaryContent must include(messages("location.title"))
     }
   }
-
 }

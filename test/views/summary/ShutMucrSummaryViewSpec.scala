@@ -16,16 +16,15 @@
 
 package views.summary
 
+import base.Injector
 import controllers.exchanges.JourneyRequest
 import models.cache.ShutMucrAnswers
-import play.api.mvc.AnyContentAsEmpty
-import base.Injector
 import views.ViewSpec
 import views.html.summary.shut_mucr_summary
 
 class ShutMucrSummaryViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(ShutMucrAnswers())
+  private implicit val request: JourneyRequest[_] = journeyRequest(ShutMucrAnswers())
 
   private val page = instanceOf[shut_mucr_summary]
   private val shutMucr = "some-mucr"
@@ -45,9 +44,7 @@ class ShutMucrSummaryViewSpec extends ViewSpec with Injector {
 
     "render correct submit button" in {
       val submitButton = page(shutMucr).getElementsByClass("govuk-button").first()
-
       submitButton.text() mustBe messages("site.confirmAndSubmit")
     }
   }
-
 }

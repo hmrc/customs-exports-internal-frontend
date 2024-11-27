@@ -82,6 +82,6 @@ class LocationController @Inject() (
 
   private def buildPage(form: Form[Location])(implicit request: JourneyRequest[_]): HtmlFormat.Appendable = {
     val answers = request.answersAs[MovementAnswers]
-    locationPage(form, answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException), answers.specificDateTimeChoice)
+    locationPage(form, answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException))
   }
 }

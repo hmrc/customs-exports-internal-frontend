@@ -24,13 +24,12 @@ import models.UcrType.Mucr
 import models.cache.AssociateUcrAnswers
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
-import play.api.mvc.AnyContentAsEmpty
 import views.ViewSpec
 import views.html.associateucr.manage_mucr
 
 class ManageMucrViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(AssociateUcrAnswers())
+  private implicit val request: JourneyRequest[_] = journeyRequest(AssociateUcrAnswers())
 
   private val page = instanceOf[manage_mucr]
   private val form: Form[ManageMucrChoice] = ManageMucrChoice.form()
@@ -60,17 +59,12 @@ class ManageMucrViewSpec extends ViewSpec with Injector {
       view.getElementsByAttributeValue("for", "choice-2").first() must containMessage("manageMucr.associate.other.consignment")
     }
 
-    "display 'Back' button" in {
-      val backButton = page(form, queryUcr).getBackButton
-
-      backButton mustBe defined
-      backButton.foreach { button =>
-        button must containMessage("site.back")
-        button must haveHref(controllers.routes.ChoiceController.displayPage)
-      }
+    "render the back button" in {
+      page(form, queryUcr).checkBackButton
     }
 
     "render error summary" when {
+
       "no errors" in {
         page(form, queryUcr).getErrorSummary mustBe empty
       }

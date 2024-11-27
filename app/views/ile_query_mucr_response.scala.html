@@ -24,17 +24,17 @@
 @import views.components.BackButton
 
 @this(
-        converter: IleQueryCodeConverter,
-        govukLayout: gds_main_template,
-        summarySection: response_mucr_summary,
-        parentSection: response_parent,
-        previousMovementsSection: response_previous_movements,
-        associatedConsignmentsSection: response_associated_consignments,
-        responseButtons: response_buttons,
-        govukButton: GovukButton,
-        govukSummaryList : GovukSummaryList,
-        govukTable: GovukTable,
-        govukTag: GovukTag
+    converter: IleQueryCodeConverter,
+    govukLayout: gds_main_template,
+    summarySection: response_mucr_summary,
+    parentSection: response_parent,
+    previousMovementsSection: response_previous_movements,
+    associatedConsignmentsSection: response_associated_consignments,
+    responseButtons: response_buttons,
+    govukButton: GovukButton,
+    govukSummaryList : GovukSummaryList,
+    govukTable: GovukTable,
+    govukTag: GovukTag
 )
 
 @(info: MucrInfo, parentMucr: Option[MucrInfo], associatedConsignments: Seq[UcrInfo])(implicit request: Request[_], messages: Messages)
@@ -42,10 +42,9 @@
 @govukLayout(
     useCustomContentWidth = true,
     title = Title("ileQueryResponse.mucr.title"),
-    backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))) {
-
+    backButton = Some(BackButton(call = FindConsignmentController.displayQueryForm))
+) {
     <div class="govuk-grid-row">
-
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">@messages("ileQueryResponse.mucr.title")</h1>
             <span class="govuk-caption-xl">@info.ucr</span>
@@ -68,6 +67,5 @@
         @parentSection(parentMucr)
 
         @associatedConsignmentsSection(associatedConsignments)
-
     </div>
 }

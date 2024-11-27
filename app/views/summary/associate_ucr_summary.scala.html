@@ -33,14 +33,12 @@
 
 @(associateUcrAnswers: AssociateUcrAnswers)(implicit request: Request[_], messages: Messages)
 
-@backCall = @{
+@changeUrl = @{
   associateUcrAnswers.manageMucrChoice.map(_.choice) match {
     case Some(choice) if choice == ManageMucrChoice.AssociateAnotherUcrToThis => AssociateUcrController.displayPage
     case _ => MucrOptionsController.displayPage
   }
 }
-
-@changeUrl = @{backCall.url}
 
 @summaryList = {
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
@@ -76,10 +74,9 @@
 
 @govukLayout(
   title = Title("associate.ucr.summary.title"),
-  backButton = Some(BackButton(messages("site.back"), backCall)),
+  backButton = Some(BackButton()),
   useCustomContentWidth = true
 ) {
-
   @formHelper(action = AssociateUcrSummaryController.submit, Symbol("autoComplete") -> "off") {
 
     @pageTitle(messages("associate.ucr.summary.title"))

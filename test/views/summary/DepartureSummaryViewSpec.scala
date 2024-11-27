@@ -16,16 +16,15 @@
 
 package views.summary
 
+import base.Injector
 import controllers.exchanges.JourneyRequest
 import forms.DepartureDetails
 import forms.common.{Date, Time}
 import models.cache.DepartureAnswers
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers._
-import base.Injector
 import views.ViewSpec
-import views.html.summary.departure_summary_page
 import views.helpers.ViewDates
+import views.html.summary.departure_summary_page
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, LocalTime}
@@ -36,7 +35,7 @@ class DepartureSummaryViewSpec extends ViewSpec with Injector {
   private val time = Time(LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
   private val answers = DepartureAnswers(departureDetails = Some(DepartureDetails(date, time)))
 
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(answers)
+  private implicit val request: JourneyRequest[_] = journeyRequest(answers)
 
   private val departureSummaryPage = instanceOf[departure_summary_page]
 
@@ -50,11 +49,8 @@ class DepartureSummaryViewSpec extends ViewSpec with Injector {
       departureSummaryPage(answers).getElementById("title") must containMessage("summary.departure.title")
     }
 
-    "render back button" in {
-      val backButton = departureSummaryPage(answers).getBackButton
-
-      backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.TransportController.displayPage)
+    "render the back button" in {
+      departureSummaryPage(answers).checkBackButton
     }
 
     "render sub-headers for summary sections" in {

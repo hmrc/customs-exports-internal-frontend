@@ -18,10 +18,8 @@ package views
 
 import base.Injector
 import controllers.exchanges.JourneyRequest
-import controllers.movements.routes.SpecificDateTimeController
 import models.cache.ArrivalAnswers
 import org.jsoup.nodes.Document
-import play.api.mvc.AnyContentAsEmpty
 import testdata.MovementsTestData
 import views.html.departure_details
 
@@ -29,7 +27,7 @@ import scala.jdk.CollectionConverters.IterableHasAsScala
 
 class DepartureDetailsViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[_] = journeyRequest(ArrivalAnswers())
 
   private val movementDetails = MovementsTestData.movementDetails
 
@@ -104,10 +102,8 @@ class DepartureDetailsViewSpec extends ViewSpec with Injector {
       }
     }
 
-    "render back button" in {
-      val backButton = view.getBackButton
-      backButton mustBe defined
-      backButton.get must haveHref(SpecificDateTimeController.displayPage)
+    "render the back button" in {
+      view.checkBackButton
     }
 
     "render error summary" when {
