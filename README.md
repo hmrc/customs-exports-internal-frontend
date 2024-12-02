@@ -33,4 +33,4 @@ This code is open source software licensed under the [Apache 2.0 License]("http:
 
 ## ILE Query
 
-A flow diagram for ILE Query is available on [Confluence](https://confluence.tools.tax.service.gov.uk/display/CD/ILE+Query+flow+diagram).
+A flow diagram for ILE Query is available on [Confluence](https://confluence.tools.tax.service.gov.uk/display/CEDS/ILE+Query+flow+diagram).
