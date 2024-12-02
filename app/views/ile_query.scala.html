@@ -24,13 +24,13 @@
 @import views.html.components.gds.paragraphBody
 
 @this(
-    govukLayout: gds_main_template,
-    govukButton: GovukButton,
-    govukRadios: GovukRadios,
-    exportsInputText: exportsInputText,
-    errorSummary: errorSummary,
-    pageTitle: pageTitle,
-    formHelper: FormWithCSRF
+        govukLayout: gds_main_template,
+        govukButton: GovukButton,
+        govukRadios: GovukRadios,
+        exportsInputText: exportsInputText,
+        errorSummary: errorSummary,
+        pageTitle: pageTitle,
+        formHelper: FormWithCSRF
 )
 
 
@@ -39,4 +39,17 @@
 @govukLayout(title = Title("ileQuery.title", hasErrors = form.hasErrors || form.hasGlobalErrors)) {
     @pageTitle(text = messages("ileQuery.title"), classes = "govuk-heading-xl")
     @paragraphBody(messages("ileQuery.paragraph"))
+
+    <div class="govuk-body">
+    @link(content = Html(messages("ileQuery.radio.1")), href = FindConsignmentController.displayQueryForm , classes = "govuk-link govuk-link--no-visited-state")
+    </div>
+
+    <div class="govuk-body">
+    @link(content = Html(messages("ileQuery.radio.2")), href = FindConsignmentController.displayQueryForm, classes = "govuk-link govuk-link--no-visited-state")
+    </div>
+
+    <ul class="govuk-list">
+        <li>@link(content = Html(messages("ileQuery.link.requests")), href = ViewSubmissionsController.displayPage)</li>
+    </ul>
+
 }
