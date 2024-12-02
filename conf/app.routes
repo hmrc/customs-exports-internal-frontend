@@ -14,6 +14,7 @@ GET         /consignment-query/:ucr                controllers.ileQuery.IleQuery
 
 # Declaration choice page
 GET         /choice                                controllers.ChoiceController.displayPage
+POST        /choice                                controllers.ChoiceController.submit
 
 # Manage CHIEF consignment page
 GET         /manage-chief-consignment             controllers.ManageChiefConsignmentController.displayPage
