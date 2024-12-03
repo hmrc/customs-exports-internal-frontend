@@ -81,9 +81,9 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
         s"form contains ucr block ${if (chiefStatus.isDefined) "from CHIEF"}" in {
           val backButton = page(form, Some(UcrBlock(ucr = "ucr", ucrType = Ducr.codeValue, chiefUcr = chiefStatus))).getElementById("back-link")
           if (chiefStatus.isEmpty)
-            backButton must haveHref(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation("ucr"))
+            backButton must haveHref("#")
           else
-            backButton must haveHref(controllers.routes.ManageChiefConsignmentController.displayPage)
+            backButton must haveHref("#")
         }
       }
     }

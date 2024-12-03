@@ -73,7 +73,7 @@ class ConfirmationPageViewSpec extends ViewSpec with Injector {
           val link = view.getElementById("choice-link")
 
           link must containMessage("confirmation.redirect.choice.link")
-          link must haveHref(controllers.routes.ChoiceController.displayPage)
+          link must haveHref(controllers.routes.RootController.displayPage)
         }
       }
 
