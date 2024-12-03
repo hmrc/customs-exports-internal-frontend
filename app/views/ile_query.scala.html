@@ -16,7 +16,7 @@
 
 @import components.gds.{errorSummary, gds_main_template, pageTitle}
 @import controllers.ileQuery.routes.FindConsignmentController
-@import controllers.routes.{ManageChiefConsignmentController, ViewSubmissionsController}
+@import controllers.routes.{ManageCdsConsignmentController, ManageChiefConsignmentController, ViewSubmissionsController}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.gds.{exportsInputText, link}
 @import views.helpers.Title
@@ -40,7 +40,7 @@
     @paragraphBody(messages("ileQuery.paragraph"))
 
     <p class="govuk-body">
-    @link(content = Html(messages("ileQuery.radio.1")), href = FindConsignmentController.displayQueryForm , classes = "govuk-link govuk-link--no-visited-state")
+    @link(content = Html(messages("ileQuery.radio.1")), href = ManageCdsConsignmentController.displayPage, classes = "govuk-link govuk-link--no-visited-state")
     </p>
 
     <p class="govuk-body">

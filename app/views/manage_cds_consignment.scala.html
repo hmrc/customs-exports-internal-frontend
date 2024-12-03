@@ -15,7 +15,7 @@
  *@
 
 @import controllers.ileQuery.routes.FindConsignmentController
-@import controllers.routes.ManageChiefConsignmentController
+@import controllers.routes.ManageCdsConsignmentController
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.helpers.Title
 @import views.components.BackButton
@@ -34,46 +34,19 @@
 
 @(form: Form[CdsConsignment])(implicit request: Request[_], messages: Messages)
 
-@pageHint = {
-  <div id="page-hint" class="govuk-hint govuk-!-margin-bottom-4">@messages("manageChiefConsignment.pageHint")</div>
-}
-
 @govukLayout(
-  title = Title("manageChiefConsignment.title", "manageChiefConsignment.pageHint", hasErrors = form.hasErrors || form.hasGlobalErrors),
+  title = Title("manageCdsConsignment.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))
 ) {
-  @formHelper(action = ManageChiefConsignmentController.submitChiefConsignment, Symbol("autoComplete") -> "off") {
+  @formHelper(action = ManageCdsConsignmentController.submitCdsConsignment, Symbol("autoComplete") -> "off") {
     @errorSummary(form.errors)
 
-    @pageTitle(text = messages("manageChiefConsignment.title"), classes = "")
-
-    @pageHint
-
-    @heading(messages("manageChiefConsignment.mucrHeading"), "govuk-heading-m", "h2")
+    @pageTitle(text = messages("manageCdsConsignment.title"), classes = "govuk-heading-xl")
 
     @exportsInputText(
-        field = form("mucr"),
-        labelKey = "manageChiefConsignment.mucr",
-        hintKey = Some("manageChiefConsignment.mucr.hint"),
+        field = form("ucr"),
+        labelKey = "manageCdsConsignment.ucr",
         inputClasses = "govuk-input--width-20"
-    )
-
-    @paragraphBody(message = messages("manageChiefConsignment.or"), classes = "govuk-body govuk-!-padding-2", id = Some("or"))
-
-    @heading(messages("manageChiefConsignment.ducrHeading"), "govuk-heading-m", "h2")
-
-    @exportsInputText(
-      field = form("ducr"),
-      labelKey = "manageChiefConsignment.ducr",
-      hintKey = Some("manageChiefConsignment.ducr.hint"),
-      inputClasses = "govuk-input--width-20"
-    )
-
-    @exportsInputText(
-      field = form("ducrPartId"),
-      labelKey = "manageChiefConsignment.ducrPartId",
-      hintKey = Some("manageChiefConsignment.ducrPartId.hint"),
-      inputClasses = "govuk-input--width-3"
     )
 
     @govukButton(Button(content = Text(messages("site.continue"))))

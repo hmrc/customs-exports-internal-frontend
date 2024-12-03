@@ -61,7 +61,7 @@ class ManageCdsConsignmentController @Inject()(
         formWithErrors => Future.successful(BadRequest(manageCdsConsignmentPage(formWithErrors))),
         validCdsConsignment =>
           cacheRepository.upsert(Cache(request.providerId, validCdsConsignment.toUcrBlock)).map { _ =>
-            Redirect(controllers.routes.ChoiceController.displayPage)
+            Redirect(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm)
           }
       )
   }
