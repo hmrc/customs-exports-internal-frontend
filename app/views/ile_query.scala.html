@@ -33,23 +33,20 @@
         formHelper: FormWithCSRF
 )
 
-
 @(form: Form[Option[String]])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(title = Title("ileQuery.title", hasErrors = form.hasErrors || form.hasGlobalErrors)) {
     @pageTitle(text = messages("ileQuery.title"), classes = "govuk-heading-xl")
     @paragraphBody(messages("ileQuery.paragraph"))
 
-    <div class="govuk-body">
+    <p class="govuk-body">
     @link(content = Html(messages("ileQuery.radio.1")), href = FindConsignmentController.displayQueryForm , classes = "govuk-link govuk-link--no-visited-state")
-    </div>
+    </p>
 
-    <div class="govuk-body">
-    @link(content = Html(messages("ileQuery.radio.2")), href = FindConsignmentController.displayQueryForm, classes = "govuk-link govuk-link--no-visited-state")
-    </div>
+    <p class="govuk-body">
+    @link(content = Html(messages("ileQuery.radio.2")), href = ManageChiefConsignmentController.displayPage, classes = "govuk-link govuk-link--no-visited-state")
+    </p>
 
-    <ul class="govuk-list">
-        <li>@link(content = Html(messages("ileQuery.link.requests")), href = ViewSubmissionsController.displayPage)</li>
-    </ul>
+    @link(content = Html(messages("ileQuery.link.requests")), href = ViewSubmissionsController.displayPage)
 
 }

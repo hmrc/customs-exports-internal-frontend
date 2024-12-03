@@ -16,6 +16,10 @@ GET         /consignment-query/:ucr                controllers.ileQuery.IleQuery
 GET         /choice                                controllers.ChoiceController.displayPage
 POST        /choice                                controllers.ChoiceController.submit
 
+# Manage CDS consignment
+GET         /find-cds-consignment                  controllers.ManageCdsConsignmentController.displayPage
+POST        /find-cds-consignment                  controllers.ManageCdsConsignmentController.submitCdsConsignment
+
 # Manage CHIEF consignment page
 GET         /manage-chief-consignment             controllers.ManageChiefConsignmentController.displayPage
 POST        /manage-chief-consignment             controllers.ManageChiefConsignmentController.submitChiefConsignment
