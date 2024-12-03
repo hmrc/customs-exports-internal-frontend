@@ -8,7 +8,11 @@ GET         /                                      controllers.RootController.di
 
 # ILE Query - entry point
 GET         /consignment-query                     controllers.ileQuery.FindConsignmentController.displayQueryForm
-POST        /consignment-query                     controllers.ileQuery.FindConsignmentController.submitQueryForm
+
+# //TODO CEDS-6202 is this the correct way?
+GET         /consignment-query-2                   controllers.ileQuery.FindCdsConsignmentController.submitQueryForm
+
+#POST        /consignment-query                     controllers.ileQuery.FindConsignmentController.submitQueryForm
 
 GET         /consignment-query/:ucr                controllers.ileQuery.IleQueryController.getConsignmentInformation(ucr: String)
 

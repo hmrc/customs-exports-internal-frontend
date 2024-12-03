@@ -352,6 +352,7 @@ notifications.elem.content.inventoryLinkingMovementTotalsResponse.soe = Status o
 
 ileQuery.title = Manage a CDS or CHIEF Consignment
 ileQuery.paragraph = Select the customs declaration service that holds your consignment details.
+# TODO CEDS-6202 these aren't radio buttons anymore
 ileQuery.radio.1 = Manage a CDS consignment
 ileQuery.radio.1.text = Enter the DUCR or MUCR associated with the consignment.
 ileQuery.radio.2 = Manage a CHIEF consignment

@@ -14,13 +14,14 @@
  * limitations under the License.
  *@
 
-@import controllers.ileQuery.routes.FindConsignmentController
+@import controllers.ileQuery.routes.{FindConsignmentController,FindCdsConsignmentController}
 @import controllers.routes.ManageCdsConsignmentController
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.helpers.Title
 @import views.components.BackButton
 @import views.html.components.gds._
 @import forms.CdsConsignment
+@import forms.FindCdsUcr
 
 @this(
     govukLayout: gds_main_template,
@@ -32,13 +33,13 @@
     heading: heading
 )
 
-@(form: Form[CdsConsignment])(implicit request: Request[_], messages: Messages)
+@(form: Form[FindCdsUcr])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
   title = Title("manageCdsConsignment.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))
 ) {
-  @formHelper(action = ManageCdsConsignmentController.submitCdsConsignment, Symbol("autoComplete") -> "off") {
+  @formHelper(action = controllers.ileQuery.routes.FindCdsConsignmentController.submitQueryForm, Symbol("autoComplete") -> "off") {
     @errorSummary(form.errors)
 
     @pageTitle(text = messages("manageCdsConsignment.title"), classes = "govuk-heading-xl")

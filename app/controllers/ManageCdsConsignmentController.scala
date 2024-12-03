@@ -17,7 +17,8 @@
 package controllers
 
 import controllers.actions.AuthenticatedAction
-import forms.{CdsConsignment}
+import forms.FindCdsUcr
+import models.UcrBlock
 import models.cache.Cache
 import models.summary.SessionHelper
 import play.api.data.Form
@@ -26,13 +27,13 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.{manage_cds_consignment}
+import views.html.manage_cds_consignment
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageCdsConsignmentController @Inject()(
+class ManageCdsConsignmentController @Inject() (
   mcc: MessagesControllerComponents,
   authenticate: AuthenticatedAction,
   cacheRepository: CacheRepository,
@@ -45,7 +46,7 @@ class ManageCdsConsignmentController @Inject()(
       .findByProviderId(request.providerId)
       .map {
         case Some(cache) =>
-          cache.queryUcr.map(ucrBlock => getEmptyForm.fill(CdsConsignment(ucrBlock))).getOrElse(getEmptyForm)
+          cache.queryUcr.map(ucrBlock => getEmptyForm.fill(FindCdsUcr(ucrBlock.ucr))).getOrElse(getEmptyForm)
 
         case _ => getEmptyForm
       }
@@ -54,17 +55,18 @@ class ManageCdsConsignmentController @Inject()(
     futureResult.map(_.withSession(SessionHelper.clearAllReceiptPageSessionKeys()))
   }
 
+  // TODO CEDS-6202 why authenticate.async?
   val submitCdsConsignment: Action[AnyContent] = authenticate.async { implicit request =>
     getEmptyForm
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(manageCdsConsignmentPage(formWithErrors))),
-        validCdsConsignment =>
-          cacheRepository.upsert(Cache(request.providerId, validCdsConsignment.toUcrBlock)).map { _ =>
+        validCdsConsignment => // TODO CEDS-6202 This doesn't look right
+          cacheRepository.upsert(Cache(request.providerId, UcrBlock(validCdsConsignment.ucr, None, "None", None))).map { _ =>
             Redirect(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm)
           }
       )
   }
 
-  private def getEmptyForm: Form[CdsConsignment] = CdsConsignment.form()
+  private def getEmptyForm: Form[FindCdsUcr] = FindCdsUcr.form()
 }

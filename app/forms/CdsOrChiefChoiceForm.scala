@@ -40,6 +40,7 @@ object CdsOrChiefChoiceForm {
       .verifying("ileQuery.ucr.incorrect", isEmpty or validDucrIgnoreCase or validMucrIgnoreCase)
       .transform[String](_.trim.toUpperCase, identity)
 
+  // TODO CEDS-6202 mentions radio buttons
   val mapping: Mapping[Option[String]] =
     Forms.mapping(isIleQuery -> requiredRadio("ileQuery.radio.empty", allowedValues), ucr -> mandatoryIfEqual(isIleQuery, cds, cdsUcrMapping))(
       (_, ucr) => ucr

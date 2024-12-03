@@ -103,7 +103,7 @@ object CdsConsignment {
         fields =>
           fields match {
             case CdsConsignment(None, None, None) => false
-            case _                                  => true
+            case _                                => true
           }
       )
       .verifying(
@@ -113,7 +113,7 @@ object CdsConsignment {
             case CdsConsignment(Some(_), Some(_), Some(_)) => false
             case CdsConsignment(Some(_), Some(_), _)       => false
             case CdsConsignment(Some(_), _, Some(_))       => false
-            case _                                           => true
+            case _                                         => true
           }
       )
   }

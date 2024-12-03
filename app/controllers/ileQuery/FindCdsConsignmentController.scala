@@ -17,32 +17,32 @@
 package controllers.ileQuery
 
 import controllers.actions.AuthenticatedAction
-import forms.CdsOrChiefChoiceForm.form
+import forms.FindCdsUcr.form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.ile_query
+//import views.html.manage_cds_consignment
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class FindConsignmentController @Inject() (authenticate: AuthenticatedAction, mcc: MessagesControllerComponents, ileQueryPage: ile_query)
-    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
+class FindCdsConsignmentController @Inject() (
+  authenticate: AuthenticatedAction,
+  mcc: MessagesControllerComponents,
+  ileQueryPage: ile_query,
+  manageCdsConsignment: views.html.manage_cds_consignment
+) extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
-  val displayQueryForm: Action[AnyContent] = authenticate { implicit request =>
-    Ok(ileQueryPage(form))
+  val submitQueryForm: Action[AnyContent] = authenticate { implicit request =>
+    form()
+      .bindFromRequest()
+      .fold(
+        formWithErrors => { println(s"XXXXXXXXXX formWithErrors [$formWithErrors]"); BadRequest(manageCdsConsignment(formWithErrors)) },
+        ucr =>
+          Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr.ucr))
+//          case _         =>  println(s"XXXXXX ") ; Redirect(controllers.routes.ManageChiefConsignmentController.displayPage)
+      )
   }
-
-//  val submitQueryForm: Action[AnyContent] = authenticate { implicit request =>
-//    form
-//      .bindFromRequest()
-//      .fold(
-//        formWithErrors => BadRequest(ileQueryPage(formWithErrors)),
-//        {
-//          case Some(ucr) => Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr))
-//          case _         => Redirect(controllers.routes.ManageChiefConsignmentController.displayPage)
-//        }
-//      )
-//  }
 }
