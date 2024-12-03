@@ -16,7 +16,7 @@
 
 @import components.gds.{gds_main_template, linkContent, pageTitle}
 @import components.summary._
-@import controllers.movements.routes.{LocationController, MovementDetailsController}
+@import controllers.movements.routes.MovementDetailsController
 @import controllers.summary.routes.ArriveDepartSummaryController
 @import models.cache.ArrivalAnswers
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -38,10 +38,9 @@
 
 @govukLayout(
   title = Title("summary.arrival.title"),
-  backButton = Some(BackButton(messages("site.back"), LocationController.displayPage)),
+  backButton = Some(BackButton()),
   useCustomContentWidth = true
 ) {
-
     @formHelper(action = ArriveDepartSummaryController.submitMovementRequest, Symbol("autoComplete") -> "off") {
 
     @pageTitle(messages("summary.arrival.title"))

@@ -15,8 +15,7 @@
  *@
 
 @import components.gds.{errorSummary, exportsInputText, gds_main_template, sectionHeader}
-@import controllers.consolidations.routes.{ManageMucrController, MucrOptionsController}
-@import controllers.routes.ChoiceController
+@import controllers.consolidations.routes.MucrOptionsController
 @import forms.{ManageMucrChoice, MucrOptions}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.helpers.Title
@@ -34,14 +33,9 @@
 
 @(form: Form[MucrOptions], queryUcr: Option[UcrBlock], manageMucrChoice: Option[ManageMucrChoice])(implicit request: Request[_], messages: Messages)
 
-@backCall = @{
-  if (manageMucrChoice.isDefined) ManageMucrController.displayPage
-  else ChoiceController.displayPage
-}
-
 @govukLayout(
   title = Title("mucrOptions.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
-  backButton = Some(BackButton(messages("site.back"), backCall))
+  backButton = Some(BackButton())
 ) {
     @formHelper(action = MucrOptionsController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)

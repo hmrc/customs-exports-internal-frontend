@@ -17,7 +17,6 @@
 package views
 
 import base.Injector
-import controllers.ileQuery.routes.FindConsignmentController
 import forms.ChiefConsignment
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
@@ -60,9 +59,8 @@ class ChiefConsignmentViewSpec extends ViewSpec with ViewMatchers with Injector 
         view.getElementById("page-hint") must containMessage("manageChiefConsignment.pageHint")
       }
 
-      "render 'Back' button leading to 'Find a consignment' page" in {
-        view.getBackButton mustBe defined
-        view.getBackButton.get must haveHref(FindConsignmentController.displayQueryForm)
+      "render the back button" in {
+        view.checkBackButton
       }
 
       "render Option 1 & 2 headings" in {

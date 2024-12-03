@@ -44,15 +44,10 @@
 
 @govukLayout(
   title = Title("submissions.title"),
-  backButton = Some(BackButton(
-    title = messages("site.back"),
-    call = controllers.ileQuery.routes.FindConsignmentController.displayQueryForm
-  )),
+  backButton = Some(BackButton()),
   useCustomContentWidth = true
 ) {
-
   <div class="govuk-grid-row">
-
     <div class="govuk-grid-column-two-thirds">
       @pageTitle(messages("submissions.title"))
 
@@ -102,6 +97,5 @@
       }
     ))
     </div>
-
   </div>
 }

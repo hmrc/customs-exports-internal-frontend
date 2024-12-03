@@ -81,9 +81,9 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
         s"form contains ucr block ${if (chiefStatus.isDefined) "from CHIEF"}" in {
           val backButton = page(form, Some(UcrBlock(ucr = "ucr", ucrType = Ducr.codeValue, chiefUcr = chiefStatus))).getElementById("back-link")
           if (chiefStatus.isEmpty)
-            backButton must haveHref(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation("ucr"))
+            backButton must haveHref("#")
           else
-            backButton must haveHref(controllers.routes.ManageChiefConsignmentController.displayPage)
+            backButton must haveHref("#")
         }
       }
     }
@@ -128,7 +128,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
     }
 
     "render 'Shut Mucr' and 'Retrospective Arrival' options appropriately" when {
-      Seq(Some(true), None).foreach { chiefStatus =>
+      List(Some(true), None).foreach { chiefStatus =>
         s"ILE query was for a Mucr ${if (chiefStatus.isDefined) "from CHIEF"}" in {
           val choicePage = page(form, Some(UcrBlock(ucr = "mucr", ucrType = Mucr.codeValue, chiefUcr = chiefStatus)))
 

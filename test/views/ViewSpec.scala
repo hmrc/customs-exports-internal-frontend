@@ -22,17 +22,21 @@ import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
 import models.cache.{Answers, Cache}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
+import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testdata.CommonTestData.providerId
 
 class ViewSpec extends AnyWordSpec with Matchers with ViewMatchers with MessagesStub with CSRFSupport {
 
+  val backButtonDefaultCall: Call = Call("GET", "#")
+
   implicit protected def htmlBodyOf(html: Html): Document = Jsoup.parse(html.toString())
 
-  protected def journeyRequest(answers: Answers) =
+  protected def journeyRequest(answers: Answers): JourneyRequest[_] =
     JourneyRequest(Cache(providerId, Some(answers), None), AuthenticatedRequest(Operator(providerId), FakeRequest().withCSRFToken))
 
   /*
@@ -41,9 +45,13 @@ class ViewSpec extends AnyWordSpec with Matchers with ViewMatchers with Messages
   protected implicit class CommonElementFinder(html: Html) {
     private val document = htmlBodyOf(html)
 
-    def getTitle: Element = document.getElementsByTag("title").first()
+    def checkBackButton(implicit request: Request[_]): Assertion = {
+      val backButton = document.getElementById("back-link")
+      backButton.text mustBe messages("site.back")
+      backButton must haveHref(backButtonDefaultCall)
+    }
 
-    def getBackButton: Option[Element] = Option(document.getElementById("back-link"))
+    def getTitle: Element = document.getElementsByTag("title").first()
 
     def getSubmitButton: Option[Element] = Option(document.getElementById("submit"))
 

@@ -17,7 +17,6 @@
 package views
 
 import base.Injector
-import controllers.ileQuery.routes.FindConsignmentController
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import views.html.consignment_not_found_page
@@ -43,11 +42,8 @@ class ConsignmentNotFoundViewSpec extends ViewSpec with Injector {
       view.getElementsByClass("govuk-body").first().text() mustBe messages("ileQueryResponse.ucrNotFound.message", "SOME_UCR")
     }
 
-    "render back button" in {
-      val backButton = view.getElementsByClass("govuk-back-link").first()
-
-      backButton.text() mustBe messages("site.back")
-      backButton.attr("href") mustBe FindConsignmentController.displayQueryForm.url
+    "render the back button" in {
+      view.checkBackButton
     }
   }
 }

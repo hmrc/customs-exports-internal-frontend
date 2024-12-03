@@ -15,7 +15,6 @@
  *@
 
 @import components.gds.{gds_main_template, pageTitle}
-@import controllers.routes.ChoiceController
 @import controllers.summary.routes.DisassociateUcrSummaryController
 @import forms.DisassociateUcr
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -34,7 +33,7 @@
 
 @govukLayout(
     title = Title("disassociate.ucr.summary.title"),
-    backButton = Some(BackButton(messages("site.back"), ChoiceController.displayPage)),
+    backButton = Some(BackButton()),
     useCustomContentWidth = true
 ) {
     @formHelper(action = DisassociateUcrSummaryController.submit, Symbol("autoComplete") -> "off") {

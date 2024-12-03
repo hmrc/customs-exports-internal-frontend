@@ -15,7 +15,6 @@
  *@
 
 @import components.gds.{gds_main_template, pageTitle}
-@import controllers.routes.ChoiceController
 @import controllers.summary.routes.ShutMucrSummaryController
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.helpers.Title
@@ -29,11 +28,11 @@
     formHelper: FormWithCSRF
 )
 
-@(mucr: String)(implicit request: Request[AnyContent], messages: Messages)
+@(mucr: String)(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
     title = Title("shutMucr.summary.title"),
-    backButton = Some(BackButton(messages("site.back"), ChoiceController.displayPage)),
+    backButton = Some(BackButton()),
     useCustomContentWidth = true
 ) {
     @formHelper(action = ShutMucrSummaryController.submit, Symbol("autoComplete") -> "off") {

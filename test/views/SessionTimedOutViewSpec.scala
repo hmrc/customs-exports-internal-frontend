@@ -21,13 +21,12 @@ import controllers.exchanges.JourneyRequest
 import controllers.ileQuery.routes.FindConsignmentController
 import models.cache.AssociateUcrAnswers
 import play.api.i18n.MessagesApi
-import play.api.mvc.AnyContentAsEmpty
 import play.twirl.api.Html
 import views.html.session_timed_out
 
 class SessionTimedOutViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(AssociateUcrAnswers())
+  private implicit val request: JourneyRequest[_] = journeyRequest(AssociateUcrAnswers())
   private val page = instanceOf[session_timed_out]
   private def createView(): Html = page()
 

@@ -35,8 +35,8 @@
 
 @govukLayout(
     title = Title("notifications.title", NO_SECTION),
-    backButton = Some(BackButton(messages("site.back"), controllers.routes.ViewSubmissionsController.displayPage))) {
-
+    backButton = Some(BackButton())
+) {
     @pageTitle(text = messages("notifications.title"), classes = "govuk-heading-l govuk-!-margin-bottom-2")
 
     <span class="govuk-caption-l">@{submissionUcr._1}: @{submissionUcr._2}</span>

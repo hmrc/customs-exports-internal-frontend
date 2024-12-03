@@ -18,7 +18,6 @@ package views
 
 import base.Injector
 import connectors.exchanges.ActionType.{ConsolidationType, MovementType}
-import controllers.ileQuery.routes.FindConsignmentController
 import models.submissions.Submission
 import models.{UcrBlock, UcrType}
 import org.jsoup.nodes.Document
@@ -46,34 +45,29 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
     page(submissions)(request, messages)
 
   "Submissions page" should {
-    val emptyPage = createView()
+    val view = createView()
 
     "contain title" in {
-      emptyPage.getTitle must containMessage("submissions.title")
+      view.getTitle must containMessage("submissions.title")
     }
 
-    "contain back button" in {
-      val backButton = emptyPage.getElementById("back-link")
-
-      backButton must containMessage("site.back")
-      backButton must haveHref(FindConsignmentController.displayQueryForm)
+    "render the back button" in {
+      view.checkBackButton
     }
 
     "contain header" in {
-      emptyPage.getElementById("title") must containMessage("submissions.title")
+      view.getElementById("title") must containMessage("submissions.title")
     }
 
     "contain information paragraph" in {
-      emptyPage.getElementsByClass("govuk-body-l").first() must containMessage("submissions.summary")
+      view.getElementsByClass("govuk-body-l").first() must containMessage("submissions.summary")
     }
 
     "contain correct table headers" in {
-      val doc: Document = emptyPage
-
-      doc.selectFirst(".govuk-table__header.ucr") // must containMessage("submissions.ucr")
-      doc.selectFirst(".govuk-table__header.submission-type") must containMessage("submissions.submissionType")
-      doc.selectFirst(".govuk-table__header.date-of-request") must containMessage("submissions.dateOfRequest")
-      doc.selectFirst(".govuk-table__header.submission-action") must containMessage("submissions.submissionAction")
+      view.selectFirst(".govuk-table__header.ucr") // must containMessage("submissions.ucr")
+      view.selectFirst(".govuk-table__header.submission-type") must containMessage("submissions.submissionType")
+      view.selectFirst(".govuk-table__header.date-of-request") must containMessage("submissions.dateOfRequest")
+      view.selectFirst(".govuk-table__header.submission-action") must containMessage("submissions.submissionAction")
     }
 
     "contain correct submission data" in {
@@ -140,7 +134,6 @@ class ViewSubmissionsViewSpec extends ViewSpec with Injector {
     }
 
     "contain MUCR and DUCR if Submission contains both" in {
-
       val pageWithData: Document = createView(Seq(exampleAssociateDucrRequestSubmission))
 
       val firstDataRowElements = pageWithData.selectFirst(".govuk-table__body .govuk-table__row:nth-child(1)")

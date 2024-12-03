@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import controllers.ileQuery.routes.FindConsignmentController
 @import controllers.routes.ManageChiefConsignmentController
 @import forms.ChiefConsignment
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -40,7 +39,7 @@
 
 @govukLayout(
   title = Title("manageChiefConsignment.title", "manageChiefConsignment.pageHint", hasErrors = form.hasErrors || form.hasGlobalErrors),
-  backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))
+  backButton = Some(BackButton())
 ) {
   @formHelper(action = ManageChiefConsignmentController.submitChiefConsignment, Symbol("autoComplete") -> "off") {
     @errorSummary(form.errors)

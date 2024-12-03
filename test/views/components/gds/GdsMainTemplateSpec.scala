@@ -19,7 +19,6 @@ package views.components.gds
 import base.Injector
 import controllers.exchanges.JourneyRequest
 import models.cache.ArrivalAnswers
-import play.api.mvc.AnyContentAsEmpty
 import views.ViewSpec
 import views.html.consignment_not_found_page
 
@@ -27,7 +26,7 @@ class GdsMainTemplateSpec extends ViewSpec with Injector {
 
   private val page = instanceOf[consignment_not_found_page]
 
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[_] = journeyRequest(ArrivalAnswers())
 
   "The Main template" should {
 
