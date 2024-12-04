@@ -16,7 +16,7 @@
 
 @import components.gds.gds_main_template
 @import components.ilequery.{response_buttons, response_ducr_summary, response_parent, response_previous_movements}
-@import controllers.ileQuery.routes.FindConsignmentController
+@import controllers.routes.ManageCdsConsignmentController
 @import models.notifications.queries.{DucrInfo, MucrInfo}
 @import models.viewmodels.ilequery.IleQueryCodeConverter
 @import views.helpers.Title
@@ -36,7 +36,7 @@
 @govukLayout(
     useCustomContentWidth = true,
     title = Title("ileQueryResponse.ducr.title"),
-    backButton = Some(BackButton(call = FindConsignmentController.displayQueryForm))
+    backButton = Some(BackButton(call = ManageCdsConsignmentController.displayPage))
 ) {
     <div class="govuk-grid-row">
 
