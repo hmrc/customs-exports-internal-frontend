@@ -20,7 +20,8 @@ import connectors.CustomsDeclareExportsMovementsConnector
 import connectors.exchanges.IleQueryExchange
 import controllers.actions.AuthenticatedAction
 import controllers.exchanges.AuthenticatedRequest
-import forms.CdsOrChiefChoiceForm.form
+import forms.FindCdsUcr
+import forms.FindCdsUcr.form
 import handlers.ErrorHandler
 import models.UcrBlock
 import models.UcrType.{Ducr, Mucr}
@@ -126,14 +127,14 @@ class IleQueryController @Inject() (
 
   private def sendIleQuery(ucr: String)(implicit request: AuthenticatedRequest[AnyContent]): Future[Result] =
     form
-      .fillAndValidate(Some(ucr))
+      .fillAndValidate(FindCdsUcr(ucr))
       .fold(
         formWithErrors => Future.successful(BadRequest(ileQueryPage(formWithErrors))),
         validUcr => {
-          val ileQueryRequest = buildIleQuery(request.providerId, validUcr.get)
+          val ileQueryRequest = buildIleQuery(request.providerId, validUcr.ucr)
 
           connector.submit(ileQueryRequest).flatMap { conversationId =>
-            val ileQuery = IleQuery(retrieveSessionId, validUcr.get, conversationId)
+            val ileQuery = IleQuery(retrieveSessionId, validUcr.ucr, conversationId)
 
             ileQueryRepository.insertOne(ileQuery).map { _ =>
               Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr))

@@ -37,5 +37,5 @@ object FindCdsUcr {
       .transform[String](_.trim.toUpperCase, identity)
   )(FindCdsUcr.apply)(FindCdsUcr.unapply)
 
-  def form(): Form[FindCdsUcr] = Form(mapping)
+  def form: Form[FindCdsUcr] = Form(mapping)
 }

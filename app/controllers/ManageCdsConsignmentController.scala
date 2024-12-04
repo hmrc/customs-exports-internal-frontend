@@ -55,7 +55,7 @@ class ManageCdsConsignmentController @Inject() (
   }
 
   val submitCdsConsignment: Action[AnyContent] = authenticate { implicit request =>
-    form()
+    form
       .bindFromRequest()
       .fold(
         formWithErrors => { println(s"XXXXXXXXXX formWithErrors [$formWithErrors]"); BadRequest(manageCdsConsignmentPage(formWithErrors)) },
@@ -64,5 +64,5 @@ class ManageCdsConsignmentController @Inject() (
       )
   }
 
-  private def getEmptyForm: Form[FindCdsUcr] = FindCdsUcr.form()
+  private def getEmptyForm: Form[FindCdsUcr] = FindCdsUcr.form
 }

@@ -22,6 +22,7 @@
 @import views.helpers.Title
 @import forms.CdsOrChiefChoiceForm
 @import views.html.components.gds.paragraphBody
+@import forms.FindCdsUcr
 
 @this(
         govukLayout: gds_main_template,
@@ -33,7 +34,7 @@
         formHelper: FormWithCSRF
 )
 
-@(form: Form[Option[String]])(implicit request: Request[_], messages: Messages)
+@(form: Form[FindCdsUcr])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(title = Title("ileQuery.title", hasErrors = form.hasErrors || form.hasGlobalErrors)) {
     @pageTitle(text = messages("ileQuery.title"), classes = "govuk-heading-xl")
