@@ -33,16 +33,4 @@ class FindConsignmentController @Inject() (authenticate: AuthenticatedAction, mc
   val displayQueryForm: Action[AnyContent] = authenticate { implicit request =>
     Ok(ileQueryPage(form))
   }
-
-//  val submitQueryForm: Action[AnyContent] = authenticate { implicit request =>
-//    form
-//      .bindFromRequest()
-//      .fold(
-//        formWithErrors => BadRequest(ileQueryPage(formWithErrors)),
-//        {
-//          case Some(ucr) => Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr))
-//          case _         => Redirect(controllers.routes.ManageChiefConsignmentController.displayPage)
-//        }
-//      )
-//  }
 }
