@@ -8,7 +8,6 @@ GET         /                                      controllers.RootController.di
 
 # ILE Query - entry point
 GET         /consignment-query                     controllers.ileQuery.FindConsignmentController.displayQueryForm
-# POST        /consignment-query                     controllers.ileQuery.FindCdsConsignmentController.submitQueryForm
 
 # Declaration choice page
 GET         /choice                                controllers.ChoiceController.displayPage

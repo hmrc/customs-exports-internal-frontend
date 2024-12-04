@@ -39,7 +39,7 @@
   title = Title("manageCdsConsignment.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))
 ) {
-  @formHelper(action = controllers.routes.ManageCdsConsignmentController.submitCdsConsignment, Symbol("autoComplete") -> "on") {
+  @formHelper(action = controllers.routes.ManageCdsConsignmentController.submitCdsConsignment, Symbol("autoComplete") -> "off") {
     @errorSummary(form.errors)
 
     @pageTitle(text = messages("manageCdsConsignment.title"), classes = "govuk-heading-xl")
