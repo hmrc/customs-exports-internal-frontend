@@ -129,7 +129,7 @@ class IleQueryController @Inject() (
     form
       .fillAndValidate(FindCdsUcr(ucr))
       .fold(
-        formWithErrors => Future.successful(BadRequest(ileQueryPage(formWithErrors))),
+        _ => Future.successful(BadRequest(ileQueryPage())),
         validUcr => {
           val ileQueryRequest = buildIleQuery(request.providerId, validUcr.ucr)
 

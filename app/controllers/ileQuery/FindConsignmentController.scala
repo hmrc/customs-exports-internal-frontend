@@ -17,7 +17,6 @@
 package controllers.ileQuery
 
 import controllers.actions.AuthenticatedAction
-import forms.FindCdsUcr.form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
@@ -31,6 +30,6 @@ class FindConsignmentController @Inject() (authenticate: AuthenticatedAction, mc
     extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
   val displayQueryForm: Action[AnyContent] = authenticate { implicit request =>
-    Ok(ileQueryPage(form))
+    Ok(ileQueryPage())
   }
 }
