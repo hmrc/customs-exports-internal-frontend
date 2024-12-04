@@ -8,9 +8,7 @@ GET         /                                      controllers.RootController.di
 
 # ILE Query - entry point
 GET         /consignment-query                     controllers.ileQuery.FindConsignmentController.displayQueryForm
-POST        /consignment-query                     controllers.ileQuery.FindCdsConsignmentController.submitQueryForm
-
-GET         /consignment-query/:ucr                controllers.ileQuery.IleQueryController.getConsignmentInformation(ucr: String)
+# POST        /consignment-query                     controllers.ileQuery.FindCdsConsignmentController.submitQueryForm
 
 # Declaration choice page
 GET         /choice                                controllers.ChoiceController.displayPage
@@ -18,7 +16,8 @@ POST        /choice                                controllers.ChoiceController.
 
 # Manage CDS consignment
 GET         /find-cds-consignment                  controllers.ManageCdsConsignmentController.displayPage
-# POST        /find-cds-consignment                  controllers.ManageCdsConsignmentController.submitCdsConsignment
+GET         /find-cds-consignment/:ucr             controllers.ileQuery.IleQueryController.getConsignmentInformation(ucr: String)
+POST        /find-cds-consignment                  controllers.ManageCdsConsignmentController.submitCdsConsignment
 
 # Manage CHIEF consignment page
 GET         /manage-chief-consignment             controllers.ManageChiefConsignmentController.displayPage

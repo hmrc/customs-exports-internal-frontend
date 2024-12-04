@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions.AuthenticatedAction
 import forms.FindCdsUcr
+import forms.FindCdsUcr.form
 import models.summary.SessionHelper
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -28,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.manage_cds_consignment
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ManageCdsConsignmentController @Inject() (
@@ -51,6 +52,16 @@ class ManageCdsConsignmentController @Inject() (
       .map(form => Ok(manageCdsConsignmentPage(form)))
 
     futureResult.map(_.withSession(SessionHelper.clearAllReceiptPageSessionKeys()))
+  }
+
+  val submitCdsConsignment: Action[AnyContent] = authenticate { implicit request =>
+    form()
+      .bindFromRequest()
+      .fold(
+        formWithErrors => { println(s"XXXXXXXXXX formWithErrors [$formWithErrors]"); BadRequest(manageCdsConsignmentPage(formWithErrors)) },
+        ucr =>
+          Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr.ucr))
+      )
   }
 
   private def getEmptyForm: Form[FindCdsUcr] = FindCdsUcr.form()
