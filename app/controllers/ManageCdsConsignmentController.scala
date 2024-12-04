@@ -18,8 +18,6 @@ package controllers
 
 import controllers.actions.AuthenticatedAction
 import forms.FindCdsUcr
-import models.UcrBlock
-import models.cache.Cache
 import models.summary.SessionHelper
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -30,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.manage_cds_consignment
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext}
 
 @Singleton
 class ManageCdsConsignmentController @Inject() (
@@ -53,19 +51,6 @@ class ManageCdsConsignmentController @Inject() (
       .map(form => Ok(manageCdsConsignmentPage(form)))
 
     futureResult.map(_.withSession(SessionHelper.clearAllReceiptPageSessionKeys()))
-  }
-
-  // TODO CEDS-6202 why authenticate.async?
-  val submitCdsConsignment: Action[AnyContent] = authenticate.async { implicit request =>
-    getEmptyForm
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(manageCdsConsignmentPage(formWithErrors))),
-        validCdsConsignment => // TODO CEDS-6202 This doesn't look right
-          cacheRepository.upsert(Cache(request.providerId, UcrBlock(validCdsConsignment.ucr, None, "None", None))).map { _ =>
-            Redirect(controllers.ileQuery.routes.FindConsignmentController.displayQueryForm)
-          }
-      )
   }
 
   private def getEmptyForm: Form[FindCdsUcr] = FindCdsUcr.form()

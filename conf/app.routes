@@ -18,7 +18,7 @@ POST        /choice                                controllers.ChoiceController.
 
 # Manage CDS consignment
 GET         /find-cds-consignment                  controllers.ManageCdsConsignmentController.displayPage
-POST        /find-cds-consignment                  controllers.ManageCdsConsignmentController.submitCdsConsignment
+# POST        /find-cds-consignment                  controllers.ManageCdsConsignmentController.submitCdsConsignment
 
 # Manage CHIEF consignment page
 GET         /manage-chief-consignment             controllers.ManageChiefConsignmentController.displayPage
