@@ -18,7 +18,6 @@ package views
 
 import base.Injector
 import controllers.routes.ViewSubmissionsController
-import forms.CdsOrChiefChoiceForm
 import org.jsoup.nodes.Element
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
@@ -29,19 +28,11 @@ class IleQueryViewSpec extends ViewSpec with Injector {
 
   private implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  private val form = CdsOrChiefChoiceForm.form
   private val page = instanceOf[ile_query]
 
-  private val view: Appendable = page(form)
+  private val view: Appendable = page()
 
   "Ile Query page" should {
-
-    "have the page's title prefixed with 'Error:'" when {
-      "the page has errors" in {
-        val view = page(form.withGlobalError("error.summary.title"))
-        view.head.getElementsByTag("title").first.text must startWith("Error: ")
-      }
-    }
 
     "render title" in {
       view.getTitle must containMessage("ileQuery.title")
@@ -51,39 +42,8 @@ class IleQueryViewSpec extends ViewSpec with Injector {
       view.getElementsByClass("govuk-heading-xl").first.text mustBe messages("ileQuery.title")
     }
 
-    "render error summary" when {
-
-      "no errors" in {
-        val govukErrorSummary: Element = view.getElementsByClass("govuk-error-summary__title").first
-        Option(govukErrorSummary) mustBe None
-      }
-
-      "some errors" in {
-        val errorView = page(form.withError("error", "error.required"))
-        val govukErrorSummary = errorView.getElementsByClass("govuk-error-summary__title").first
-        govukErrorSummary.text mustBe messages("error.summary.title")
-      }
-    }
-
     "contain explanatory accompanying text" in {
       view.getElementsByClass("govuk-body").first.text mustBe messages("ileQuery.paragraph")
-    }
-
-    "contain radios for CDS or CHIEF with conditional HTML" in {
-      val radioItems = view.getElementsByClass("govuk-radios__item")
-      radioItems.size mustBe 2
-      radioItems.first must containMessage("ileQuery.radio.1")
-
-      radioItems.get(1) must containMessage("ileQuery.radio.2")
-    }
-
-    "contains input field" in {
-      Option(view.getElementById("ucr")) mustBe defined
-      view.getElementsByAttributeValue("for", "ucr").first() must containMessage("ileQuery.radio.1.text")
-    }
-
-    "contains submit button" in {
-      view.getElementsByClass("govuk-button").first.text mustBe messages("site.continue")
     }
 
     "contains link to view previous requests" in {

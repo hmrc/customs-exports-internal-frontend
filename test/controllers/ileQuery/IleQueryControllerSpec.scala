@@ -21,7 +21,6 @@ import connectors.exchanges.IleQueryExchange
 import controllers.ControllerLayerSpec
 import controllers.exchanges.Operator
 import controllers.ileQuery.routes.IleQueryController
-import forms.CdsOrChiefChoiceForm
 import handlers.ErrorHandler
 import models.{now, UcrBlock}
 import models.UcrType.Mucr

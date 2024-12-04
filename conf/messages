@@ -350,13 +350,14 @@ notifications.elem.content.inventoryLinkingMovementResponse.crc = CRC:
 notifications.elem.content.inventoryLinkingMovementTotalsResponse.roe = Route of entry is:
 notifications.elem.content.inventoryLinkingMovementTotalsResponse.soe = Status of entry is:
 
+## rename ileQuery to findConsignment
+
 ileQuery.title = Manage a CDS or CHIEF Consignment
 ileQuery.paragraph = Select the customs declaration service that holds your consignment details.
-# TODO CEDS-6202 these aren't radio buttons anymore
-ileQuery.radio.1 = Manage a CDS consignment
-ileQuery.radio.1.text = Enter the DUCR or MUCR associated with the consignment.
-ileQuery.radio.2 = Manage a CHIEF consignment
-ileQuery.radio.empty = Please select either CDS or CHIEF
+
+ileQuery.option.manageCds = Manage a CDS consignment
+ileQuery.option.manageChief = Manage a CHIEF consignment
+
 ileQuery.ucr.empty = Enter a Unique Consignment Reference.
 ileQuery.ucr.incorrect = Unique Consignment Reference is incorrect.
 
