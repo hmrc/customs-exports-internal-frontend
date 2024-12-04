@@ -17,24 +17,20 @@
 package views.associateucr
 
 import base.Injector
-import controllers.consolidations.routes.ManageMucrController
 import controllers.exchanges.JourneyRequest
-import controllers.routes.ChoiceController
-import forms.ManageMucrChoice._
 import forms.{ManageMucrChoice, MucrOptions}
 import models.UcrBlock
 import models.UcrType.Mucr
 import models.cache.AssociateUcrAnswers
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
-import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.twirl.api.Html
 import views.ViewSpec
 import views.html.associateucr.mucr_options
 
 class MucrOptionsViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(AssociateUcrAnswers())
+  private implicit val request: JourneyRequest[_] = journeyRequest(AssociateUcrAnswers())
 
   private val page = instanceOf[mucr_options]
 
@@ -72,23 +68,8 @@ class MucrOptionsViewSpec extends ViewSpec with Injector {
       view.getElementById("createOrAdd-2") mustBe unchecked
     }
 
-    "display 'Back' button" when {
-
-      def validateBackbutton(backButton: Option[Element], call: Call): Unit = {
-        backButton mustBe defined
-        backButton.foreach { button =>
-          button must containMessage("site.back")
-          button must haveHref(call)
-        }
-      }
-
-      "query Ducr" in {
-        validateBackbutton(createView().getBackButton, ChoiceController.displayPage)
-      }
-
-      "query Mucr and Associate this consignment to another" in {
-        validateBackbutton(createView(MucrOptions.form, Some(ManageMucrChoice(AssociateThisToMucr))).getBackButton, ManageMucrController.displayPage)
-      }
+    "render the back button" in {
+      view.checkBackButton
     }
 
     "display 'Continue' button on page" in {
@@ -96,6 +77,7 @@ class MucrOptionsViewSpec extends ViewSpec with Injector {
     }
 
     "render error summary" when {
+
       "no errors" in {
         view.getErrorSummary mustBe empty
       }

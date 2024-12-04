@@ -38,7 +38,7 @@
 
 @govukLayout(
   title = Title("goodsDeparted.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
-  backButton = Some(BackButton(messages("site.back"), controllers.movements.routes.LocationController.displayPage))
+  backButton = Some(BackButton())
 ) {
     @formHelper(action = controllers.movements.routes.GoodsDepartedController.saveGoodsDeparted, Symbol("autoComplete") -> "off") {
       @errorSummary(form.errors)

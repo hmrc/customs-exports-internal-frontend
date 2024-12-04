@@ -16,13 +16,12 @@
 
 package views.summary
 
-import controllers.routes.ChoiceController
+import base.Injector
 import controllers.summary.routes.DisassociateUcrSummaryController
 import forms.DisassociateUcr
 import models.UcrType
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
-import base.Injector
 import views.ViewSpec
 import views.html.summary.disassociate_ucr_summary
 
@@ -45,20 +44,8 @@ class DisassociateUcrSummaryViewSpec extends ViewSpec with Injector {
       form.get must haveAttribute("action", DisassociateUcrSummaryController.submit.url)
     }
 
-    "render back button" when {
-      "ducr" in {
-        val backButton = page(answersDUCR).getBackButton
-
-        backButton mustBe defined
-        backButton.get must haveHref(ChoiceController.displayPage)
-      }
-
-      "mucr" in {
-        val backButton = page(answersMUCR).getBackButton
-
-        backButton mustBe defined
-        backButton.get must haveHref(ChoiceController.displayPage)
-      }
+    "render the back button" in {
+      page(answersDUCR).checkBackButton
     }
 
     "render type" when {

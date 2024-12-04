@@ -37,16 +37,9 @@
 
 @(form: Form[Choice], queryUcr: Option[UcrBlock] = None)(implicit request: Request[_], messages: Messages)
 
-@backLink = @{
-  queryUcr.map { block =>
-    if (block.isChief) BackButton(messages("site.back"), ManageChiefConsignmentController.displayPage)
-    else BackButton(messages("site.back"), IleQueryController.getConsignmentInformation(block.ucr))
-  }
-}
-
 @govukLayout(
   title = Title("movement.choice.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
-  backButton = backLink
+  backButton = queryUcr.map(_ => BackButton())
 ) {
     @formHelper(action = ChoiceController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)

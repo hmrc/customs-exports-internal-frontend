@@ -15,7 +15,7 @@
  *@
 
 @import components.gds.{errorSummary, exportsInputText, gds_main_template, sectionHeader}
-@import controllers.consolidations.routes.{AssociateUcrController, ManageMucrController}
+@import controllers.consolidations.routes.AssociateUcrController
 @import forms.{AssociateUcr, MucrOptions}
 @import models.UcrType
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -36,7 +36,7 @@
 
 @govukLayout(
   title = Title("associate.ucr.title", "", Seq(mucrOptions.mucr), hasErrors = form.hasErrors || form.hasGlobalErrors),
-  backButton = Some(BackButton(messages("site.back"), ManageMucrController.displayPage))
+  backButton = Some(BackButton())
 ) {
     @formHelper(action = AssociateUcrController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)

@@ -17,7 +17,6 @@
 package views.associateucr
 
 import base.Injector
-import controllers.consolidations.routes.ManageMucrController
 import forms.{AssociateUcr, MucrOptions}
 import models.UcrType.{Ducr, Mucr}
 import play.api.data.Form
@@ -49,51 +48,44 @@ class AssociateUcrViewSpec extends ViewSpec with ViewMatchers with Injector {
     }
 
     "form is empty" should {
+      val view = createView(mucrOptions, form)
 
-      val emptyView = createView(mucrOptions, form)
-
-      "display 'Back' button" in {
-        val backButton = emptyView.getBackButton
-
-        backButton mustBe defined
-        backButton.foreach { button =>
-          button must containMessage("site.back")
-          button must haveHref(ManageMucrController.displayPage)
-        }
+      "render the back button" in {
+        view.checkBackButton
       }
 
       "have 'DUCR' section" which {
 
         "have radio button" in {
-          emptyView.getElementById("kind") mustBe unchecked
+          view.getElementById("kind") mustBe unchecked
         }
 
         "display label" in {
-          emptyView.getElementsByAttributeValue("for", "kind").text() mustBe messages("associate.ucr.ducr")
+          view.getElementsByAttributeValue("for", "kind").text() mustBe messages("associate.ucr.ducr")
         }
 
         "have input for value" in {
-          emptyView.getElementById("ducr").`val`() mustBe empty
+          view.getElementById("ducr").`val`() mustBe empty
         }
       }
 
       "have 'MUCR' section" which {
 
         "have radio button" in {
-          emptyView.getElementById("kind-2") mustBe unchecked
+          view.getElementById("kind-2") mustBe unchecked
         }
 
         "display label" in {
-          emptyView.getElementsByAttributeValue("for", "kind-2").text() mustBe messages("associate.ucr.mucr")
+          view.getElementsByAttributeValue("for", "kind-2").text() mustBe messages("associate.ucr.mucr")
         }
 
         "have input" in {
-          emptyView.getElementById("mucr").`val`() mustBe empty
+          view.getElementById("mucr").`val`() mustBe empty
         }
       }
 
       "display 'Continue' button on page" in {
-        emptyView.getElementsByClass("govuk-button").text() mustBe messages("site.continue")
+        view.getElementsByClass("govuk-button").text() mustBe messages("site.continue")
       }
     }
 

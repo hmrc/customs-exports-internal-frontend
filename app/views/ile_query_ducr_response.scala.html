@@ -36,8 +36,8 @@
 @govukLayout(
     useCustomContentWidth = true,
     title = Title("ileQueryResponse.ducr.title"),
-    backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))) {
-
+    backButton = Some(BackButton(call = FindConsignmentController.displayQueryForm))
+) {
     <div class="govuk-grid-row">
 
         <div class="govuk-grid-column-two-thirds">

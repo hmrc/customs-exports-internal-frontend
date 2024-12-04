@@ -20,13 +20,12 @@ import base.Injector
 import controllers.exchanges.JourneyRequest
 import forms.Transport
 import models.cache.ArrivalAnswers
-import play.api.mvc.AnyContentAsEmpty
 import play.twirl.api.Html
 import views.html.transport
 
 class TransportViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[_] = journeyRequest(ArrivalAnswers())
 
   private val form = Transport.outOfTheUkForm
   private val page = instanceOf[transport]
@@ -68,11 +67,8 @@ class TransportViewSpec extends ViewSpec with Injector {
       createView.getElementsByAttributeValue("for", "nationality").first() must containMessage("transport.nationality.question")
     }
 
-    "render back button" in {
-      val backButton = createView.getBackButton
-
-      backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.GoodsDepartedController.displayPage)
+    "render the back button" in {
+      createView.checkBackButton
     }
 
     "render error summary" when {

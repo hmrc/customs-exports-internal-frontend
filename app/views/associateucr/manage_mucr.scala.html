@@ -16,7 +16,6 @@
 
 @import components.gds.{errorSummary, exportsInputText, gds_main_template, sectionHeader}
 @import controllers.consolidations.routes.ManageMucrController
-@import controllers.routes.ChoiceController
 @import forms.ManageMucrChoice
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.helpers.Title
@@ -36,7 +35,7 @@
 
 @govukLayout(
   title = Title("manageMucr.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
-  backButton = Some(BackButton(messages("site.back"), ChoiceController.displayPage))
+  backButton = Some(BackButton())
 ) {
     @formHelper(action = ManageMucrController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)

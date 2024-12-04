@@ -16,7 +16,6 @@
 
 @import components.gds.{errorSummary, gds_main_template, sectionHeader}
 @import controllers.exchanges.JourneyRequest
-@import controllers.routes.ChoiceController
 @import forms.SpecificDateTimeChoice
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.helpers.Title
@@ -37,7 +36,7 @@
 
 @govukLayout(
   title = Title("specific.datetime.heading", hasErrors = form.hasErrors || form.hasGlobalErrors),
-  backButton = Some(BackButton(messages("site.back"), ChoiceController.displayPage))
+  backButton = Some(BackButton())
 ) {
     @formHelper(action = controllers.movements.routes.SpecificDateTimeController.submit, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)

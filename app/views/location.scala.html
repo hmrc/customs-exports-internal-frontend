@@ -16,14 +16,12 @@
 
 @import components.gds.{errorSummary, exportsInputText, gds_main_template, sectionHeader}
 @import controllers.exchanges.JourneyRequest
-@import controllers.movements.routes.{LocationController, MovementDetailsController, SpecificDateTimeController}
-@import controllers.routes.ChoiceController
+@import controllers.movements.routes.LocationController
 @import forms.Location
 @import models.cache.JourneyType
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.helpers.Title
 @import views.components.BackButton
-@import forms.SpecificDateTimeChoice
 
 @this(
     govukLayout: gds_main_template,
@@ -34,18 +32,7 @@
     formHelper: FormWithCSRF
 )
 
-@(form: Form[Location],
-  consignmentReference: String,
-  specificDateTimeChoice: Option[SpecificDateTimeChoice]
-)(implicit request: JourneyRequest[_], messages: Messages)
-
-@backLink = @{
-    request.answers.`type` match {
-        case JourneyType.RETROSPECTIVE_ARRIVE => ChoiceController.displayPage
-        case _ if specificDateTimeChoice.map(_.choice).contains(SpecificDateTimeChoice.CurrentDateTime) => SpecificDateTimeController.displayPage
-        case _ => MovementDetailsController.displayPage
-    }
-}
+@(form: Form[Location], consignmentReference: String)(implicit request: JourneyRequest[_], messages: Messages)
 
 @pageTitleKey = @{
     if (request.answers.`type` == JourneyType.RETROSPECTIVE_ARRIVE) "location.question.retrospectiveArrival"
@@ -56,7 +43,7 @@
 
 @govukLayout(
   title = Title(pageTitleKey, hasErrors = form.hasErrors || form.hasGlobalErrors),
-  backButton = Some(BackButton(messages("site.back"), backLink))
+  backButton = Some(BackButton())
 ) {
     @formHelper(action = LocationController.saveLocation, Symbol("autoComplete") -> "off") {
         @errorSummary(form.errors)

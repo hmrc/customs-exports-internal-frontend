@@ -18,18 +18,16 @@ package views
 
 import base.Injector
 import controllers.exchanges.JourneyRequest
-import controllers.movements.routes.LocationController
 import forms.GoodsDeparted
 import models.cache.DepartureAnswers
 import org.jsoup.nodes.Document
 import play.api.data.FormError
-import play.api.mvc.AnyContentAsEmpty
 import testdata.CommonTestData.validDucr
 import views.html.goods_departed
 
 class GoodsDepartedViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(DepartureAnswers())
+  private implicit val request: JourneyRequest[_] = journeyRequest(DepartureAnswers())
 
   private val form = GoodsDeparted.form
   private val page = instanceOf[goods_departed]
@@ -59,10 +57,8 @@ class GoodsDepartedViewSpec extends ViewSpec with Injector {
       view.getElementsByAttributeValue("for", "departureLocation-2").text() must be(messages("goodsDeparted.departureLocation.backIntoTheUk"))
     }
 
-    "display back button" in {
-      val backButton = page(form, validDucr).getBackButton
-      backButton mustBe defined
-      backButton.get must haveHref(LocationController.displayPage)
+    "render the back button" in {
+      page(form, validDucr).checkBackButton
     }
 
     "display error summary" when {

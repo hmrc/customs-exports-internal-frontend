@@ -16,16 +16,15 @@
 
 package views.summary
 
+import base.Injector
 import controllers.exchanges.JourneyRequest
 import forms.ArrivalDetails
 import forms.common.{Date, Time}
 import models.cache.ArrivalAnswers
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import base.Injector
 import views.ViewSpec
-import views.html.summary.arrival_summary_page
 import views.helpers.ViewDates
+import views.html.summary.arrival_summary_page
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, LocalTime}
@@ -36,32 +35,25 @@ class ArrivalSummaryViewSpec extends ViewSpec with Injector {
   private val time = Time(LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
   private val answers = ArrivalAnswers(arrivalDetails = Some(ArrivalDetails(date, time)))
 
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(answers)
+  private implicit val request: JourneyRequest[_] = journeyRequest(answers)
 
   private val page = instanceOf[arrival_summary_page]
 
   "View" should {
 
     "render title" in {
-
       page(answers).getTitle must containMessage("summary.arrival.title")
     }
 
     "render heading" in {
-
       page(answers).getElementById("title") must containMessage("summary.arrival.title")
     }
 
-    "render back button" in {
-
-      val backButton = page(answers).getBackButton
-
-      backButton mustBe defined
-      backButton.get must haveHref(controllers.movements.routes.LocationController.displayPage)
+    "render the back button" in {
+      page(answers).checkBackButton
     }
 
     "render sub-headers for summary sections" in {
-
       val summaryContent = contentAsString(page(answers))
 
       summaryContent must include(messages("summary.consignmentDetails"))

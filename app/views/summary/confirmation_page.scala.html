@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 @import views.html.components.gds.{link, heading, paragraphBody}
 @import controllers.ileQuery.routes.IleQueryController
-@import controllers.routes.{ChoiceController, ViewNotificationsController}
+@import controllers.routes.{RootController, ViewNotificationsController}
 @import views.helpers.Title
 @import forms.ConsignmentReferences
 
@@ -45,7 +45,6 @@
     classes = "govuk-link--no-visited-state"
   )
 }
-
 
 @govukLayout(title = Title(s"confirmation.title.${confirmation.journeyType}")) {
 
@@ -88,7 +87,7 @@
 
 <ul>
     <li class="govuk-body">
-        @link(content = Html(messages("confirmation.redirect.choice.link")), href = ChoiceController.displayPage, id = Some("choice-link"))
+        @link(content = Html(messages("confirmation.redirect.choice.link")), href = RootController.displayPage, id = Some("choice-link"))
     </li>
 </ul>
 }

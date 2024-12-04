@@ -21,7 +21,6 @@ import controllers.exchanges.JourneyRequest
 import forms.SpecificDateTimeChoice
 import models.cache.{ArrivalAnswers, DepartureAnswers}
 import play.api.data.Form
-import play.api.mvc.AnyContentAsEmpty
 import play.twirl.api.Html
 import views.html.specific_date_and_time
 
@@ -30,7 +29,7 @@ class SpecificDateTimeViewSpec extends ViewSpec with Injector {
   private val page = instanceOf[specific_date_and_time]
 
   private val form: Form[SpecificDateTimeChoice] = SpecificDateTimeChoice.form()
-  private implicit val request: JourneyRequest[AnyContentAsEmpty.type] = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[_] = journeyRequest(ArrivalAnswers())
 
   private def createView: Html = page(form, "some-reference")
 
@@ -56,10 +55,8 @@ class SpecificDateTimeViewSpec extends ViewSpec with Injector {
       departureView.getElementById("section-header") must containMessage("specific.datetime.depart.heading", "some-reference")
     }
 
-    "display 'Back' button that links to Choice" in {
-      val backButton = createView.getBackButton
-      backButton mustBe defined
-      backButton.get must haveHref(controllers.routes.ChoiceController.displayPage)
+    "render the back button" in {
+      createView.checkBackButton
     }
 
     "display 'Continue' button on page" in {

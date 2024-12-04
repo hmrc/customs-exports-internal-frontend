@@ -15,7 +15,6 @@
  *@
 
 @import components.gds._
-@import controllers.ileQuery.routes.FindConsignmentController
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.components.BackButton
 @import views.helpers.Title
@@ -26,8 +25,8 @@
 
 @govukLayout(
     title = Title("ileQueryResponse.timeout.title"),
-    backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))) {
-
+    backButton = Some(BackButton())
+) {
   @pageTitle(text = messages("ileQueryResponse.timeout.heading"), classes = "govuk-heading-xl")
 
   <p class="govuk-body-l">'@{ucr}'</p>
