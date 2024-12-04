@@ -32,7 +32,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ManageCdsConsignmentController @Inject() (
+class FindCdsConsignmentController @Inject()(
   mcc: MessagesControllerComponents,
   authenticate: AuthenticatedAction,
   cacheRepository: CacheRepository,

@@ -15,7 +15,7 @@
  *@
 
 @import controllers.ileQuery.routes.{FindConsignmentController}
-@import controllers.routes.ManageCdsConsignmentController
+@import controllers.routes.FindCdsConsignmentController
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.helpers.Title
 @import views.components.BackButton
@@ -38,7 +38,7 @@
   title = Title("manageCdsConsignment.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))
 ) {
-  @formHelper(action = controllers.routes.ManageCdsConsignmentController.submitCdsConsignment, Symbol("autoComplete") -> "off") {
+  @formHelper(action = controllers.routes.FindCdsConsignmentController.submitCdsConsignment, Symbol("autoComplete") -> "off") {
     @errorSummary(form.errors)
 
     @pageTitle(text = messages("manageCdsConsignment.title"), classes = "govuk-heading-xl")

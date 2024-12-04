@@ -9,20 +9,20 @@ GET         /                                      controllers.RootController.di
 # ILE Query - entry point
 GET         /consignment-query                     controllers.ileQuery.FindConsignmentController.displayQueryForm
 
+# Manage CDS consignment
+GET         /find-cds-consignment                  controllers.FindCdsConsignmentController.displayPage
+GET         /find-cds-consignment/:ucr             controllers.ileQuery.IleQueryController.getConsignmentInformation(ucr: String)
+POST        /find-cds-consignment                  controllers.FindCdsConsignmentController.submitCdsConsignment
+
+# Manage CHIEF consignment page
+GET         /manage-chief-consignment              controllers.ManageChiefConsignmentController.displayPage
+POST        /manage-chief-consignment              controllers.ManageChiefConsignmentController.submitChiefConsignment
+
 # Declaration choice page
 GET         /choice                                controllers.ChoiceController.displayPage
 POST        /choice                                controllers.ChoiceController.submit
 
-# Manage CDS consignment
-GET         /find-cds-consignment                  controllers.ManageCdsConsignmentController.displayPage
-GET         /find-cds-consignment/:ucr             controllers.ileQuery.IleQueryController.getConsignmentInformation(ucr: String)
-POST        /find-cds-consignment                  controllers.ManageCdsConsignmentController.submitCdsConsignment
-
-# Manage CHIEF consignment page
-GET         /manage-chief-consignment             controllers.ManageChiefConsignmentController.displayPage
-POST        /manage-chief-consignment             controllers.ManageChiefConsignmentController.submitChiefConsignment
-
-#Manage MUCR
+# Manage MUCR
 GET         /manage-mucr                          controllers.consolidations.ManageMucrController.displayPage
 POST        /manage-mucr                          controllers.consolidations.ManageMucrController.submit
 
