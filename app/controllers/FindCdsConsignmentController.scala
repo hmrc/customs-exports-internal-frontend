@@ -32,7 +32,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class FindCdsConsignmentController @Inject()(
+class FindCdsConsignmentController @Inject() (
   mcc: MessagesControllerComponents,
   authenticate: AuthenticatedAction,
   cacheRepository: CacheRepository,
@@ -59,8 +59,7 @@ class FindCdsConsignmentController @Inject()(
       .bindFromRequest()
       .fold(
         formWithErrors => BadRequest(findCdsConsignment(formWithErrors)),
-        ucr =>
-          Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr.ucr))
+        ucr => Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr.ucr))
       )
   }
 
