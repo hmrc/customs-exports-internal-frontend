@@ -24,6 +24,7 @@ import utils.FieldValidator._
 
 case class FindCdsUcr(ucr: String)
 
+//TODO CEDS-6202 we should add a test for this.
 object FindCdsUcr {
 
   implicit val format: OFormat[FindCdsUcr] = Json.format[FindCdsUcr]
