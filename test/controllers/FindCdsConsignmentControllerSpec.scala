@@ -54,13 +54,13 @@ class FindCdsConsignmentControllerSpec extends ControllerLayerSpec with MockIleQ
 
   "Calling submitCdsConsignment" should {
 
-    "return BAD_REQUEST when passing form with errors" in {
+    "return BAD_REQUEST with form with errors" in {
       val incorrectUCR = "123ABC-789456POIUYT"
       val result = controller.submitCdsConsignment(postRequest(Json.obj("ucr" -> incorrectUCR)))
       status(result) mustBe BAD_REQUEST
     }
 
-    "return SEE_OTHER when passing form without errors" in {
+    "return SEE_OTHER with form without errors" in {
 
       val correctUCR = "GB/123456789100-AB123"
       val result = controller.submitCdsConsignment(postRequest(Json.obj("ucr" -> correctUCR)))
