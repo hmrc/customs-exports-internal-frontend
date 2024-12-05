@@ -68,5 +68,4 @@ class FindCdsConsignmentControllerSpec extends ControllerLayerSpec with MockIleQ
     }
   }
 
-
 }
