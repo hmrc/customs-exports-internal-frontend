@@ -35,17 +35,17 @@
 @(form: Form[FindCdsUcr])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-  title = Title("manageCdsConsignment.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
+  title = Title("findCdsConsignment.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton(messages("site.back"), FindConsignmentController.displayQueryForm))
 ) {
   @formHelper(action = controllers.routes.FindCdsConsignmentController.submitCdsConsignment, Symbol("autoComplete") -> "off") {
     @errorSummary(form.errors)
 
-    @pageTitle(text = messages("manageCdsConsignment.title"), classes = "govuk-heading-xl")
+    @pageTitle(text = messages("findCdsConsignment.title"), classes = "govuk-heading-xl")
 
     @exportsInputText(
         field = form("ucr"),
-        labelKey = "manageCdsConsignment.ucr",
+        labelKey = "findCdsConsignment.ucr",
         inputClasses = "govuk-input--width-20"
     )
 

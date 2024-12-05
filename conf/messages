@@ -84,8 +84,8 @@ choicePage.input.error.incorrectValue = Please, choose valid option.
 
 ileQuery.link.ducrPart = Enter a DUCR Part
 
-manageCdsConsignment.title = Find a CDS consignment
-manageCdsConsignment.ucr = Enter the DUCR or MUCR associated with the consignment
+findCdsConsignment.title = Find a CDS consignment
+findCdsConsignment.ucr = Enter the DUCR or MUCR associated with the consignment
 
 manageChiefConsignment.title = Manage a CHIEF consignment
 manageChiefConsignment.pageHint = Use one of the two options below. Enter the reference of the consignment you want to manage.

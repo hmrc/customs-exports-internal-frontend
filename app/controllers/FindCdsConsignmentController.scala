@@ -26,7 +26,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.manage_cds_consignment
+import views.html.find_cds_consignment
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -36,7 +36,7 @@ class FindCdsConsignmentController @Inject()(
   mcc: MessagesControllerComponents,
   authenticate: AuthenticatedAction,
   cacheRepository: CacheRepository,
-  manageCdsConsignmentPage: manage_cds_consignment
+  findCdsConsignment: find_cds_consignment
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
@@ -49,7 +49,7 @@ class FindCdsConsignmentController @Inject()(
 
         case _ => getEmptyForm
       }
-      .map(form => Ok(manageCdsConsignmentPage(form)))
+      .map(form => Ok(findCdsConsignment(form)))
 
     futureResult.map(_.withSession(SessionHelper.clearAllReceiptPageSessionKeys()))
   }
@@ -58,7 +58,7 @@ class FindCdsConsignmentController @Inject()(
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => { println(s"XXXXXXXXXX formWithErrors [$formWithErrors]"); BadRequest(manageCdsConsignmentPage(formWithErrors)) },
+        formWithErrors => BadRequest(findCdsConsignment(formWithErrors)),
         ucr =>
           Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr.ucr))
       )
