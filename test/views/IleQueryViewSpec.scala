@@ -18,7 +18,6 @@ package views
 
 import base.Injector
 import controllers.routes.ViewSubmissionsController
-import org.jsoup.nodes.Element
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat.Appendable
@@ -47,9 +46,7 @@ class IleQueryViewSpec extends ViewSpec with Injector {
     }
 
     "contains link to view previous requests" in {
-      val govukListElement = view.getElementsByClass("govuk-list").first
-
-      val previousRequests = govukListElement.getElementsByClass("govuk-link").get(0)
+      val previousRequests = view.getElementsByClass("govuk-link").get(2)
 
       previousRequests.text mustBe messages("ileQuery.link.requests")
       previousRequests must haveHref(ViewSubmissionsController.displayPage)

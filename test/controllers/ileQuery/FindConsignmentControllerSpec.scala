@@ -17,14 +17,10 @@
 package controllers.ileQuery
 
 import controllers.ControllerLayerSpec
-import controllers.routes.ManageChiefConsignmentController
-import controllers.ileQuery.routes.IleQueryController
 import org.mockito.ArgumentMatchers.any
 
-import play.api.libs.json.{JsString, Json}
 import play.api.test.Helpers.{status, _}
 import play.twirl.api.HtmlFormat
-import testdata.CommonTestData.correctUcr
 import views.html.ile_query
 
 class FindConsignmentControllerSpec extends ControllerLayerSpec {
@@ -39,7 +35,7 @@ class FindConsignmentControllerSpec extends ControllerLayerSpec {
 
     reset(ileQueryPage)
 
-    when(ileQueryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(ileQueryPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -56,38 +52,4 @@ class FindConsignmentControllerSpec extends ControllerLayerSpec {
     }
   }
 
-  "FindConsignmentController on submitQueryForm" when {
-
-    "provide with correct form" should {
-      val cdsForm = Json.obj(("ucr", JsString(correctUcr)), ("isIleQuery", JsString("cds")))
-      val chiefForm = Json.obj(("isIleQuery", JsString("chief")))
-      "return SeeOther status (303)" in {
-        val result = controller.submitQueryForm()(postRequest(cdsForm))
-
-        status(result) mustBe SEE_OTHER
-      }
-
-      "redirect to Consignment Details page" in {
-        val result = controller.submitQueryForm()(postRequest(cdsForm))
-
-        redirectLocation(result).get mustBe IleQueryController.getConsignmentInformation(correctUcr).url
-      }
-
-      "redirect to Manage a CHIEF UCR page" in {
-        val result = controller.submitQueryForm()(postRequest(chiefForm))
-
-        redirectLocation(result).get mustBe ManageChiefConsignmentController.displayPage.url
-      }
-    }
-
-    "provided with incorrect form" should {
-      "return BadRequest status (400)" in {
-        val incorrectForm = JsString("1234")
-
-        val result = controller.submitQueryForm()(postRequest(incorrectForm))
-
-        status(result) mustBe BAD_REQUEST
-      }
-    }
-  }
 }
