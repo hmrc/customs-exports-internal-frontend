@@ -45,7 +45,7 @@ class FindCdsConsignmentControllerSpec extends ControllerLayerSpec with MockIleQ
 
     "return Find CDS Consignment page, passing form with errors" in {
 
-      // controller.getConsignmentInformation(incorrectUCR)(request).futureValue
+      controller.submitCdsConsignment(getRequest)
 
       val expectedForm = FindCdsUcr.form.fillAndValidate(FindCdsUcr(incorrectUCR))
       verify(findCdsConsignmentPage).apply(meq(expectedForm))(any(), any())
