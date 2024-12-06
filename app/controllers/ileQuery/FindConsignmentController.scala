@@ -27,12 +27,12 @@ import views.html.ile_query
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class FindConsignmentController @Inject()(
-                                           authenticate: AuthenticatedAction,
-                                           mcc: MessagesControllerComponents,
-                                           ileQueryPage: ile_query,
-                                           cacheRepository: CacheRepository)
-  extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
+class FindConsignmentController @Inject() (
+  authenticate: AuthenticatedAction,
+  mcc: MessagesControllerComponents,
+  ileQueryPage: ile_query,
+  cacheRepository: CacheRepository
+) extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
   val displayQueryForm: Action[AnyContent] = authenticate { implicit request =>
     cacheRepository.removeByProviderId(request.providerId)

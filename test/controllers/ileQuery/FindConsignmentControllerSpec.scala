@@ -17,18 +17,20 @@
 package controllers.ileQuery
 
 import controllers.ControllerLayerSpec
+import controllers.exchanges.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
-
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{status, _}
 import play.twirl.api.HtmlFormat
+import services.MockCache
 import views.html.ile_query
 
-class FindConsignmentControllerSpec extends ControllerLayerSpec {
+class FindConsignmentControllerSpec extends ControllerLayerSpec with MockCache {
 
   private val ileQueryPage = mock[ile_query]
 
   private val controller: FindConsignmentController =
-    new FindConsignmentController(SuccessfulAuth(), stubMessagesControllerComponents(), ileQueryPage)
+    new FindConsignmentController(SuccessfulAuth(), stubMessagesControllerComponents(), ileQueryPage, cacheRepository)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -46,8 +48,9 @@ class FindConsignmentControllerSpec extends ControllerLayerSpec {
 
   "FindConsignmentController on displayQueryForm" should {
     "return Ok status (200)" in {
-      val result = controller.displayQueryForm(getRequest)
-
+      val authenticatedRequest = AuthenticatedRequest(operator, FakeRequest())
+      val result = controller.displayQueryForm(authenticatedRequest)
+      verify(cacheRepository).removeByProviderId(authenticatedRequest.providerId)
       status(result) mustBe OK
     }
   }
