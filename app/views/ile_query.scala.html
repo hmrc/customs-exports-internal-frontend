@@ -16,11 +16,12 @@
 
 @import components.gds.{errorSummary, gds_main_template, pageTitle}
 @import controllers.ileQuery.routes.FindConsignmentController
-@import controllers.routes.{ManageChiefConsignmentController, ViewSubmissionsController}
+@import controllers.routes.{FindCdsConsignmentController, ManageChiefConsignmentController, ViewSubmissionsController}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.gds.{exportsInputText, link}
 @import views.helpers.Title
-@import forms.CdsOrChiefChoiceForm
+@import views.html.components.gds.paragraphBody
+@import forms.FindCdsUcr
 
 @this(
     govukLayout: gds_main_template,
@@ -32,57 +33,22 @@
     formHelper: FormWithCSRF
 )
 
-@(form: Form[Option[String]])(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[_], messages: Messages)
 
-@inputField = @{
-    Some(exportsInputText(
-        field = form(CdsOrChiefChoiceForm.ucr),
-        inputClasses = "govuk-input govuk-input--width-20",
-        labelKey = "ileQuery.radio.1.text"
-    ))
-}
+@govukLayout(title = Title("ileQuery.title")) {
+    @pageTitle(text = messages("ileQuery.title"), classes = "govuk-heading-xl")
+    @paragraphBody(messages("ileQuery.paragraph"))
 
-@radios = {
-    @govukRadios(Radios(
-            name = CdsOrChiefChoiceForm.isIleQuery,
-            fieldset = Some(Fieldset(
-                    legend = Some(Legend(
-                    content = Text(messages("ileQuery.paragraph")),
-                    isPageHeading = false,
-                    classes = "govuk-body"
-                ))
-            )),
-            items = Seq(
-                RadioItem(
-                    id = Some(CdsOrChiefChoiceForm.cds),
-                    value = Some(CdsOrChiefChoiceForm.cds),
-                    content = Text(messages("ileQuery.radio.1")),
-                    conditionalHtml = inputField,
-                    checked = form(CdsOrChiefChoiceForm.isIleQuery).value.contains(CdsOrChiefChoiceForm.cds)
-                ),
-                RadioItem(
-                    id = Some(CdsOrChiefChoiceForm.chief),
-                    value = Some(CdsOrChiefChoiceForm.chief),
-                    content = Text(messages("ileQuery.radio.2")),
-                    checked = form(CdsOrChiefChoiceForm.isIleQuery).value.contains(CdsOrChiefChoiceForm.chief)
-                )
-            ),
-            errorMessage = form(CdsOrChiefChoiceForm.isIleQuery).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
-    ))
-}
+    <p class="govuk-body">
+    @link(content = Html(messages("ileQuery.option.manageCds")), href = FindCdsConsignmentController.displayPage, classes = "govuk-link--no-visited-state")
+    </p>
 
-@govukLayout(title = Title("ileQuery.title", hasErrors = form.hasErrors || form.hasGlobalErrors)) {
-    @formHelper(action = FindConsignmentController.submitQueryForm, Symbol("autoComplete") -> "off") {
-        @errorSummary(form.errors)
+    <p class="govuk-body">
+    @link(content = Html(messages("ileQuery.option.manageChief")), href = ManageChiefConsignmentController.displayPage, classes = "govuk-link--no-visited-state")
+    </p>
 
-        @pageTitle(text = messages("ileQuery.title"), classes = "govuk-heading-xl")
+    <p class="govuk-body">
+    @link(content = Html(messages("ileQuery.link.requests")), href = ViewSubmissionsController.displayPage, classes = "govuk-link--no-visited-state")
+    </p>
 
-        @radios
-
-        @govukButton(Button(content = Text(messages("site.continue"))))
-
-        <ul class="govuk-list">
-            <li>@link(content = Html(messages("ileQuery.link.requests")), href = ViewSubmissionsController.displayPage)</li>
-        </ul>
-    }
 }

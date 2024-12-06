@@ -17,9 +17,9 @@
 package controllers.ileQuery
 
 import controllers.actions.AuthenticatedAction
-import forms.CdsOrChiefChoiceForm.form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.ile_query
@@ -27,22 +27,15 @@ import views.html.ile_query
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class FindConsignmentController @Inject() (authenticate: AuthenticatedAction, mcc: MessagesControllerComponents, ileQueryPage: ile_query)
-    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
+class FindConsignmentController @Inject() (
+  authenticate: AuthenticatedAction,
+  mcc: MessagesControllerComponents,
+  ileQueryPage: ile_query,
+  cacheRepository: CacheRepository
+) extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
 
   val displayQueryForm: Action[AnyContent] = authenticate { implicit request =>
-    Ok(ileQueryPage(form))
-  }
-
-  val submitQueryForm: Action[AnyContent] = authenticate { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => BadRequest(ileQueryPage(formWithErrors)),
-        {
-          case Some(ucr) => Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr))
-          case _         => Redirect(controllers.routes.ManageChiefConsignmentController.displayPage)
-        }
-      )
+    cacheRepository.removeByProviderId(request.providerId)
+    Ok(ileQueryPage())
   }
 }

@@ -10,7 +10,7 @@ This service is written in [Scala](http://www.scala-lang.org/) and [Play](http:/
 This service uses MongoDB.
 
 This service depends on other services. The easiest way to set up required microservices is to use Service Manager and profiles from [service-manager-config](https://github.com/hmrc/service-manager-config/) repository:
-- CDS_EXPORTS_MOVEMENTS_ALL - all services together with both declarations services
+- CDS_EXPORTS_INTERNAL_ALL
 
 ### Running the application
 In order to run the application you need to have SBT installed. Then, it is enough to start the service with:
@@ -33,4 +33,4 @@ This code is open source software licensed under the [Apache 2.0 License]("http:
 
 ## ILE Query
 
-A flow diagram for ILE Query is available on [Confluence](https://confluence.tools.tax.service.gov.uk/display/CD/ILE+Query+flow+diagram).
+A flow diagram for ILE Query is available on [Confluence](https://confluence.tools.tax.service.gov.uk/display/CEDS/ILE+Query+flow+diagram).

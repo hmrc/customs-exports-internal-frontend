@@ -17,29 +17,27 @@
 package controllers.ileQuery
 
 import controllers.ControllerLayerSpec
-import controllers.routes.ManageChiefConsignmentController
-import controllers.ileQuery.routes.IleQueryController
+import controllers.exchanges.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
-
-import play.api.libs.json.{JsString, Json}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{status, _}
 import play.twirl.api.HtmlFormat
-import testdata.CommonTestData.correctUcr
+import services.MockCache
 import views.html.ile_query
 
-class FindConsignmentControllerSpec extends ControllerLayerSpec {
+class FindConsignmentControllerSpec extends ControllerLayerSpec with MockCache {
 
   private val ileQueryPage = mock[ile_query]
 
   private val controller: FindConsignmentController =
-    new FindConsignmentController(SuccessfulAuth(), stubMessagesControllerComponents(), ileQueryPage)
+    new FindConsignmentController(SuccessfulAuth(), stubMessagesControllerComponents(), ileQueryPage, cacheRepository)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
     reset(ileQueryPage)
 
-    when(ileQueryPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(ileQueryPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -50,44 +48,11 @@ class FindConsignmentControllerSpec extends ControllerLayerSpec {
 
   "FindConsignmentController on displayQueryForm" should {
     "return Ok status (200)" in {
-      val result = controller.displayQueryForm(getRequest)
-
+      val authenticatedRequest = AuthenticatedRequest(operator, FakeRequest())
+      val result = controller.displayQueryForm(authenticatedRequest)
+      verify(cacheRepository).removeByProviderId(authenticatedRequest.providerId)
       status(result) mustBe OK
     }
   }
 
-  "FindConsignmentController on submitQueryForm" when {
-
-    "provide with correct form" should {
-      val cdsForm = Json.obj(("ucr", JsString(correctUcr)), ("isIleQuery", JsString("cds")))
-      val chiefForm = Json.obj(("isIleQuery", JsString("chief")))
-      "return SeeOther status (303)" in {
-        val result = controller.submitQueryForm()(postRequest(cdsForm))
-
-        status(result) mustBe SEE_OTHER
-      }
-
-      "redirect to Consignment Details page" in {
-        val result = controller.submitQueryForm()(postRequest(cdsForm))
-
-        redirectLocation(result).get mustBe IleQueryController.getConsignmentInformation(correctUcr).url
-      }
-
-      "redirect to Manage a CHIEF UCR page" in {
-        val result = controller.submitQueryForm()(postRequest(chiefForm))
-
-        redirectLocation(result).get mustBe ManageChiefConsignmentController.displayPage.url
-      }
-    }
-
-    "provided with incorrect form" should {
-      "return BadRequest status (400)" in {
-        val incorrectForm = JsString("1234")
-
-        val result = controller.submitQueryForm()(postRequest(incorrectForm))
-
-        status(result) mustBe BAD_REQUEST
-      }
-    }
-  }
 }
