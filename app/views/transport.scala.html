@@ -136,7 +136,6 @@
 <script @CSPNonce.attr>
     //grab the contents of the default select element's aria-describedby attribute and add its contents into the auto-complete's aria-describedby attribute
     let defaultSelectComp = document.querySelector('select.govuk-form-group');
-    console.log(defaultSelectComp)
     let fieldPrefix = defaultSelectComp.getAttribute('name').replace(/\./g, "_")
     let defaultAriaDescribedBy = defaultSelectComp.getAttribute('aria-describedby')
     let autoCompleteElement = document.getElementById(fieldPrefix)
