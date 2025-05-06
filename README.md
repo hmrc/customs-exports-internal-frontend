@@ -10,7 +10,10 @@ This service is written in [Scala](http://www.scala-lang.org/) and [Play](http:/
 This service uses MongoDB.
 
 This service depends on other services. The easiest way to set up required microservices is to use Service Manager and profiles from [service-manager-config](https://github.com/hmrc/service-manager-config/) repository:
-- CDS_EXPORTS_INTERNAL_ALL
+
+```bash
+sm2 --start CDS_EXPORTS_INTERNAL_ALL
+```
 
 ### Running the application
 In order to run the application you need to have SBT installed. Then, it is enough to start the service with:
