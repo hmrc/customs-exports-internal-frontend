@@ -17,7 +17,7 @@
 @import config.TimeoutDialogConfig
 @import controllers.exchanges.{AuthenticatedRequest, JourneyRequest}
 @import controllers.routes.SignOutController
-@import components.gds.{phaseBanner, siteHeader}
+@import components.gds.siteHeader
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
@@ -36,9 +36,9 @@
   hmrcHead: HmrcHead,
   hmrcScripts: HmrcScripts,
   hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
-  phaseBanner: phaseBanner,
   timeoutDialogConfig: TimeoutDialogConfig,
   hmrcFooter: HmrcStandardFooter,
+  hmrcReportTechnicalIssue: HmrcReportTechnicalIssueHelper
 )
 
 @(
@@ -77,8 +77,6 @@
 }
 
 @beforeContentBlock = {
-    @phaseBanner("BETA")
-
     <div class="govuk-back-link-div">
         @backLink
     </div>
@@ -86,6 +84,7 @@
 
 @content = {
     @contentBlock
+    @hmrcReportTechnicalIssue()
 }
 
 @if(useCustomContentWidth) {
