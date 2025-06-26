@@ -52,7 +52,7 @@ class ErrorHandler @Inject() (val messagesApi: MessagesApi, errorTemplate: error
       case ApplicationException(result, _) => Future.successful(result)
 
       case _ =>
-        logger.warn(s"Unexpected Exception was thron accessing [${rh.uri}]", exception)
+        logger.warn(s"Unexpected Exception was thrown accessing [${rh.uri}]", exception)
         Future.successful(internalServerError(Request(rh, "")))
     }
 

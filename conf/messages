@@ -30,9 +30,6 @@ time.error.invalid = Time must be in the correct format
 time.error.arrival.allEmpty = Enter the time of arrival
 time.error.departure.allEmpty = Enter the time of departure
 
-feedback = This is a new service - your {0} will help us to improve it.
-feedback.link = feedback
-
 site.continue = Continue
 site.back = Back
 site.link.backToGovUk = Back to GOV.UK
