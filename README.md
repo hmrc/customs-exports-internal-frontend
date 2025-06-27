@@ -27,8 +27,9 @@ This repository contains unit tests for the service. In order to run them, simpl
 
 ### Logging in
 This UI is authenticated via the stride-auth stub. To login you will need to enter the following details on the stride-auth login form:
-* Stride Identity Provider Login Stub URL Local = [Local IMS Stride Login](http://localhost:9043/stride-idp-stub/auth-request?SAMLRequest=fZFBb4MwDIX%2FCso9kLIG0ahQobFqldpporDDbgHMigQJi0O1%2Ffsx1krdpUfb7%2BnZn9ebr75zzmCw1SoiC5cRB1Sl61Z9RKTItzQkm3iNsu%2F8QSSjPakMPkdA60xGheJvEpHRKKEltiiU7AGFrcQxOeyF7zIxGG11pTviJIhg7BT1qBWOPZgjmHNbQZHtI3KydkDheZ2uZHfSaD20pq3Bk1MsNYDDZALipFN6q6SdN76aGnShl5WdZm6le0%2FWDXodesTZpRE5pPkrXTEeBIyXtORNSJchZ7SsmhUt4SEIa1jWUIaTHHGEnUIrlY2Iz3xOWUB9ni8C4XPBmMsD%2F504b1dm04XkQkjMZnOL5j4ZeeVBnK02vbT35b%2BdtqbNLBWgbGu%2FSVxkL2I%2B8Jhnu%2FSJJkX%2BvPZuF4ov5f8Pxj8%3D&RelayState=successURL%3Dhttp%253A%252F%252Flocalhost%253A6799%252Fcustoms-exports-internal%252Fconsignment-query%26failureURL%3D%252Fstride%252Ffailure)
-* Stride Identity Provider Login Stub URL QA = [QA IMS Stride Login](https://admin.qa.tax.service.gov.uk/stride-idp-stub/auth-request?SAMLRequest=fVHRboIwFP2Vpu8FBAXWCIaMmZnosiDsYW8FqjaDlvUW4%2F5%2BDCVxL7719p5z7znnLleXtkFnrkEoGeGZ5WDEZaVqIY8RLvI1CfEqXgJrG7ejSW9OMuPfPQeDBqIEeu1EuNeSKgYCqGQtB2oquk92W%2BpaDu20MqpSDUYJANdmWPWsJPQt13uuz6LiRbaN8MmYDqhts7oV0jLsYsG1ax3V2eq%2FbDBa1NxmgwqiOXTDDI5ROogRkpnRwDTjANap1dXEZPUB7AZsjDZphHdp%2Fk5qf%2BZ5ZeiTsnyak%2Fk84MPL5yTwHP%2BpLF13Ec4GOEDPNxIMkybCruMuiOMTd5HPAup61PGtIAw%2FMfqYEhz84ltedCTr%2B6Ae58SmdDBaK90y8xj%2B9yNqchihlEsjzA%2BOi%2ByNjgb3ebZJX0hS5K9L%2B15QfCv%2F3zP%2BBQ%3D%3D&RelayState=successURL%3D%252Fcustoms-exports-internal%252Fnotifications%252Ffe576898-2f76-4f91-bcbd-f6093b9c86a8%26failureURL%3D%252Fstride%252Ffailure)
+* Stride Identity Provider Login Stub URL Local = [Local IMS Stride Login](http://localhost:6799/customs-exports-internal/consignment-query)
+* Stride Identity Provider Login Stub URL QA = [QA IMS Stride Login](https://admin.qa.tax.service.gov.uk/customs-exports-internal/consignment-query)
+* Stride Identity Provider Login Stub URL Staging = [Staging IMS Stride Login](https://admin.staging.tax.service.gov.uk/customs-exports-internal/consignment-query)
 * PID = 1234 
 * Roles = write:customs-inventory-linking-exports
 

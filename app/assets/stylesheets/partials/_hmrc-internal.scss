@@ -647,14 +647,15 @@ hmrc-subnav__section__heading {
   float: right;
 }
 
-.hmrc-header.hmrc-header--with-additional-navigation .hmrc-sign-out-nav__link {
+.hmrc-header.hmrc-header--with-additional-navigation .hmrc-sign-out-nav_link {
   color: #0b0c0c;
   font-weight: 700;
   line-height: 1.8em;
   text-decoration: none;
+  float: right;
 }
 
-.hmrc-header.hmrc-header--with-additional-navigation .hmrc-sign-out-nav__link:hover {
+.hmrc-header.hmrc-header--with-additional-navigation .hmrc-sign-out-nav_link:hover {
   text-decoration: underline;
 }
 
@@ -712,7 +713,7 @@ hmrc-subnav__section__heading {
 .hmrc-internal-header__logo-link:before {
   content: "";
   display: table-cell;
-  width: 52px;
+  width: 0px;
   height: 32px;
   background: url("/extension-assets/hmrc-frontend/hmrc/components/internal-header/images/hmrc-crown-logo_black.svg") no-repeat;
   background-size: 32px 32px;
