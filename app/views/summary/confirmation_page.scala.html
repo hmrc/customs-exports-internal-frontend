@@ -28,62 +28,63 @@
 
 
 @this(
-  govukLayout: gds_main_template,
-  govukPanel: GovukPanel,
-  govukTable: GovukTable,
-  govukInsetText: GovukInsetText,
-  pageTitle: pageTitle,
-  heading: heading
+    govukLayout: gds_main_template,
+    govukPanel: GovukPanel,
+    govukSummaryList: GovukSummaryList,
+    govukInsetText: GovukInsetText,
+    pageTitle: pageTitle,
+    heading: heading
 )
 
 @(confirmation: Confirmation)(implicit request: Request[_], messages: Messages)
 
 @gotoTimelineLink = @{
-  link(
-    content = Html(messages("confirmation.notification.timeline.link")),
-    href = ViewNotificationsController.listOfNotifications(confirmation.conversationId),
-    classes = "govuk-link--no-visited-state"
-  )
+    link(
+        content = Html(messages("confirmation.notification.timeline.link")),
+        href = ViewNotificationsController.listOfNotifications(confirmation.conversationId),
+        classes = "govuk-link--no-visited-state"
+    )
 }
 
 @govukLayout(title = Title(s"confirmation.title.${confirmation.journeyType}")) {
 
-  @govukPanel(Panel(title = Text(messages(s"confirmation.title.${confirmation.journeyType}"))))
+@govukPanel(Panel(title = Text(messages(s"confirmation.title.${confirmation.journeyType}"))))
 
-    @govukTable(Table(
-        rows = Seq(
+@govukSummaryList(
+    SummaryList(
+        rows = (
             confirmation.consignmentRefs.map { case ConsignmentReferences(ucrType, ucrValue) =>
-                Seq(
-                    TableRow(
-                        content = Text(messages(s"confirmation.${ucrType.toString.toUpperCase}")), classes = "govuk-!-font-weight-bold"
-                    ),
-                    TableRow(
-                        content = HtmlContent(link(content = Html(ucrValue),
-                        href = IleQueryController.getConsignmentInformation(ucrValue),
-                        id = Some("summary-link")
-                    ))
+                SummaryListRow(
+                    key = Key(content = Text(messages(s"confirmation.${ucrType.toString.toUpperCase}"))),
+                    value = Value(
+                        content = HtmlContent(
+                            link(
+                                content = Html(ucrValue),
+                                href = IleQueryController.getConsignmentInformation(ucrValue),
+                                id = Some("summary-link")
+                            )
+                        )
+                    )
                 )
+            } ).toSeq ++ confirmation.mucr.map { mucr =>
+                 SummaryListRow(
+                    key = Key(content = Text(messages("confirmation.MUCR"))),
+                    value = Value(
+                        content = HtmlContent(
+                            link(
+                                content = Html(mucr),
+                                href = IleQueryController.getConsignmentInformation(mucr)
+                            )
+                        )
+                    )
                 )
-            },
-            confirmation.mucr.map { mucr =>
-                Seq(
-                    TableRow(
-                        content = Text(messages("confirmation.MUCR")), classes = "govuk-!-font-weight-bold"
-                    ),
-                    TableRow(
-                        content = HtmlContent(link(content = Html(mucr),
-                        href = IleQueryController.getConsignmentInformation(mucr)
-                    ))
-                )
-                )
-            }
-        ).flatten
-    ))
+            }.toSeq
+        )
+    )
 
+@paragraphBody(messages("confirmation.bodyText", gotoTimelineLink))
 
-  @paragraphBody(messages("confirmation.bodyText", gotoTimelineLink))
-
-  @heading(messages("confirmation.subheading"), "govuk-heading-m", "h2")
+@heading(messages("confirmation.subheading"), "govuk-heading-m", "h2")
 
 <ul>
     <li class="govuk-body">
