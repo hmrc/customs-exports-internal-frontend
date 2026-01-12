@@ -32,7 +32,7 @@ object ShutMucr {
     "mucr" -> text()
       .verifying("error.mucr.empty", nonEmpty)
       .verifying("error.mucr.format", isEmpty or validMucrIgnoreCase)
-  )(form2Data)(ShutMucr.unapply)
+  )(form2Data)(shutMucrForm => Option(shutMucrForm.mucr))
 
   private def form2Data(mucr: String): ShutMucr = ShutMucr(mucr.trim.toUpperCase)
 

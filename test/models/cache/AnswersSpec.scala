@@ -16,11 +16,11 @@
 
 package models.cache
 
+import base.UnitSpec
 import forms.ConsignmentReferenceType
 import models.UcrType.{Ducr, Mucr}
 import models.{UcrBlock, UcrType}
 import play.api.libs.json.{JsSuccess, Json}
-import base.UnitSpec
 
 import java.time.Instant
 import java.util.Date
@@ -65,31 +65,31 @@ class AnswersSpec extends UnitSpec {
 
     "correctly read Arrival Answers" in {
       val arrivalAnswersJson = Json.obj("type" -> JourneyType.ARRIVE.toString)
-      val expectedResult = ArrivalAnswers(None)
+      val expectedResult = ArrivalAnswers(eori = Option("GB1234567890"))
       Answers.format.reads(arrivalAnswersJson) mustBe JsSuccess(expectedResult)
     }
 
     "correctly read Departure Answers" in {
       val departureAnswersJson = Json.obj("type" -> JourneyType.DEPART.toString)
-      val expectedResult = DepartureAnswers(None)
+      val expectedResult = DepartureAnswers(eori = Option("GB1234567890"))
       Answers.format.reads(departureAnswersJson) mustBe JsSuccess(expectedResult)
     }
 
     "correctly read Associate UCR Answers" in {
       val associateUcrAnswersJson = Json.obj("type" -> JourneyType.ASSOCIATE_UCR.toString)
-      val expectedResult = AssociateUcrAnswers(None)
+      val expectedResult = AssociateUcrAnswers(eori = Option("GB1234567890"))
       Answers.format.reads(associateUcrAnswersJson) mustBe JsSuccess(expectedResult)
     }
 
     "correctly read Disassociate UCR Answers" in {
       val dissociateUcrAnswersJson = Json.obj("type" -> JourneyType.DISSOCIATE_UCR.toString)
-      val expectedResult = DisassociateUcrAnswers(None)
+      val expectedResult = DisassociateUcrAnswers(eori = Option("GB1234567890"))
       Answers.format.reads(dissociateUcrAnswersJson) mustBe JsSuccess(expectedResult)
     }
 
     "correctly read Shut Mucr Answers" in {
       val shutMucrAnswersJson = Json.obj("type" -> JourneyType.SHUT_MUCR.toString)
-      val expectedResult = ShutMucrAnswers(None)
+      val expectedResult = ShutMucrAnswers(eori = Option("GB1234567890"))
       Answers.format.reads(shutMucrAnswersJson) mustBe JsSuccess(expectedResult)
     }
   }

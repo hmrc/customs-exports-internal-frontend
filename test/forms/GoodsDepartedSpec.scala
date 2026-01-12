@@ -16,10 +16,10 @@
 
 package forms
 
+import base.UnitSpec
 import forms.GoodsDeparted.DepartureLocation.{BackIntoTheUk, OutOfTheUk}
 import play.api.data.FormError
 import play.api.libs.json.Json
-import base.UnitSpec
 
 class GoodsDepartedSpec extends UnitSpec {
 

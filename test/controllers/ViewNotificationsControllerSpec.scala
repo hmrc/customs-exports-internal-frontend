@@ -22,12 +22,12 @@ import controllers.routes.ViewSubmissionsController
 import models.notifications.{NotificationFrontendModel, ResponseType}
 import models.submissions.Submission
 import models.viewmodels.notificationspage.{NotificationPageSingleElementFactory, NotificationsPageSingleElement}
-import org.mockito.ArgumentMatchers.{any, eq => meq}
-
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testdata.CommonTestData.{conversationId, providerId, validEori}
 import testdata.MovementsTestData.exampleSubmission

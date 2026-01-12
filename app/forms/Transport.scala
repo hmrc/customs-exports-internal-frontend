@@ -76,7 +76,7 @@ object Transport {
       "transportId" -> optional(
         text().verifying("transport.transportId.error", isEmpty or (noLongerThan(35) and isAlphanumericWithAllowedSpecialCharacters))
       )
-    )(form2IntoUkModel)(Transport.unapply)
+    )(form2IntoUkModel)(transportForm => Option((transportForm.modeOfTransport, transportForm.nationality, transportForm.transportId)))
     .verifying("transport.backIntoTheUk.error.allFieldsEntered", atLeastOneIsEmpty)
 
   private def form2IntoUkModel(modeOfTransport: Option[String], nationality: Option[String], transportId: Option[String]): Transport =

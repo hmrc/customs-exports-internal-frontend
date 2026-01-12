@@ -32,7 +32,7 @@
     heading: heading
 )
 
-@(form: Form[FindCdsUcr])(implicit request: Request[_], messages: Messages)
+@(form: Form[FindCdsUcr])(implicit request: Request[?], messages: Messages)
 
 @govukLayout(
   title = Title("findCdsConsignment.title", hasErrors = form.hasErrors || form.hasGlobalErrors),

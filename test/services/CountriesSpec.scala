@@ -16,8 +16,8 @@
 
 package services
 
-import services.Countries.allCountries
 import base.UnitSpec
+import services.Countries.allCountries
 
 class CountriesSpec extends UnitSpec {
 

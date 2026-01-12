@@ -39,7 +39,8 @@ class JourneyRefiner @Inject() (cacheRepository: CacheRepository)(implicit val e
           case _ =>
             Left(Results.Redirect(controllers.routes.ChoiceController.displayPage))
         }
-      case _ => Left(Results.Redirect(controllers.routes.ChoiceController.displayPage))
+      case _ =>
+        Left(Results.Redirect(controllers.routes.ChoiceController.displayPage))
     }
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =

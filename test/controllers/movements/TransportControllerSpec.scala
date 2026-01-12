@@ -25,9 +25,10 @@ import forms.{ConsignmentReferenceType, ConsignmentReferences, GoodsDeparted, Tr
 import models.cache.{Answers, ArrivalAnswers, Cache, DepartureAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.Form
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import testdata.CommonTestData.providerId
@@ -76,7 +77,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
       "invoked without data for Transport in cache" in {
         val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)), consignmentReferences = consignmentReferences)
-        givenTheCacheContains(Cache(providerId, Some(answers), None))
+        whenTheCacheContains(Cache(providerId, Some(answers), None))
 
         val result = controller(answers).displayPage(getRequest)
 
@@ -89,7 +90,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
         val cachedTransport = Some(Transport(Some("1"), Some("GB"), Some("123")))
         val answers =
           DepartureAnswers(goodsDeparted = cachedGoodsDeparted, transport = cachedTransport, consignmentReferences = consignmentReferences)
-        givenTheCacheContains(Cache(providerId, Some(answers), None))
+        whenTheCacheContains(Cache(providerId, Some(answers), None))
 
         val result = controller(answers).displayPage(getRequest)
 
@@ -100,7 +101,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
     "return 303 (SEE_OTHER)" when {
       "there is no goods departed in the cache" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
 
         val result = controller(DepartureAnswers(consignmentReferences = consignmentReferences)).displayPage(getRequest)
 
@@ -115,7 +116,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
     "provided with incorrect form" should {
       "return 400 (BAD_REQUEST)" in {
         val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)), consignmentReferences = consignmentReferences)
-        givenTheCacheContains(Cache(providerId, Some(answers), None))
+        whenTheCacheContains(Cache(providerId, Some(answers), None))
 
         val invalidForm = Json.toJson(Transport(Some("99"), Some("Invalid"), Some("Invalid")))
 
@@ -127,7 +128,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
     "user is on a different journey" should {
       "return 403 (FORBIDDEN)" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
 
         val correctForm = Json.toJson(Transport(Some("1"), Some("GB"), Some("123")))
 
@@ -141,7 +142,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
       "call FormProvider passing answers with GoodsDeparted element" in {
         val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)))
-        givenTheCacheContains(Cache(providerId, Some(answers), None))
+        whenTheCacheContains(Cache(providerId, Some(answers), None))
 
         val correctForm = Json.toJson(Transport(Some("1"), Some("GB"), Some("123")))
 
@@ -152,7 +153,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
       "return 303 (SEE_OTHER)" in {
         val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)))
-        givenTheCacheContains(Cache(providerId, Some(answers), None))
+        whenTheCacheContains(Cache(providerId, Some(answers), None))
 
         val correctForm = Json.toJson(Transport(Some("1"), Some("GB"), Some("123")))
 

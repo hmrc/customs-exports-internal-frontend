@@ -20,15 +20,15 @@ import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
 import controllers.routes.ChoiceController
 import models.cache.{AssociateUcrAnswers, Cache}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.MockitoSugar.{mock, reset, verify}
+import org.mockito.ArgumentMatchers.*
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.mvc.{Result, Results}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.CacheRepository
 import testdata.CommonTestData.providerId
 
@@ -38,7 +38,7 @@ import scala.concurrent.Future
 class JourneyRefinerSpec extends AnyWordSpec with Matchers with BeforeAndAfterEach {
 
   private val repository = mock[CacheRepository]
-  private val block = mock[JourneyRequest[_] => Future[Result]]
+  private val block = mock[JourneyRequest[?] => Future[Result]]
   private val operator = Operator(providerId)
   private val request = AuthenticatedRequest(operator, FakeRequest())
   private val answers = AssociateUcrAnswers()
@@ -54,16 +54,16 @@ class JourneyRefinerSpec extends AnyWordSpec with Matchers with BeforeAndAfterEa
   "refine" should {
     "permit request" when {
       "answers found" in {
-        given(block.apply(any())).willReturn(Future.successful(Results.Ok))
-        given(repository.findByProviderId(providerId)).willReturn(Future.successful(Some(cache)))
+        when(block.apply(any())).thenReturn(Future.successful(Results.Ok))
+        when(repository.findByProviderId(providerId)).thenReturn(Future.successful(Some(cache)))
 
         await(refiner.invokeBlock(request, block)) mustBe Results.Ok
 
         theRequestBuilt mustBe JourneyRequest(cache, request)
       }
 
-      def theRequestBuilt: JourneyRequest[_] = {
-        val captor = ArgumentCaptor.forClass(classOf[JourneyRequest[_]])
+      def theRequestBuilt: JourneyRequest[?] = {
+        val captor = ArgumentCaptor.forClass(classOf[JourneyRequest[?]])
         verify(block).apply(captor.capture())
         captor.getValue
       }
@@ -71,7 +71,7 @@ class JourneyRefinerSpec extends AnyWordSpec with Matchers with BeforeAndAfterEa
 
     "block request" when {
       "answers not found" in {
-        given(repository.findByProviderId(providerId)).willReturn(Future.successful(None))
+        when(repository.findByProviderId(providerId)).thenReturn(Future.successful(None))
 
         await(refiner.invokeBlock(request, block)) mustBe Results.Redirect(ChoiceController.displayPage)
       }

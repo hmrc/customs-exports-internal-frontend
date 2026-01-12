@@ -22,9 +22,9 @@ import forms.{AssociateUcr, MucrOptions}
 import models.cache.AssociateUcrAnswers
 import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentMatchers.any
-
+import org.mockito.Mockito.{reset, when}
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import views.html.associateucr.associate_ucr
@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext.global
 
 class AssociateUcrControllerSpec extends ControllerLayerSpec with MockCache {
 
-  val associateUcrPage = mock[associate_ucr]
+  val associateUcrPage: associate_ucr = mock[associate_ucr]
 
   def controller(associateUcrAnswers: AssociateUcrAnswers) =
     new AssociateUcrController(

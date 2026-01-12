@@ -31,7 +31,7 @@
   formHelper: FormWithCSRF
 )
 
-@(data: RetrospectiveArrivalAnswers)(implicit request: Request[_], messages: Messages)
+@(data: RetrospectiveArrivalAnswers)(implicit request: Request[?], messages: Messages)
 
 @govukLayout(
   title = Title("summary.retrospectiveArrival.title"),

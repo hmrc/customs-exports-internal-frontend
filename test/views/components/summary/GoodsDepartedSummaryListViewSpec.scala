@@ -16,12 +16,12 @@
 
 package views.components.summary
 
+import base.Injector
 import controllers.movements.routes.GoodsDepartedController
 import forms.GoodsDeparted
 import forms.GoodsDeparted.DepartureLocation
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import base.Injector
 import views.html.components.summary.goods_departed_summary_list
 import views.{ViewMatchers, ViewSpec}
 

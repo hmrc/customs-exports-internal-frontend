@@ -30,10 +30,10 @@ class LocationViewSpec extends ViewSpec with Injector {
   private val form = Location.form()
   private val page = instanceOf[location]
 
-  private def createView(form: Form[Location] = form)(implicit request: JourneyRequest[_]): Html =
+  private def createView(form: Form[Location] = form)(implicit request: JourneyRequest[?]): Html =
     page(form.withGlobalError("error.summary.title"), validDucr)
 
-  private implicit val request: JourneyRequest[_] = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[?] = journeyRequest(ArrivalAnswers())
 
   "View" should {
 

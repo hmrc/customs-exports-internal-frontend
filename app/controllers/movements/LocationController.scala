@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedAndMultipartFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.location
 
@@ -44,7 +44,7 @@ class LocationController @Inject() (
   mcc: MessagesControllerComponents,
   locationPage: location
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUrlEncodedAndMultipartFormBinding {
 
   private val actionValidation = authenticate andThen getJourney(ARRIVE, RETROSPECTIVE_ARRIVE, DEPART)
 
@@ -80,7 +80,7 @@ class LocationController @Inject() (
       )
   }
 
-  private def buildPage(form: Form[Location])(implicit request: JourneyRequest[_]): HtmlFormat.Appendable = {
+  private def buildPage(form: Form[Location])(implicit request: JourneyRequest[?]): HtmlFormat.Appendable = {
     val answers = request.answersAs[MovementAnswers]
     locationPage(form, answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException))
   }

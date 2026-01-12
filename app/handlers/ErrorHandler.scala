@@ -39,7 +39,7 @@ class ErrorHandler @Inject() (val messagesApi: MessagesApi, errorTemplate: error
   override def standardErrorTemplate(titleKey: String, headingKey: String, messageKey: String)(
     implicit requestHeader: RequestHeader
   ): Future[Html] = {
-    implicit val request: Request[_] = Request(requestHeader, "")
+    implicit val request: Request[?] = Request(requestHeader, "")
     Future.successful(defaultErrorTemplate(titleKey, headingKey, messageKey))
   }
 
@@ -60,8 +60,8 @@ class ErrorHandler @Inject() (val messagesApi: MessagesApi, errorTemplate: error
     titleKey: String = "global.error.title",
     headingKey: String = "global.error.heading",
     messageKey: String = "global.error.message"
-  )(implicit request: Request[_]): Html = errorTemplate(titleKey, headingKey, messageKey)
+  )(implicit request: Request[?]): Html = errorTemplate(titleKey, headingKey, messageKey)
 
-  def internalServerError(implicit request: Request[_]): Result =
+  def internalServerError(implicit request: Request[?]): Result =
     InternalServerError(defaultErrorTemplate()).withHeaders(CACHE_CONTROL -> "no-cache")
 }

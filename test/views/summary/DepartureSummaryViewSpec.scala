@@ -21,7 +21,7 @@ import controllers.exchanges.JourneyRequest
 import forms.DepartureDetails
 import forms.common.{Date, Time}
 import models.cache.DepartureAnswers
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.ViewSpec
 import views.helpers.ViewDates
 import views.html.summary.departure_summary_page
@@ -35,7 +35,7 @@ class DepartureSummaryViewSpec extends ViewSpec with Injector {
   private val time = Time(LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
   private val answers = DepartureAnswers(departureDetails = Some(DepartureDetails(date, time)))
 
-  private implicit val request: JourneyRequest[_] = journeyRequest(answers)
+  private implicit val request: JourneyRequest[?] = journeyRequest(answers)
 
   private val departureSummaryPage = instanceOf[departure_summary_page]
 

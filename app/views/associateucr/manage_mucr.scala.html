@@ -31,7 +31,7 @@
   formHelper: FormWithCSRF
 )
 
-@(form: Form[ManageMucrChoice], queryUcr: Option[UcrBlock])(implicit request: Request[_], messages: Messages)
+@(form: Form[ManageMucrChoice], queryUcr: Option[UcrBlock])(implicit request: Request[?], messages: Messages)
 
 @govukLayout(
   title = Title("manageMucr.title", hasErrors = form.hasErrors || form.hasGlobalErrors),

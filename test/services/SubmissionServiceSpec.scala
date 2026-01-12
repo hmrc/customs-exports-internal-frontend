@@ -16,24 +16,24 @@
 
 package services
 
+import base.UnitSpec
 import connectors.CustomsDeclareExportsMovementsConnector
-import connectors.exchanges._
-import forms._
+import connectors.exchanges.*
+import forms.*
+import metrics.MovementsMetricsStub
 import models.cache.{AssociateUcrAnswers, DisassociateUcrAnswers, MovementAnswers, ShutMucrAnswers}
 import models.{ReturnToStartException, UcrType}
-import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
-import org.mockito.BDDMockito._
+import org.mockito.ArgumentMatchers.{any, anyString, eq as meq}
+import org.mockito.Mockito.*
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.BeforeAndAfterEach
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.CacheRepository
 import services.audit.{AuditService, AuditType}
-import testdata.CommonTestData._
-import testdata.MovementsTestData._
+import testdata.CommonTestData.*
+import testdata.MovementsTestData.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import base.UnitSpec
-import metrics.MovementsMetricsStub
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -61,8 +61,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
     "delegate to connector" when {
       "Associate DUCR" in {
-        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful(conversationId))
-        given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
+        when(connector.submit(any[ConsolidationExchange]())(any())).thenReturn(Future.successful(conversationId))
+        when(repository.removeByProviderId(anyString())).thenReturn(Future.successful((): Unit))
 
         val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(UcrType.Ducr, ucr)))
         await(service.submit(providerId, answers))
@@ -73,8 +73,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       }
 
       "Associate MUCR" in {
-        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful(conversationId))
-        given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
+        when(connector.submit(any[ConsolidationExchange]())(any())).thenReturn(Future.successful(conversationId))
+        when(repository.removeByProviderId(anyString())).thenReturn(Future.successful((): Unit))
 
         val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(UcrType.Mucr, ucr)))
         await(service.submit(providerId, answers))
@@ -86,7 +86,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
     }
 
     "audit when failed" in {
-      given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
+      when(connector.submit(any[ConsolidationExchange]())(any())).thenReturn(Future.failed(new RuntimeException("Error")))
 
       val answers = AssociateUcrAnswers(Some(eori), Some(MucrOptions(mucr)), Some(AssociateUcr(UcrType.Ducr, ucr)))
       intercept[RuntimeException] {
@@ -104,8 +104,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
-      verifyZeroInteractions(repository)
-      verifyZeroInteractions(audit)
+      verifyNoInteractions(repository)
+      verifyNoInteractions(audit)
     }
 
     "handle missing ucr" in {
@@ -114,8 +114,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
-      verifyZeroInteractions(repository)
-      verifyZeroInteractions(audit)
+      verifyNoInteractions(repository)
+      verifyNoInteractions(audit)
     }
 
     def theAssociationSubmitted[T <: ConsolidationExchange]: T = {
@@ -130,8 +130,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
     "delegate to connector" when {
 
       "Disassociate MUCR" in {
-        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful(conversationId))
-        given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
+        when(connector.submit(any[ConsolidationExchange]())(any())).thenReturn(Future.successful(conversationId))
+        when(repository.removeByProviderId(anyString())).thenReturn(Future.successful((): Unit))
 
         val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(UcrType.Mucr, None, Some(mucr))))
         await(service.submit(providerId, answers))
@@ -142,8 +142,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       }
 
       "Disassociate DUCR" in {
-        given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful(conversationId))
-        given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
+        when(connector.submit(any[ConsolidationExchange]())(any())).thenReturn(Future.successful(conversationId))
+        when(repository.removeByProviderId(anyString())).thenReturn(Future.successful((): Unit))
 
         val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(UcrType.Ducr, Some(ucr), None)))
         await(service.submit(providerId, answers))
@@ -155,7 +155,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
     }
 
     "audit when failed" in {
-      given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
+      when(connector.submit(any[ConsolidationExchange]())(any())).thenReturn(Future.failed(new RuntimeException("Error")))
 
       val answers = DisassociateUcrAnswers(Some(validEori), Some(DisassociateUcr(UcrType.Mucr, None, Some(mucr))))
       intercept[RuntimeException] {
@@ -173,8 +173,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
-      verifyZeroInteractions(repository)
-      verifyZeroInteractions(audit)
+      verifyNoInteractions(repository)
+      verifyNoInteractions(audit)
     }
 
     "handle missing ucr" when {
@@ -185,8 +185,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
           await(service.submit(providerId, answers))
         } mustBe ReturnToStartException
 
-        verifyZeroInteractions(repository)
-        verifyZeroInteractions(audit)
+        verifyNoInteractions(repository)
+        verifyNoInteractions(audit)
       }
 
       "missing fields" when {
@@ -197,8 +197,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           } mustBe ReturnToStartException
 
-          verifyZeroInteractions(repository)
-          verifyZeroInteractions(audit)
+          verifyNoInteractions(repository)
+          verifyNoInteractions(audit)
         }
 
         "Disassociate DUCR" in {
@@ -207,8 +207,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           } mustBe ReturnToStartException
 
-          verifyZeroInteractions(repository)
-          verifyZeroInteractions(audit)
+          verifyNoInteractions(repository)
+          verifyNoInteractions(audit)
         }
       }
     }
@@ -223,8 +223,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
   "Submit ShutMUCR" should {
 
     "delegate to connector" in {
-      given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.successful(conversationId))
-      given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
+      when(connector.submit(any[ConsolidationExchange]())(any())).thenReturn(Future.successful(conversationId))
+      when(repository.removeByProviderId(anyString())).thenReturn(Future.successful((): Unit))
 
       val answers = ShutMucrAnswers(Some(validEori), Some(ShutMucr(mucr)))
       await(service.submit(providerId, answers))
@@ -235,7 +235,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
     }
 
     "audit when failed" in {
-      given(connector.submit(any[ConsolidationExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
+      when(connector.submit(any[ConsolidationExchange]())(any())).thenReturn(Future.failed(new RuntimeException("Error")))
 
       val answers = ShutMucrAnswers(Some(validEori), Some(ShutMucr(mucr)))
       intercept[RuntimeException] {
@@ -253,8 +253,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
-      verifyZeroInteractions(repository)
-      verifyZeroInteractions(audit)
+      verifyNoInteractions(repository)
+      verifyNoInteractions(audit)
     }
 
     "handle missing mucr" in {
@@ -263,8 +263,8 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         await(service.submit(providerId, answers))
       } mustBe ReturnToStartException
 
-      verifyZeroInteractions(repository)
-      verifyZeroInteractions(audit)
+      verifyNoInteractions(repository)
+      verifyNoInteractions(audit)
     }
 
     def theShutMucrSubmitted: ShutMUCRExchange = {
@@ -281,13 +281,13 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       "everything works correctly" should {
 
         "call MovementBuilder, AuditService, backend Connector, CacheRepository and AuditService again" in {
-          given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful(conversationId))
-          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
-          given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
-            .willReturn(Future.successful(AuditResult.Success))
+          when(repository.removeByProviderId(anyString())).thenReturn(Future.successful((): Unit))
+          when(connector.submit(any[MovementExchange]())(any())).thenReturn(Future.successful(conversationId))
+          when(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).thenReturn(Future.successful(AuditResult.Success))
+          when(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
+            .thenReturn(Future.successful(AuditResult.Success))
           val arrivalExchange = validArrivalExchange
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(arrivalExchange)
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenReturn(arrivalExchange)
 
           val answers = validArrivalAnswers
 
@@ -304,7 +304,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
       "MovementBuilder throws ReturnToStartException" should {
         "propagate the exception" in {
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willThrow(ReturnToStartException)
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenThrow(ReturnToStartException)
 
           val answers = validArrivalAnswers
 
@@ -314,7 +314,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         }
 
         "not call AuditService, backend Connector and CacheRepository" in {
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willThrow(ReturnToStartException)
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenThrow(ReturnToStartException)
 
           val answers = validArrivalAnswers
 
@@ -322,20 +322,20 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           }
 
-          verifyZeroInteractions(audit)
-          verifyZeroInteractions(connector)
-          verifyZeroInteractions(repository)
+          verifyNoInteractions(audit)
+          verifyNoInteractions(connector)
+          verifyNoInteractions(repository)
         }
       }
 
       "backend Connector returns Failed Future" should {
 
         "not call CacheRepository" in {
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
-          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
-          given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
-            .willReturn(Future.successful(AuditResult.Success))
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(validArrivalExchange)
+          when(connector.submit(any[MovementExchange]())(any())).thenReturn(Future.failed(new RuntimeException("Error")))
+          when(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).thenReturn(Future.successful(AuditResult.Success))
+          when(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
+            .thenReturn(Future.successful(AuditResult.Success))
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenReturn(validArrivalExchange)
 
           val answers = validArrivalAnswers
 
@@ -343,16 +343,16 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           }
 
-          verifyZeroInteractions(repository)
+          verifyNoInteractions(repository)
         }
 
         "call AuditService second time with failed result" in {
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
-          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
-          given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
-            .willReturn(Future.successful(AuditResult.Success))
+          when(connector.submit(any[MovementExchange]())(any())).thenReturn(Future.failed(new RuntimeException("Error")))
+          when(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).thenReturn(Future.successful(AuditResult.Success))
+          when(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
+            .thenReturn(Future.successful(AuditResult.Success))
           val arrivalExchange = validArrivalExchange
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(arrivalExchange)
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenReturn(arrivalExchange)
 
           val answers = validArrivalAnswers
 
@@ -370,13 +370,13 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       "everything works correctly" should {
 
         "call MovementBuilder, AuditService, backend Connector, CacheRepository and AuditService again" in {
-          given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful(conversationId))
-          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
-          given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
-            .willReturn(Future.successful(AuditResult.Success))
+          when(repository.removeByProviderId(anyString())).thenReturn(Future.successful((): Unit))
+          when(connector.submit(any[MovementExchange]())(any())).thenReturn(Future.successful(conversationId))
+          when(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).thenReturn(Future.successful(AuditResult.Success))
+          when(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
+            .thenReturn(Future.successful(AuditResult.Success))
           val retroArrivalExchange = validRetrospectiveArrivalExchange
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(retroArrivalExchange)
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenReturn(retroArrivalExchange)
 
           val answers = validRetrospectiveArrivalAnswers
 
@@ -395,7 +395,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
       "MovementBuilder throws ReturnToStartException" should {
         "propagate the exception" in {
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willThrow(ReturnToStartException)
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenThrow(ReturnToStartException)
 
           val answers = validRetrospectiveArrivalAnswers
 
@@ -405,7 +405,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         }
 
         "not call AuditService, backend Connector and CacheRepository" in {
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willThrow(ReturnToStartException)
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenThrow(ReturnToStartException)
 
           val answers = validRetrospectiveArrivalAnswers
 
@@ -413,20 +413,20 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           }
 
-          verifyZeroInteractions(audit)
-          verifyZeroInteractions(connector)
-          verifyZeroInteractions(repository)
+          verifyNoInteractions(audit)
+          verifyNoInteractions(connector)
+          verifyNoInteractions(repository)
         }
       }
 
       "backend Connector returns Failed Future" should {
 
         "not call CacheRepository" in {
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
-          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
-          given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
-            .willReturn(Future.successful(AuditResult.Success))
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(validRetrospectiveArrivalExchange)
+          when(connector.submit(any[MovementExchange]())(any())).thenReturn(Future.failed(new RuntimeException("Error")))
+          when(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).thenReturn(Future.successful(AuditResult.Success))
+          when(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
+            .thenReturn(Future.successful(AuditResult.Success))
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenReturn(validRetrospectiveArrivalExchange)
 
           val answers = validRetrospectiveArrivalAnswers
 
@@ -434,16 +434,16 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           }
 
-          verifyZeroInteractions(repository)
+          verifyNoInteractions(repository)
         }
 
         "call AuditService second time with failed result" in {
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
-          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
-          given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
-            .willReturn(Future.successful(AuditResult.Success))
+          when(connector.submit(any[MovementExchange]())(any())).thenReturn(Future.failed(new RuntimeException("Error")))
+          when(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).thenReturn(Future.successful(AuditResult.Success))
+          when(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
+            .thenReturn(Future.successful(AuditResult.Success))
           val retroArrivalExchange = validRetrospectiveArrivalExchange
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(retroArrivalExchange)
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenReturn(retroArrivalExchange)
 
           val answers = validRetrospectiveArrivalAnswers
 
@@ -461,13 +461,13 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
       "everything works correctly" should {
 
         "call MovementBuilder, AuditService, backend Connector, CacheRepository and AuditService again" in {
-          given(repository.removeByProviderId(anyString())).willReturn(Future.successful((): Unit))
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.successful(conversationId))
-          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
-          given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
-            .willReturn(Future.successful(AuditResult.Success))
+          when(repository.removeByProviderId(anyString())).thenReturn(Future.successful((): Unit))
+          when(connector.submit(any[MovementExchange]())(any())).thenReturn(Future.successful(conversationId))
+          when(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).thenReturn(Future.successful(AuditResult.Success))
+          when(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
+            .thenReturn(Future.successful(AuditResult.Success))
           val departureExchange = validDepartureExchange
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(departureExchange)
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenReturn(departureExchange)
 
           val answers = validDepartureAnswers
 
@@ -486,7 +486,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
 
       "MovementBuilder throws ReturnToStartException" should {
         "propagate the exception" in {
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willThrow(ReturnToStartException)
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenThrow(ReturnToStartException)
 
           val answers = validDepartureAnswers
 
@@ -496,7 +496,7 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
         }
 
         "not call AuditService, backend Connector and CacheRepository" in {
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willThrow(ReturnToStartException)
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenThrow(ReturnToStartException)
 
           val answers = validDepartureAnswers
 
@@ -504,20 +504,20 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           }
 
-          verifyZeroInteractions(audit)
-          verifyZeroInteractions(connector)
-          verifyZeroInteractions(repository)
+          verifyNoInteractions(audit)
+          verifyNoInteractions(connector)
+          verifyNoInteractions(repository)
         }
       }
 
       "backend Connector returns Failed Future" should {
 
         "not call CacheRepository" in {
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
-          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
-          given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
-            .willReturn(Future.successful(AuditResult.Success))
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(validDepartureExchange)
+          when(connector.submit(any[MovementExchange]())(any())).thenReturn(Future.failed(new RuntimeException("Error")))
+          when(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).thenReturn(Future.successful(AuditResult.Success))
+          when(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
+            .thenReturn(Future.successful(AuditResult.Success))
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenReturn(validDepartureExchange)
 
           val answers = validDepartureAnswers
 
@@ -525,16 +525,16 @@ class SubmissionServiceSpec extends UnitSpec with MovementsMetricsStub with Befo
             await(service.submit(providerId, answers))
           }
 
-          verifyZeroInteractions(repository)
+          verifyNoInteractions(repository)
         }
 
         "call AuditService second time with failed result" in {
-          given(connector.submit(any[MovementExchange]())(any())).willReturn(Future.failed(new RuntimeException("Error")))
-          given(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).willReturn(Future.successful(AuditResult.Success))
-          given(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
-            .willReturn(Future.successful(AuditResult.Success))
+          when(connector.submit(any[MovementExchange]())(any())).thenReturn(Future.failed(new RuntimeException("Error")))
+          when(audit.auditAllPagesUserInput(anyString(), any[MovementAnswers])(any())).thenReturn(Future.successful(AuditResult.Success))
+          when(audit.auditMovements(any[MovementExchange], anyString(), any[AuditType.Audit], any[Option[String]])(any()))
+            .thenReturn(Future.successful(AuditResult.Success))
           val departureExchange = validDepartureExchange
-          given(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).willReturn(departureExchange)
+          when(movementBuilder.createMovementExchange(anyString(), any[MovementAnswers])).thenReturn(departureExchange)
 
           val answers = validDepartureAnswers
 

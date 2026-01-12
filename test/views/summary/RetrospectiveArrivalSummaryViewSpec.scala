@@ -27,7 +27,7 @@ class RetrospectiveArrivalSummaryViewSpec extends ViewSpec with Injector {
 
   private val answers = RetrospectiveArrivalAnswers()
 
-  private implicit val request: JourneyRequest[_] = journeyRequest(answers)
+  private implicit val request: JourneyRequest[?] = journeyRequest(answers)
 
   private val page = instanceOf[retrospective_arrival_summary_page]
 

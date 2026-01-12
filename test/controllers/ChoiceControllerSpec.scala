@@ -21,18 +21,18 @@ import controllers.consolidations.routes.{ManageMucrController, MucrOptionsContr
 import controllers.ileQuery.routes.FindConsignmentController
 import controllers.movements.routes.{LocationController, SpecificDateTimeController}
 import controllers.summary.routes.{DisassociateUcrSummaryController, ShutMucrSummaryController}
-import forms.Choice._
-import forms._
+import forms.*
+import forms.Choice.*
 import models.UcrType.{Ducr, DucrPart, Mucr}
-import models.cache._
+import models.cache.*
 import models.{UcrBlock, UcrType}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsJson, Request}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import testdata.CommonTestData.providerId
@@ -61,7 +61,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    givenTheCacheIsEmpty()
+    whenTheCacheIsEmpty()
     when(choicePage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
@@ -74,7 +74,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
     "redirect to query page" when {
       "an UCR is not available" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
 
         val result = controller().displayPage(getRequest)
 
@@ -86,7 +86,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     "return 200 when authenticated" when {
 
       "existing answers with no UcrBlock" in {
-        givenTheCacheContains(Cache(providerId, Some(ArrivalAnswers()), None))
+        whenTheCacheContains(Cache(providerId, Some(ArrivalAnswers()), None))
 
         val result = controller().displayPage(getRequest)
 
@@ -97,7 +97,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
       "existing answers with UcrBlock" in {
         val ucrBlock = UcrBlock(ucr = "ucr", ucrType = Mucr)
-        givenTheCacheContains(Cache(providerId, None, Some(ucrBlock)))
+        whenTheCacheContains(Cache(providerId, None, Some(ucrBlock)))
 
         val result = controller().displayPage(getRequest)
 
@@ -122,7 +122,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     "return 303 (SEE_OTHER) when authenticated" when {
 
       "user chooses arrival" in {
-        givenTheCacheContains(Cache(providerId, queryResult))
+        whenTheCacheContains(Cache(providerId, queryResult))
 
         val result = controller().submit(postWithChoice(Arrival))
 
@@ -133,7 +133,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "user chooses retrospective arrival" in {
-        givenTheCacheContains(Cache(providerId, queryResult))
+        whenTheCacheContains(Cache(providerId, queryResult))
 
         val result = controller().submit(postWithChoice(RetrospectiveArrival))
 
@@ -146,7 +146,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "user chooses departure" in {
-        givenTheCacheContains(Cache(providerId, queryResult))
+        whenTheCacheContains(Cache(providerId, queryResult))
 
         val result = controller().submit(postWithChoice(Departure))
 
@@ -162,7 +162,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         "queryUcr is of type Ducr" in {
           val queryResultDucr = UcrBlock(ucr = "ucr", ucrType = Ducr)
-          givenTheCacheContains(Cache(providerId, None, Some(queryResultDucr)))
+          whenTheCacheContains(Cache(providerId, None, Some(queryResultDucr)))
 
           val result = controller().submit(postWithChoice(AssociateUCR))
 
@@ -174,7 +174,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
         "queryUcr is of type Ducr Part" in {
           val queryResultDucr = UcrBlock(ucr = "ucr-123", ucrType = DucrPart.codeValue)
-          givenTheCacheContains(Cache(providerId, None, Some(queryResultDucr)))
+          whenTheCacheContains(Cache(providerId, None, Some(queryResultDucr)))
 
           val result = controller().submit(postWithChoice(AssociateUCR))
 
@@ -185,7 +185,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
         }
 
         "queryUcr is of type Mucr" in {
-          givenTheCacheContains(Cache(providerId, None, Some(queryResult)))
+          whenTheCacheContains(Cache(providerId, None, Some(queryResult)))
 
           val result = controller().submit(postWithChoice(AssociateUCR))
 
@@ -197,7 +197,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "user chooses disassociate UCR" in {
-        givenTheCacheContains(Cache(providerId, queryResult))
+        whenTheCacheContains(Cache(providerId, queryResult))
 
         val result = controller().submit(postWithChoice(DisassociateUCR))
 
@@ -208,7 +208,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "user chooses shut MUCR" in {
-        givenTheCacheContains(Cache(providerId, queryResult))
+        whenTheCacheContains(Cache(providerId, queryResult))
 
         val result = controller().submit(postWithChoice(ShutMUCR))
 
@@ -220,7 +220,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     }
 
     "return 400 when invalid" in {
-      givenTheCacheContains(Cache(providerId, queryResult))
+      whenTheCacheContains(Cache(providerId, queryResult))
 
       val result = controller().submit(postRequest)
 
@@ -235,7 +235,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
     "redirect to query page" when {
       "queried UCR is not available" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
 
         val result = controller().submit(postWithChoice(Arrival))
 
@@ -247,7 +247,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
     "take user on Arrival journey and prefill location code" when {
       "user selects to retrospectively arrive a CHIEF DUCR" in {
         val queryResultDucr = UcrBlock(ucr = "ucr", ucrType = Ducr.codeValue, chiefUcr = Some(true))
-        givenTheCacheContains(Cache(providerId, None, Some(queryResultDucr)))
+        whenTheCacheContains(Cache(providerId, None, Some(queryResultDucr)))
 
         val result = controller().submit(postWithChoice(RetrospectiveArrival))
 

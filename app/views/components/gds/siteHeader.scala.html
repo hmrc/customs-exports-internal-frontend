@@ -22,10 +22,10 @@
 
 @this()
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[?], messages: Messages)
 
 @signOutHref = {
-  @if(request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]]){
+  @if(request.isInstanceOf[AuthenticatedRequest[?]] || request.isInstanceOf[JourneyRequest[?]]){
     <a href="@{SignOutController.signOut(models.SignOutReason.UserAction).url}" class="hmrc-sign-out-nav_link">
         @messages("site.link.signOut")
     </a>

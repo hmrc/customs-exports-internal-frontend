@@ -17,7 +17,7 @@
 package connectors
 
 import base.{Injector, WiremockTestServer}
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import config.AppConfig
 import connectors.exception.MovementsConnectorException
 import connectors.exchanges.{ArrivalExchange, DisassociateDUCRExchange, IleQueryExchange, MovementDetailsExchange}
@@ -26,16 +26,16 @@ import models.UcrBlock
 import models.UcrType.Ducr
 import models.notifications.queries.DucrInfo
 import models.notifications.queries.IleQueryResponseExchangeData.SuccessfulResponseExchangeData
-import org.mockito.BDDMockito._
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status
 import play.api.libs.json.{Format, Json}
-import play.api.test.Helpers._
-import testdata.CommonTestData._
+import play.api.test.Helpers.*
+import testdata.CommonTestData.*
 import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import uk.gov.hmrc.http.HeaderCarrier
@@ -55,7 +55,7 @@ class CustomsDeclareExportsMovementsConnectorSpec extends AnyWordSpec with Injec
   implicit val formatInstant: Format[Instant] = MongoJavatimeFormats.instantFormat
 
   private val config = mock[AppConfig]
-  given(config.customsDeclareExportsMovementsUrl).willReturn(downstreamURL)
+  when(config.customsDeclareExportsMovementsUrl).thenReturn(downstreamURL)
 
   private val httpClientV2: HttpClientV2 = instanceOf[HttpClientV2]
   private val connector = new CustomsDeclareExportsMovementsConnector(config, httpClientV2)

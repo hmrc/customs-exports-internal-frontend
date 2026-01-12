@@ -23,10 +23,10 @@ import forms.{ArrivalDetails, DepartureDetails}
 import models.cache.{Answers, ArrivalAnswers, Cache, DepartureAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.{Form, FormError}
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import testdata.MovementsTestData
@@ -75,7 +75,7 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
     "return 200 (OK)" when {
 
       "GET displayPage is invoked without data in cache" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
 
         val result = controller().displayPage(getRequest)
 
@@ -85,7 +85,7 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
 
       "GET displayPage is invoked with data in cache" in {
         val cachedForm = Some(ArrivalDetails(Date(LocalDate.now()), Time(LocalTime.now())))
-        givenTheCacheContains(Cache("12345", Some(ArrivalAnswers(arrivalDetails = cachedForm)), None))
+        whenTheCacheContains(Cache("12345", Some(ArrivalAnswers(arrivalDetails = cachedForm)), None))
 
         val result = controller(ArrivalAnswers(arrivalDetails = cachedForm)).displayPage(getRequest)
 
@@ -98,7 +98,7 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
     "return 400 (BAD_REQUEST)" when {
 
       "POST submit is invoked with incorrect form" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
 
         val invalidForm = Json.toJson("")
 
@@ -139,7 +139,7 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
     }
 
     "POST submit is invoked with correct form for arrival" in {
-      givenTheCacheIsEmpty()
+      whenTheCacheIsEmpty()
 
       val validArrivalDetails = ArrivalDetails(Date(LocalDate.now()), Time(LocalTime.now()))
       val correctForm = Json.obj(
@@ -158,7 +158,7 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
     }
 
     "POST submit is invoked with correct form for departure" in {
-      givenTheCacheIsEmpty()
+      whenTheCacheIsEmpty()
 
       val validDepartureDetails = DepartureDetails(Date(LocalDate.now()), Time(LocalTime.now()))
       val correctForm = Json.obj(

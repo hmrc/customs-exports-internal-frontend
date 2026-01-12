@@ -16,9 +16,10 @@
 
 package services.audit
 
+import base.UnitSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.libs.json.{JsValue, Json}
 import testdata.CommonTestData.providerId
@@ -26,7 +27,6 @@ import testdata.{CommonTestData, MovementsTestData}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
-import base.UnitSpec
 
 import scala.concurrent.{ExecutionContext, Future}
 

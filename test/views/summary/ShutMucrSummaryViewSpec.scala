@@ -24,7 +24,7 @@ import views.html.summary.shut_mucr_summary
 
 class ShutMucrSummaryViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[_] = journeyRequest(ShutMucrAnswers())
+  private implicit val request: JourneyRequest[?] = journeyRequest(ShutMucrAnswers())
 
   private val page = instanceOf[shut_mucr_summary]
   private val shutMucr = "some-mucr"

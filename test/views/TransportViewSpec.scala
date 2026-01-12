@@ -25,7 +25,7 @@ import views.html.transport
 
 class TransportViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[_] = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[?] = journeyRequest(ArrivalAnswers())
 
   private val form = Transport.outOfTheUkForm
   private val page = instanceOf[transport]

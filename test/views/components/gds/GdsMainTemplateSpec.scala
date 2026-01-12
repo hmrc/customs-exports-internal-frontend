@@ -26,7 +26,7 @@ class GdsMainTemplateSpec extends ViewSpec with Injector {
 
   private val page = instanceOf[consignment_not_found_page]
 
-  private implicit val request: JourneyRequest[_] = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[?] = journeyRequest(ArrivalAnswers())
 
   "The Main template" should {
 

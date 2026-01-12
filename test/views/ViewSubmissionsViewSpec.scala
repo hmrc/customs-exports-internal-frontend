@@ -24,8 +24,8 @@ import org.jsoup.nodes.Document
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import testdata.CommonTestData._
-import testdata.ConsolidationTestData._
+import testdata.CommonTestData.*
+import testdata.ConsolidationTestData.*
 import views.helpers.ViewDates
 import views.html.view_submissions
 

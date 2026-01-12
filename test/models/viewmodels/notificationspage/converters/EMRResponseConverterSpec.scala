@@ -16,17 +16,18 @@
 
 package models.viewmodels.notificationspage.converters
 
+import base.UnitSpec
 import models.UcrBlock
 import models.notifications.{Entry, EntryStatus, ResponseType}
 import models.viewmodels.decoder.{CRCCode, Decoder, ROECode, SOECode}
 import models.viewmodels.notificationspage.MovementTotalsResponseType.EMR
 import models.viewmodels.notificationspage.NotificationsPageSingleElement
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 import play.twirl.api.Html
-import base.UnitSpec
 import testdata.CommonTestData.correctUcr
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 
@@ -34,7 +35,7 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 
 class EMRResponseConverterSpec extends UnitSpec with BeforeAndAfterEach {
 
-  import EMRResponseConverterSpec._
+  import EMRResponseConverterSpec.*
 
   private implicit val messages: Messages = stubMessages()
 

@@ -21,7 +21,7 @@ import models.UcrType.{Ducr, DucrPart, Mucr}
 import models.cache.JourneyType.JourneyType
 import models.{Ucr, UcrBlock, UcrType}
 import play.api.libs.json.{Format, Json, OFormat}
-import uk.gov.hmrc.play.json.Union
+import utils.Union
 
 sealed trait Answers {
   val `type`: JourneyType

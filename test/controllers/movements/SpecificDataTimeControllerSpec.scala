@@ -18,20 +18,21 @@ package controllers.movements
 
 import controllers.ControllerLayerSpec
 import controllers.movements.routes.{LocationController, MovementDetailsController}
-import forms._
+import forms.*
 import forms.common.{Date, Time}
 import models.DateTimeProvider
 import models.cache.{ArrivalAnswers, DepartureAnswers, MovementAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.Form
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import views.html.specific_date_and_time
 
-import java.time._
+import java.time.*
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SpecificDataTimeControllerSpec extends ControllerLayerSpec with MockCache {

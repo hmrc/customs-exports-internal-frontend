@@ -27,7 +27,7 @@ import views.html.goods_departed
 
 class GoodsDepartedViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[_] = journeyRequest(DepartureAnswers())
+  private implicit val request: JourneyRequest[?] = journeyRequest(DepartureAnswers())
 
   private val form = GoodsDeparted.form
   private val page = instanceOf[goods_departed]

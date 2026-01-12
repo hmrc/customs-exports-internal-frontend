@@ -33,7 +33,7 @@
     formHelper: FormWithCSRF
 )
 
-@(form: Form[ArrivalDetails], consignmentReferences: Option[ConsignmentReferences])(implicit request: Request[_], messages: Messages)
+@(form: Form[ArrivalDetails], consignmentReferences: Option[ConsignmentReferences])(implicit request: Request[?], messages: Messages)
 
 @govukLayout(
   title = Title("arrivalDetails.header", hasErrors = form.hasErrors || form.hasGlobalErrors),

@@ -16,9 +16,9 @@
 
 package utils
 
-import java.time.ZoneId
-
 import modules.DateTimeModule
+
+import java.time.ZoneId
 
 class DateTimeTestModule extends DateTimeModule {
   lazy val timezone: ZoneId = DateTimeModule.timezone

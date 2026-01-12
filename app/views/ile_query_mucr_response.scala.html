@@ -37,7 +37,7 @@
     govukTag: GovukTag
 )
 
-@(info: MucrInfo, parentMucr: Option[MucrInfo], associatedConsignments: Seq[UcrInfo])(implicit request: Request[_], messages: Messages)
+@(info: MucrInfo, parentMucr: Option[MucrInfo], associatedConsignments: Seq[UcrInfo])(implicit request: Request[?], messages: Messages)
 
 @govukLayout(
     useCustomContentWidth = true,

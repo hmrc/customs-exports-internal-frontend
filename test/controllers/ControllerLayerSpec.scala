@@ -16,7 +16,7 @@
 
 package controllers
 
-import org.apache.pekko.stream.testkit.NoMaterializer
+import base.UnitSpec
 import config.AppConfig
 import connectors.StrideAuthConnector
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
@@ -24,18 +24,17 @@ import controllers.exchanges.{AuthenticatedRequest, JourneyRequest, Operator}
 import models.UcrBlock
 import models.cache.JourneyType.JourneyType
 import models.cache.{Answers, Cache}
-
+import org.apache.pekko.stream.testkit.NoMaterializer
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{DefaultFileMimeTypes, FileMimeTypes, FileMimeTypesConfiguration}
 import play.api.i18n.{Langs, Messages, MessagesApi}
 import play.api.libs.json.Writes
-import play.api.mvc._
+import play.api.mvc.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import repositories.CacheRepository
-import base.UnitSpec
 import testdata.CommonTestData.providerId
 import views.html.unauthorized
 
@@ -51,7 +50,7 @@ abstract class ControllerLayerSpec extends UnitSpec with BeforeAndAfterEach with
   protected def postRequest[T](body: T)(implicit wts: Writes[T]): Request[AnyContentAsJson] =
     FakeRequest("POST", "/").withJsonBody(wts.writes(body)).withCSRFToken
 
-  protected implicit def messages(implicit request: Request[_]): Messages = stubMessagesControllerComponents().messagesApi.preferred(request)
+  protected implicit def messages(implicit request: Request[?]): Messages = stubMessagesControllerComponents().messagesApi.preferred(request)
 
   protected def contentAsHtml(of: Future[Result]): Html = Html(contentAsBytes(of).decodeString(charset(of).getOrElse("utf-8")))
 

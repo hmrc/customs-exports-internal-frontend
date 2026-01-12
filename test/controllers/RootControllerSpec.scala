@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.ileQuery.routes.FindConsignmentController
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 class RootControllerSpec extends ControllerLayerSpec {
 

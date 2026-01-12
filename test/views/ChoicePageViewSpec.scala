@@ -78,7 +78,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
 
     "render back link and point to appropriate page" when {
       Seq(Some(true), None).foreach { chiefStatus =>
-        s"form contains ucr block ${if (chiefStatus.isDefined) "from CHIEF"}" in {
+        s"form contains ucr block ${if (chiefStatus.isDefined) "from CHIEF" else ""}" in {
           val backButton = page(form, Some(UcrBlock(ucr = "ucr", ucrType = Ducr.codeValue, chiefUcr = chiefStatus))).getElementById("back-link")
           if (chiefStatus.isEmpty)
             backButton must haveHref("#")
@@ -97,7 +97,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
 
     "not render 'Shut Mucr' option" when {
       Seq(Some(true), None).foreach { chiefStatus =>
-        s"ILE query was for a Ducr ${if (chiefStatus.isDefined) "from CHIEF"}" in {
+        s"ILE query was for a Ducr ${if (chiefStatus.isDefined) "from CHIEF" else ""}" in {
           val choicePage = page(form, Some(UcrBlock(ucr = "ducr", ucrType = Ducr.codeValue, chiefUcr = chiefStatus)))
 
           choicePage.getElementsByClass("govuk-radios__input").size() mustBe 5
@@ -111,7 +111,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
           choicePage.getElementsByAttributeValue("value", "shutMUCR").size() mustBe 0
         }
 
-        s"ILE query was for a Ducr part ${if (chiefStatus.isDefined) "from CHIEF"}" in {
+        s"ILE query was for a Ducr part ${if (chiefStatus.isDefined) "from CHIEF" else ""}" in {
           val choicePage = page(form, Some(UcrBlock(ucr = "ducr-part", ucrType = DucrPart.codeValue, chiefUcr = chiefStatus)))
 
           choicePage.getElementsByClass("govuk-radios__input").size() mustBe 5
@@ -129,7 +129,7 @@ class ChoicePageViewSpec extends ViewSpec with Injector {
 
     "render 'Shut Mucr' and 'Retrospective Arrival' options appropriately" when {
       List(Some(true), None).foreach { chiefStatus =>
-        s"ILE query was for a Mucr ${if (chiefStatus.isDefined) "from CHIEF"}" in {
+        s"ILE query was for a Mucr ${if (chiefStatus.isDefined) "from CHIEF" else ""}" in {
           val choicePage = page(form, Some(UcrBlock(ucr = "mucr", ucrType = Mucr.codeValue, chiefUcr = chiefStatus)))
 
           choicePage.getElementsByClass("govuk-radios__input").size() mustBe (if (chiefStatus.isDefined) 5 else 6)

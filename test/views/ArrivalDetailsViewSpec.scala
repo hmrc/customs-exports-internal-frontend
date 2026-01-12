@@ -34,7 +34,7 @@ import scala.jdk.CollectionConverters.IterableHasAsScala
 
 class ArrivalDetailsViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[_] = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[?] = journeyRequest(ArrivalAnswers())
   private val movementDetails = MovementsTestData.movementDetails
 
   private val form = movementDetails.arrivalForm

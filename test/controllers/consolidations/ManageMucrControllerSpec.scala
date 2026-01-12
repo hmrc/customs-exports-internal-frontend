@@ -21,15 +21,15 @@ import controllers.consolidations.routes.{AssociateUcrController, MucrOptionsCon
 import forms.ManageMucrChoice.{AssociateAnotherUcrToThis, AssociateThisToMucr}
 import forms.{AssociateUcr, ManageMucrChoice, MucrOptions}
 import models.UcrBlock
-import models.UcrType._
+import models.UcrType.*
 import models.cache.AssociateUcrAnswers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import testdata.CommonTestData.{validDucr, validMucr}

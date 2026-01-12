@@ -113,7 +113,7 @@ class IleQueryController @Inject() (
               Ok(ileQueryMucrResponsePage(mucrInfo, response.parentMucr, response.sortedChildrenUcrs))
             }
 
-          case _ => Future.successful(loadingPageResult)
+          case null => Future.successful(loadingPageResult)
         }
 
       case Some(response: UcrNotFoundResponseExchangeData) =>

@@ -21,7 +21,7 @@
 
 @(
   fieldName: String,
-  form: Form[_],
+  form: Form[?],
   label: String,
   hint: Option[String] = None
 )(implicit messages: Messages)
@@ -52,21 +52,21 @@
       name = dayField.name,
       label = Some(messages("date.day")),
       value = dayField.value,
-        classes = s"govuk-input--width-2 ${if(dateField.hasErrors || dayField.hasErrors) "govuk-input--error"}"
+        classes = s"govuk-input--width-2 ${if(dateField.hasErrors || dayField.hasErrors) "govuk-input--error" else ""}"
     ),
     InputItem(
       id = s"${fieldName}_$monthKey",
       name = monthField.name,
       label = Some(messages("date.month")),
       value = monthField.value,
-        classes = s"govuk-input--width-2 ${if(dateField.hasErrors || monthField.hasErrors) "govuk-input--error"}"
+        classes = s"govuk-input--width-2 ${if(dateField.hasErrors || monthField.hasErrors) "govuk-input--error" else ""}"
     ),
     InputItem(
       id = s"${fieldName}_$yearKey",
       name = yearField.name,
       label = Some(messages("date.year")),
       value = yearField.value,
-        classes = s"govuk-input--width-4 ${if(dateField.hasErrors || yearField.hasErrors) "govuk-input--error"}"
+        classes = s"govuk-input--width-4 ${if(dateField.hasErrors || yearField.hasErrors) "govuk-input--error" else ""}"
     )
   )
 ))
