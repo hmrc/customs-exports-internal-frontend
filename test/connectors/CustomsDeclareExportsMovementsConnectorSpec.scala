@@ -26,7 +26,7 @@ import models.UcrBlock
 import models.UcrType.Ducr
 import models.notifications.queries.DucrInfo
 import models.notifications.queries.IleQueryResponseExchangeData.SuccessfulResponseExchangeData
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}

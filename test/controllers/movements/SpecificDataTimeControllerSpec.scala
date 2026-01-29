@@ -117,55 +117,59 @@ class SpecificDataTimeControllerSpec extends ControllerLayerSpec with MockCache 
     "return 303 (SEE_OTHER)" when {
 
       "form is correct and user date-time selected on arrival journey" in {
-        val dateTimeChoice = SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime)
+        val dateTimeChoice = "choice" -> SpecificDateTimeChoice.UserDateTime
         val answers = ArrivalAnswers(consignmentReferences = Some(consignmentReferences))
 
-        val result = controller(answers).submit()(postRequest(Json.toJson(dateTimeChoice)))
+        val result = controller(answers).submit()(postRequest(dateTimeChoice))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(MovementDetailsController.displayPage.url)
-        theCacheUpserted.answers mustBe Some(answers.copy(specificDateTimeChoice = Some(dateTimeChoice)))
+        theCacheUpserted.answers mustBe Some(answers.copy(
+          specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime))
+        ))
       }
 
       "form is correct and current date-time selected on arrival journey" in {
-        val dateTimeChoice = SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime)
+        val dateTimeChoice = "choice" -> SpecificDateTimeChoice.CurrentDateTime
         val answers = ArrivalAnswers(consignmentReferences = Some(consignmentReferences))
 
         val result =
-          controller(answers).submit()(postRequest(Json.toJson(dateTimeChoice)))
+          controller(answers).submit()(postRequest(dateTimeChoice))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(LocationController.displayPage.url)
-        theCacheUpserted.answers mustBe Some(
-          answers
-            .copy(specificDateTimeChoice = Some(dateTimeChoice), arrivalDetails = Some(ArrivalDetails(fixedDate, fixedTime)))
-        )
+        theCacheUpserted.answers mustBe Some(answers.copy(
+          specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime)),
+          arrivalDetails = Some(ArrivalDetails(fixedDate, fixedTime))
+        ))
       }
 
       "form is correct and user date-time selected on departure journey" in {
-        val dateTimeChoice = SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime)
+        val dateTimeChoice = "choice" -> SpecificDateTimeChoice.UserDateTime
         val answers = DepartureAnswers(consignmentReferences = Some(consignmentReferences))
 
-        val result = controller(answers).submit()(postRequest(Json.toJson(dateTimeChoice)))
+        val result = controller(answers).submit()(postRequest(dateTimeChoice))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(MovementDetailsController.displayPage.url)
-        theCacheUpserted.answers mustBe Some(answers.copy(specificDateTimeChoice = Some(dateTimeChoice)))
+        theCacheUpserted.answers mustBe Some(answers.copy(
+          specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime))
+        ))
       }
 
       "form is correct and current date-time selected on departure journey" in {
-        val dateTimeChoice = SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime)
+        val dateTimeChoice = "choice" -> SpecificDateTimeChoice.CurrentDateTime
         val answers = DepartureAnswers(consignmentReferences = Some(consignmentReferences))
 
         val result =
-          controller(answers).submit()(postRequest(Json.toJson(dateTimeChoice)))
+          controller(answers).submit()(postRequest(dateTimeChoice))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(LocationController.displayPage.url)
-        theCacheUpserted.answers mustBe Some(
-          answers
-            .copy(specificDateTimeChoice = Some(dateTimeChoice), departureDetails = Some(DepartureDetails(fixedDate, fixedTime)))
-        )
+        theCacheUpserted.answers mustBe Some(answers.copy(
+          specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime)),
+          departureDetails = Some(DepartureDetails(fixedDate, fixedTime))
+        ))
       }
     }
   }

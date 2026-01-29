@@ -25,7 +25,6 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.Form
-import play.api.libs.json.Json
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
@@ -107,7 +106,7 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
 
       "call MovementRepository" in {
         whenTheCacheIsEmpty()
-        val correctForm = Json.toJson(GoodsDeparted(BackIntoTheUk))
+        val correctForm = "departureLocation" -> BackIntoTheUk.value
 
         await(controller().saveGoodsDeparted()(postRequest(correctForm)))
 
@@ -118,7 +117,7 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
 
       "return 303 (SEE_OTHER) and redirect to Transport page" in {
         whenTheCacheIsEmpty()
-        val correctForm = Json.toJson(GoodsDeparted(BackIntoTheUk))
+        val correctForm = "departureLocation" -> BackIntoTheUk.value
 
         val result = controller().saveGoodsDeparted()(postRequest(correctForm))
 
@@ -131,7 +130,7 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
       "return 400 (BAD_REQUEST)" in {
         whenTheCacheIsEmpty()
 
-        val incorrectForm = Json.obj("departureLocation" -> "INVALID")
+        val incorrectForm = "departureLocation" -> "INVALID"
 
         val result = controller().saveGoodsDeparted()(postRequest(incorrectForm))
 
@@ -142,7 +141,7 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
     "user is on arrival journey" should {
       "return 403 (FORBIDDEN)" in {
         whenTheCacheIsEmpty()
-        val correctForm = Json.toJson(GoodsDeparted(BackIntoTheUk))
+        val correctForm = "departureLocation" -> BackIntoTheUk.value
 
         val result = controller(ArrivalAnswers(consignmentReferences = Some(consignmentReferences))).displayPage(postRequest(correctForm))
 

@@ -164,21 +164,21 @@ class ManageChiefConsignmentControllerSpec extends ControllerLayerSpec with Mock
       }
     }
 
-    val ducrPartData = Json.obj("ducr" -> validDucr, "ducrPartId" -> validDucrPartId)
-    val ducrData = Json.obj("ducr" -> validDucr)
-    val mucrData = Json.obj("mucr" -> validMucr)
+    val ducrPartData = Seq("ducr" -> validDucr, "ducrPartId" -> validDucrPartId)
+    val ducrData = Seq("ducr" -> validDucr)
+    val mucrData = Seq("mucr" -> validMucr)
     val validFormData = Seq(ducrData, ducrPartData, mucrData)
 
     validFormData.foreach { inputData =>
       s"provided with correct data $inputData" should {
 
         "call CacheRepository upsert" in {
-          controller.submitChiefConsignment()(postRequest(inputData)).futureValue
+          controller.submitChiefConsignment()(postRequest(inputData: _*)).futureValue
           verify(cacheRepository).upsert(any[Cache])
         }
 
         "provide CacheRepository with correct UcrBlock object" in {
-          controller.submitChiefConsignment()(postRequest(inputData)).futureValue
+          controller.submitChiefConsignment()(postRequest(inputData: _*)).futureValue
 
           val expectedUcrBlock = inputData match {
             case _ if ducrData == inputData => UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr.toUpperCase, chiefUcr = Some(true))
@@ -193,12 +193,12 @@ class ManageChiefConsignmentControllerSpec extends ControllerLayerSpec with Mock
         }
 
         "return SeeOther (303) response" in {
-          val result = controller.submitChiefConsignment()(postRequest(inputData))
+          val result = controller.submitChiefConsignment()(postRequest(inputData: _*))
           status(result) mustBe SEE_OTHER
         }
 
         "redirect to Choice page" in {
-          val result = controller.submitChiefConsignment()(postRequest(inputData))
+          val result = controller.submitChiefConsignment()(postRequest(inputData: _*))
           redirectLocation(result) mustBe Some(ChoiceController.displayPage.url)
         }
       }
