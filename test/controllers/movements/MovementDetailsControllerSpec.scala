@@ -109,11 +109,14 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
 
       "date is in the future" in {
         val tomorrow = LocalDateTime.now().plusDays(1)
-        val incorrectForm = Json.obj(
-          "dateOfArrival" -> Json.obj("day" -> tomorrow.getDayOfMonth, "month" -> tomorrow.getMonthValue, "year" -> tomorrow.getYear),
-          "timeOfArrival" -> Json.obj("hour" -> "10", "minute" -> "35", "ampm" -> "AM")
-        )
-        val result = controller(ArrivalAnswers()).saveMovementDetails()(postRequest(incorrectForm))
+        val result = controller(ArrivalAnswers()).saveMovementDetails()(postRequest(
+          "dateOfArrival.day" -> s"${tomorrow.getDayOfMonth}",
+          "dateOfArrival.month" -> s"${tomorrow.getMonthValue}",
+          "dateOfArrival.year" -> s"${tomorrow.getYear}",
+          "timeOfArrival.hour" -> "10",
+          "timeOfArrival.minute" -> "35",
+          "timeOfArrival.ampm" -> "AM"
+        ))
 
         status(result) mustBe BAD_REQUEST
 
@@ -124,11 +127,14 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
 
       "date is in the past" in {
         val lastYear = LocalDateTime.now().minusYears(1)
-        val incorrectForm = Json.obj(
-          "dateOfArrival" -> Json.obj("day" -> lastYear.getDayOfMonth, "month" -> lastYear.getMonthValue, "year" -> lastYear.getYear),
-          "timeOfArrival" -> Json.obj("hour" -> "10", "minute" -> "35", "ampm" -> "AM")
-        )
-        val result = controller(ArrivalAnswers()).saveMovementDetails()(postRequest(incorrectForm))
+        val result = controller(ArrivalAnswers()).saveMovementDetails()(postRequest(
+          "dateOfArrival.day" -> s"${lastYear.getDayOfMonth}",
+          "dateOfArrival.month" -> s"${lastYear.getMonthValue}",
+          "dateOfArrival.year" -> s"${lastYear.getYear}",
+          "timeOfArrival.hour" -> "10",
+          "timeOfArrival.minute" -> "35",
+          "timeOfArrival.ampm" -> "AM"
+        ))
 
         status(result) mustBe BAD_REQUEST
 
@@ -142,16 +148,16 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
       whenTheCacheIsEmpty()
 
       val validArrivalDetails = ArrivalDetails(Date(LocalDate.now()), Time(LocalTime.now()))
-      val correctForm = Json.obj(
-        "dateOfArrival.day" -> validArrivalDetails.dateOfArrival.date.getDayOfMonth,
-        "dateOfArrival.month" -> validArrivalDetails.dateOfArrival.date.getMonthValue,
-        "dateOfArrival.year" -> validArrivalDetails.dateOfArrival.date.getYear,
-        "timeOfArrival.hour" -> validArrivalDetails.timeOfArrival.getClockHour,
-        "timeOfArrival.minute" -> validArrivalDetails.timeOfArrival.getMinute,
+      val correctForm = List(
+        "dateOfArrival.day" -> validArrivalDetails.dateOfArrival.date.getDayOfMonth.toString,
+        "dateOfArrival.month" -> validArrivalDetails.dateOfArrival.date.getMonthValue.toString,
+        "dateOfArrival.year" -> validArrivalDetails.dateOfArrival.date.getYear.toString,
+        "timeOfArrival.hour" -> validArrivalDetails.timeOfArrival.getClockHour.toString,
+        "timeOfArrival.minute" -> validArrivalDetails.timeOfArrival.getMinute.toString,
         "timeOfArrival.ampm" -> validArrivalDetails.timeOfArrival.getAmPm
       )
 
-      val result = controller(ArrivalAnswers()).saveMovementDetails()(postRequest(correctForm))
+      val result = controller(ArrivalAnswers()).saveMovementDetails()(postRequest(correctForm: _*))
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(LocationController.displayPage.url)
@@ -161,16 +167,16 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
       whenTheCacheIsEmpty()
 
       val validDepartureDetails = DepartureDetails(Date(LocalDate.now()), Time(LocalTime.now()))
-      val correctForm = Json.obj(
-        "dateOfDeparture.day" -> validDepartureDetails.dateOfDeparture.date.getDayOfMonth,
-        "dateOfDeparture.month" -> validDepartureDetails.dateOfDeparture.date.getMonthValue,
-        "dateOfDeparture.year" -> validDepartureDetails.dateOfDeparture.date.getYear,
-        "timeOfDeparture.hour" -> validDepartureDetails.timeOfDeparture.getClockHour,
-        "timeOfDeparture.minute" -> validDepartureDetails.timeOfDeparture.getMinute,
+      val correctForm = List(
+        "dateOfDeparture.day" -> validDepartureDetails.dateOfDeparture.date.getDayOfMonth.toString,
+        "dateOfDeparture.month" -> validDepartureDetails.dateOfDeparture.date.getMonthValue.toString,
+        "dateOfDeparture.year" -> validDepartureDetails.dateOfDeparture.date.getYear.toString,
+        "timeOfDeparture.hour" -> validDepartureDetails.timeOfDeparture.getClockHour.toString,
+        "timeOfDeparture.minute" -> validDepartureDetails.timeOfDeparture.getMinute.toString,
         "timeOfDeparture.ampm" -> validDepartureDetails.timeOfDeparture.getAmPm
       )
 
-      val result = controller(DepartureAnswers()).saveMovementDetails()(postRequest(correctForm))
+      val result = controller(DepartureAnswers()).saveMovementDetails()(postRequest(correctForm: _*))
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(LocationController.displayPage.url)

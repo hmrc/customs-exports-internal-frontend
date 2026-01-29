@@ -16,7 +16,7 @@
 
 package models
 
-import models.UcrType.{Ducr, DucrPart}
+import models.UcrType
 import play.api.libs.json.{Json, OFormat}
 
 case class UcrBlock(ucr: String, ucrPartNo: Option[String] = None, ucrType: String, chiefUcr: Option[Boolean] = None) {
@@ -30,7 +30,7 @@ case class UcrBlock(ucr: String, ucrPartNo: Option[String] = None, ucrType: Stri
   def fullUcr: String = ucr + ucrPartNo.map(ucrPartNoValue => s"-$ucrPartNoValue").getOrElse("")
 
   def typeAndValue: Option[(String, String)] = {
-    val result: (String, String) = (if (is(Ducr)) "DUCR" else if (is(DucrPart)) "DUCR Part" else "MUCR", fullUcr)
+    val result: (String, String) = (if (is(UcrType.Ducr)) "DUCR" else if (is(UcrType.DucrPart)) "DUCR Part" else "MUCR", fullUcr)
     Some(result)
   }
 }

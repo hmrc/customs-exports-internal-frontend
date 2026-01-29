@@ -27,7 +27,6 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.Form
-import play.api.libs.json.Json
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
@@ -118,9 +117,9 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
         val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)), consignmentReferences = consignmentReferences)
         whenTheCacheContains(Cache(providerId, Some(answers), None))
 
-        val invalidForm = Json.toJson(Transport(Some("99"), Some("Invalid"), Some("Invalid")))
+        val invalidForm = List("modeOfTransport"->"99","nationality"->"Invalid","transportId"->"Invalid")
 
-        val result = controller(answers).saveTransport()(postRequest(invalidForm))
+        val result = controller(answers).saveTransport()(postRequest(invalidForm: _*))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -130,9 +129,9 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
       "return 403 (FORBIDDEN)" in {
         whenTheCacheIsEmpty()
 
-        val correctForm = Json.toJson(Transport(Some("1"), Some("GB"), Some("123")))
+        val correctForm = List("modeOfTransport"->"1","nationality"->"GB","transportId"->"123")
 
-        val result = controller(ArrivalAnswers()).saveTransport()(postRequest(correctForm))
+        val result = controller(ArrivalAnswers()).saveTransport()(postRequest(correctForm: _*))
 
         status(result) mustBe FORBIDDEN
       }
@@ -144,9 +143,9 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
         val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)))
         whenTheCacheContains(Cache(providerId, Some(answers), None))
 
-        val correctForm = Json.toJson(Transport(Some("1"), Some("GB"), Some("123")))
+        val correctForm = List("modeOfTransport"->"1","nationality"->"GB","transportId"->"123")
 
-        await(controller(answers).saveTransport()(postRequest(correctForm)))
+        await(controller(answers).saveTransport()(postRequest(correctForm: _*)))
 
         answersPassedToFormProvider mustBe answers
       }
@@ -155,9 +154,9 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
         val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)))
         whenTheCacheContains(Cache(providerId, Some(answers), None))
 
-        val correctForm = Json.toJson(Transport(Some("1"), Some("GB"), Some("123")))
+        val correctForm = List("modeOfTransport"->"1","nationality"->"GB","transportId"->"123")
 
-        val result = controller(answers).saveTransport()(postRequest(correctForm))
+        val result = controller(answers).saveTransport()(postRequest(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(ArriveDepartSummaryController.displayPage.url)

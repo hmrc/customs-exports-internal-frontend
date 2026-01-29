@@ -28,7 +28,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
-import play.api.libs.json.Json
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
@@ -131,7 +130,7 @@ class ManageMucrControllerSpec extends ControllerLayerSpec with MockCache with S
     "provided with AssociateThisToMucr answer" should {
 
       "call CacheRepository passing Cache with queryUcr in childUcr field" in {
-        val correctForm = Json.obj("choice" -> AssociateThisToMucr)
+        val correctForm = "choice" -> AssociateThisToMucr
 
         controller(AssociateUcrAnswers()).submit()(postRequest(correctForm)).futureValue
 
@@ -141,7 +140,7 @@ class ManageMucrControllerSpec extends ControllerLayerSpec with MockCache with S
       }
 
       "return 303 (SEE_OTHER) response" in {
-        val correctForm = Json.obj("choice" -> AssociateThisToMucr)
+        val correctForm = "choice" -> AssociateThisToMucr
 
         val result = controller(AssociateUcrAnswers()).submit()(postRequest(correctForm))
 
@@ -149,7 +148,7 @@ class ManageMucrControllerSpec extends ControllerLayerSpec with MockCache with S
       }
 
       "redirect to Mucr Options controller" in {
-        val correctForm = Json.obj("choice" -> AssociateThisToMucr)
+        val correctForm = "choice" -> AssociateThisToMucr
 
         val result = controller(AssociateUcrAnswers()).submit()(postRequest(correctForm))
 
@@ -160,7 +159,7 @@ class ManageMucrControllerSpec extends ControllerLayerSpec with MockCache with S
     "provided with AssociateAnotherUcr answer" should {
 
       "call CacheRepository passing Cache with queryUcr in parentMucr field" in {
-        val correctForm = Json.obj("choice" -> AssociateAnotherUcrToThis)
+        val correctForm = "choice" -> AssociateAnotherUcrToThis
 
         controller(AssociateUcrAnswers()).submit()(postRequest(correctForm)).futureValue
 
@@ -170,7 +169,7 @@ class ManageMucrControllerSpec extends ControllerLayerSpec with MockCache with S
       }
 
       "return 303 (SEE_OTHER) response" in {
-        val correctForm = Json.obj("choice" -> AssociateAnotherUcrToThis)
+        val correctForm = "choice" -> AssociateAnotherUcrToThis
 
         val result = controller(AssociateUcrAnswers()).submit()(postRequest(correctForm))
 
@@ -178,7 +177,7 @@ class ManageMucrControllerSpec extends ControllerLayerSpec with MockCache with S
       }
 
       "redirect to Associate UCR controller" in {
-        val correctForm = Json.obj("choice" -> AssociateAnotherUcrToThis)
+        val correctForm = "choice" -> AssociateAnotherUcrToThis
 
         val result = controller(AssociateUcrAnswers()).submit()(postRequest(correctForm))
 

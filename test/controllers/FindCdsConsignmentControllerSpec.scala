@@ -19,7 +19,6 @@ package controllers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import play.api.libs.json.Json
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.{MockCache, MockIleQueryCache}
@@ -56,14 +55,14 @@ class FindCdsConsignmentControllerSpec extends ControllerLayerSpec with MockIleQ
 
     "return BAD_REQUEST with form with errors" in {
       val incorrectUCR = "123ABC-789456POIUYT"
-      val result = controller.submitCdsConsignment(postRequest(Json.obj("ucr" -> incorrectUCR)))
+      val result = controller.submitCdsConsignment(postRequest("ucr" -> incorrectUCR))
       status(result) mustBe BAD_REQUEST
     }
 
     "return SEE_OTHER with form without errors" in {
 
       val correctUCR = "GB/123456789100-AB123"
-      val result = controller.submitCdsConsignment(postRequest(Json.obj("ucr" -> correctUCR)))
+      val result = controller.submitCdsConsignment(postRequest("ucr" -> correctUCR))
       status(result) mustBe SEE_OTHER
     }
   }

@@ -30,8 +30,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.Form
-import play.api.libs.json.Json
-import play.api.mvc.{AnyContentAsJson, Request}
+import play.api.mvc.{AnyContentAsFormUrlEncoded, Request}
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
@@ -116,7 +115,7 @@ class ChoiceControllerSpec extends ControllerLayerSpec with MockCache {
 
   "POST" should {
 
-    def postWithChoice(choice: Choice): Request[AnyContentAsJson] = postRequest(Json.obj("choice" -> choice.value))
+    def postWithChoice(choice: Choice): Request[AnyContentAsFormUrlEncoded] = postRequest("choice" -> choice.value)
     val queryResult = UcrBlock(ucr = "mucr", ucrType = Mucr)
 
     "return 303 (SEE_OTHER) when authenticated" when {
