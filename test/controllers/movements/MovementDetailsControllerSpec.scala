@@ -109,14 +109,16 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
 
       "date is in the future" in {
         val tomorrow = LocalDateTime.now().plusDays(1)
-        val result = controller(ArrivalAnswers()).saveMovementDetails()(postRequest(
-          "dateOfArrival.day" -> s"${tomorrow.getDayOfMonth}",
-          "dateOfArrival.month" -> s"${tomorrow.getMonthValue}",
-          "dateOfArrival.year" -> s"${tomorrow.getYear}",
-          "timeOfArrival.hour" -> "10",
-          "timeOfArrival.minute" -> "35",
-          "timeOfArrival.ampm" -> "AM"
-        ))
+        val result = controller(ArrivalAnswers()).saveMovementDetails()(
+          postRequest(
+            "dateOfArrival.day" -> s"${tomorrow.getDayOfMonth}",
+            "dateOfArrival.month" -> s"${tomorrow.getMonthValue}",
+            "dateOfArrival.year" -> s"${tomorrow.getYear}",
+            "timeOfArrival.hour" -> "10",
+            "timeOfArrival.minute" -> "35",
+            "timeOfArrival.ampm" -> "AM"
+          )
+        )
 
         status(result) mustBe BAD_REQUEST
 
@@ -127,14 +129,16 @@ class MovementDetailsControllerSpec extends ControllerLayerSpec with MockCache {
 
       "date is in the past" in {
         val lastYear = LocalDateTime.now().minusYears(1)
-        val result = controller(ArrivalAnswers()).saveMovementDetails()(postRequest(
-          "dateOfArrival.day" -> s"${lastYear.getDayOfMonth}",
-          "dateOfArrival.month" -> s"${lastYear.getMonthValue}",
-          "dateOfArrival.year" -> s"${lastYear.getYear}",
-          "timeOfArrival.hour" -> "10",
-          "timeOfArrival.minute" -> "35",
-          "timeOfArrival.ampm" -> "AM"
-        ))
+        val result = controller(ArrivalAnswers()).saveMovementDetails()(
+          postRequest(
+            "dateOfArrival.day" -> s"${lastYear.getDayOfMonth}",
+            "dateOfArrival.month" -> s"${lastYear.getMonthValue}",
+            "dateOfArrival.year" -> s"${lastYear.getYear}",
+            "timeOfArrival.hour" -> "10",
+            "timeOfArrival.minute" -> "35",
+            "timeOfArrival.ampm" -> "AM"
+          )
+        )
 
         status(result) mustBe BAD_REQUEST
 

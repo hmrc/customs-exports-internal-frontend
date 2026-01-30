@@ -37,7 +37,10 @@ class ViewSpec extends AnyWordSpec with Matchers with ViewMatchers with Messages
   implicit protected def htmlBodyOf(html: Html): Document = Jsoup.parse(html.toString())
 
   protected def journeyRequest(answers: Answers): JourneyRequest[?] =
-    JourneyRequest(Cache(providerId, Some(answers), None), AuthenticatedRequest(Operator(providerId), FakeRequest().withFormUrlEncodedBody().withCSRFToken))
+    JourneyRequest(
+      Cache(providerId, Some(answers), None),
+      AuthenticatedRequest(Operator(providerId), FakeRequest().withFormUrlEncodedBody().withCSRFToken)
+    )
 
   /*
     Implicit Utility class for retrieving common elements which are on the vast majority of pages

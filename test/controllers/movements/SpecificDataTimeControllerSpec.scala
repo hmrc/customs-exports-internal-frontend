@@ -124,9 +124,7 @@ class SpecificDataTimeControllerSpec extends ControllerLayerSpec with MockCache 
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(MovementDetailsController.displayPage.url)
-        theCacheUpserted.answers mustBe Some(answers.copy(
-          specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime))
-        ))
+        theCacheUpserted.answers mustBe Some(answers.copy(specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime))))
       }
 
       "form is correct and current date-time selected on arrival journey" in {
@@ -138,10 +136,12 @@ class SpecificDataTimeControllerSpec extends ControllerLayerSpec with MockCache 
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(LocationController.displayPage.url)
-        theCacheUpserted.answers mustBe Some(answers.copy(
-          specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime)),
-          arrivalDetails = Some(ArrivalDetails(fixedDate, fixedTime))
-        ))
+        theCacheUpserted.answers mustBe Some(
+          answers.copy(
+            specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime)),
+            arrivalDetails = Some(ArrivalDetails(fixedDate, fixedTime))
+          )
+        )
       }
 
       "form is correct and user date-time selected on departure journey" in {
@@ -152,9 +152,7 @@ class SpecificDataTimeControllerSpec extends ControllerLayerSpec with MockCache 
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(MovementDetailsController.displayPage.url)
-        theCacheUpserted.answers mustBe Some(answers.copy(
-          specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime))
-        ))
+        theCacheUpserted.answers mustBe Some(answers.copy(specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime))))
       }
 
       "form is correct and current date-time selected on departure journey" in {
@@ -166,10 +164,12 @@ class SpecificDataTimeControllerSpec extends ControllerLayerSpec with MockCache 
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(LocationController.displayPage.url)
-        theCacheUpserted.answers mustBe Some(answers.copy(
-          specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime)),
-          departureDetails = Some(DepartureDetails(fixedDate, fixedTime))
-        ))
+        theCacheUpserted.answers mustBe Some(
+          answers.copy(
+            specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime)),
+            departureDetails = Some(DepartureDetails(fixedDate, fixedTime))
+          )
+        )
       }
     }
   }

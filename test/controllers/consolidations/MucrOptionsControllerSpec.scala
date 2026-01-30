@@ -136,21 +136,13 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
     "provided with correct form" should {
 
       "return 303 (SEE_OTHER) response" in {
-        val result = controller().submit()(postRequest(
-          "newMucr"->"GB/12SD-123455ASD",
-          "existingMucr"->"",
-          "createOrAdd"->"create"
-        ))
+        val result = controller().submit()(postRequest("newMucr" -> "GB/12SD-123455ASD", "existingMucr" -> "", "createOrAdd" -> "create"))
 
         status(result) mustBe SEE_OTHER
       }
 
       "redirect to Associate UCR Summary controller" in {
-        val result = controller().submit()(postRequest(
-          "newMucr" -> "GB/12SD-123455ASD",
-          "existingMucr" -> "",
-          "createOrAdd" -> "create"
-        ))
+        val result = controller().submit()(postRequest("newMucr" -> "GB/12SD-123455ASD", "existingMucr" -> "", "createOrAdd" -> "create"))
 
         redirectLocation(result) mustBe Some(AssociateUcrSummaryController.displayPage.url)
       }

@@ -117,7 +117,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
         val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)), consignmentReferences = consignmentReferences)
         whenTheCacheContains(Cache(providerId, Some(answers), None))
 
-        val invalidForm = List("modeOfTransport"->"99","nationality"->"Invalid","transportId"->"Invalid")
+        val invalidForm = List("modeOfTransport" -> "99", "nationality" -> "Invalid", "transportId" -> "Invalid")
 
         val result = controller(answers).saveTransport()(postRequest(invalidForm: _*))
 
@@ -129,7 +129,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
       "return 403 (FORBIDDEN)" in {
         whenTheCacheIsEmpty()
 
-        val correctForm = List("modeOfTransport"->"1","nationality"->"GB","transportId"->"123")
+        val correctForm = List("modeOfTransport" -> "1", "nationality" -> "GB", "transportId" -> "123")
 
         val result = controller(ArrivalAnswers()).saveTransport()(postRequest(correctForm: _*))
 
@@ -143,7 +143,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
         val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)))
         whenTheCacheContains(Cache(providerId, Some(answers), None))
 
-        val correctForm = List("modeOfTransport"->"1","nationality"->"GB","transportId"->"123")
+        val correctForm = List("modeOfTransport" -> "1", "nationality" -> "GB", "transportId" -> "123")
 
         await(controller(answers).saveTransport()(postRequest(correctForm: _*)))
 
@@ -154,7 +154,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
         val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)))
         whenTheCacheContains(Cache(providerId, Some(answers), None))
 
-        val correctForm = List("modeOfTransport"->"1","nationality"->"GB","transportId"->"123")
+        val correctForm = List("modeOfTransport" -> "1", "nationality" -> "GB", "transportId" -> "123")
 
         val result = controller(answers).saveTransport()(postRequest(correctForm: _*))
 

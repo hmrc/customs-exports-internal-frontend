@@ -54,9 +54,7 @@ class AssociateUcrController @Inject() (
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => {
-          Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions)))
-        },
+        formWithErrors => Future.successful(BadRequest(associateUcrPage(formWithErrors, mucrOptions))),
         formData => {
           val updatedCache = request.answersAs[AssociateUcrAnswers].copy(childUcr = Some(formData))
           cacheRepository.upsert(request.cache.update(updatedCache)).map { _ =>

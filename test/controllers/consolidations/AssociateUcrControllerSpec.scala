@@ -70,9 +70,8 @@ class AssociateUcrControllerSpec extends ControllerLayerSpec with MockCache {
     "return 303 (SEE_OTHER)" when {
       "correct form is submitted and cache contains mucr options data" in {
         val cachedData = AssociateUcrAnswers(parentMucr = Some(MucrOptions("123")))
-        val result = controller(cachedData).submit()(postRequest(
-          "kind" -> UcrType.Ducr.formValue,
-          UcrType.Ducr.formValue -> "5GB123456789000-123ABC456DEFIIIII")
+        val result = controller(cachedData).submit()(
+          postRequest("kind" -> UcrType.Ducr.formValue, UcrType.Ducr.formValue -> "5GB123456789000-123ABC456DEFIIIII")
         )
 
         status(result) mustBe SEE_OTHER
@@ -83,10 +82,7 @@ class AssociateUcrControllerSpec extends ControllerLayerSpec with MockCache {
     "return 400 (BAD_REQUEST)" when {
       "form is incorrect and cache contains data from mucr options" in {
         val cachedData = AssociateUcrAnswers(parentMucr = Some(MucrOptions("123")))
-        val result = controller(cachedData).submit()(postRequest(
-          "kind" -> UcrType.Ducr.codeValue,
-          "ucr" -> "incorrect")
-        )
+        val result = controller(cachedData).submit()(postRequest("kind" -> UcrType.Ducr.codeValue, "ucr" -> "incorrect"))
 
         status(result) mustBe BAD_REQUEST
       }
