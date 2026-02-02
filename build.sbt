@@ -6,6 +6,7 @@ ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "3.3.7"
 
 PlayKeys.devSettings := List("play.server.http.port" -> "6799")
+coverageMinimumStmtTotal := 89.50
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
