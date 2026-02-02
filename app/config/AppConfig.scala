@@ -16,6 +16,8 @@
 
 package config
 
+import play.api.mvc.Call
+
 import javax.inject.{Inject, Named, Singleton}
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -47,6 +49,7 @@ class AppConfig @Inject() (
 
   lazy val customsDeclarationsGoodsTakenOutOfEuUrl: String = loadConfig("urls.customsDeclarationsGoodsTakenOutOfEu")
   lazy val serviceAvailabilityUrl: String = loadConfig("urls.serviceAvailability")
+  lazy val goodsLocationCodeUrl: String = loadConfig("urls.goodsLocationCode")
 
   lazy val mongodbUri: String = loadConfig("mongodb.uri")
 }
