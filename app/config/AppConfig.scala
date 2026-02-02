@@ -16,8 +16,6 @@
 
 package config
 
-import play.api.mvc.Call
-
 import javax.inject.{Inject, Named, Singleton}
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
