@@ -55,9 +55,9 @@
 
         @heading(messages("goodsLocation.title"))
 
-        @paragraphBody(messages(s"goodsLocation.paragraph.${request.answers.`type`.toString}"))
+        @paragraphBody(messages(s"goodsLocation.paragraph.${request.answers.`type`.toString}"), id = Some("paragraphBody"))
 
-        <p class="govuk-body">
+        <p class="govuk-body" id = "goodsLocationLink">
             <a href="@appConfig.goodsLocationCodeUrl" class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank">@Html(messages("goodsLocation.link"))</a>@Html(messages("goodsLocation.paragraph.2"))
         </p>
 

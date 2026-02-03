@@ -35,37 +35,37 @@ class LocationSpec extends UnitSpec {
       "location is empty" in {
         val inputData = Location("")
         val errors = Location.form().fillAndValidate(inputData).errors
-        errors mustBe Seq(FormError("code", "location.code.empty"))
+        errors mustBe Seq(FormError("code", "goodsLocation.code.empty"))
       }
 
       "location has incorrect country" in {
         val inputData = Location("XXAUcorrect")
         val errors = Location.form().fillAndValidate(inputData).errors
-        errors mustBe Seq(FormError("code", "location.code.error"))
+        errors mustBe Seq(FormError("code", "goodsLocation.code.error"))
       }
 
       "location has incorrect type" in {
         val inputData = Location("GBEUcorrect")
         val errors = Location.form().fillAndValidate(inputData).errors
-        errors mustBe Seq(FormError("code", "location.code.error"))
+        errors mustBe Seq(FormError("code", "goodsLocation.code.error"))
       }
 
       "location has incorrect qualifier code" in {
         val inputData = Location("GBAZcorrect")
         val errors = Location.form().fillAndValidate(inputData).errors
-        errors mustBe Seq(FormError("code", "location.code.error"))
+        errors mustBe Seq(FormError("code", "goodsLocation.code.error"))
       }
 
       "location is shorter than 10 characters" in {
         val inputData = Location("GBAZ123")
         val errors = Location.form().fillAndValidate(inputData).errors
-        errors mustBe Seq(FormError("code", "location.code.error"))
+        errors mustBe Seq(FormError("code", "goodsLocation.code.error"))
       }
 
       "location is longer than 17 characters" in {
         val inputData = Location("GBAU12345678912345")
         val errors = Location.form().fillAndValidate(inputData).errors
-        errors mustBe Seq(FormError("code", "location.code.error"))
+        errors mustBe Seq(FormError("code", "goodsLocation.code.error"))
       }
     }
 

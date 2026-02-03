@@ -17,6 +17,7 @@
 package views
 
 import base.Injector
+import config.AppConfig
 import controllers.exchanges.JourneyRequest
 import forms.Location
 import models.cache.{ArrivalAnswers, DepartureAnswers, RetrospectiveArrivalAnswers}
@@ -26,6 +27,8 @@ import testdata.CommonTestData.validDucr
 import views.html.location
 
 class LocationViewSpec extends ViewSpec with Injector {
+
+  private val appConfig = instanceOf[AppConfig]
 
   private val form = Location.form()
   private val page = instanceOf[location]
@@ -44,31 +47,41 @@ class LocationViewSpec extends ViewSpec with Injector {
       }
     }
 
-    "render title" when {
+    "render goods location page" when {
 
       "used for Arrival journey" in {
-        createView().getTitle must containMessage("location.question")
+        val view = createView()
+
+        view.getTitle must containMessage("goodsLocation.title")
+        view.getElementById("section-header") must containMessage("movement.sectionHeading.ARRIVE", validDucr)
+        view.getElementsByClass("govuk-heading-xl").text() mustBe messages("goodsLocation.title")
+        view.getElementById("paragraphBody").text() mustBe messages("goodsLocation.paragraph.ARRIVE")
+        view.getElementById("goodsLocationLink") must containMessage("goodsLocation.link")
+        view.getElementById("goodsLocationLink")
+          .getElementsByTag("a")
+          .attr("href") mustBe appConfig.goodsLocationCodeUrl
+        view.getElementById("goodsLocationLink") must containMessage("goodsLocation.paragraph.2")
+        view.getElementsByClass("govuk-warning-text").text() contains messages("goodsLocation.warning")
+
+
       }
 
       "used for Retrospective Arrival journey" in {
         implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
-        createView().getTitle must containMessage("location.question.retrospectiveArrival")
+        createView().getTitle must containMessage("goodsLocation.title")
       }
 
       "used for Departure journey" in {
         implicit val request = journeyRequest(DepartureAnswers())
-        createView().getTitle must containMessage("location.question")
+        createView().getTitle must containMessage("goodsLocation.title")
       }
     }
 
     "render heading" when {
 
       "used for Arrival journey" in {
-        val view = createView()
 
-        view.getElementById("section-header") must containMessage("movement.sectionHeading.ARRIVE", validDucr)
-        view.getTitle must containMessage("location.question")
-        view.getElementById("code-hint").text() mustBe messages("location.hint")
+
       }
 
       "used for Retrospective Arrival journey" in {
