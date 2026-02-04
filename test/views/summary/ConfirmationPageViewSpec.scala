@@ -16,17 +16,17 @@
 
 package views.summary
 
+import base.Injector
+import controllers.exchanges.JourneyRequest
 import controllers.ileQuery.routes.IleQueryController
 import forms.ConsignmentReferences
 import models.UcrType
 import models.UcrType.{Ducr, DucrPart, Mucr}
-import models.cache.JourneyType._
-import models.cache._
+import models.cache.*
+import models.cache.JourneyType.*
 import models.summary.Confirmation
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
-import base.Injector
-import controllers.exchanges.JourneyRequest
 import views.ViewSpec
 import views.html.summary.confirmation_page
 
@@ -82,7 +82,7 @@ class ConfirmationPageViewSpec extends ViewSpec with Injector {
       ucrType <- List(Mucr, Ducr, DucrPart)
       answer <- List(ArrivalAnswers(), DepartureAnswers(), DisassociateUcrAnswers(), RetrospectiveArrivalAnswers())
     } s"provided with ${answer.`type`} Journey Type and $ucrType" should {
-      implicit val request: JourneyRequest[_] = journeyRequest(answer)
+      implicit val request: JourneyRequest[?] = journeyRequest(answer)
       val view = page(Confirmation(answer.`type`, conversationId, Some(consignmentRefs(ucrType)), None))
 
       "render summary list with one row" in {
@@ -109,7 +109,7 @@ class ConfirmationPageViewSpec extends ViewSpec with Injector {
       ucrType <- List(Mucr, Ducr, DucrPart)
       answer <- List(AssociateUcrAnswers())
     } s"provided with ${answer.`type`} Journey Type and $ucrType" should {
-      implicit val request: JourneyRequest[_] = journeyRequest(answer)
+      implicit val request: JourneyRequest[?] = journeyRequest(answer)
       val view = page(Confirmation(answer.`type`, conversationId, Some(consignmentRefs(ucrType)), Some(dummyUcr)))
 
       "render summary list with two rows" in {
@@ -143,7 +143,7 @@ class ConfirmationPageViewSpec extends ViewSpec with Injector {
       ucrType <- List(Mucr)
       answer <- List(ShutMucrAnswers())
     } s"provided with ${answer.`type`} Journey Type" should {
-      implicit val request: JourneyRequest[_] = journeyRequest(answer)
+      implicit val request: JourneyRequest[?] = journeyRequest(answer)
       val view = page(Confirmation(answer.`type`, conversationId, Some(consignmentRefs(ucrType)), None))
 
       "render summary list with one row" in {

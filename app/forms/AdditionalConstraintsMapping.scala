@@ -61,5 +61,5 @@ case class AdditionalConstraintsMapping[T](
 
   def withPrefix(prefix: String): Mapping[T] = copy(baseMappings = baseMappings.withPrefix(prefix))
 
-  val mappings: Seq[Mapping[_]] = baseMappings.mappings :+ this
+  val mappings: Seq[Mapping[?]] = baseMappings.mappings :+ this
 }

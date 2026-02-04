@@ -16,11 +16,12 @@
 
 package forms
 
-import java.time.{LocalDate, LocalTime}
-import forms.common.{Date, Time}
 import base.UnitSpec
+import forms.common.{Date, Time}
 import matchers.FormMatchers
 import testdata.MovementsTestData
+
+import java.time.{LocalDate, LocalTime}
 
 class DepartureDetailsSpec extends UnitSpec with FormMatchers {
 

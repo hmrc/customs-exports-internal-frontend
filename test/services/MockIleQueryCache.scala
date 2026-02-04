@@ -17,8 +17,8 @@
 package services
 
 import org.mockito.Mockito.reset
-import org.mockito.MockitoSugar.mock
 import org.scalatest.{BeforeAndAfterEach, Suite}
+import org.scalatestplus.mockito.MockitoSugar.mock
 import repositories.IleQueryRepository
 
 trait MockIleQueryCache extends BeforeAndAfterEach {

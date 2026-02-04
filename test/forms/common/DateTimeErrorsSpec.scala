@@ -16,8 +16,8 @@
 
 package forms.common
 
-import play.api.data.{Form, FormError}
 import base.UnitSpec
+import play.api.data.{Form, FormError}
 
 class DateTimeErrorsSpec extends UnitSpec {
 

@@ -20,7 +20,7 @@ import controllers.actions.AuthenticatedAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedAndMultipartFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.ile_query
 
@@ -32,7 +32,7 @@ class FindConsignmentController @Inject() (
   mcc: MessagesControllerComponents,
   ileQueryPage: ile_query,
   cacheRepository: CacheRepository
-) extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
+) extends FrontendController(mcc) with I18nSupport with WithUrlEncodedAndMultipartFormBinding {
 
   val displayQueryForm: Action[AnyContent] = authenticate { implicit request =>
     cacheRepository.removeByProviderId(request.providerId)

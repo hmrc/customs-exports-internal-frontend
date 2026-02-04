@@ -21,12 +21,11 @@ import connectors.StrideAuthConnector
 import controllers.ControllerLayerSpec
 import controllers.exchanges.AuthenticatedRequest
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-
+import org.mockito.ArgumentMatchers.*
+import org.mockito.Mockito.{verify, when}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.api.{Configuration, Environment, Mode}
 import play.twirl.api.HtmlFormat
 import testdata.CommonTestData.providerId
@@ -51,14 +50,14 @@ class AuthenticatedActionSpec extends ControllerLayerSpec {
 
   "Invoke" should {
     val request = FakeRequest()
-    val block = mock[AuthenticatedRequest[_] => Future[Result]]
+    val block = mock[AuthenticatedRequest[?] => Future[Result]]
     val controllerResponse = mock[Result]
 
     "delegate to controller" when {
       "auth successful" in {
-        given(block.apply(any())).willReturn(Future.successful(controllerResponse))
-        given(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any()))
-          .willReturn(Future.successful(Some(Credentials(providerId, "type"))))
+        when(block.apply(any())).thenReturn(Future.successful(controllerResponse))
+        when(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any()))
+          .thenReturn(Future.successful(Some(Credentials(providerId, "type"))))
 
         val result = await(action.invokeBlock(request, block))
 
@@ -75,8 +74,8 @@ class AuthenticatedActionSpec extends ControllerLayerSpec {
 
     "return unauthorized" when {
       "auth successful without credentials" in {
-        given(block.apply(any())).willReturn(Future.successful(controllerResponse))
-        given(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any())).willReturn(Future.successful(None))
+        when(block.apply(any())).thenReturn(Future.successful(controllerResponse))
+        when(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any())).thenReturn(Future.successful(None))
         when(unauthorizedPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
 
         val result = action.invokeBlock(request, block)
@@ -85,9 +84,9 @@ class AuthenticatedActionSpec extends ControllerLayerSpec {
       }
 
       "authorization exception" in {
-        given(block.apply(any())).willReturn(Future.successful(controllerResponse))
-        given(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any()))
-          .willReturn(Future.failed(new AuthorisationException("error") {}))
+        when(block.apply(any())).thenReturn(Future.successful(controllerResponse))
+        when(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any()))
+          .thenReturn(Future.failed(new AuthorisationException("error") {}))
         when(unauthorizedPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
 
         val result = action.invokeBlock(request, block)
@@ -99,12 +98,12 @@ class AuthenticatedActionSpec extends ControllerLayerSpec {
     "redirect to stride" when {
       "no active session exception" when {
         "running as local" in {
-          given(appConfig.runningAsDev).willReturn(true)
-          given(config.getOptional(any[String])(any())).willReturn(None)
-          given(environment.mode).willReturn(Mode.Dev)
-          given(block.apply(any())).willReturn(Future.successful(controllerResponse))
-          given(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any()))
-            .willReturn(Future.failed(new NoActiveSession("error") {}))
+          when(appConfig.runningAsDev).thenReturn(true)
+          when(config.getOptional(any[String])(any())).thenReturn(None)
+          when(environment.mode).thenReturn(Mode.Dev)
+          when(block.apply(any())).thenReturn(Future.successful(controllerResponse))
+          when(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any()))
+            .thenReturn(Future.failed(new NoActiveSession("error") {}))
 
           val result = action.invokeBlock(request, block)
 
@@ -113,12 +112,12 @@ class AuthenticatedActionSpec extends ControllerLayerSpec {
         }
 
         "running in environment" in {
-          given(appConfig.runningAsDev).willReturn(false)
-          given(config.getOptional(any[String])(any())).willReturn(None)
-          given(environment.mode).willReturn(Mode.Prod)
-          given(block.apply(any())).willReturn(Future.successful(controllerResponse))
-          given(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any()))
-            .willReturn(Future.failed(new NoActiveSession("error") {}))
+          when(appConfig.runningAsDev).thenReturn(false)
+          when(config.getOptional(any[String])(any())).thenReturn(None)
+          when(environment.mode).thenReturn(Mode.Prod)
+          when(block.apply(any())).thenReturn(Future.successful(controllerResponse))
+          when(strideConnector.authorise(any(), any[Retrieval[Option[Credentials]]]())(any(), any()))
+            .thenReturn(Future.failed(new NoActiveSession("error") {}))
 
           val result = action.invokeBlock(request, block)
 

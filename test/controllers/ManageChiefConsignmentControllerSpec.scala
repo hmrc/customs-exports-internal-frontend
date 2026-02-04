@@ -18,12 +18,13 @@ package controllers
 
 import controllers.routes.ChoiceController
 import forms.ChiefConsignment
-import models.{UcrBlock, UcrType}
-import org.mockito.ArgumentMatchers.{any, eq => meq}
 import models.cache.Cache
+import models.{UcrBlock, UcrType}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import testdata.CommonTestData.{validDucr, validDucrPartId, validMucr, validWholeDucrParts}
@@ -52,13 +53,13 @@ class ManageChiefConsignmentControllerSpec extends ControllerLayerSpec with Mock
   "ManageChiefConsignmentController on displayPage" should {
 
     "call CacheRepository" in {
-      givenTheCacheIsEmpty()
+      whenTheCacheIsEmpty()
       controller.displayPage(getRequest).futureValue
       verify(cacheRepository).findByProviderId(any())
     }
 
     "return Ok (200) response" in {
-      givenTheCacheIsEmpty()
+      whenTheCacheIsEmpty()
       val result = controller.displayPage(getRequest)
       status(result) mustBe OK
     }
@@ -69,13 +70,13 @@ class ManageChiefConsignmentControllerSpec extends ControllerLayerSpec with Mock
     "cache is empty" should {
 
       "call ChiefConsignment view" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
         controller.displayPage(getRequest).futureValue
         verify(manageChiefConsignmentPage).apply(any())(any(), any())
       }
 
       "pass empty form to ChiefConsignment view" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
         controller.displayPage(getRequest).futureValue
 
         val expectedForm = ChiefConsignment.form()
@@ -88,7 +89,7 @@ class ManageChiefConsignmentControllerSpec extends ControllerLayerSpec with Mock
       "call ChiefConsignment view" in {
         val cacheContents =
           Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts)))
-        givenTheCacheContains(cacheContents)
+        whenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
         verify(manageChiefConsignmentPage).apply(any())(any(), any())
       }
@@ -96,7 +97,7 @@ class ManageChiefConsignmentControllerSpec extends ControllerLayerSpec with Mock
       "pass data from CacheRepository to ChiefConsignment view" in {
         val cacheContents =
           Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.DucrPart.codeValue, ucr = validWholeDucrParts)))
-        givenTheCacheContains(cacheContents)
+        whenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
 
         val expectedForm = ChiefConsignment.form().fill(ChiefConsignment(mucr = None, ducr = Some(validDucr), ducrPartId = Some(validDucrPartId)))
@@ -108,14 +109,14 @@ class ManageChiefConsignmentControllerSpec extends ControllerLayerSpec with Mock
 
       "call ChiefConsignment view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
-        givenTheCacheContains(cacheContents)
+        whenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
         verify(manageChiefConsignmentPage).apply(any())(any(), any())
       }
 
       "pass populated form to ChiefConsignment view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr)))
-        givenTheCacheContains(cacheContents)
+        whenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
 
         val expectedForm = ChiefConsignment.form().fill(ChiefConsignment(mucr = None, ducr = Some(validDucr), ducrPartId = None))
@@ -127,14 +128,14 @@ class ManageChiefConsignmentControllerSpec extends ControllerLayerSpec with Mock
 
       "call ChiefConsignment view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Mucr.codeValue, ucr = validMucr)))
-        givenTheCacheContains(cacheContents)
+        whenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
         verify(manageChiefConsignmentPage).apply(any())(any(), any())
       }
 
       "pass populated form to ChiefConsignment view" in {
         val cacheContents = Cache(providerId = "12345", answers = None, queryUcr = Some(UcrBlock(ucrType = UcrType.Mucr.codeValue, ucr = validMucr)))
-        givenTheCacheContains(cacheContents)
+        whenTheCacheContains(cacheContents)
         controller.displayPage(getRequest).futureValue
 
         val expectedForm = ChiefConsignment.form().fill(ChiefConsignment(mucr = Some(validMucr), ducr = None, ducrPartId = None))
@@ -158,26 +159,26 @@ class ManageChiefConsignmentControllerSpec extends ControllerLayerSpec with Mock
 
         "not call CacheRepository" in {
           controller.submitChiefConsignment()(postRequest(inputData)).futureValue
-          verifyZeroInteractions(cacheRepository)
+          verifyNoInteractions(cacheRepository)
         }
       }
     }
 
-    val ducrPartData = Json.obj("ducr" -> validDucr, "ducrPartId" -> validDucrPartId)
-    val ducrData = Json.obj("ducr" -> validDucr)
-    val mucrData = Json.obj("mucr" -> validMucr)
+    val ducrPartData = Seq("ducr" -> validDucr, "ducrPartId" -> validDucrPartId)
+    val ducrData = Seq("ducr" -> validDucr)
+    val mucrData = Seq("mucr" -> validMucr)
     val validFormData = Seq(ducrData, ducrPartData, mucrData)
 
     validFormData.foreach { inputData =>
       s"provided with correct data $inputData" should {
 
         "call CacheRepository upsert" in {
-          controller.submitChiefConsignment()(postRequest(inputData)).futureValue
+          controller.submitChiefConsignment()(postRequest(inputData: _*)).futureValue
           verify(cacheRepository).upsert(any[Cache])
         }
 
         "provide CacheRepository with correct UcrBlock object" in {
-          controller.submitChiefConsignment()(postRequest(inputData)).futureValue
+          controller.submitChiefConsignment()(postRequest(inputData: _*)).futureValue
 
           val expectedUcrBlock = inputData match {
             case _ if ducrData == inputData => UcrBlock(ucrType = UcrType.Ducr.codeValue, ucr = validDucr.toUpperCase, chiefUcr = Some(true))
@@ -192,12 +193,12 @@ class ManageChiefConsignmentControllerSpec extends ControllerLayerSpec with Mock
         }
 
         "return SeeOther (303) response" in {
-          val result = controller.submitChiefConsignment()(postRequest(inputData))
+          val result = controller.submitChiefConsignment()(postRequest(inputData: _*))
           status(result) mustBe SEE_OTHER
         }
 
         "redirect to Choice page" in {
-          val result = controller.submitChiefConsignment()(postRequest(inputData))
+          val result = controller.submitChiefConsignment()(postRequest(inputData: _*))
           redirectLocation(result) mustBe Some(ChoiceController.displayPage.url)
         }
       }

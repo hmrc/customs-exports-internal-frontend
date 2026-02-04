@@ -16,6 +16,7 @@
 
 package controllers.consolidations
 
+import base.Injector
 import controllers.ControllerLayerSpec
 import controllers.summary.DisassociateUcrSummaryController
 import controllers.summary.routes.MovementConfirmationController
@@ -24,14 +25,13 @@ import models.cache.{Answers, DisassociateUcrAnswers, JourneyType}
 import models.summary.SessionHelper
 import models.{ReturnToStartException, UcrType}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, eq => meq}
-
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsString, Json}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.SubmissionService
-import base.Injector
 import testdata.CommonTestData.conversationId
 import views.html.summary.disassociate_ucr_summary
 

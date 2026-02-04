@@ -20,10 +20,10 @@ import connectors.CustomsDeclareExportsMovementsConnector
 import models.now
 import models.submissions.Submission
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, eq => meq}
-
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testdata.CommonTestData.{conversationId, conversationId_2, conversationId_3, providerId}
 import testdata.MovementsTestData.exampleSubmission

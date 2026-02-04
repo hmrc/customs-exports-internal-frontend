@@ -18,20 +18,21 @@ package controllers.movements
 
 import controllers.ControllerLayerSpec
 import controllers.movements.routes.{LocationController, MovementDetailsController}
-import forms._
+import forms.*
 import forms.common.{Date, Time}
 import models.DateTimeProvider
 import models.cache.{ArrivalAnswers, DepartureAnswers, MovementAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.Form
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import views.html.specific_date_and_time
 
-import java.time._
+import java.time.*
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SpecificDataTimeControllerSpec extends ControllerLayerSpec with MockCache {
@@ -116,54 +117,58 @@ class SpecificDataTimeControllerSpec extends ControllerLayerSpec with MockCache 
     "return 303 (SEE_OTHER)" when {
 
       "form is correct and user date-time selected on arrival journey" in {
-        val dateTimeChoice = SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime)
+        val dateTimeChoice = "choice" -> SpecificDateTimeChoice.UserDateTime
         val answers = ArrivalAnswers(consignmentReferences = Some(consignmentReferences))
 
-        val result = controller(answers).submit()(postRequest(Json.toJson(dateTimeChoice)))
+        val result = controller(answers).submit()(postRequest(dateTimeChoice))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(MovementDetailsController.displayPage.url)
-        theCacheUpserted.answers mustBe Some(answers.copy(specificDateTimeChoice = Some(dateTimeChoice)))
+        theCacheUpserted.answers mustBe Some(answers.copy(specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime))))
       }
 
       "form is correct and current date-time selected on arrival journey" in {
-        val dateTimeChoice = SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime)
+        val dateTimeChoice = "choice" -> SpecificDateTimeChoice.CurrentDateTime
         val answers = ArrivalAnswers(consignmentReferences = Some(consignmentReferences))
 
         val result =
-          controller(answers).submit()(postRequest(Json.toJson(dateTimeChoice)))
+          controller(answers).submit()(postRequest(dateTimeChoice))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(LocationController.displayPage.url)
         theCacheUpserted.answers mustBe Some(
-          answers
-            .copy(specificDateTimeChoice = Some(dateTimeChoice), arrivalDetails = Some(ArrivalDetails(fixedDate, fixedTime)))
+          answers.copy(
+            specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime)),
+            arrivalDetails = Some(ArrivalDetails(fixedDate, fixedTime))
+          )
         )
       }
 
       "form is correct and user date-time selected on departure journey" in {
-        val dateTimeChoice = SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime)
+        val dateTimeChoice = "choice" -> SpecificDateTimeChoice.UserDateTime
         val answers = DepartureAnswers(consignmentReferences = Some(consignmentReferences))
 
-        val result = controller(answers).submit()(postRequest(Json.toJson(dateTimeChoice)))
+        val result = controller(answers).submit()(postRequest(dateTimeChoice))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(MovementDetailsController.displayPage.url)
-        theCacheUpserted.answers mustBe Some(answers.copy(specificDateTimeChoice = Some(dateTimeChoice)))
+        theCacheUpserted.answers mustBe Some(answers.copy(specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.UserDateTime))))
       }
 
       "form is correct and current date-time selected on departure journey" in {
-        val dateTimeChoice = SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime)
+        val dateTimeChoice = "choice" -> SpecificDateTimeChoice.CurrentDateTime
         val answers = DepartureAnswers(consignmentReferences = Some(consignmentReferences))
 
         val result =
-          controller(answers).submit()(postRequest(Json.toJson(dateTimeChoice)))
+          controller(answers).submit()(postRequest(dateTimeChoice))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(LocationController.displayPage.url)
         theCacheUpserted.answers mustBe Some(
-          answers
-            .copy(specificDateTimeChoice = Some(dateTimeChoice), departureDetails = Some(DepartureDetails(fixedDate, fixedTime)))
+          answers.copy(
+            specificDateTimeChoice = Some(SpecificDateTimeChoice(SpecificDateTimeChoice.CurrentDateTime)),
+            departureDetails = Some(DepartureDetails(fixedDate, fixedTime))
+          )
         )
       }
     }

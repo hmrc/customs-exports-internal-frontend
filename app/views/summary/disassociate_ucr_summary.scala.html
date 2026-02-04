@@ -29,7 +29,7 @@
     formHelper: FormWithCSRF
 )
 
-@(disassociateUcr: DisassociateUcr)(implicit request: Request[_], messages: Messages)
+@(disassociateUcr: DisassociateUcr)(implicit request: Request[?], messages: Messages)
 
 @govukLayout(
     title = Title("disassociate.ucr.summary.title"),

@@ -16,11 +16,11 @@
 
 package testdata
 
+import connectors.exchanges.*
 import connectors.exchanges.ActionType.MovementType
-import connectors.exchanges._
+import forms.*
 import forms.GoodsDeparted.DepartureLocation.OutOfTheUk
 import forms.Transport.ModesOfTransport
-import forms._
 import forms.common.{Date, Time}
 import models.UcrBlock
 import models.cache.{ArrivalAnswers, DepartureAnswers, RetrospectiveArrivalAnswers}

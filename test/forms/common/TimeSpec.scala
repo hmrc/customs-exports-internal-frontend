@@ -16,11 +16,12 @@
 
 package forms.common
 
-import java.time.LocalTime
-import forms.common.Time._
-import play.api.data.{Form, FormError}
 import base.UnitSpec
+import forms.common.Time.*
 import matchers.FormMatchers
+import play.api.data.{Form, FormError}
+
+import java.time.LocalTime
 
 class TimeSpec extends UnitSpec with FormMatchers {
 

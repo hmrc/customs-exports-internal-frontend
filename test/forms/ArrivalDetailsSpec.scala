@@ -16,10 +16,11 @@
 
 package forms
 
-import java.time.{LocalDate, LocalTime, ZoneId}
+import base.UnitSpec
 import forms.common.{Date, Time}
 import play.api.data.Mapping
-import base.UnitSpec
+
+import java.time.{LocalDate, LocalTime, ZoneId}
 
 class ArrivalDetailsSpec extends UnitSpec {
 

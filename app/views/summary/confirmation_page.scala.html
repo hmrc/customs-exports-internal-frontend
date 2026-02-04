@@ -36,7 +36,7 @@
     heading: heading
 )
 
-@(confirmation: Confirmation)(implicit request: Request[_], messages: Messages)
+@(confirmation: Confirmation)(implicit request: Request[?], messages: Messages)
 
 @gotoTimelineLink = @{
     link(

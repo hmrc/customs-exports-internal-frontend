@@ -34,7 +34,7 @@
   formHelper: FormWithCSRF
 )
 
-@(data: ArrivalAnswers)(implicit request: Request[_], messages: Messages)
+@(data: ArrivalAnswers)(implicit request: Request[?], messages: Messages)
 
 @govukLayout(
   title = Title("summary.arrival.title"),

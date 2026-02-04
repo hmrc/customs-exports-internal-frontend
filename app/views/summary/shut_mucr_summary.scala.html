@@ -28,7 +28,7 @@
     formHelper: FormWithCSRF
 )
 
-@(mucr: String)(implicit request: Request[_], messages: Messages)
+@(mucr: String)(implicit request: Request[?], messages: Messages)
 
 @govukLayout(
     title = Title("shutMucr.summary.title"),

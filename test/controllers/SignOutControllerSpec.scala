@@ -19,9 +19,9 @@ package controllers
 import controllers.routes.SignOutController
 import models.SignOutReason
 import org.mockito.ArgumentMatchers.any
-
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import views.html.{session_timed_out, user_signed_out}
 

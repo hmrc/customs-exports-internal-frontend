@@ -16,10 +16,10 @@
 
 package forms
 
-import forms.MucrOptions.CreateOrAddValues._
+import base.UnitSpec
+import forms.MucrOptions.CreateOrAddValues.*
 import play.api.data.FormError
 import play.api.libs.json.Json
-import base.UnitSpec
 import testdata.CommonTestData.correctUcr
 
 class MucrOptionsSpec extends UnitSpec {

@@ -17,8 +17,8 @@
 package models
 
 import models.UcrType.Ducr
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import testdata.CommonTestData.{validDucr, validDucrPartId}
 
 class UcrBlockSpec extends AnyWordSpec with Matchers {

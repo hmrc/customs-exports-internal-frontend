@@ -30,7 +30,7 @@ import views.html.associateucr.mucr_options
 
 class MucrOptionsViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[_] = journeyRequest(AssociateUcrAnswers())
+  private implicit val request: JourneyRequest[?] = journeyRequest(AssociateUcrAnswers())
 
   private val page = instanceOf[mucr_options]
 

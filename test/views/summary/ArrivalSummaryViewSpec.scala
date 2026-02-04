@@ -35,7 +35,7 @@ class ArrivalSummaryViewSpec extends ViewSpec with Injector {
   private val time = Time(LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
   private val answers = ArrivalAnswers(arrivalDetails = Some(ArrivalDetails(date, time)))
 
-  private implicit val request: JourneyRequest[_] = journeyRequest(answers)
+  private implicit val request: JourneyRequest[?] = journeyRequest(answers)
 
   private val page = instanceOf[arrival_summary_page]
 

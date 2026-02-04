@@ -27,7 +27,7 @@
   table: GovukTable
 )
 
-@(submissions: Seq[Submission])(implicit request: Request[_], messages: Messages)
+@(submissions: Seq[Submission])(implicit request: Request[?], messages: Messages)
 
 @ucrCellContent(submission: Submission) = {
   @link(

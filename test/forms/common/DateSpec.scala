@@ -16,9 +16,10 @@
 
 package forms.common
 
-import java.time.LocalDate
-import play.api.data.{Form, FormError}
 import base.UnitSpec
+import play.api.data.{Form, FormError}
+
+import java.time.LocalDate
 
 class DateSpec extends UnitSpec {
 

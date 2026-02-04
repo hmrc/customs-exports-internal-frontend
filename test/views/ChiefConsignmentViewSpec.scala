@@ -23,7 +23,7 @@ import play.api.data.{Form, FormError}
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import testdata.CommonTestData._
+import testdata.CommonTestData.*
 import views.html.manage_chief_consignment
 
 class ChiefConsignmentViewSpec extends ViewSpec with ViewMatchers with Injector {

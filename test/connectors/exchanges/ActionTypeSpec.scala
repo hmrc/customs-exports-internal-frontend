@@ -16,10 +16,10 @@
 
 package connectors.exchanges
 
-import connectors.exchanges.ActionType.ConsolidationType._
-import connectors.exchanges.ActionType.MovementType._
-import play.api.libs.json.{JsError, JsString}
 import base.UnitSpec
+import connectors.exchanges.ActionType.ConsolidationType.*
+import connectors.exchanges.ActionType.MovementType.*
+import play.api.libs.json.{JsError, JsString}
 
 class ActionTypeSpec extends UnitSpec {
 

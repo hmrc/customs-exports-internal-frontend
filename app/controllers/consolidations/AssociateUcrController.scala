@@ -24,7 +24,7 @@ import models.cache.AssociateUcrAnswers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedAndMultipartFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.associateucr.associate_ucr
 
@@ -39,7 +39,7 @@ class AssociateUcrController @Inject() (
   cacheRepository: CacheRepository,
   associateUcrPage: associate_ucr
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUrlEncodedAndMultipartFormBinding {
 
   val displayPage: Action[AnyContent] = (authenticate andThen getJourney) { implicit request =>
     val associateUcrAnswers = request.answersAs[AssociateUcrAnswers]
@@ -51,7 +51,6 @@ class AssociateUcrController @Inject() (
 
   val submit: Action[AnyContent] = (authenticate andThen getJourney).async { implicit request =>
     val mucrOptions = request.answersAs[AssociateUcrAnswers].parentMucr.getOrElse(throw ReturnToStartException)
-
     form
       .bindFromRequest()
       .fold(

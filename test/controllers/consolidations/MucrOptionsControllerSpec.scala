@@ -25,11 +25,11 @@ import models.UcrType.Ducr
 import models.cache.AssociateUcrAnswers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
-import play.api.libs.json.{JsString, Json}
-import play.api.test.Helpers._
+import play.api.libs.json.JsString
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import testdata.CommonTestData.validDucr
@@ -136,17 +136,13 @@ class MucrOptionsControllerSpec extends ControllerLayerSpec with MockCache with 
     "provided with correct form" should {
 
       "return 303 (SEE_OTHER) response" in {
-        val correctForm = Json.toJson(MucrOptions("GB/12SD-123455ASD"))
-
-        val result = controller().submit()(postRequest(correctForm))
+        val result = controller().submit()(postRequest("newMucr" -> "GB/12SD-123455ASD", "existingMucr" -> "", "createOrAdd" -> "create"))
 
         status(result) mustBe SEE_OTHER
       }
 
       "redirect to Associate UCR Summary controller" in {
-        val correctForm = Json.toJson(MucrOptions("GB/12SD-123455ASD"))
-
-        val result = controller().submit()(postRequest(correctForm))
+        val result = controller().submit()(postRequest("newMucr" -> "GB/12SD-123455ASD", "existingMucr" -> "", "createOrAdd" -> "create"))
 
         redirectLocation(result) mustBe Some(AssociateUcrSummaryController.displayPage.url)
       }

@@ -33,7 +33,7 @@ object ArrivalDetails {
   def mapping(zoneId: ZoneId): Mapping[ArrivalDetails] =
     Forms
       .mapping("dateOfArrival" -> Date.mapping("dateOfArrival."), "timeOfArrival" -> Time.mapping("timeOfArrival."))(ArrivalDetails.apply)(
-        ArrivalDetails.unapply
+        arrivalDetails => Option(arrivalDetails.dateOfArrival, arrivalDetails.timeOfArrival)
       )
       .verifying("arrival.details.error.overdue", _.goodsArrivalMoment(zoneId).isAfter(ZonedDateTime.now(zoneId).minusDays(60)))
       .verifying("arrival.details.error.future", _.goodsArrivalMoment(zoneId).isBefore(ZonedDateTime.now(zoneId)))

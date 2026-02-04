@@ -29,7 +29,7 @@ import views.html.associateucr.manage_mucr
 
 class ManageMucrViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[_] = journeyRequest(AssociateUcrAnswers())
+  private implicit val request: JourneyRequest[?] = journeyRequest(AssociateUcrAnswers())
 
   private val page = instanceOf[manage_mucr]
   private val form: Form[ManageMucrChoice] = ManageMucrChoice.form()

@@ -16,8 +16,8 @@
 
 package models.viewmodels.decoder
 
-import models.viewmodels.decoder.ActionCode.{AcknowledgedAndProcessed, PartiallyAcknowledgedAndProcessed, Rejected}
 import base.UnitSpec
+import models.viewmodels.decoder.ActionCode.{AcknowledgedAndProcessed, PartiallyAcknowledgedAndProcessed, Rejected}
 
 class ActionCodeSpec extends UnitSpec {
 

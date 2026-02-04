@@ -17,7 +17,7 @@
 package utils
 
 import base.UnitSpec
-import utils.FieldValidator._
+import utils.FieldValidator.*
 
 import scala.util.Random
 

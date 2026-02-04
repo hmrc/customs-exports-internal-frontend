@@ -16,11 +16,11 @@
 
 package views.components.summary
 
+import base.Injector
 import controllers.movements.routes.LocationController
 import forms.Location
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import base.Injector
 import views.html.components.summary.location_summary_list
 import views.{ViewMatchers, ViewSpec}
 

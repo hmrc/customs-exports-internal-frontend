@@ -28,7 +28,7 @@ class ErrorHandlerViewsSpec extends ViewSpec with Injector {
   private val errorHandler = instanceOf[ErrorHandler]
   private val errorTemplate = instanceOf[error_template]
 
-  private implicit val request: Request[_] = FakeRequest().withCSRFToken
+  private implicit val request: Request[?] = FakeRequest().withCSRFToken
   private val expectedPage = errorTemplate("global.error.title", "global.error.heading", "global.error.message")(request, messages)
 
   "ErrorHandler.defaultErrorTemplate" should {

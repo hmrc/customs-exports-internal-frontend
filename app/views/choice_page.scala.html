@@ -35,7 +35,7 @@
     formHelper: FormWithCSRF
 )
 
-@(form: Form[Choice], queryUcr: Option[UcrBlock] = None)(implicit request: Request[_], messages: Messages)
+@(form: Form[Choice], queryUcr: Option[UcrBlock] = None)(implicit request: Request[?], messages: Messages)
 
 @govukLayout(
   title = Title("movement.choice.title", hasErrors = form.hasErrors || form.hasGlobalErrors),

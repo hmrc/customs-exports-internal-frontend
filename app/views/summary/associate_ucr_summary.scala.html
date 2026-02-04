@@ -31,7 +31,7 @@
   formHelper: FormWithCSRF
 )
 
-@(associateUcrAnswers: AssociateUcrAnswers)(implicit request: Request[_], messages: Messages)
+@(associateUcrAnswers: AssociateUcrAnswers)(implicit request: Request[?], messages: Messages)
 
 @changeUrl = @{
   associateUcrAnswers.manageMucrChoice.map(_.choice) match {

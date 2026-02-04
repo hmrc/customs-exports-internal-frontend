@@ -29,7 +29,7 @@ class SpecificDateTimeViewSpec extends ViewSpec with Injector {
   private val page = instanceOf[specific_date_and_time]
 
   private val form: Form[SpecificDateTimeChoice] = SpecificDateTimeChoice.form()
-  private implicit val request: JourneyRequest[_] = journeyRequest(ArrivalAnswers())
+  private implicit val request: JourneyRequest[?] = journeyRequest(ArrivalAnswers())
 
   private def createView: Html = page(form, "some-reference")
 

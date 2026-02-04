@@ -26,7 +26,7 @@ import views.html.session_timed_out
 
 class SessionTimedOutViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: JourneyRequest[_] = journeyRequest(AssociateUcrAnswers())
+  private implicit val request: JourneyRequest[?] = journeyRequest(AssociateUcrAnswers())
   private val page = instanceOf[session_timed_out]
   private def createView(): Html = page()
 

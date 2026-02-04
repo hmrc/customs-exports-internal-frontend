@@ -17,8 +17,8 @@
 package forms
 
 import forms.ConsignmentReferenceType.ConsignmentReferenceType
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{Format, JsString, JsSuccess, Json}
 
 class ConsignmentReferenceTypeSpec extends AnyWordSpec with Matchers {

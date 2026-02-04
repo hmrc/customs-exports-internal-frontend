@@ -16,9 +16,9 @@
 
 package forms
 
+import base.UnitSpec
 import models.{UcrBlock, UcrType}
 import play.api.data.FormError
-import base.UnitSpec
 import testdata.CommonTestData.{validDucr, validDucrPartId, validMucr, validWholeDucrParts}
 
 class ChiefConsignmentSpec extends UnitSpec {

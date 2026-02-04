@@ -30,7 +30,7 @@
   formHelper: FormWithCSRF
 )
 
-@(form: Form[SpecificDateTimeChoice], consignmentReferenceValue: String)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[SpecificDateTimeChoice], consignmentReferenceValue: String)(implicit request: JourneyRequest[?], messages: Messages)
 
 @sectionHeaderKey = @{s"specific.datetime.${request.answers.`type`.toString.toLowerCase}.heading"}
 

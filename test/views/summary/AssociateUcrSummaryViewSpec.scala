@@ -17,7 +17,7 @@
 package views.summary
 
 import base.Injector
-import forms.ManageMucrChoice._
+import forms.ManageMucrChoice.*
 import forms.{AssociateUcr, ManageMucrChoice, MucrOptions}
 import models.UcrType.Ducr
 import models.cache.AssociateUcrAnswers

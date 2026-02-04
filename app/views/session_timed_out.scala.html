@@ -24,7 +24,7 @@
     linkButton: linkButton
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[?], messages: Messages)
 
 @govukLayout(title = Title("sessionTimout.title")) {
 

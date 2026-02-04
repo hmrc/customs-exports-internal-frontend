@@ -19,16 +19,17 @@ package controllers.summary
 import controllers.ControllerLayerSpec
 import forms.ConsignmentReferences
 import models.ReturnToStartException
-import models.cache.JourneyType._
+import models.cache.JourneyType.*
 import models.summary.Confirmation
-import models.summary.SessionHelper._
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import models.summary.SessionHelper.*
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import views.html.summary.confirmation_page
 

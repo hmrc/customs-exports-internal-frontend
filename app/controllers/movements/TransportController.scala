@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedAndMultipartFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.transport
 
@@ -43,7 +43,7 @@ class TransportController @Inject() (
   mcc: MessagesControllerComponents,
   transportPage: transport
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUrlEncodedAndMultipartFormBinding {
 
   val displayPage: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.DEPART)) { implicit request =>
     val answers = request.answersAs[DepartureAnswers]
@@ -71,7 +71,7 @@ class TransportController @Inject() (
       )
   }
 
-  private def form(implicit request: JourneyRequest[_]): Form[Transport] = {
+  private def form(implicit request: JourneyRequest[?]): Form[Transport] = {
     val answers = request.answersAs[DepartureAnswers]
     formProvider.provideForm(answers)
   }

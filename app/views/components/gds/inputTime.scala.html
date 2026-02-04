@@ -22,7 +22,7 @@
 
 @(
     fieldName: String,
-    form: Form[_],
+    form: Form[?],
     label: String,
     hourKey: String = "time.hour",
     minuteKey: String = "time.minute",
@@ -38,7 +38,7 @@
 @ampmField = @{form(s"$fieldName.ampm")}
 @allErrors = @{timeField.errors ++ hourField.errors ++ minuteField.errors ++ ampmField.errors}
 
-<div class="govuk-form-group @{if(allErrors.nonEmpty) "govuk-form-group--error"}">
+<div class="govuk-form-group @{if(allErrors.nonEmpty) "govuk-form-group--error" else ""}">
     <fieldset class="govuk-fieldset" role="group" aria-describedby="@{fieldName}-hint">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
             @label
@@ -61,7 +61,7 @@
                     name = hourField.name,
                     value = hourField.value,
                     label = Label(content = Text(messages(hourKey))),
-                    classes = s"govuk-input govuk-date-input__input govuk-input--width-2 ${if(timeField.hasErrors || hourField.hasErrors) "govuk-input--error"}"
+                    classes = s"govuk-input govuk-date-input__input govuk-input--width-2 ${if(timeField.hasErrors || hourField.hasErrors) "govuk-input--error" else ""}"
                 ))
             </div>
             <div class="govuk-date-input__item">
@@ -70,7 +70,7 @@
                     name = minuteField.name,
                     value = minuteField.value,
                     label = Label(content = Text(messages(minuteKey))),
-                    classes = s"govuk-input govuk-date-input__input govuk-input--width-2 ${if(timeField.hasErrors || minuteField.hasErrors) "govuk-input--error"}"
+                    classes = s"govuk-input govuk-date-input__input govuk-input--width-2 ${if(timeField.hasErrors || minuteField.hasErrors) "govuk-input--error" else ""}"
                 ))
             </div>
             <div class="govuk-date-input__item">
@@ -83,7 +83,7 @@
                         SelectItem(value = Some(Time.pm),text = messages(pmLabelKey), selected = ampmField.value.contains(Time.pm))
                     ),
                     label = Label(content = Text(messages(ampmLabelKey))),
-                    classes = s"govuk-input--width-4 ${if(timeField.hasErrors || ampmField.hasErrors) "govuk-select--error"}"
+                    classes = s"govuk-input--width-4 ${if(timeField.hasErrors || ampmField.hasErrors) "govuk-select--error" else ""}"
                 ))
             </div>
         </div>

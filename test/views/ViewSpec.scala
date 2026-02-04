@@ -36,8 +36,11 @@ class ViewSpec extends AnyWordSpec with Matchers with ViewMatchers with Messages
 
   implicit protected def htmlBodyOf(html: Html): Document = Jsoup.parse(html.toString())
 
-  protected def journeyRequest(answers: Answers): JourneyRequest[_] =
-    JourneyRequest(Cache(providerId, Some(answers), None), AuthenticatedRequest(Operator(providerId), FakeRequest().withCSRFToken))
+  protected def journeyRequest(answers: Answers): JourneyRequest[?] =
+    JourneyRequest(
+      Cache(providerId, Some(answers), None),
+      AuthenticatedRequest(Operator(providerId), FakeRequest().withFormUrlEncodedBody().withCSRFToken)
+    )
 
   /*
     Implicit Utility class for retrieving common elements which are on the vast majority of pages
@@ -45,7 +48,7 @@ class ViewSpec extends AnyWordSpec with Matchers with ViewMatchers with Messages
   protected implicit class CommonElementFinder(html: Html) {
     private val document = htmlBodyOf(html)
 
-    def checkBackButton(implicit request: Request[_]): Assertion = {
+    def checkBackButton(implicit request: Request[?]): Assertion = {
       val backButton = document.getElementById("back-link")
       backButton.text mustBe messages("site.back")
       backButton must haveHref(backButtonDefaultCall)

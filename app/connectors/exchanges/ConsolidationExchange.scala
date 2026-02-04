@@ -18,7 +18,7 @@ package connectors.exchanges
 
 import connectors.exchanges.ActionType.ConsolidationType
 import play.api.libs.json._
-import uk.gov.hmrc.play.json.Union
+import utils.Union
 
 sealed trait ConsolidationExchange {
   val consolidationType: ConsolidationType

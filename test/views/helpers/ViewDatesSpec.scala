@@ -21,7 +21,7 @@ import play.api.i18n.{Lang, Messages}
 import play.api.test.Helpers.{stubLangs, stubMessagesApi}
 import views.helpers.ViewDates.zoneId
 
-import java.time._
+import java.time.*
 import java.time.temporal.UnsupportedTemporalTypeException
 import java.util.Locale
 

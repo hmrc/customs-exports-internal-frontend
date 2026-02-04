@@ -19,7 +19,7 @@ package connectors.exchanges
 import connectors.exchanges.ActionType.MovementType
 import forms._
 import play.api.libs.json.{Format, Json, OFormat}
-import uk.gov.hmrc.play.json.Union
+import utils.Union
 
 trait MovementExchange {
   val eori: String

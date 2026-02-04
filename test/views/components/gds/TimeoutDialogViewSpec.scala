@@ -21,11 +21,11 @@ import play.api.test.FakeRequest
 import views.ViewSpec
 import views.html.components.gds.timeoutDialog
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 class TimeoutDialogViewSpec extends ViewSpec with Injector {
 
-  private implicit val request: FakeRequest[_] = FakeRequest()
+  private implicit val request: FakeRequest[?] = FakeRequest()
 
   private val view = instanceOf[timeoutDialog]
 

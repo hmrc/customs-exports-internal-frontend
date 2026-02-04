@@ -32,9 +32,9 @@
     formHelper: FormWithCSRF
 )
 
-@(form: Form[GoodsDeparted], consignmentReference: String)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[GoodsDeparted], consignmentReference: String)(implicit request: JourneyRequest[?], messages: Messages)
 
-@sectionHeaderKey(request: JourneyRequest[_]) = @{s"movement.sectionHeading.${request.answers.`type`.toString}"}
+@sectionHeaderKey(request: JourneyRequest[?]) = @{s"movement.sectionHeading.${request.answers.`type`.toString}"}
 
 @govukLayout(
   title = Title("goodsDeparted.title", hasErrors = form.hasErrors || form.hasGlobalErrors),

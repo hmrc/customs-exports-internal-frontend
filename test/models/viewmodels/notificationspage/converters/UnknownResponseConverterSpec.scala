@@ -16,11 +16,11 @@
 
 package models.viewmodels.notificationspage.converters
 
+import base.UnitSpec
 import models.notifications.ResponseType.MovementTotalsResponse
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 import play.twirl.api.HtmlFormat
-import base.UnitSpec
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 

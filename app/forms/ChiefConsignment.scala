@@ -97,7 +97,9 @@ object ChiefConsignment {
     )
 
     Forms
-      .mapping("mucr" -> mucrMapping, "ducr" -> ducrMapping, "ducrPartId" -> ducrPartMapping)(ChiefConsignment.apply)(ChiefConsignment.unapply)
+      .mapping("mucr" -> mucrMapping, "ducr" -> ducrMapping, "ducrPartId" -> ducrPartMapping)(ChiefConsignment.apply)(chiefConsignmentForm =>
+        Option((chiefConsignmentForm.mucr, chiefConsignmentForm.ducr, chiefConsignmentForm.ducrPartId))
+      )
       .verifying(
         "manageChiefConsignment.error.blank",
         fields =>

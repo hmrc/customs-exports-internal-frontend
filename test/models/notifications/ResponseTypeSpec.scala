@@ -16,9 +16,9 @@
 
 package models.notifications
 
-import models.notifications.ResponseType._
-import org.scalatest.wordspec.AnyWordSpec
+import models.notifications.ResponseType.*
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsError, JsString}
 
 class ResponseTypeSpec extends AnyWordSpec with Matchers {

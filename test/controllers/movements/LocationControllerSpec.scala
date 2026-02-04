@@ -20,12 +20,12 @@ import controllers.ControllerLayerSpec
 import controllers.movements.routes.GoodsDepartedController
 import controllers.summary.routes.ArriveDepartSummaryController
 import forms.{ConsignmentReferenceType, ConsignmentReferences, Location}
-import models.cache._
+import models.cache.*
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.Form
-import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.MockCache
 import views.html.location
@@ -106,9 +106,9 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
     "return 400 (BAD_REQUEST)" when {
 
       "POST submit is invoked with incorrect form" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
         val answers = ArrivalAnswers(consignmentReferences = Some(consignmentReferences))
-        val invalidForm = Json.toJson(Location("Invalid"))
+        val invalidForm = "code" -> "Invalid"
 
         val result = controller(answers).saveLocation()(postRequest(invalidForm))
 
@@ -122,9 +122,9 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
     "POST submit is invoked with correct form for arrival" should {
 
       "call cache upsert method" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
 
-        val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
+        val correctForm = "code" -> "GBAUEMAEMAEMA"
 
         await(controller(ArrivalAnswers(consignmentReferences = Some(consignmentReferences))).saveLocation()(postRequest(correctForm)))
 
@@ -132,9 +132,9 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "return 303 (SEE_OTHER)" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
 
-        val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
+        val correctForm = "code" -> "GBAUEMAEMAEMA"
 
         val result = controller(ArrivalAnswers(consignmentReferences = Some(consignmentReferences))).saveLocation()(postRequest(correctForm))
 
@@ -146,9 +146,9 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
     "POST submit is invoked with correct form for retrospective arrival" should {
 
       "call cache upsert method" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
 
-        val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
+        val correctForm = "code" -> "GBAUEMAEMAEMA"
 
         await(controller(RetrospectiveArrivalAnswers(consignmentReferences = Some(consignmentReferences))).saveLocation()(postRequest(correctForm)))
 
@@ -156,9 +156,9 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "return 303 (SEE_OTHER)" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
 
-        val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
+        val correctForm = "code" -> "GBAUEMAEMAEMA"
 
         val result =
           controller(RetrospectiveArrivalAnswers(consignmentReferences = Some(consignmentReferences))).saveLocation()(postRequest(correctForm))
@@ -171,9 +171,9 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
     "POST submit is invoked with correct form for departure" should {
 
       "call cache upsert method" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
 
-        val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
+        val correctForm = "code" -> "GBAUEMAEMAEMA"
 
         await(controller(DepartureAnswers(consignmentReferences = Some(consignmentReferences))).saveLocation()(postRequest(correctForm)))
 
@@ -181,9 +181,9 @@ class LocationControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "return 303 (SEE_OTHER)" in {
-        givenTheCacheIsEmpty()
+        whenTheCacheIsEmpty()
 
-        val correctForm = Json.obj("code" -> "GBAUEMAEMAEMA")
+        val correctForm = "code" -> "GBAUEMAEMAEMA"
 
         val result = controller(DepartureAnswers(consignmentReferences = Some(consignmentReferences))).saveLocation()(postRequest(correctForm))
 

@@ -20,7 +20,7 @@ import org.scalatest.matchers.{BeMatcher, MatchResult}
 import play.api.data.{Form, FormError}
 
 trait FormMatchers {
-  val withoutErrors: BeMatcher[Form[_]] = new BeMatcher[Form[_]] {
+  val withoutErrors: BeMatcher[Form[?]] = new BeMatcher[Form[?]] {
     def fieldErrors(errors: Seq[FormError]): String =
       errors
         .groupBy(_.key)
@@ -29,7 +29,7 @@ trait FormMatchers {
         }
         .mkString("\n")
 
-    override def apply(left: Form[_]): MatchResult = {
+    override def apply(left: Form[?]): MatchResult = {
       val errors = left.errors
       MatchResult(errors.isEmpty, s"Form has errors. Errors ${fieldErrors(errors)}", "Form does not have errors")
     }

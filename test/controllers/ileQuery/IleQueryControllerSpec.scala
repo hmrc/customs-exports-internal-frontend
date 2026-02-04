@@ -22,23 +22,24 @@ import controllers.ControllerLayerSpec
 import controllers.exchanges.Operator
 import controllers.ileQuery.routes.IleQueryController
 import handlers.ErrorHandler
-import models.{now, UcrBlock}
 import models.UcrType.Mucr
 import models.cache.{Answers, Cache, IleQuery}
+import models.notifications.queries.*
 import models.notifications.queries.IleQueryResponseExchangeData.{SuccessfulResponseExchangeData, UcrNotFoundResponseExchangeData}
-import models.notifications.queries._
+import models.{now, UcrBlock}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
+import org.mockito.ArgumentMatchers.{any, anyString, eq as meq}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import play.api.libs.json.Json
 import play.api.mvc.Headers
 import play.api.mvc.Results.InternalServerError
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.{MockCache, MockIleQueryCache}
-import testdata.CommonTestData._
+import testdata.CommonTestData.*
 import uk.gov.hmrc.http.HttpResponse
-import views.html._
+import views.html.*
 
 import java.time.Instant
 import scala.concurrent.ExecutionContext.global
@@ -349,7 +350,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
             val optMucrInfoCaptor = newOptionalMucrInfoCaptor
             verify(ileQueryDucrResponsePage).apply(meq(ducrInfo), optMucrInfoCaptor.capture())(any(), any())
             optMucrInfoCaptor.getValue mustBe Some(parentMucrInfo)
-            verifyZeroInteractions(ileQueryMucrResponsePage)
+            verifyNoInteractions(ileQueryMucrResponsePage)
           }
         }
 
@@ -386,7 +387,7 @@ class IleQueryControllerSpec extends ControllerLayerSpec with MockIleQueryCache 
             val optMucrInfoCaptor = newOptionalMucrInfoCaptor
             verify(ileQueryMucrResponsePage).apply(meq(mucrInfo), optMucrInfoCaptor.capture(), meq(Seq.empty))(any(), any())
             optMucrInfoCaptor.getValue mustBe Some(parentMucrInfo)
-            verifyZeroInteractions(ileQueryDucrResponsePage)
+            verifyNoInteractions(ileQueryDucrResponsePage)
           }
         }
       }

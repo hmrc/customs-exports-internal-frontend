@@ -18,13 +18,12 @@ package services
 
 import models.cache.Cache
 import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.given
-import org.mockito.Mockito.verify
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{verify, when}
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.{BeforeAndAfterEach, Suite}
+import org.scalatestplus.mockito.MockitoSugar.mock
 import repositories.CacheRepository
 
 import scala.concurrent.Future
@@ -36,8 +35,8 @@ trait MockCache extends BeforeAndAfterEach {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    given(cacheRepository.upsert(any())).willAnswer(withTheCacheUpserted)
-    given(cacheRepository.removeByProviderId(any())).willReturn(Future.successful((): Unit))
+    when(cacheRepository.upsert(any())).thenAnswer(withTheCacheUpserted)
+    when(cacheRepository.removeByProviderId(any())).thenReturn(Future.successful((): Unit))
   }
 
   override protected def afterEach(): Unit = {
@@ -45,11 +44,11 @@ trait MockCache extends BeforeAndAfterEach {
     super.afterEach()
   }
 
-  protected def givenTheCacheContains(content: Cache): Unit =
-    given(cacheRepository.findByProviderId(any())).willReturn(Future.successful(Some(content)))
+  protected def whenTheCacheContains(content: Cache): Unit =
+    when(cacheRepository.findByProviderId(any())).thenReturn(Future.successful(Some(content)))
 
-  protected def givenTheCacheIsEmpty(): Unit =
-    given(cacheRepository.findByProviderId(any())).willReturn(Future.successful(None))
+  protected def whenTheCacheIsEmpty(): Unit =
+    when(cacheRepository.findByProviderId(any())).thenReturn(Future.successful(None))
 
   protected def theCacheUpserted: Cache = {
     val captor: ArgumentCaptor[Cache] = ArgumentCaptor.forClass(classOf[Cache])
@@ -58,7 +57,7 @@ trait MockCache extends BeforeAndAfterEach {
   }
 
   protected def successfulRemoving(): Unit =
-    given(cacheRepository.removeByProviderId(any())).willReturn(Future.successful((): Unit))
+    when(cacheRepository.removeByProviderId(any())).thenReturn(Future.successful((): Unit))
 
   protected def withTheCacheUpserted: Answer[Future[Cache]] = new Answer[Future[Cache]] {
     override def answer(invocation: InvocationOnMock): Future[Cache] = Future.successful(invocation.getArgument(0))

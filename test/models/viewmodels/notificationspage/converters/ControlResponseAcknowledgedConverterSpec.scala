@@ -16,18 +16,17 @@
 
 package models.viewmodels.notificationspage.converters
 
-import base.MessagesStub
+import base.{MessagesStub, UnitSpec}
 import models.notifications.ResponseType
 import models.viewmodels.decoder.ActionCode
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import base.UnitSpec
 import testdata.NotificationTestData
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 
 class ControlResponseAcknowledgedConverterSpec extends UnitSpec with MessagesStub {
 
-  import ControlResponseAcknowledgedConverterSpec._
+  import ControlResponseAcknowledgedConverterSpec.*
 
   private implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 

@@ -138,9 +138,9 @@ object FieldValidator {
           case _                        => false
         }
 
-  val containsDuplicates: Iterable[_] => Boolean = (input: Iterable[_]) => input.toSet.size != input.size
+  val containsDuplicates: Iterable[?] => Boolean = (input: Iterable[?]) => input.toSet.size != input.size
 
-  val areAllElementsUnique: Iterable[_] => Boolean = (input: Iterable[_]) => input.toSet.size == input.size
+  val areAllElementsUnique: Iterable[?] => Boolean = (input: Iterable[?]) => input.toSet.size == input.size
 
   val ofPattern: String => String => Boolean = (pattern: String) => (input: String) => input.trim.matches(pattern)
 

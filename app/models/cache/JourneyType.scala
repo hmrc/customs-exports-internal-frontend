@@ -23,5 +23,5 @@ object JourneyType extends Enumeration {
 
   val ARRIVE, RETROSPECTIVE_ARRIVE, DEPART, ASSOCIATE_UCR, DISSOCIATE_UCR, SHUT_MUCR = Value
 
-  implicit val format: Format[JourneyType] = Format(Reads.enumNameReads(JourneyType), Writes.enumNameWrites)
+  implicit val format: Format[JourneyType] = Format(Reads.enumNameReads(JourneyType), Writes.enumNameWrites[JourneyType.type])
 }

@@ -16,17 +16,18 @@
 
 package models.viewmodels.notificationspage.converters
 
+import base.UnitSpec
 import models.UcrBlock
 import models.notifications.{Entry, EntryStatus, ResponseType}
 import models.viewmodels.decoder.{CRCCode, Decoder}
 import models.viewmodels.notificationspage.NotificationsPageSingleElement
 import models.viewmodels.notificationspage.converters.ERSResponseConverterSpec.{roeKeyFromDecoder, soeKeyFromDecoder}
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 import play.twirl.api.HtmlFormat
-import base.UnitSpec
 import testdata.CommonTestData.correctUcr
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 

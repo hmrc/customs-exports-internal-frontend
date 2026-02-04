@@ -16,15 +16,15 @@
 
 package forms
 
-import forms.Choice._
-import models.cache.JourneyType.{apply => _, _}
-import org.scalatest.OptionValues
-import play.api.libs.json.{JsError, JsNumber, JsString, JsSuccess, JsValue, Json}
 import base.UnitSpec
+import forms.Choice.*
+import models.cache.JourneyType.{apply as _, *}
+import org.scalatest.OptionValues
+import play.api.libs.json.*
 
 class ChoiceSpec extends UnitSpec with OptionValues {
 
-  import ChoiceSpec._
+  import ChoiceSpec.*
 
   "Validation defined in Choice mapping" should {
 

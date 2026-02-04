@@ -36,7 +36,7 @@ object FindCdsUcr {
       .verifying("ileQuery.ucr.empty", nonEmpty)
       .verifying("ileQuery.ucr.incorrect", isEmpty or validDucrIgnoreCase or validMucrIgnoreCase)
       .transform[String](_.trim.toUpperCase, identity)
-  )(FindCdsUcr.apply)(FindCdsUcr.unapply)
+  )(FindCdsUcr.apply)(findCdsUcrForm => Option(findCdsUcrForm.ucr))
 
   def form: Form[FindCdsUcr] = Form(mapping)
 }

@@ -24,7 +24,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedAndMultipartFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.manage_chief_consignment
 
@@ -38,7 +38,7 @@ class ManageChiefConsignmentController @Inject() (
   cacheRepository: CacheRepository,
   manageChiefConsignmentPage: manage_chief_consignment
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUrlEncodedAndMultipartFormBinding {
 
   val displayPage: Action[AnyContent] = authenticate.async { implicit request =>
     val futureResult = cacheRepository

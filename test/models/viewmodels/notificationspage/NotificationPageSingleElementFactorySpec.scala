@@ -22,14 +22,15 @@ import connectors.exchanges.ActionType.{ConsolidationType, MovementType}
 import models.UcrBlock
 import models.notifications.NotificationFrontendModel
 import models.submissions.Submission
-import models.viewmodels.notificationspage.converters._
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import models.viewmodels.notificationspage.converters.*
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import testdata.CommonTestData._
+import testdata.CommonTestData.*
 import testdata.MovementsTestData.exampleSubmission
 import testdata.NotificationTestData.exampleNotificationFrontendModel
 import utils.DateTimeTestModule

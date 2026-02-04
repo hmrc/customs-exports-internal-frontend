@@ -26,7 +26,7 @@ case class Confirmation(journeyType: JourneyType, conversationId: String, consig
 
 object Confirmation {
 
-  def apply()(implicit request: Request[_]): Option[Confirmation] = {
+  def apply()(implicit request: Request[?]): Option[Confirmation] = {
     val consignmentReferences =
       for {
         ucr <- getValue(UCR)

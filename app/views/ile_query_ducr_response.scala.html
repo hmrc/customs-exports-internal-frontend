@@ -31,7 +31,7 @@
     responseButtons: response_buttons
 )
 
-@(info: DucrInfo, parentMucr: Option[MucrInfo])(implicit request: Request[_], messages: Messages)
+@(info: DucrInfo, parentMucr: Option[MucrInfo])(implicit request: Request[?], messages: Messages)
 
 @govukLayout(
     useCustomContentWidth = true,

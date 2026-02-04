@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import repositories.CacheRepository
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedAndMultipartFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.specific_date_and_time
 
@@ -43,7 +43,7 @@ class SpecificDateTimeController @Inject() (
   specificDateTimePage: specific_date_and_time,
   dateTimeProvider: DateTimeProvider
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with WithUnsafeDefaultFormBinding {
+    extends FrontendController(mcc) with I18nSupport with WithUrlEncodedAndMultipartFormBinding {
 
   val displayPage: Action[AnyContent] = (authenticate andThen getJourney(JourneyType.ARRIVE, JourneyType.DEPART)) { implicit request =>
     val choice = request.answersAs[MovementAnswers].specificDateTimeChoice
@@ -72,7 +72,7 @@ class SpecificDateTimeController @Inject() (
         )
     }
 
-  private def buildPage(form: Form[SpecificDateTimeChoice])(implicit request: JourneyRequest[_]): HtmlFormat.Appendable =
+  private def buildPage(form: Form[SpecificDateTimeChoice])(implicit request: JourneyRequest[?]): HtmlFormat.Appendable =
     specificDateTimePage(form, request.answersAs[MovementAnswers].consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException))
 
   private def updateArrivalAnswers(arrivalAnswers: ArrivalAnswers, specificDateTimeChoice: SpecificDateTimeChoice): ArrivalAnswers = {
