@@ -7,22 +7,22 @@ object Dependencies {
   val hmrcMongoVersion = "2.12.0"
 
   val compile: Seq[ModuleID] = List(
-    "uk.gov.hmrc" %% "bootstrap-frontend-play-30" % bootstrapPlayVersion,
-    "uk.gov.hmrc" %% "play-frontend-hmrc-play-30" % frontendPlayVersion,
-    "uk.gov.hmrc" %% "play-conditional-form-mapping-play-30" % "3.4.0",
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-30" % hmrcMongoVersion,
-    "org.webjars.npm" % "accessible-autocomplete" % "3.0.0",
-    "commons-codec" % "commons-codec" % "1.17.1",
-    "org.playframework"    %% "play-json"    % "3.0.4"
+    "uk.gov.hmrc"           %% "bootstrap-frontend-play-30"             % bootstrapPlayVersion,
+    "uk.gov.hmrc"           %% "play-frontend-hmrc-play-30"             % frontendPlayVersion,
+    "uk.gov.hmrc"           %% "play-conditional-form-mapping-play-30"  % "3.4.0",
+    "uk.gov.hmrc.mongo"     %% "hmrc-mongo-play-30"                     % hmrcMongoVersion,
+    "org.webjars.npm"       % "accessible-autocomplete"                 % "3.0.0",
+    "commons-codec"         % "commons-codec"                           % "1.17.1",
+    "org.playframework"     %% "play-json"                              % "3.0.4"
   )
 
   val test: Seq[ModuleID] = List(
-    "uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrapPlayVersion % "test",
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-test-play-30" % hmrcMongoVersion % "test",
-    "com.vladsch.flexmark" % "flexmark-all" % "0.64.8" % "test",
-    "org.jsoup" % "jsoup" % "1.18.2" % "test",
-    "org.scalatestplus" %% "mockito-4-11" % "3.2.18.0" % "test",
-    "org.scalatest" %% "scalatest" % "3.2.19" % "test"
+    "uk.gov.hmrc"           %% "bootstrap-test-play-30"   % bootstrapPlayVersion  % "test",
+    "uk.gov.hmrc.mongo"     %% "hmrc-mongo-test-play-30"  % hmrcMongoVersion      % "test",
+    "com.vladsch.flexmark"  % "flexmark-all"              % "0.64.8"              % "test",
+    "org.jsoup"             % "jsoup"                     % "1.18.2"              % "test",
+    "org.scalatestplus"     %% "mockito-4-11"             % "3.2.18.0"            % "test",
+    "org.scalatest"         %% "scalatest"                % "3.2.19"              % "test"
   )
 
   def apply(): Seq[ModuleID] = (compile ++ test).map(_.withSources)
