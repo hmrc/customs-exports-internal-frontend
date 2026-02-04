@@ -57,30 +57,13 @@ class LocationViewSpec extends ViewSpec with Injector {
         view.getElementsByClass("govuk-heading-xl").text() mustBe messages("goodsLocation.title")
         view.getElementById("paragraphBody").text() mustBe messages("goodsLocation.paragraph.ARRIVE")
         view.getElementById("goodsLocationLink") must containMessage("goodsLocation.link")
-        view.getElementById("goodsLocationLink")
+        view
+          .getElementById("goodsLocationLink")
           .getElementsByTag("a")
           .attr("href") mustBe appConfig.goodsLocationCodeUrl
         view.getElementById("goodsLocationLink") must containMessage("goodsLocation.paragraph.2")
         view.getElementsByClass("govuk-warning-text").text() contains messages("goodsLocation.warning")
-
-
-      }
-
-      "used for Retrospective Arrival journey" in {
-        implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
-        createView().getTitle must containMessage("goodsLocation.title")
-      }
-
-      "used for Departure journey" in {
-        implicit val request = journeyRequest(DepartureAnswers())
-        createView().getTitle must containMessage("goodsLocation.title")
-      }
-    }
-
-    "render heading" when {
-
-      "used for Arrival journey" in {
-
+        view.getElementsByClass("govuk-label--m").text() mustBe messages("goodsLocation.question")
 
       }
 
@@ -88,18 +71,38 @@ class LocationViewSpec extends ViewSpec with Injector {
         implicit val request = journeyRequest(RetrospectiveArrivalAnswers())
         val view = createView()
 
+        view.getTitle must containMessage("goodsLocation.title")
         view.getElementById("section-header") must containMessage("movement.sectionHeading.RETROSPECTIVE_ARRIVE", validDucr)
-        view.getTitle must containMessage("location.question.retrospectiveArrival")
-        view.getElementById("code-hint") must containMessage("location.hint")
+        view.getElementsByClass("govuk-heading-xl").text() mustBe messages("goodsLocation.title")
+        view.getElementById("paragraphBody").text() mustBe messages("goodsLocation.paragraph.RETROSPECTIVE_ARRIVE")
+        view.getElementById("goodsLocationLink") must containMessage("goodsLocation.link")
+        view
+          .getElementById("goodsLocationLink")
+          .getElementsByTag("a")
+          .attr("href") mustBe appConfig.goodsLocationCodeUrl
+        view.getElementById("goodsLocationLink") must containMessage("goodsLocation.paragraph.2")
+        view.getElementsByClass("govuk-warning-text").text() contains messages("goodsLocation.warning")
+        view.getElementsByClass("govuk-label--m").text() mustBe messages("goodsLocation.question")
+
       }
 
       "used for Departure journey" in {
         implicit val request = journeyRequest(DepartureAnswers())
         val view = createView()
 
+        view.getTitle must containMessage("goodsLocation.title")
         view.getElementById("section-header") must containMessage("movement.sectionHeading.DEPART", validDucr)
-        view.getTitle must containMessage("location.question")
-        view.getElementById("code-hint") must containMessage("location.hint")
+        view.getElementsByClass("govuk-heading-xl").text() mustBe messages("goodsLocation.title")
+        view.getElementById("paragraphBody").text() mustBe messages("goodsLocation.paragraph.DEPART")
+        view.getElementById("goodsLocationLink") must containMessage("goodsLocation.link")
+        view
+          .getElementById("goodsLocationLink")
+          .getElementsByTag("a")
+          .attr("href") mustBe appConfig.goodsLocationCodeUrl
+        view.getElementById("goodsLocationLink") must containMessage("goodsLocation.paragraph.2")
+        view.getElementsByClass("govuk-warning-text").text() contains messages("goodsLocation.warning")
+        view.getElementsByClass("govuk-label--m").text() mustBe messages("goodsLocation.question")
+
       }
     }
 
