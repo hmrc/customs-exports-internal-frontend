@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.gds.{errorSummary, exportsInputText, gds_main_template, sectionHeader}
+@import components.gds.{errorSummary, exportsInputText, gds_main_template, sectionHeader, heading, paragraphBody, link}
 @import controllers.exchanges.JourneyRequest
 @import controllers.movements.routes.LocationController
 @import forms.Location
@@ -22,6 +22,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.helpers.Title
 @import views.components.BackButton
+@import config.AppConfig
 
 @this(
     govukLayout: gds_main_template,
@@ -29,20 +30,22 @@
     exportsInputText: exportsInputText,
     errorSummary: errorSummary,
     sectionHeader: sectionHeader,
-    formHelper: FormWithCSRF
+    formHelper: FormWithCSRF,
+    govukWarningText: GovukWarningText,
+    heading: heading,
+    appConfig: AppConfig
+
 )
 
 @(form: Form[Location], consignmentReference: String)(implicit request: JourneyRequest[?], messages: Messages)
 
-@pageTitleKey = @{
-    if (request.answers.`type` == JourneyType.RETROSPECTIVE_ARRIVE) "location.question.retrospectiveArrival"
-    else "location.question"
-}
+
 
 @sectionHeaderKey = @{ s"movement.sectionHeading.${request.answers.`type`.toString}" }
 
+
 @govukLayout(
-  title = Title(pageTitleKey, hasErrors = form.hasErrors || form.hasGlobalErrors),
+  title = Title("goodsLocation.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton())
 ) {
     @formHelper(action = LocationController.saveLocation, Symbol("autoComplete") -> "off") {
@@ -50,11 +53,24 @@
 
         @sectionHeader(messages(sectionHeaderKey, consignmentReference))
 
+        @heading(messages("goodsLocation.title"))
+
+        @paragraphBody(messages(s"goodsLocation.paragraph.${request.answers.`type`.toString}"), id = Some("paragraphBody"))
+
+        <p class="govuk-body" id = "goodsLocationLink">
+            <a href="@appConfig.goodsLocationCodeUrl" class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank">@Html(messages("goodsLocation.link"))</a>@Html(messages("goodsLocation.paragraph.2"))
+        </p>
+
+        @govukWarningText(WarningText(
+        iconFallbackText = Some("Warning"),
+        content = Text(messages("goodsLocation.warning"))
+        ))
+
         @exportsInputText(
             field = form("code"),
-            labelKey = pageTitleKey,
-            hintKey = Some("location.hint"),
-            isPageHeading = true
+            labelKey = "goodsLocation.question",
+            isPageHeading = true,
+            headingClasses = "govuk-label--m"
         )
 
         @govukButton(Button(content = Text(messages("site.continue"))))

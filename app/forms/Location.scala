@@ -60,9 +60,9 @@ object Location {
 
   val mapping = Forms.mapping(
     "code" -> text()
-      .verifying("location.code.empty", nonEmpty)
+      .verifying("goodsLocation.code.empty", nonEmpty)
       .verifying(
-        "location.code.error",
+        "goodsLocation.code.error",
         isEmpty or (
           validateCountry and validateLocationType and validateQualifierCode and noShorterThan(10) and noLongerThan(17)
         )

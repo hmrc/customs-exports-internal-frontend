@@ -47,6 +47,7 @@ class AppConfig @Inject() (
 
   lazy val customsDeclarationsGoodsTakenOutOfEuUrl: String = loadConfig("urls.customsDeclarationsGoodsTakenOutOfEu")
   lazy val serviceAvailabilityUrl: String = loadConfig("urls.serviceAvailability")
+  lazy val goodsLocationCodeUrl: String = loadConfig("urls.goodsLocationCode")
 
   lazy val mongodbUri: String = loadConfig("mongodb.uri")
 }
