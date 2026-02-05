@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.gds.{errorSummary, exportsInputText, gds_main_template, sectionHeader, heading, paragraphBody, link}
+@import components.gds.{errorSummary, gds_main_template, sectionHeader, heading, paragraphBody, link}
 @import controllers.exchanges.JourneyRequest
 @import controllers.movements.routes.LocationController
 @import forms.Location
@@ -27,7 +27,7 @@
 @this(
     govukLayout: gds_main_template,
     govukButton: GovukButton,
-    exportsInputText: exportsInputText,
+    govukInput: GovukInput,
     errorSummary: errorSummary,
     sectionHeader: sectionHeader,
     formHelper: FormWithCSRF,
@@ -62,16 +62,24 @@
         </p>
 
         @govukWarningText(WarningText(
-        iconFallbackText = Some("Warning"),
-        content = Text(messages("goodsLocation.warning"))
+            iconFallbackText = Some("Warning"),
+            content = Text(messages("goodsLocation.warning"))
         ))
 
-        @exportsInputText(
-            field = form("code"),
-            labelKey = "goodsLocation.question",
-            isPageHeading = true,
-            headingClasses = "govuk-label--m"
-        )
+        @govukInput(Input(
+            id = "code",
+            name = "code",
+            classes = "govuk-!-width-two-thirds",
+            value = form("code").value,
+            label = Label(
+                content = Text(messages("goodsLocation.question")),
+                classes = "govuk-label--m"
+            ),
+            errorMessage =
+                form("code").error.map(err =>
+                ErrorMessage(content = Text(messages(err.message, err.args:_*)))
+            )
+        ))
 
         @govukButton(Button(content = Text(messages("site.continue"))))
     }
