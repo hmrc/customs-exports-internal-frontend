@@ -16,7 +16,7 @@
 
 package controllers
 
-Clear import controllers.actions.AuthenticatedAction
+import controllers.actions.AuthenticatedAction
 import controllers.routes.SignOutController
 import models.SignOutReason
 import play.api.i18n.I18nSupport
