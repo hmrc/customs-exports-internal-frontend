@@ -19,6 +19,8 @@ package controllers
 import controllers.actions.AuthenticatedAction
 import forms.FindCdsUcr
 import forms.FindCdsUcr.form
+import models.UcrBlock
+import models.cache.Cache
 import models.summary.SessionHelper
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -59,7 +61,11 @@ class FindCdsConsignmentController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => BadRequest(findCdsConsignment(formWithErrors)),
-        ucr => Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr.ucr))
+        ucr => {
+          val ucrBlock = UcrBlock(ucr = ucr.ucr, ucrType = "")
+          cacheRepository.upsert(Cache(request.providerId, ucrBlock))
+          Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr.ucr))
+        }
       )
   }
 
