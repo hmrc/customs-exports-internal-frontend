@@ -31,7 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.find_cds_consignment
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FindCdsConsignmentController @Inject() (
@@ -56,15 +56,16 @@ class FindCdsConsignmentController @Inject() (
     futureResult.map(_.withSession(SessionHelper.clearAllReceiptPageSessionKeys()))
   }
 
-  val submitCdsConsignment: Action[AnyContent] = authenticate { implicit request =>
+  val submitCdsConsignment: Action[AnyContent] = authenticate.async { implicit request =>
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => BadRequest(findCdsConsignment(formWithErrors)),
+        formWithErrors => Future.successful(BadRequest(findCdsConsignment(formWithErrors))),
         ucr => {
           val ucrBlock = UcrBlock(ucr = ucr.ucr, ucrType = "")
-          cacheRepository.upsert(Cache(request.providerId, ucrBlock))
-          Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr.ucr))
+          cacheRepository.upsert(Cache(request.providerId, ucrBlock)).map { _ =>
+            Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr.ucr))
+          }
         }
       )
   }
