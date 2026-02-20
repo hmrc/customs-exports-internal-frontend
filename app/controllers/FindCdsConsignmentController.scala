@@ -19,6 +19,8 @@ package controllers
 import controllers.actions.AuthenticatedAction
 import forms.FindCdsUcr
 import forms.FindCdsUcr.form
+import models.UcrBlock
+import models.cache.Cache
 import models.summary.SessionHelper
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -29,7 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.find_cds_consignment
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FindCdsConsignmentController @Inject() (
@@ -54,12 +56,17 @@ class FindCdsConsignmentController @Inject() (
     futureResult.map(_.withSession(SessionHelper.clearAllReceiptPageSessionKeys()))
   }
 
-  val submitCdsConsignment: Action[AnyContent] = authenticate { implicit request =>
+  val submitCdsConsignment: Action[AnyContent] = authenticate.async { implicit request =>
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => BadRequest(findCdsConsignment(formWithErrors)),
-        ucr => Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr.ucr))
+        formWithErrors => Future.successful(BadRequest(findCdsConsignment(formWithErrors))),
+        ucr => {
+          val ucrBlock = UcrBlock(ucr = ucr.ucr, ucrType = "")
+          cacheRepository.upsert(Cache(request.providerId, ucrBlock)).map { _ =>
+            Redirect(controllers.ileQuery.routes.IleQueryController.getConsignmentInformation(ucr.ucr))
+          }
+        }
       )
   }
 

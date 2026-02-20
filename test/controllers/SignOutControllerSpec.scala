@@ -23,6 +23,7 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
+import repositories.CacheRepository
 import views.html.{session_timed_out, user_signed_out}
 
 class SignOutControllerSpec extends ControllerLayerSpec with ScalaFutures {
@@ -30,8 +31,9 @@ class SignOutControllerSpec extends ControllerLayerSpec with ScalaFutures {
   private val mcc = stubMessagesControllerComponents()
   private val sessionTimedOutPage = mock[session_timed_out]
   private val userSignedOutPage = mock[user_signed_out]
+  private val cacheRepository = mock[CacheRepository]
 
-  private val controller = new SignOutController(mcc, sessionTimedOutPage, userSignedOutPage)
+  private val controller = new SignOutController(mcc, sessionTimedOutPage, userSignedOutPage, SuccessfulAuth(), cacheRepository)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -82,7 +84,7 @@ class SignOutControllerSpec extends ControllerLayerSpec with ScalaFutures {
 
   "SignOutController on sessionTimeoutSignedOut" should {
 
-    val controller = new SignOutController(mcc, sessionTimedOutPage, userSignedOutPage)
+    val controller = new SignOutController(mcc, sessionTimedOutPage, userSignedOutPage, SuccessfulAuth(), cacheRepository)
 
     "call sessionTimedOutPage" in {
       controller.sessionTimeoutSignedOut()(getRequest).futureValue
@@ -99,7 +101,7 @@ class SignOutControllerSpec extends ControllerLayerSpec with ScalaFutures {
 
   "SignOutController on userSignedOut" should {
 
-    val controller = new SignOutController(mcc, sessionTimedOutPage, userSignedOutPage)
+    val controller = new SignOutController(mcc, sessionTimedOutPage, userSignedOutPage, SuccessfulAuth(), cacheRepository)
 
     "call userSignedOutPage" in {
       controller.userSignedOut()(getRequest).futureValue
