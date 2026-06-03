@@ -19,14 +19,14 @@ package controllers
 import controllers.actions.AuthenticatedAction
 import controllers.exchanges.AuthenticatedRequest
 import controllers.ileQuery.routes.FindConsignmentController
-import controllers.summary.routes._
+import controllers.summary.routes.*
 import forms.Choice
-import models.{ReturnToStartException, UcrBlock}
 import models.UcrType.{Ducr, DucrPart, Mucr}
-import models.cache._
+import models.cache.*
 import models.summary.SessionHelper
+import models.{ReturnToStartException, UcrBlock}
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedAndMultipartFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

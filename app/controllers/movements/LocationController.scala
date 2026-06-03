@@ -18,12 +18,12 @@ package controllers.movements
 
 import controllers.actions.{AuthenticatedAction, JourneyRefiner}
 import controllers.exchanges.JourneyRequest
-import controllers.summary.routes._
+import controllers.summary.routes.*
 import forms.Location
 import forms.Location.form
 import models.ReturnToStartException
+import models.cache.*
 import models.cache.JourneyType.{ARRIVE, DEPART, RETROSPECTIVE_ARRIVE}
-import models.cache._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
