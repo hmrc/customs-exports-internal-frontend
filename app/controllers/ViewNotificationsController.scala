@@ -18,7 +18,6 @@ package controllers
 
 import connectors.CustomsDeclareExportsMovementsConnector
 import controllers.actions.AuthenticatedAction
-import javax.inject.Inject
 import models.notifications.NotificationFrontendModel
 import models.submissions.Submission
 import models.viewmodels.notificationspage.{NotificationPageSingleElementFactory, NotificationsPageSingleElement}
@@ -27,6 +26,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.view_notifications
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class ViewNotificationsController @Inject() (
