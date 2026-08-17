@@ -35,7 +35,7 @@
     formHelper: FormWithCSRF
 )
 
-@(form: Form[Transport], consignmentReference: String)(implicit request: Request[?], messages: Messages)
+@(form: Form[Transport], consignmentReference: String, isBackIntoTheUk: Boolean)(implicit request: Request[?], messages: Messages)
 
 
 @govukLayout(
@@ -53,7 +53,14 @@
             name = "modeOfTransport",
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(messages("transport.modeOfTransport.question")),
+                    content = Text(
+                        messages(
+                            if (isBackIntoTheUk)
+                                "transport.modeOfTransport.question.optional"
+                            else
+                                "transport.modeOfTransport.question"
+                        )
+                    ),
                     isPageHeading = false,
                     classes = "govuk-fieldset__legend--m"
                 ))
@@ -109,7 +116,14 @@
             classes = "govuk-!-width-one-third",
             value = form("transportId").value,
             label = Label(
-                content = Text(messages("transport.transportId.question")),
+                content = Text(
+                    messages(
+                        if (isBackIntoTheUk)
+                            "transport.transportId.question.optional"
+                        else
+                            "transport.transportId.question"
+                    )
+                ),
                 classes = "govuk-label--m"
             ),
             hint = Some(Hint(
@@ -122,7 +136,11 @@
 
         @components.autocomplete.field_accessible_autocomplete(
             field = form("nationality"),
-            label = "transport.nationality.question",
+            label =
+                if (isBackIntoTheUk)
+                    "transport.nationality.question.optional"
+                else
+                    "transport.nationality.question",
             labelClass = Some("govuk-label--m"),
             hintText = None,
             emptySelectValue = messages("transport.nationality.country.help"),

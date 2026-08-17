@@ -30,6 +30,8 @@ import repositories.CacheRepository
 import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedAndMultipartFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.transport
+import forms.GoodsDeparted
+import forms.GoodsDeparted.DepartureLocation.BackIntoTheUk
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,7 +51,7 @@ class TransportController @Inject() (
     val answers = request.answersAs[DepartureAnswers]
     val consignmentReference = answers.consignmentReferences.map(_.referenceValue).getOrElse(throw ReturnToStartException)
     answers.goodsDeparted match {
-      case Some(_) => Ok(transportPage(answers.transport.fold(form)(form.fill(_)), consignmentReference))
+      case Some(_) => Ok(transportPage(answers.transport.fold(form)(form.fill(_)), consignmentReference, isBackIntoTheUk(answers)))
       case None    => Redirect(routes.GoodsDepartedController.displayPage)
     }
   }
@@ -61,7 +63,7 @@ class TransportController @Inject() (
     form
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[Transport]) => Future.successful(BadRequest(transportPage(formWithErrors, consignmentReference))),
+        (formWithErrors: Form[Transport]) => Future.successful(BadRequest(transportPage(formWithErrors, consignmentReference, isBackIntoTheUk(answers)))),
         validForm => {
           val movementAnswers = answers.copy(transport = Some(validForm))
           cacheRepository.upsert(request.cache.update(movementAnswers)).map { _ =>
@@ -75,4 +77,7 @@ class TransportController @Inject() (
     val answers = request.answersAs[DepartureAnswers]
     formProvider.provideForm(answers)
   }
+
+  private def isBackIntoTheUk(answers: DepartureAnswers): Boolean =
+    answers.goodsDeparted.contains(GoodsDeparted(BackIntoTheUk))
 }

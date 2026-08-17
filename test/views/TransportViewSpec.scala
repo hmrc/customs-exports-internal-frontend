@@ -30,13 +30,13 @@ class TransportViewSpec extends ViewSpec with Injector {
   private val form = Transport.outOfTheUkForm
   private val page = instanceOf[transport]
 
-  private def createView: Html = page(form, "some-reference")
+  private def createView: Html = page(form, "some-reference", false)
 
   "View" should {
 
     "have the page's title prefixed with 'Error:'" when {
       "the page has errors" in {
-        val view = page(form.withGlobalError("error.summary.title"), "some-reference")
+        val view = page(form.withGlobalError("error.summary.title"), "some-reference", false)
         view.head.getElementsByTag("title").first.text must startWith("Error: ")
       }
     }
@@ -67,6 +67,21 @@ class TransportViewSpec extends ViewSpec with Injector {
       createView.getElementsByAttributeValue("for", "nationality").first() must containMessage("transport.nationality.question")
     }
 
+    "render optional labels when returning to the UK" in {
+      val view = page(form, "some-reference", true)
+
+      view.getElementsByClass("govuk-fieldset__legend").get(0).text() mustBe
+        messages("transport.modeOfTransport.question.optional")
+
+      view.getElementsByAttributeValue("for", "transportId").first() must containMessage(
+        "transport.transportId.question.optional"
+      )
+
+      view.getElementsByAttributeValue("for", "nationality").first() must containMessage(
+        "transport.nationality.question.optional"
+      )
+    }
+
     "render the back button" in {
       createView.checkBackButton
     }
@@ -77,7 +92,7 @@ class TransportViewSpec extends ViewSpec with Injector {
       }
 
       "some errors" in {
-        val viewWithError = page(form.withError("error", "error.required"), "some-reference")
+        val viewWithError = page(form.withError("error", "error.required"), "some-reference", false)
         viewWithError.getElementsByClass("govuk-error-summary__title").text() mustBe messages("error.summary.title")
       }
     }

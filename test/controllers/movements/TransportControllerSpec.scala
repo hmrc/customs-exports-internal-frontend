@@ -32,6 +32,7 @@ import play.twirl.api.HtmlFormat
 import services.MockCache
 import testdata.CommonTestData.providerId
 import views.html.transport
+import forms.GoodsDeparted.DepartureLocation.BackIntoTheUk
 
 import scala.concurrent.ExecutionContext.global
 
@@ -48,7 +49,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
     super.beforeEach()
 
     when(formProvider.provideForm(any())).thenReturn(Transport.outOfTheUkForm)
-    when(page.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -60,13 +61,19 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
   private def theResponseForm: Form[Transport] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[Transport]])
-    verify(page).apply(captor.capture(), any())(any(), any())
+    verify(page).apply(captor.capture(), any(), any())(any(), any())
     captor.getValue
   }
 
   private def answersPassedToFormProvider: DepartureAnswers = {
     val captor = ArgumentCaptor.forClass(classOf[DepartureAnswers])
     verify(formProvider).provideForm(captor.capture())
+    captor.getValue
+  }
+
+  private def isBackIntoTheUkPassedToView: Boolean = {
+    val captor = ArgumentCaptor.forClass(classOf[Boolean])
+    verify(page).apply(any(), any(), captor.capture())(any(), any())
     captor.getValue
   }
 
@@ -95,6 +102,30 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
 
         status(result) mustBe OK
         theResponseForm.value mustBe cachedTransport
+      }
+
+      "pass false to the view when goods are leaving the UK" in {
+        val answers = DepartureAnswers(
+          goodsDeparted = Some(GoodsDeparted(OutOfTheUk)),
+          consignmentReferences = consignmentReferences
+        )
+        whenTheCacheContains(Cache(providerId, Some(answers), None))
+
+        await(controller(answers).displayPage(getRequest))
+
+        isBackIntoTheUkPassedToView mustBe false
+      }
+
+      "pass true to the view when goods are going back into the UK" in {
+        val answers = DepartureAnswers(
+          goodsDeparted = Some(GoodsDeparted(BackIntoTheUk)),
+          consignmentReferences = consignmentReferences
+        )
+        whenTheCacheContains(Cache(providerId, Some(answers), None))
+
+        await(controller(answers).displayPage(getRequest))
+
+        isBackIntoTheUkPassedToView mustBe true
       }
     }
 
