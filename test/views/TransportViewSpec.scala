@@ -73,13 +73,9 @@ class TransportViewSpec extends ViewSpec with Injector {
       view.getElementsByClass("govuk-fieldset__legend").get(0).text() mustBe
         messages("transport.modeOfTransport.question.optional")
 
-      view.getElementsByAttributeValue("for", "transportId").first() must containMessage(
-        "transport.transportId.question.optional"
-      )
+      view.getElementsByAttributeValue("for", "transportId").first() must containMessage("transport.transportId.question.optional")
 
-      view.getElementsByAttributeValue("for", "nationality").first() must containMessage(
-        "transport.nationality.question.optional"
-      )
+      view.getElementsByAttributeValue("for", "nationality").first() must containMessage("transport.nationality.question.optional")
     }
 
     "render the back button" in {

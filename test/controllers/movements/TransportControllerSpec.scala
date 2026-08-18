@@ -105,10 +105,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "pass false to the view when goods are leaving the UK" in {
-        val answers = DepartureAnswers(
-          goodsDeparted = Some(GoodsDeparted(OutOfTheUk)),
-          consignmentReferences = consignmentReferences
-        )
+        val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(OutOfTheUk)), consignmentReferences = consignmentReferences)
         whenTheCacheContains(Cache(providerId, Some(answers), None))
 
         await(controller(answers).displayPage(getRequest))
@@ -117,10 +114,7 @@ class TransportControllerSpec extends ControllerLayerSpec with MockCache {
       }
 
       "pass true to the view when goods are going back into the UK" in {
-        val answers = DepartureAnswers(
-          goodsDeparted = Some(GoodsDeparted(BackIntoTheUk)),
-          consignmentReferences = consignmentReferences
-        )
+        val answers = DepartureAnswers(goodsDeparted = Some(GoodsDeparted(BackIntoTheUk)), consignmentReferences = consignmentReferences)
         whenTheCacheContains(Cache(providerId, Some(answers), None))
 
         await(controller(answers).displayPage(getRequest))
