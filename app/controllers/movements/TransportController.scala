@@ -63,7 +63,8 @@ class TransportController @Inject() (
     form
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[Transport]) => Future.successful(BadRequest(transportPage(formWithErrors, consignmentReference, isBackIntoTheUk(answers)))),
+        (formWithErrors: Form[Transport]) =>
+          Future.successful(BadRequest(transportPage(formWithErrors, consignmentReference, isBackIntoTheUk(answers)))),
         validForm => {
           val movementAnswers = answers.copy(transport = Some(validForm))
           cacheRepository.upsert(request.cache.update(movementAnswers)).map { _ =>
