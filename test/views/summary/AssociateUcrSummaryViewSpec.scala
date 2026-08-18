@@ -62,7 +62,7 @@ class AssociateUcrSummaryViewSpec extends ViewSpec with Injector {
     "render change link" when {
 
       def validateChangeLink(view: Html, call: Call): Unit = {
-        val changeUcr = view.getElementsByClass("govuk-link").first()
+        val changeUcr = view.getElementsByClass("govuk-link").get(1)
         changeUcr must containMessage("site.change")
         changeUcr must haveHref(call)
       }
