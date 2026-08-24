@@ -26,7 +26,7 @@
 
 @signOutHref = {
   @if(request.isInstanceOf[AuthenticatedRequest[?]] || request.isInstanceOf[JourneyRequest[?]]){
-    <a href="@{SignOutController.signOut(models.SignOutReason.UserAction).url}" class="hmrc-sign-out-nav_link">
+    <a href="@{SignOutController.signOut(models.SignOutReason.UserAction).url}" class="govuk-link hmrc-sign-out-nav_link">
         @messages("site.link.signOut")
     </a>
   }
@@ -58,7 +58,7 @@
         </div>
 
         <div class="hmrc-internal-service-name">
-            <a href="@{FindConsignmentController.displayQueryForm.url}" class="hmrc-internal-service-name__link govuk-service-navigation__link" title='@messages("header.servicename.alt")' >
+            <a href="@{FindConsignmentController.displayQueryForm.url}" class="govuk-link hmrc-internal-service-name__link" title='@messages("header.servicename.alt")' >
                 @messages("service.name")
             </a>
             @signOutHref

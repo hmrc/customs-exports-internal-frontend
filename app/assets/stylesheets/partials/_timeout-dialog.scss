@@ -1,3 +1,5 @@
+@import '_forms__mixin';
+
 .hmrc-timeout-overlay {
   position: fixed;
   z-index: 1001;
@@ -32,13 +34,13 @@ html {
   border: 5px solid govuk-colour("black");
   background-color: govuk-colour("white");
 
-  @use govuk-media-query($from: tablet) {
+  @media screen and (min-width: 641px) {
     width: 460px;
   }
 }
 
 .hmrc-timeout-dialog__message {
-  @use govuk-font(19);
+  font-size: 19px;
   line-height: 1.31579;
 }
 
@@ -50,7 +52,7 @@ html {
 
 .hmrc-timeout-dialog__link {
   display: inline-block;
-  @use govuk-media-query($from: tablet) {
+  @media screen and (min-width: 641px) {
     position: relative;
     top: 2px;
     padding: .526315em .789473em .263157em;

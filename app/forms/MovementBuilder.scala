@@ -58,7 +58,7 @@ class MovementBuilder @Inject() (zoneId: ZoneId) {
       consignmentReference = answers.consignmentReferences.getOrElse(throw ReturnToStartException),
       movementDetails = movementDetails(answers).getOrElse(throw ReturnToStartException),
       location = answers.location.getOrElse(throw ReturnToStartException),
-      transport = answers.transport.getOrElse(throw ReturnToStartException)
+      transport = answers.transport.getOrElse(Transport(None, None, None))
     )
 
   private def movementDetails(answers: ArrivalAnswers): Option[MovementDetailsExchange] =
