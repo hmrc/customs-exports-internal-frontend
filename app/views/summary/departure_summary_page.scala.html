@@ -20,6 +20,7 @@
 @import controllers.summary.routes.ArriveDepartSummaryController
 @import models.cache.DepartureAnswers
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import forms.GoodsDeparted.DepartureLocation.BackIntoTheUk
 @import views.helpers.{Title, ViewDates}
 @import views.components.BackButton
 
@@ -95,7 +96,9 @@
 
     @goodsDepartedList(data.goodsDeparted)
 
-    @transportList(data.transport)
+    @if(!data.goodsDeparted.exists(_.departureLocation == BackIntoTheUk)) {
+        @transportList(data.transport)
+    }
 
     @govukButton(Button(content = Text(messages("site.confirmAndSubmit"))))
   }

@@ -18,7 +18,8 @@ package controllers.movements
 
 import controllers.ControllerLayerSpec
 import controllers.movements.routes.TransportController
-import forms.GoodsDeparted.DepartureLocation.BackIntoTheUk
+import controllers.summary.routes.ArriveDepartSummaryController
+import forms.GoodsDeparted.DepartureLocation.{BackIntoTheUk, OutOfTheUk}
 import forms.{ConsignmentReferenceType, ConsignmentReferences, GoodsDeparted}
 import models.cache.{Answers, ArrivalAnswers, Cache, DepartureAnswers}
 import org.mockito.ArgumentCaptor
@@ -115,15 +116,26 @@ class GoodsDepartedControllerSpec extends ControllerLayerSpec with MockCache {
         )
       }
 
-      "return 303 (SEE_OTHER) and redirect to Transport page" in {
+      "return 303 (SEE_OTHER) and redirect to Transport page when goods are going out of the UK" in {
         whenTheCacheIsEmpty()
-        val correctForm = "departureLocation" -> BackIntoTheUk.value
+        val correctForm = "departureLocation" -> OutOfTheUk.value
 
         val result = controller().saveGoodsDeparted()(postRequest(correctForm))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(TransportController.displayPage.url)
       }
+
+      "return 303 (SEE_OTHER) and redirect to Summary page when goods are going back into the UK" in {
+        whenTheCacheIsEmpty()
+        val correctForm = "departureLocation" -> BackIntoTheUk.value
+
+        val result = controller().saveGoodsDeparted()(postRequest(correctForm))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(ArriveDepartSummaryController.displayPage.url)
+      }
+
     }
 
     "provided with incorrect form" should {
