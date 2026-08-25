@@ -63,10 +63,24 @@ class GoodsDepartedController @Inject() (
       .fold(
         (formWithErrors: Form[GoodsDeparted]) => Future.successful(BadRequest(goodsDepartedPage(formWithErrors, consignmentReference))),
         validGoodsDeparted => {
-          val updatedAnswers = request.answersAs[DepartureAnswers].copy(goodsDeparted = Some(validGoodsDeparted))
+
+          val updatedAnswers =
+            validGoodsDeparted.departureLocation match {
+              case GoodsDeparted.DepartureLocation.OutOfTheUk =>
+                request.answersAs[DepartureAnswers].copy(goodsDeparted = Some(validGoodsDeparted))
+
+              case GoodsDeparted.DepartureLocation.BackIntoTheUk =>
+                request.answersAs[DepartureAnswers].copy(goodsDeparted = Some(validGoodsDeparted), transport = None)
+            }
 
           cacheRepository.upsert(request.cache.update(updatedAnswers)).map { _ =>
-            Redirect(controllers.movements.routes.TransportController.displayPage)
+            validGoodsDeparted.departureLocation match {
+              case GoodsDeparted.DepartureLocation.OutOfTheUk =>
+                Redirect(controllers.movements.routes.TransportController.displayPage)
+
+              case GoodsDeparted.DepartureLocation.BackIntoTheUk =>
+                Redirect(controllers.summary.routes.ArriveDepartSummaryController.displayPage)
+            }
           }
         }
       )

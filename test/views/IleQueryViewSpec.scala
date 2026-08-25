@@ -46,7 +46,7 @@ class IleQueryViewSpec extends ViewSpec with Injector {
     }
 
     "contains link to view previous requests" in {
-      val previousRequests = view.getElementsByClass("govuk-link").get(2)
+      val previousRequests = view.getElementsByClass("govuk-link").get(3)
 
       previousRequests.text mustBe messages("ileQuery.link.requests")
       previousRequests must haveHref(ViewSubmissionsController.displayPage)
