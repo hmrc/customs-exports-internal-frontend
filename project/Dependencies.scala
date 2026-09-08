@@ -2,8 +2,8 @@ import sbt.*
 
 object Dependencies {
 
-  val bootstrapPlayVersion = "10.7.0"
-  val frontendPlayVersion = "13.11.0"
+  val bootstrapPlayVersion = "10.8.0"
+  val frontendPlayVersion = "13.12.0"
   val hmrcMongoVersion = "2.13.0"
 
   val compile: Seq[ModuleID] = List(
@@ -12,7 +12,7 @@ object Dependencies {
     "uk.gov.hmrc"           %% "play-conditional-form-mapping-play-30"  % "3.5.0",
     "uk.gov.hmrc.mongo"     %% "hmrc-mongo-play-30"                     % hmrcMongoVersion,
     "org.webjars.npm"       % "accessible-autocomplete"                 % "3.0.1",
-    "commons-codec"         % "commons-codec"                           % "1.22.0",
+    "commons-codec"         % "commons-codec"                           % "1.22.1",
     "org.playframework"     %% "play-json"                              % "3.0.6"
   )
 
@@ -20,7 +20,7 @@ object Dependencies {
     "uk.gov.hmrc"           %% "bootstrap-test-play-30"   % bootstrapPlayVersion  % "test",
     "uk.gov.hmrc.mongo"     %% "hmrc-mongo-test-play-30"  % hmrcMongoVersion      % "test",
     "com.vladsch.flexmark"  % "flexmark-all"              % "0.64.8"              % "test",
-    "org.jsoup"             % "jsoup"                     % "1.22.2"              % "test",
+    "org.jsoup"             % "jsoup"                     % "1.23.2"              % "test",
     "org.scalatestplus"     %% "mockito-4-11"             % "3.2.18.0"            % "test",
     "org.scalatest"         %% "scalatest"                % "3.2.20"              % "test"
   )
