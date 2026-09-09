@@ -41,7 +41,7 @@
   title = Title("manageChiefConsignment.title", "manageChiefConsignment.pageHint", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton())
 ) {
-  @formHelper(action = ManageChiefConsignmentController.submitChiefConsignment, Symbol("autoComplete") -> "off") {
+  @formHelper(action = ManageChiefConsignmentController.submitChiefConsignment) {
     @errorSummary(form.errors)
 
     @pageTitle(text = messages("manageChiefConsignment.title"), classes = "")

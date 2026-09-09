@@ -41,7 +41,7 @@
   title = Title("movement.choice.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = queryUcr.map(_ => BackButton())
 ) {
-    @formHelper(action = ChoiceController.submit, Symbol("autoComplete") -> "off") {
+    @formHelper(action = ChoiceController.submit) {
         @errorSummary(form.errors)
 
         @sectionHeader(messages("movement.choice.sectionHeading", queryUcr.map(_.ucr).getOrElse("")))
