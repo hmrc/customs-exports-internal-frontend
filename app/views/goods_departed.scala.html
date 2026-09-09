@@ -40,7 +40,7 @@
   title = Title("goodsDeparted.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton())
 ) {
-    @formHelper(action = controllers.movements.routes.GoodsDepartedController.saveGoodsDeparted, Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.movements.routes.GoodsDepartedController.saveGoodsDeparted) {
       @errorSummary(form.errors)
 
       @sectionHeader(messages(sectionHeaderKey(request), consignmentReference))

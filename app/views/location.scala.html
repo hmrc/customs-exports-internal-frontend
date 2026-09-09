@@ -48,7 +48,7 @@
   title = Title("goodsLocation.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton())
 ) {
-    @formHelper(action = LocationController.saveLocation, Symbol("autoComplete") -> "off") {
+    @formHelper(action = LocationController.saveLocation) {
         @errorSummary(form.errors)
 
         @sectionHeader(messages(sectionHeaderKey, consignmentReference))
