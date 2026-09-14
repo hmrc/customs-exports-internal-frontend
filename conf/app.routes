@@ -14,10 +14,6 @@ GET         /find-cds-consignment                  controllers.FindCdsConsignmen
 GET         /find-cds-consignment/:ucr             controllers.ileQuery.IleQueryController.getConsignmentInformation(ucr: String)
 POST        /find-cds-consignment                  controllers.FindCdsConsignmentController.submitCdsConsignment
 
-# Manage CHIEF consignment page
-GET         /manage-chief-consignment              controllers.ManageChiefConsignmentController.displayPage
-POST        /manage-chief-consignment              controllers.ManageChiefConsignmentController.submitChiefConsignment
-
 # Declaration choice page
 GET         /choice                                controllers.ChoiceController.displayPage
 POST        /choice                                controllers.ChoiceController.submit

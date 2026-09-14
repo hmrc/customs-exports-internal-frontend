@@ -88,7 +88,7 @@ trait IntegrationSpec
   protected def theAnswersFor(pid: String): Option[Answers] = theCacheFor(pid).flatMap(_.answers)
 
   protected def givenCacheFor(pid: String, answers: Answers): Unit =
-    cacheRepository.insertOne(Cache(providerId = pid, answers = Some(answers), queryUcr = None))
+    await(cacheRepository.insertOne(Cache(providerId = pid, answers = Some(answers), queryUcr = None)))
 
   protected def givenCacheFor(pid: String, queryUcr: UcrBlock): Unit = givenCacheFor(Cache(pid, queryUcr = queryUcr))
   protected def givenCacheFor(cache: Cache): Unit = await(cacheRepository.insertOne(cache))
