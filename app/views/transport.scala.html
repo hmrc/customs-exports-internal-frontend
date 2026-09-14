@@ -42,7 +42,7 @@
   title = Title("transport.title", hasErrors = form.hasErrors || form.hasGlobalErrors),
   backButton = Some(BackButton())
 ) {
-    @formHelper(action = controllers.movements.routes.TransportController.saveTransport) -> "off") {
+    @formHelper(action = controllers.movements.routes.TransportController.saveTransport) {
         @errorSummary(form.errors)
 
         @sectionHeader(messages("transport.heading", consignmentReference))
