@@ -19,13 +19,11 @@ package models
 import models.UcrType
 import play.api.libs.json.{Json, OFormat}
 
-case class UcrBlock(ucr: String, ucrPartNo: Option[String] = None, ucrType: String, chiefUcr: Option[Boolean] = None) {
+case class UcrBlock(ucr: String, ucrPartNo: Option[String] = None, ucrType: String) {
 
   def is(ucrType: UcrType): Boolean = this.ucrType.equals(ucrType.codeValue)
 
   def isNot(ucrType: UcrType): Boolean = !is(ucrType)
-
-  val isChief: Boolean = chiefUcr.fold(false)(_.self)
 
   def fullUcr: String = ucr + ucrPartNo.map(ucrPartNoValue => s"-$ucrPartNoValue").getOrElse("")
 
