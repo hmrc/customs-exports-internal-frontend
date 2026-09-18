@@ -83,9 +83,6 @@ class ChoiceController @Inject() (
       case Choice.Arrival =>
         (ArrivalAnswers.fromQueryUcr(cache.queryUcr), movements.routes.SpecificDateTimeController.displayPage)
 
-      case Choice.RetrospectiveArrival if cache.queryUcr.exists(_.isChief) =>
-        (ArrivalAnswers.fromQueryUcr(cache.queryUcr).withLocationCode("GBAURETRETRET"), movements.routes.SpecificDateTimeController.displayPage)
-
       case Choice.RetrospectiveArrival =>
         (RetrospectiveArrivalAnswers.fromQueryUcr(cache.queryUcr), movements.routes.LocationController.displayPage)
 

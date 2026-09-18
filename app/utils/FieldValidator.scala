@@ -55,13 +55,11 @@ object FieldValidator {
   val validDucr: String => Boolean = (input: String) => ducrPattern.matcher(input.trim).matches()
 
   val validDucrIgnoreCase: String => Boolean = (input: String) => validDucr(input.trim.toUpperCase)
-  val validDucrIgnoreCaseOption: Option[String] => Boolean = (input: Option[String]) => input.fold(false)(validDucrIgnoreCase)
 
   val validMucr: String => Boolean = (input: String) =>
     input.trim.matches("""GB/[0-9A-Z]{3,4}-[0-9A-Z]{5,28}|GB/[0-9A-Z]{9,12}-[0-9A-Z]{1,23}|A:[0-9A-Z]{3}[0-9]{8}|C:[A-Z]{3}[0-9A-Z]{3,30}""")
 
   val validMucrIgnoreCase: String => Boolean = (input: String) => validMucr(input.trim.toUpperCase) && noLongerThan(35)(input)
-  val validMucrIgnoreCaseOption: Option[String] => Boolean = (input: Option[String]) => input.fold(false)(validMucrIgnoreCase)
 
   private val zerosOnlyRegexValue = "[0]+"
   private val noMoreDecimalPlacesThanRegexValue: Int => String =
@@ -143,8 +141,4 @@ object FieldValidator {
   val areAllElementsUnique: Iterable[?] => Boolean = (input: Iterable[?]) => input.toSet.size == input.size
 
   val ofPattern: String => String => Boolean = (pattern: String) => (input: String) => input.trim.matches(pattern)
-
-  def validRegex: String = "^[0-9]{0,3}[A-Z]?$"
-  val isValidDucrPartId: String => Boolean = (input: String) => lengthInRange(1)(4)(input) && input.trim.matches(validRegex)
-  val isValidDucrPartIdOption: Option[String] => Boolean = (input: Option[String]) => input.fold(false)(isValidDucrPartId)
 }

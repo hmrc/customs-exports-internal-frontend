@@ -84,24 +84,6 @@ ileQuery.link.ducrPart = Enter a DUCR Part
 findCdsConsignment.title = Find a CDS consignment
 findCdsConsignment.ucr = Enter the DUCR or MUCR associated with the consignment.
 
-manageChiefConsignment.title = Manage a CHIEF consignment
-manageChiefConsignment.pageHint = Use one of the two options below. Enter the reference of the consignment you want to manage.
-manageChiefConsignment.mucrHeading = Option 1
-manageChiefConsignment.ducrHeading = Option 2
-manageChiefConsignment.mucr = Enter the associated MUCR
-manageChiefConsignment.mucr.hint = For example, GB/123456789100-AB123.
-manageChiefConsignment.mucr.error = Enter a valid MUCR.
-manageChiefConsignment.or = or
-manageChiefConsignment.ducr = Enter the associated DUCR
-manageChiefConsignment.ducr.hint = For example, 3GB986007773125-INVOICE123.
-manageChiefConsignment.ducr.error = Enter a valid DUCR.
-manageChiefConsignment.ducr.error.blank = A DUCR must be entered with a DUCR Part.
-manageChiefConsignment.ducrPartId = Enter DUCR Part (optional)
-manageChiefConsignment.ducrPartId.hint = This can be up to 3 numbers and one optional capital letter at the end. For example, 1, 111, 111M or M.
-manageChiefConsignment.ducrPartId.error = Enter a valid DUCR Part.
-manageChiefConsignment.error.blank = Enter a consignment reference in one of the two options.
-manageChiefConsignment.error.mismatchedInput = Enter a consignment reference in only one of the two options.
-
 consignmentReferences.reference.ducr = Declaration Consignment Reference (DUCR)
 consignmentReferences.reference.ducrPart = DUCR Part
 consignmentReferences.reference.mucr = Master Consignment Reference (MUCR)
@@ -354,11 +336,10 @@ notifications.elem.content.inventoryLinkingMovementTotalsResponse.soe = Status o
 
 ## rename ileQuery to findConsignment
 
-ileQuery.title = Manage a CDS or CHIEF Consignment
+ileQuery.title = Manage a CDS Consignment
 ileQuery.paragraph = Select the customs declaration service that holds your consignment details.
 
 ileQuery.option.manageCds = Manage a CDS consignment
-ileQuery.option.manageChief = Manage a CHIEF consignment
 
 ileQuery.ucr.empty = Enter a Unique Consignment Reference.
 ileQuery.ucr.incorrect = Unique Consignment Reference is incorrect.
